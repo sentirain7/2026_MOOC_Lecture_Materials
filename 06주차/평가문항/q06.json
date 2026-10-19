@@ -1,0 +1,110 @@
+{
+  "week": 6,
+  "title": "물성 계산·후처리 — 역학·부착·점도·응집에너지밀도(CED) 산출",
+  "items": [
+    {
+      "no": 1,
+      "type": "객관식",
+      "difficulty": "상",
+      "session": "6-1",
+      "question": "바인더 셀을 고온에서 단계 냉각해 부피–온도 곡선의 두 직선 교점으로 구한 유리전이온도 Tg(glass transition temperature)가 시차주사열량계(DSC, differential scanning calorimetry) 측정값보다 수십 K 높게 나왔다. 가장 먼저 고려할 원인으로 옳은 것은?",
+      "options": [
+        "MD 냉각률이 실험보다 10¹⁰배 이상 빨라 분자가 재배열할 시간이 부족했다",
+        "힘장의 LJ 파라미터가 틀렸으므로 다른 힘장으로 교체해야 하는 상황이다",
+        "부피 대신 밀도를 써야 하는데 부피를 사용해 교점이 온도 축에서 이동했다",
+        "생산 구간이 너무 길어 부피 요동이 평균값에 과도하게 반영되었다"
+      ],
+      "answer": 1,
+      "explanation": "MD 냉각률은 실험보다 10¹⁰배 이상 빨라 분자가 더 높은 온도에서 굳으므로 Tg가 수십 K 높게 나온다. 이 차이를 따지지 않고 힘장이 틀렸다고 결론 내리는 것이 흔한 실수이며, 계산 Tg는 조성 간 상대 비교에 쓰거나 여러 냉각률 결과를 외삽해 보완한다.",
+      "source": {
+        "slide": 11,
+        "label": "Tg 판정"
+      }
+    },
+    {
+      "no": 2,
+      "type": "OX",
+      "difficulty": "하",
+      "session": "6-2",
+      "question": "응집에너지밀도(CED, cohesive energy density)는 벌크 에너지 평균에서 기상 에너지 평균을 뺀 값을 평균 부피로 나누어 구한다.",
+      "answer": "X",
+      "explanation": "틀린 부분은 빼는 순서이다. CED = (⟨E_gas⟩ − ⟨E_bulk⟩) / ⟨V⟩로 기상 에너지에서 벌크 에너지를 빼야 한다. 벌크 쪽 에너지가 더 낮으므로 순서를 반대로 쓰면 CED가 음수가 되어 δ = √CED를 구할 수 없다.",
+      "source": {
+        "slide": 14,
+        "label": "CED 정의"
+      }
+    },
+    {
+      "no": 3,
+      "type": "객관식",
+      "difficulty": "중",
+      "session": "6-2",
+      "question": "CED를 구하는 두 방식 중 Method A(직접 산출)에 대한 설명으로 옳은 것은?",
+      "options": [
+        "단분자를 상자에 하나씩 두고 기상 에너지를 따로 계산해 차감한다",
+        "분자 내 결합 항까지 포함한 전체 퍼텐셜 에너지를 부피로 나눈다",
+        "정의에 가장 충실하지만 계산을 두 벌 수행해야 하는 방식이다",
+        "분자간 vdW·쿨롱 항만 집계하며 분자 내·분자 간 분리 설정에 민감하다"
+      ],
+      "answer": 4,
+      "explanation": "Method A는 분자 내 결합 항을 빼고 분자간(intermolecular) vdW·쿨롱 항만 집계해 CED = −E_inter / V로 한 번에 구하므로, 분자 내·분자 간을 나누는 exclude 설정에 민감하다. 단분자 기상 계산을 따로 해 차감하고 계산이 두 벌 필요한 것은 Method B(간접 차감)의 특징이다.",
+      "source": {
+        "slide": 16,
+        "label": "CED 계산 두 방식"
+      }
+    },
+    {
+      "no": 4,
+      "type": "OX",
+      "difficulty": "중",
+      "session": "6-3",
+      "question": "용해도 파라미터(solubility parameter) δ는 분산·극성·수소결합 기여를 합친 단일 값이므로, 극성이 큰 첨가제는 바인더와 δ가 비슷해도 실제로는 잘 섞이지 않을 수 있다.",
+      "answer": "O",
+      "explanation": "δ는 분산·극성·수소결합 기여를 하나로 합친 값이라 |Δδ|가 작아도 기여의 구성이 다르면 혼화성 판정이 틀릴 수 있다. 이런 경우 Hansen 3성분(Hansen solubility parameters)으로 기여를 나눠 비교하거나 혼합 엔탈피를 직접 계산해 판정한다.",
+      "source": {
+        "slide": 19,
+        "label": "상용성 판정"
+      }
+    },
+    {
+      "no": 5,
+      "type": "객관식",
+      "difficulty": "하",
+      "session": "6-4",
+      "question": "평균제곱변위(MSD, mean squared displacement) 곡선에서 확산계수 D를 구하기 위해 직선 적합할 구간으로 옳은 것은?",
+      "options": [
+        "MSD가 t²에 비례하는 초기 탄도 구간",
+        "log–log 기울기가 1에 가까운 확산 구간",
+        "MSD 증가가 거의 멈추는 케이지(cage) 정체 구간",
+        "탄도 구간부터 확산 구간까지의 전체 구간"
+      ],
+      "answer": 2,
+      "explanation": "D는 MSD가 t에 비례하는 확산 구간, 즉 log–log 기울기가 1에 가까운 구간에서만 MSD/6t로 구한다. t²에 비례하는 탄도 구간은 충돌 전 직선 운동이고, 케이지 정체 구간까지 넣어 적합하면 D가 작게 나온다.",
+      "source": {
+        "slide": 23,
+        "label": "MSD 구간"
+      }
+    },
+    {
+      "no": 6,
+      "type": "단답형",
+      "difficulty": "중",
+      "session": "6-5",
+      "question": "하나의 궤적에서 생산 구간을 5~10개로 나누고, 각 구간 평균의 흩어짐으로 궤적 내 표준오차(SE, standard error)를 구하는 방법은?",
+      "answer": "블록 평균",
+      "accept": [
+        "블록 평균",
+        "블록평균",
+        "블록 평균법",
+        "block averaging",
+        "block average",
+        "block-averaging"
+      ],
+      "explanation": "블록 평균(block averaging)은 생산 구간을 5~10개 블록으로 나눠 SE = σ_block / √N_block으로 궤적 내 오차를 구한다. 연속한 프레임은 서로 상관되어 있어 프레임 전체의 표준편차로 계산하면 오차가 실제보다 작게 나오기 때문이며, 궤적 간 오차는 별도로 시드 반복으로 구한다.",
+      "source": {
+        "slide": 27,
+        "label": "오차 산출"
+      }
+    }
+  ]
+}

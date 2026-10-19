@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/tokens/fonts.css">
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/tokens/colors.css">
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/tokens/typography.css">
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/tokens/spacing.css">
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/tokens/effects.css">
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/tokens/base.css">
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/styles.css">
+<script src="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400..700;1,400..700&display=swap">
+<style>
+  body { margin: 0; background: #0c1222; }
+  a { color: #599eff; }
+  a:hover { color: #8ec0ff; }
+</style>
+</helmet>
+<x-import component-from-global-scope="deck-stage" from="../deck-stage.js" width="1920" height="1080" hint-size="100%,100%">
+
+<section data-label="표지" data-screen-label="01" data-speaker-notes="10주차 보충 B. 유한한 계산 예산을 어느 후보에 쓸지 정하는 방법을 다룹니다. 획득함수, 배치 선정, 비용 인지 탐색, 루프 자동화 네 차시입니다. 동적 도구의 곡선과 후보는 가정(예시) 데이터이고, 정책 수치와 계획 수치는 COMID 코드·문서에서 가져왔습니다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:100px 100px 80px;display:flex;flex-direction:column;justify-content:space-between;">
+  <div style="display:flex;align-items:center;gap:28px;">
+    <div style="width:64px;height:64px;border-radius:14px;background:linear-gradient(135deg,#3377ff,#8b5cf6);"></div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:28px;letter-spacing:0.16em;color:#94a3b8;">COMID</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:40px;max-width:1500px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:28px;letter-spacing:0.14em;color:#599eff;">WEEK 10 · 보충 B · 차시 10-S5 ~ 10-S8 · 45분</div>
+    <h1 style="font-size:88px;font-weight:700;letter-spacing:-0.03em;line-height:1.08;margin:0;">능동학습과 탐색 전략</h1>
+    <p style="font-size:40px;color:#94a3b8;margin:0;line-height:1.4;">획득함수 · 배치 선정 · 비용 인지 · 루프 자동화</p>
+  </div>
+  <div style="display:flex;gap:56px;font-size:28px;color:#64748b;font-family:'JetBrains Mono',monospace;">
+    <span>윤태영 (Taeyoung Yun)</span>
+    <span>실습 · 능동학습 루프 구현</span>
+    <span>퀴즈 10주차 보충 B</span>
+  </div>
+</section>
+
+<section data-label="지난 주차" data-screen-label="02" data-speaker-notes="보충 A에서 예측값, 불확실성, 적용 영역을 함께 내는 대리모델을 만들었습니다. 불확실성이 있으므로 이제 다음 계산을 고를 수 있습니다. 파이프라인 6단계 중 05 능동학습 단계에서 루프가 완결됩니다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:52px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">RECAP · WEEK 10 · 보충 A</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">지난 주차 요약과 이번 주차의 위치</h2>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:40px;display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">10주차 보충 A 산출물</div>
+      <div style="font-size:32px;line-height:1.45;">예측값 · 불확실성 · 적용 영역을 함께 출력하는 대리모델(surrogate model)</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:40px;display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">현실의 제약</div>
+      <div style="font-size:32px;line-height:1.45;">GPU 시간 유한 · 후보 조성 수십만 개</div>
+    </div>
+    <div style="background:#111827;border:1px solid #2d3748;border-radius:12px;padding:40px;display:flex;flex-direction:column;gap:18px;box-shadow:0 0 20px rgba(59,130,246,0.15);">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#60a5fa;">이번 주차</div>
+      <div style="font-size:32px;line-height:1.45;">다음 계산 조성을 모델 기준으로 선택 · 능동학습(active learning)</div>
+    </div>
+  </div>
+  <p style="font-size:32px;color:#64748b;margin:0;">파이프라인 6단계 중 05 능동학습 — 루프가 완결되는 단계</p>
+</section>
+
+<section data-label="학습목표" data-screen-label="03" data-speaker-notes="탐색과 활용의 균형이 핵심입니다. 네 목표가 네 차시에 하나씩 대응합니다." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:52px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">OBJECTIVE</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">10주차 보충 B 학습목표</h2>
+  <div style="display:flex;flex-direction:column;gap:32px;max-width:1600px;">
+    <div style="display:flex;gap:36px;align-items:baseline;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:32px;color:#599eff;width:80px;">01</div>
+      <div style="font-size:36px;line-height:1.45;flex:1;">획득함수(acquisition function)의 종류와 탐색(exploration) · 활용(exploitation)의 균형 설명</div>
+    </div>
+    <div style="display:flex;gap:36px;align-items:baseline;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:32px;color:#8ec0ff;width:80px;">02</div>
+      <div style="font-size:36px;line-height:1.45;flex:1;">한 번에 여러 개를 고르는 배치 선정(batch selection)에서 다양성 확보</div>
+    </div>
+    <div style="display:flex;gap:36px;align-items:baseline;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:32px;color:#a5b4fc;width:80px;">03</div>
+      <div style="font-size:36px;line-height:1.45;flex:1;">계산 비용을 획득함수에 반영해 예산 대비 정보량 최대화</div>
+    </div>
+    <div style="display:flex;gap:36px;align-items:baseline;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:32px;color:#a78bfa;width:80px;">04</div>
+      <div style="font-size:36px;line-height:1.45;flex:1;">사람 개입 없이 반복되는 루프로 자동화</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="10주차 보충 B 구성" data-screen-label="04" data-speaker-notes="차시별 분량 안내. 총 45분입니다. 각 차시에 동적 도구가 하나씩 있습니다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:52px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">AGENDA</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">10주차 보충 B 구성</h2>
+  <div style="display:flex;flex-direction:column;gap:24px;">
+    <div style="display:flex;align-items:center;gap:40px;background:#111827;border:1px solid #1f2937;border-radius:12px;padding:32px 40px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#599eff;width:130px;">10-S5</div>
+      <div style="font-size:38px;font-weight:600;flex:1;">획득함수의 종류</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#64748b;">15분</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:40px;background:#111827;border:1px solid #1f2937;border-radius:12px;padding:32px 40px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#599eff;width:130px;">10-S6</div>
+      <div style="font-size:38px;font-weight:600;flex:1;">배치 선정과 다양성</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#64748b;">10분</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:40px;background:#111827;border:1px solid #1f2937;border-radius:12px;padding:32px 40px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#599eff;width:130px;">10-S7</div>
+      <div style="font-size:38px;font-weight:600;flex:1;">계산 비용 인지 탐색</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#64748b;">10분</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:40px;background:#111827;border:1px solid #1f2937;border-radius:12px;padding:32px 40px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#599eff;width:130px;">10-S8</div>
+      <div style="font-size:38px;font-weight:600;flex:1;">루프 자동화</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#64748b;">10분</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="[10-S5] 섹션" data-screen-label="05" data-speaker-notes="첫 차시 15분. 획득함수 종류, 표준식, 1차원 GP 위에서의 동작, 계수 선택, 콜드스타트 순서입니다." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:100px;display:flex;flex-direction:column;justify-content:center;gap:40px;">
+  <div style="width:200px;height:6px;background:linear-gradient(135deg,#3377ff,#8b5cf6);border-radius:999px;"></div>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:120px;color:#1f2937;font-weight:700;line-height:1;">10-S5</div>
+  <h2 style="font-size:68px;font-weight:700;letter-spacing:-0.02em;margin:0;line-height:1.1;">획득함수의 종류</h2>
+  <p style="font-size:30px;color:#94a3b8;margin:0;">15분 · 다음 계산의 선택 기준 · EI · UCB · 계수 선택 · 콜드스타트</p>
+</section>
+
+<section data-label="획득함수" data-screen-label="06" data-speaker-notes="세 획득함수와 그림. 탐색·활용 축입니다. 10주차 본강의 10-4에도 같은 슬라이드가 공유되어 있고, 여기서는 식과 κ 선택까지 다룹니다. 그림은 개념 도식(가정 곡선)입니다. EHVI(expected hypervolume improvement, 기대 초부피 개선)는 표적이 여러 개일 때 쓰며 13주차에서 다룹니다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:20px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">10-S5 · ACQUISITION</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">탐색 · 활용 균형 기반 선택</h2>
+  <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:14px 24px;">
+    <svg viewBox="0 0 1480 260" style="width:100%;height:auto;">
+      <line x1="90" y1="180" x2="1440" y2="180" stroke="#374151" stroke-width="2"></line>
+      <path d="M90 120 C260 60 420 150 600 120 C780 92 980 150 1410 96" stroke="#60a5fa" stroke-width="3" fill="none"></path>
+      <path d="M90 150 C260 96 420 176 600 148 C780 122 980 176 1410 130" stroke="#334155" stroke-width="2" stroke-dasharray="8 6" fill="none"></path>
+      <path d="M90 92 C260 30 420 126 600 94 C780 64 980 126 1410 66" stroke="#334155" stroke-width="2" stroke-dasharray="8 6" fill="none"></path>
+      <circle cx="300" cy="86" r="10" fill="#4ade80"></circle>
+      <circle cx="760" cy="106" r="10" fill="#4ade80"></circle>
+      <circle cx="1180" cy="112" r="10" fill="#4ade80"></circle>
+      <circle cx="1040" cy="126" r="12" fill="#facc15"></circle>
+      <text x="1040" y="222" fill="#facc15" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">불확실성 큰 지점 (탐색)</text>
+      <text x="330" y="222" fill="#4ade80" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">현재 최적 근처 (활용)</text>
+      <text x="46" y="110" fill="#94a3b8" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle" transform="rotate(-90 46 110)">물성</text>
+      <text x="1430" y="248" fill="#64748b" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="end">조성 공간</text>
+    </svg>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-top:3px solid #4ade80;border-radius:12px;padding:18px 24px;display:flex;flex-direction:column;gap:8px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#4ade80;">EI · 기대 개선</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">현재 최고를 넘어설 기대값(expected improvement) · 활용 쪽</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-top:3px solid #60a5fa;border-radius:12px;padding:18px 24px;display:flex;flex-direction:column;gap:8px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#60a5fa;">UCB</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">상한 신뢰 경계(upper confidence bound) μ + κσ · κ로 균형 직접 조절</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-top:3px solid #facc15;border-radius:12px;padding:18px 24px;display:flex;flex-direction:column;gap:8px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#facc15;">최대 분산</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">모델 개선이 목적일 때 · 순수 탐색</div>
+    </div>
+    <div style="background:#111827;border:1px solid #2d3748;border-top:3px solid #8b5cf6;border-radius:12px;padding:18px 24px;display:flex;flex-direction:column;gap:8px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#a78bfa;">EHVI</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">표적이 여러 개일 때 · 13주차에서 다룸</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="획득함수 표준식" data-screen-label="07" data-speaker-notes="표준식입니다. EI는 Jones, Schonlau &amp; Welch (1998, J. Global Optimization 13:455) 형식, UCB는 Srinivas et al. (2010, ICML, GP-UCB), PI(probability of improvement, 개선 확률)는 Kushner (1964) 형식입니다. Φ는 표준정규 누적분포, φ는 표준정규 밀도입니다. f*는 지금까지 관측된 최고값, ξ는 개선 여유로 클수록 불확실한 곳을 더 선호합니다. COMID 코드(src/recommendation/bayesian_optimizer.py)는 EI에서 ξ를 두지 않고 현재 최고값을 그대로 쓰며, UCB 탐색 계수 exploration_weight 기본값은 0.1입니다. 목표가 여러 개면 목표별 획득값에 weight를 곱해 더합니다(스칼라화). 최소화 목표는 부호를 바꿔 같은 식을 씁니다." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:22px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">10-S5 · FORMULA</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">표준식 네 가지: EI · UCB · PI · 최대 분산</h2>
+  <div style="display:grid;grid-template-columns:1.35fr 1fr;gap:26px;align-items:start;">
+    <div style="background:#0c1222;border:1px solid #2d3748;border-radius:12px;padding:22px 30px;display:flex;flex-direction:column;gap:18px;">
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#4ade80;">EI · 기대 개선 · Jones 1998</div>
+        <div style="font-family:'STIX Two Text','Cambria Math',serif;word-spacing:0.14em;font-feature-settings:'ss04';letter-spacing:0.01em;font-size:32px;color:#8ec0ff;line-height:1.5;">EI(<i>x</i>) = (<i>μ</i> − <i>f</i>* − <i>ξ</i>) Φ(<i>z</i>) + <i>σ</i> φ(<i>z</i>)</div>
+        <div style="font-family:'STIX Two Text','Cambria Math',serif;word-spacing:0.14em;font-feature-settings:'ss04';letter-spacing:0.01em;font-size:28px;color:#a5b4fc;line-height:1.5;"><i>z</i> = (<i>μ</i> − <i>f</i>* − <i>ξ</i>) / <i>σ</i></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#60a5fa;">UCB · 상한 신뢰 경계 · Srinivas 2010</div>
+        <div style="font-family:'STIX Two Text','Cambria Math',serif;word-spacing:0.14em;font-feature-settings:'ss04';letter-spacing:0.01em;font-size:32px;color:#8ec0ff;line-height:1.5;">UCB(<i>x</i>) = <i>μ</i>(<i>x</i>) + <i>κ</i> <i>σ</i>(<i>x</i>)</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#a78bfa;">PI · 개선 확률 · Kushner 1964</div>
+        <div style="font-family:'STIX Two Text','Cambria Math',serif;word-spacing:0.14em;font-feature-settings:'ss04';letter-spacing:0.01em;font-size:32px;color:#8ec0ff;line-height:1.5;">PI(<i>x</i>) = Φ(<i>z</i>)</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#facc15;">최대 분산 · 순수 탐색</div>
+        <div style="font-family:'STIX Two Text','Cambria Math',serif;word-spacing:0.14em;font-feature-settings:'ss04';letter-spacing:0.01em;font-size:32px;color:#8ec0ff;line-height:1.5;"><i>α</i>(<i>x</i>) = <i>σ</i>(<i>x</i>)</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div style="background:#0c1222;border:1px solid #1f2937;border-left:3px solid #60a5fa;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:32px;color:#60a5fa;">기호</div>
+        <div style="font-size:30px;color:#94a3b8;line-height:1.45;">f* = 현재 최고 관측값 · Φ = 표준정규 누적분포 · φ = 표준정규 밀도</div>
+      </div>
+      <div style="background:#0c1222;border:1px solid #1f2937;border-left:3px solid #a78bfa;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:32px;color:#a78bfa;">계수</div>
+        <div style="font-size:30px;color:#94a3b8;line-height:1.45;">ξ = 개선 여유 (클수록 탐색) · κ = 탐색 계수 (클수록 탐색)</div>
+      </div>
+      <div style="background:#0c1222;border:1px solid #2d3748;border-left:3px solid #facc15;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:32px;color:#facc15;">COMID 구현</div>
+        <div style="font-size:30px;color:#94a3b8;line-height:1.45;">EI: ξ 없음 · UCB: κ 기본 0.1 · 다목적: 목표별 가중합</div>
+      </div>
+      <div style="background:#0c1222;border:1px solid #1f2937;border-left:3px solid #4ade80;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:32px;color:#4ade80;">최소화 목표</div>
+        <div style="font-size:30px;color:#94a3b8;line-height:1.45;">부호 반전 후 같은 식 적용</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="라이브 · 1차원 GP 획득함수" data-screen-label="08" data-speaker-notes="1차원 가우스 과정(GP, Gaussian process) 위에서 획득함수를 바꾸면 다음 샘플점이 어떻게 달라지는지 봅니다. 회색 점선은 실제로는 모르는 목표 함수(가정 함수)이고, 노란 점이 관측값, 파란 선과 띠가 GP 평균 μ와 μ ± 2σ, 아래 초록 곡선이 선택한 획득함수, 노란 세로선이 획득값 최대 위치(다음 샘플점)입니다. 「샘플 추가」를 누르면 그 위치의 가정 함수 값을 관측으로 넣고 GP를 다시 맞춥니다. κ를 0으로 두면 μ만 보고 현재 최고 근처를 고르고, κ를 키우면 관측이 없는 넓은 구간을 고릅니다. GP 설정: RBF 커널, 길이 척도 0.08, 신호 표준편차 0.6, 관측 잡음 분산 1e-4. 식은 앞 장의 표준식입니다. 모든 곡선과 관측점은 가정(예시)입니다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:40px 80px 28px;display:flex;flex-direction:column;gap:12px;">
+  <div style="display:flex;align-items:baseline;gap:28px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">10-S5 · LIVE</div>
+    <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">획득함수 · 계수 변경 → 다음 샘플점 이동</h2>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;background:#111827;border:1px solid #2d3748;border-radius:12px;padding:10px 18px;">
+    <button type="button" id="gaB0" onClick="{{ gaEI }}" style="padding:7px 14px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:#f1f5f9;font-family:'JetBrains Mono',monospace;font-size:24px;cursor:pointer;">EI</button>
+    <button type="button" id="gaB1" onClick="{{ gaUCB }}" style="padding:7px 14px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:#f1f5f9;font-family:'JetBrains Mono',monospace;font-size:24px;cursor:pointer;">UCB</button>
+    <button type="button" id="gaB2" onClick="{{ gaPI }}" style="padding:7px 14px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:#f1f5f9;font-family:'JetBrains Mono',monospace;font-size:24px;cursor:pointer;">PI</button>
+    <button type="button" id="gaB3" onClick="{{ gaVar }}" style="padding:7px 14px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:#f1f5f9;font-size:24px;cursor:pointer;">최대 분산</button>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#60a5fa;margin-left:14px;">κ</span>
+    <button type="button" onClick="{{ gaKd }}" style="width:42px;height:38px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:#f1f5f9;font-family:'JetBrains Mono',monospace;font-size:24px;cursor:pointer;">−</button>
+    <span id="ga_k" style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#f1f5f9;min-width:54px;text-align:center;">2.0</span>
+    <button type="button" onClick="{{ gaKi }}" style="width:42px;height:38px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:#f1f5f9;font-family:'JetBrains Mono',monospace;font-size:24px;cursor:pointer;">+</button>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#4ade80;margin-left:14px;">ξ</span>
+    <button type="button" onClick="{{ gaXd }}" style="width:42px;height:38px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:#f1f5f9;font-family:'JetBrains Mono',monospace;font-size:24px;cursor:pointer;">−</button>
+    <span id="ga_x" style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#f1f5f9;min-width:64px;text-align:center;">0.00</span>
+    <button type="button" onClick="{{ gaXi }}" style="width:42px;height:38px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:#f1f5f9;font-family:'JetBrains Mono',monospace;font-size:24px;cursor:pointer;">+</button>
+    <button type="button" onClick="{{ gaAdd }}" style="padding:7px 14px;border-radius:8px;border:1px solid #4ade80;background:rgba(74,222,128,0.16);color:#f1f5f9;font-size:24px;cursor:pointer;margin-left:14px;">샘플 추가</button>
+    <button type="button" onClick="{{ gaReset }}" style="padding:7px 14px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:#94a3b8;font-size:24px;cursor:pointer;">초기화</button>
+  </div>
+  <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:10px 20px;display:flex;flex-direction:column;gap:4px;">
+    <div style="display:flex;gap:28px;font-size:24px;color:#94a3b8;">
+      <span><span style="color:#64748b;">╌</span> 가정 함수</span>
+      <span><span style="color:#facc15;">●</span> 관측</span>
+      <span><span style="color:#60a5fa;">━</span> μ · 띠 = μ ± 2σ</span>
+      <span><span style="color:#4ade80;">━</span> 획득값 α(x) (아래 칸)</span>
+      <span><span style="color:#facc15;">│</span> 다음 샘플점</span>
+    </div>
+    <svg viewBox="0 0 1600 520" style="width:100%;height:auto;display:block;">
+      <line x1="90" y1="300" x2="1580" y2="300" stroke="#374151" stroke-width="2"></line>
+      <line x1="90" y1="476" x2="1580" y2="476" stroke="#374151" stroke-width="2"></line>
+      <text x="90" y="508" fill="#94a3b8" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="middle">0</text>
+      <text x="835" y="508" fill="#94a3b8" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="middle">0.5</text>
+      <text x="1580" y="508" fill="#94a3b8" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="end">1.0</text>
+      <g id="ga_dyn"></g>
+    </svg>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:10px 18px;font-size:24px;color:#94a3b8;">획득함수 <span id="ga_mode" style="font-family:'JetBrains Mono',monospace;color:#f1f5f9;">UCB</span></div>
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:10px 18px;font-size:24px;color:#94a3b8;">다음 x* <span id="ga_next" style="font-family:'JetBrains Mono',monospace;color:#facc15;">0.00</span></div>
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:10px 18px;font-size:24px;color:#94a3b8;">μ(x*) <span id="ga_mu" style="font-family:'JetBrains Mono',monospace;color:#f1f5f9;">0</span></div>
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:10px 18px;font-size:24px;color:#94a3b8;">σ(x*) <span id="ga_sd" style="font-family:'JetBrains Mono',monospace;color:#f1f5f9;">0</span></div>
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:10px 18px;font-size:24px;color:#94a3b8;">f* <span id="ga_best" style="font-family:'JetBrains Mono',monospace;color:#f1f5f9;">0</span> · n <span id="ga_n" style="font-family:'JetBrains Mono',monospace;color:#f1f5f9;">5</span></div>
+  </div>
+</section>
+
+<section data-label="계수 선택" data-screen-label="09" data-speaker-notes="κ와 ξ의 일반적 경향입니다. κ = 0이면 평균만 보는 순수 활용이고, κ ≈ 2는 대략 95% 상한(1.96σ)을 보는 셈입니다. GP-UCB 이론(Srinivas et al., 2010)은 반복이 진행될수록 κ를 천천히 키우는 일정(β_t ~ log t 형태)을 제시합니다. COMID 기본값 κ = 0.1은 활용 쪽 설정이며, 능동학습 목적(모델 개선)일 때는 더 큰 값이나 최대 분산 기준이 맞습니다. EI의 ξ는 보통 0–0.1 범위에서 씁니다. 표의 해석은 일반 경향이고, 적절한 값은 문제마다 검증이 필요합니다. 원천: bayesian_optimizer.py(OptimizationConfig.exploration_weight = 0.1), docs/plans/INVERSE_DESIGN_AUTOMATION_PLAN.md §7(잔차 큰 곳 = UCB 정보획득, 목표 근접 = EI/EHVI 활용)." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:22px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">10-S5 · COEFFICIENT</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">κ · ξ 선택 = 목적(최적점 탐색 vs 모델 개선)에 따라 결정</h2>
+  <div style="display:grid;grid-template-columns:0.7fr 1.2fr 1.4fr;gap:0;background:#0c1222;border:1px solid #1f2937;border-radius:12px;overflow:hidden;">
+    <div style="padding:12px 26px;font-size:26px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;">UCB κ</div>
+    <div style="padding:12px 26px;font-size:26px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;">선택 경향</div>
+    <div style="padding:12px 26px;font-size:26px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;">쓰임</div>
+    <div style="padding:11px 26px;font-size:32px;font-family:'JetBrains Mono',monospace;color:#4ade80;border-bottom:1px solid rgba(51,65,85,0.5);">0</div>
+    <div style="padding:11px 26px;font-size:28px;border-bottom:1px solid rgba(51,65,85,0.5);">μ 최대 위치 · 순수 활용</div>
+    <div style="padding:11px 26px;font-size:28px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">최종 추천 직전 확인</div>
+    <div style="padding:11px 26px;font-size:32px;font-family:'JetBrains Mono',monospace;color:#facc15;border-bottom:1px solid rgba(51,65,85,0.5);">0.1</div>
+    <div style="padding:11px 26px;font-size:28px;border-bottom:1px solid rgba(51,65,85,0.5);">활용 쪽 · COMID 기본값</div>
+    <div style="padding:11px 26px;font-size:28px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">목표 근접 단계 역설계</div>
+    <div style="padding:11px 26px;font-size:32px;font-family:'JetBrains Mono',monospace;color:#60a5fa;border-bottom:1px solid rgba(51,65,85,0.5);">≈ 2</div>
+    <div style="padding:11px 26px;font-size:28px;border-bottom:1px solid rgba(51,65,85,0.5);">95% 상한 근사 (1.96σ) · 균형</div>
+    <div style="padding:11px 26px;font-size:28px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">일반 탐색 루프</div>
+    <div style="padding:11px 26px;font-size:32px;font-family:'JetBrains Mono',monospace;color:#a78bfa;">≥ 3</div>
+    <div style="padding:11px 26px;font-size:28px;">관측 공백 구간 우선 · 탐색 쪽</div>
+    <div style="padding:11px 26px;font-size:28px;color:#94a3b8;">잔차 큰 영역 정보 획득 · 모델 개선</div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;">
+    <div style="background:#0c1222;border:1px solid #1f2937;border-left:3px solid #4ade80;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#4ade80;">EI ξ</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">보통 0–0.1 · 클수록 σ 큰 위치 선호</div>
+    </div>
+    <div style="background:#0c1222;border:1px solid #1f2937;border-left:3px solid #60a5fa;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#60a5fa;">GP-UCB 이론</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">반복 수 증가에 따라 κ 점진 증가 일정</div>
+    </div>
+    <div style="background:#0c1222;border:1px solid #2d3748;border-left:3px solid #facc15;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#facc15;">COMID 진단 규칙</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">잔차 큰 곳 → UCB · 목표 근접 → EI · EHVI</div>
+    </div>
+  </div>
+  <p style="font-size:26px;color:#64748b;margin:0;">표의 κ 해석 = 일반 경향 · 문제별 검증 대상</p>
+</section>
+
+<section data-label="콜드스타트" data-screen-label="10" data-speaker-notes="라벨이 거의 없으면 대리모델을 학습할 수 없어 베이지안 최적화(BO, Bayesian optimization)를 시작할 수 없습니다. COMID 역설계는 active champion 모델이 표적 물성을 지원하지 않으면 즉시 거부되므로, BO 앞에 결정론적 부트스트랩(BOOTSTRAP) 단계를 두었습니다. 표적별 학습 라벨이 12개 미만이거나 champion이 미지원이면 BOOTSTRAP으로 들어가 공간충전(space-filling) 시드 조성 8개를 만들고, 시드 난수는 20260611 + i로 고정해 재현 가능하게 합니다. 라벨이 쌓이면 다음 라운드부터 자동으로 BO로 전환됩니다. 이 단계에서 실현가능성 점검(FeasibilityScout)은 unknown으로 보고해 거짓 불가능 판정을 막습니다. 원천: LAMMPS_Asphalt/src/contracts/policies/inverse_pipeline.py (ColdStartPolicy), docs/plans/INVERSE_DESIGN_AUTOMATION_PLAN.md §4.5, docs/DECISION_RULES.md R8." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:24px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">10-S5 · COLD START</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">라벨 부족 시 BOOTSTRAP(공간충전 시드) → BO 자동 전환</h2>
+  <div style="display:grid;grid-template-columns:1fr 90px 1fr 90px 1fr;align-items:stretch;gap:0;">
+    <div style="background:#111827;border:1px solid #1f2937;border-top:3px solid #60a5fa;border-radius:12px;padding:22px 26px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#60a5fa;">모드 판정</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.45;">표적 라벨 &lt; 12 또는 champion 미지원 → BOOTSTRAP</div>
+    </div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#475569;display:flex;align-items:center;justify-content:center;">→</div>
+    <div style="background:#111827;border:1px solid #1f2937;border-top:3px solid #facc15;border-radius:12px;padding:22px 26px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#facc15;">BOOTSTRAP</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.45;">공간충전(space-filling) 시드 8개 · 시드 = 20260611 + i</div>
+    </div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#475569;display:flex;align-items:center;justify-content:center;">→</div>
+    <div style="background:#111827;border:1px solid #2d3748;border-top:3px solid #4ade80;border-radius:12px;padding:22px 26px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#4ade80;">BO</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.45;">라벨 ≥ 12 · champion 지원 → 획득함수 기반 제안</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-left:3px solid #a78bfa;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#a78bfa;">이유</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">champion 미지원 표적 → 역설계 즉시 거부 · 시작 불가</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:3px solid #60a5fa;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#60a5fa;">전환</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">라운드 1 = 시드 · 라운드 2 이후 = BO · 판정 자동</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:3px solid #f87171;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f87171;">실현가능성 점검</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">BOOTSTRAP 중 unknown 보고 · 거짓 불가능 판정 차단</div>
+    </div>
+  </div>
+  <p style="font-size:26px;color:#64748b;margin:0;">정책값 출처: contracts/policies/inverse_pipeline.py · ColdStartPolicy</p>
+</section>
+
+<section data-label="[10-S6] 섹션" data-screen-label="11" data-speaker-notes="두 번째 차시 10분. 한 번에 여러 후보를 고를 때 다양성을 확보하는 방법입니다." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:100px;display:flex;flex-direction:column;justify-content:center;gap:40px;">
+  <div style="width:200px;height:6px;background:linear-gradient(135deg,#3377ff,#8b5cf6);border-radius:999px;"></div>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:120px;color:#1f2937;font-weight:700;line-height:1;">10-S6</div>
+  <h2 style="font-size:68px;font-weight:700;letter-spacing:-0.02em;margin:0;line-height:1.1;">배치 선정과 다양성</h2>
+  <p style="font-size:30px;color:#94a3b8;margin:0;">10분 · 한 번에 여러 후보 선정 · 다양성 벌점 · 구현 규칙</p>
+</section>
+
+<section data-label="배치 선정" data-screen-label="12" data-speaker-notes="상위 N개를 그대로 고르면 거의 같은 조성 근처가 됩니다. 가상 관측(Kriging believer, fantasy)은 고른 후보의 예측값을 임시 관측으로 넣어 불확실성을 줄인 뒤 다시 계산하는 방법입니다. Thompson 샘플링은 사후분포에서 함수를 여러 번 뽑아 각각의 최적점을 모읍니다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:22px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">10-S6 · BATCH</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">상위 N개 그대로 선택 시 문제</h2>
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:26px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-top:3px solid #f87171;border-radius:12px;padding:24px 30px;display:flex;flex-direction:column;gap:12px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:32px;color:#f87171;">단순 top-N</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.45;">획득함수 상위 10개가 사실상 같은 조성 근처 — GPU 10대가 같은 질문에 투입</div>
+    </div>
+    <div style="background:#111827;border:1px solid #2d3748;border-top:3px solid #4ade80;border-radius:12px;padding:24px 30px;display:flex;flex-direction:column;gap:12px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:32px;color:#4ade80;">다양성 제약</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.45;">선택점 주변 획득값 감소 → 다음 후보를 먼 위치에서 선택</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:0;background:#111827;border:1px solid #1f2937;border-radius:12px;overflow:hidden;">
+    <div style="padding:12px 30px;font-size:28px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">방법</div>
+    <div style="padding:12px 30px;font-size:28px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">작동 방식</div>
+
+    <div style="padding:11px 30px;font-size:30px;color:#8ec0ff;border-bottom:1px solid rgba(51,65,85,0.5);">거리 제약</div>
+    <div style="padding:11px 30px;font-size:28px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">이미 고른 후보와 잠재 공간 거리가 d 이상인 후보만 유지</div>
+
+    <div style="padding:11px 30px;font-size:30px;color:#a5b4fc;border-bottom:1px solid rgba(51,65,85,0.5);">군집 후 대표 선택</div>
+    <div style="padding:11px 30px;font-size:28px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">상위 후보를 k개 군집으로 나눠 각 군집에서 하나씩</div>
+
+    <div style="padding:11px 30px;font-size:30px;color:#a78bfa;border-bottom:1px solid rgba(51,65,85,0.5);">가상 관측(fantasy)</div>
+    <div style="padding:11px 30px;font-size:28px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">고른 후보의 예측값을 임시 관측으로 넣고 획득함수를 다시 계산</div>
+
+    <div style="padding:11px 30px;font-size:30px;color:#4ade80;">Thompson 샘플링</div>
+    <div style="padding:11px 30px;font-size:28px;color:#94a3b8;">앙상블 멤버마다 최적점을 하나씩 뽑아 배치를 구성</div>
+  </div>
+</section>
+
+<section data-label="라이브 · 배치 다양성 벌점" data-screen-label="13" data-speaker-notes="같은 획득값 곡선에서 배치 크기 B, 선정 방식, 반경 r을 바꿔 봅니다. 「벌점 없음」은 획득값 상위 B개 격자점을 그대로 고르므로 가장 높은 봉우리 옆에 몰립니다. 「지역 벌점(local penalization)」은 하나를 고를 때마다 그 주변의 획득값에 1 − exp(−(x − xₛ)² / 2r²)를 곱해 낮춥니다. 「최소 거리」는 이미 고른 점과 거리가 r 미만인 후보를 건너뛰는 방식으로, COMID 반발 규칙(정규화 거리 0.05)과 같은 계열입니다. 봉우리 3개(가정 위치 0.30, 0.62, 0.85)를 몇 개 덮는지와 최소 간격을 비교합니다. 곡선은 가정 함수입니다." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:40px 80px 28px;display:flex;flex-direction:column;gap:12px;">
+  <div style="display:flex;align-items:baseline;gap:28px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">10-S6 · LIVE</div>
+    <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">다양성 벌점 → 배치의 봉우리 분산</h2>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;background:#0c1222;border:1px solid #2d3748;border-radius:12px;padding:10px 18px;">
+    <button type="button" id="btB0" onClick="{{ btM0 }}" style="padding:7px 14px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:#f1f5f9;font-size:24px;cursor:pointer;">벌점 없음</button>
+    <button type="button" id="btB1" onClick="{{ btM1 }}" style="padding:7px 14px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:#f1f5f9;font-size:24px;cursor:pointer;">지역 벌점</button>
+    <button type="button" id="btB2" onClick="{{ btM2 }}" style="padding:7px 14px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:#f1f5f9;font-size:24px;cursor:pointer;">최소 거리</button>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#60a5fa;margin-left:14px;">배치 B</span>
+    <button type="button" onClick="{{ btBd }}" style="width:42px;height:38px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:#f1f5f9;font-family:'JetBrains Mono',monospace;font-size:24px;cursor:pointer;">−</button>
+    <span id="bt_b" style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#f1f5f9;min-width:40px;text-align:center;">5</span>
+    <button type="button" onClick="{{ btBi }}" style="width:42px;height:38px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:#f1f5f9;font-family:'JetBrains Mono',monospace;font-size:24px;cursor:pointer;">+</button>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;margin-left:14px;">반경 r</span>
+    <button type="button" onClick="{{ btRd }}" style="width:42px;height:38px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:#f1f5f9;font-family:'JetBrains Mono',monospace;font-size:24px;cursor:pointer;">−</button>
+    <span id="bt_r" style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#f1f5f9;min-width:64px;text-align:center;">0.06</span>
+    <button type="button" onClick="{{ btRi }}" style="width:42px;height:38px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:#f1f5f9;font-family:'JetBrains Mono',monospace;font-size:24px;cursor:pointer;">+</button>
+    <span style="font-size:24px;color:#64748b;margin-left:14px;">가정 획득값 곡선</span>
+  </div>
+  <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:10px 20px;display:flex;flex-direction:column;gap:4px;">
+    <div style="display:flex;gap:28px;font-size:24px;color:#94a3b8;">
+      <span><span style="color:#64748b;">╌</span> 원래 획득값 α(x)</span>
+      <span><span style="color:#60a5fa;">━</span> 벌점 반영 후 α</span>
+      <span><span style="color:#facc15;">▼</span> 선택점</span>
+      <span><span style="color:#a78bfa;">▒</span> 봉우리 위치(가정)</span>
+    </div>
+    <svg viewBox="0 0 1600 440" style="width:100%;height:auto;display:block;">
+      <line x1="90" y1="380" x2="1580" y2="380" stroke="#374151" stroke-width="2"></line>
+      <text x="90" y="414" fill="#94a3b8" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="middle">0</text>
+      <text x="835" y="414" fill="#94a3b8" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="middle">0.5</text>
+      <text x="1580" y="414" fill="#94a3b8" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="end">1.0</text>
+      <g id="bt_dyn"></g>
+    </svg>
+  </div>
+  <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;">
+    <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:10px 18px;font-size:24px;color:#94a3b8;">선택 x <span id="bt_list" style="font-family:'JetBrains Mono',monospace;color:#facc15;">—</span></div>
+    <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:10px 18px;font-size:24px;color:#94a3b8;">최소 간격 <span id="bt_gap" style="font-family:'JetBrains Mono',monospace;color:#f1f5f9;">—</span></div>
+    <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:10px 18px;font-size:24px;color:#94a3b8;">덮은 봉우리 <span id="bt_peak" style="font-family:'JetBrains Mono',monospace;color:#f1f5f9;">—</span> / 3</div>
+  </div>
+</section>
+
+<section data-label="COMID 반발 규칙" data-screen-label="14" data-speaker-notes="COMID 베이지안 최적화 코드의 배치 다양성 구현입니다. 제안 개수만큼 반복하면서 매번 획득함수를 최적화하고, 이미 제안한 점과의 최소 거리가 정규화 공간에서 0.05 이하이면 최대 3회까지 획득함수 최적화를 다시 시도합니다(반발, repulsion). 조성 변수(아스팔텐·레진·방향족·포화분·첨가제)만 합이 100이 되도록 정규화하고, 온도 같은 조건 변수는 물리 단위를 유지합니다. 또 ReaxFF 검증 선택기는 배치당 최대 선택 수를 두고, validation tier는 배치당 5개(cap_per_batch)로 제한합니다. 원천: LAMMPS_Asphalt/src/recommendation/bayesian_optimizer.py (suggest 루프), src/contracts/policies/tier.py (validation cap_per_batch = 5), docs/DECISION_RULES.md R4." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:22px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">10-S6 · REPULSION</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">COMID 구현: 정규화 거리 0.05 이하 → 최대 3회 재최적화</h2>
+  <div style="display:grid;grid-template-columns:1.25fr 1fr;gap:26px;align-items:start;">
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:20px 28px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;letter-spacing:0.06em;">bayesian_optimizer.py · 제안 루프 (요약)</div>
+      <pre style="margin:0;font-family:'JetBrains Mono',monospace;font-size:28px;line-height:1.7;color:#8ec0ff;white-space:pre-wrap;">for _ in range(n_suggestions):
+    x = optimize_acquisition()
+    if suggested:
+        for _retry in range(3):
+            if min_dist(x, suggested) &gt; 0.05:
+                break
+            x = optimize_acquisition()
+    suggested.append(x)</pre>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div style="background:#111827;border:1px solid #1f2937;border-left:3px solid #60a5fa;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#60a5fa;">거리 기준</div>
+        <div style="font-size:28px;color:#94a3b8;line-height:1.4;">정규화 설계 공간 유클리드 거리 · 임계 0.05</div>
+      </div>
+      <div style="background:#111827;border:1px solid #1f2937;border-left:3px solid #a78bfa;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#a78bfa;">정규화 범위</div>
+        <div style="font-size:28px;color:#94a3b8;line-height:1.4;">조성 변수 합 = 100 · 온도 등 조건 변수 = 물리 단위 유지</div>
+      </div>
+      <div style="background:#111827;border:1px solid #1f2937;border-left:3px solid #f87171;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#f87171;">배치 상한</div>
+        <div style="font-size:28px;color:#94a3b8;line-height:1.4;">ReaxFF 검증 tier · 배치당 최대 5개</div>
+      </div>
+      <div style="background:#111827;border:1px solid #2d3748;border-left:3px solid #facc15;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#facc15;">방식 분류</div>
+        <div style="font-size:28px;color:#94a3b8;line-height:1.4;">앞 도구의 「최소 거리」 계열 · 벌점 곱셈 없음</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="위치별 1개 규칙 사례" data-screen-label="15" data-speaker-notes="다른 분야 예제 데이터로 본 다양성 규칙입니다. Claude Science 예제(효소 IS621 bridge recombinase 변이 후보, 단백질 언어모델·역접힘 모델 합의 점수 consensus_z)에서 점수 상위 10개를 그대로 고르면 서로 다른 잔기 위치가 6곳뿐이고 322번 위치가 4번 들어갑니다. 위치마다 1개만 허용하는 규칙(ranked_candidates_by_position.csv)을 적용하면 상위 10개가 10곳의 서로 다른 위치로 퍼지고, 10번째 후보는 원래 순위 23위(S45A)입니다. 건설소재에서는 위치 대신 첨가제 종류나 조성 셀을 그룹 키로 쓰면 같은 규칙이 됩니다. 점수는 모델 계산값이며 이 강의 주제(아스팔트)와 무관한 예제 데이터라는 점을 밝혀 둡니다. 원천: /home/tyun/.claude-science/seed-assets/example_enzyme_engineering/ranked_candidates.csv, ranked_candidates_by_position.csv." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:22px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">10-S6 · CASE</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">그룹당 1개 규칙: 상위 10개의 서로 다른 위치 6곳 → 10곳</h2>
+  <div style="font-size:26px;color:#64748b;">다른 분야 예제 데이터 · 효소 변이 후보 순위 (Claude Science 예제) · 점수 = 모델 합의 점수</div>
+  <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:18px 26px;display:flex;flex-direction:column;gap:10px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#f87171;">점수 상위 10개 그대로 · 서로 다른 위치 6곳</div>
+    <div style="display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:10px;">
+      <div style="background:#111827;border:2px solid #facc15;border-radius:8px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f1f5f9;">L168A</span><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">#1</span></div>
+      <div style="background:#111827;border:2px solid #f87171;border-radius:8px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f1f5f9;">N322L</span><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">#2</span></div>
+      <div style="background:#111827;border:2px solid #374151;border-radius:8px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f1f5f9;">T152L</span><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">#3</span></div>
+      <div style="background:#111827;border:2px solid #facc15;border-radius:8px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f1f5f9;">L168E</span><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">#4</span></div>
+      <div style="background:#111827;border:2px solid #f87171;border-radius:8px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f1f5f9;">N322Q</span><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">#5</span></div>
+      <div style="background:#111827;border:2px solid #374151;border-radius:8px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f1f5f9;">S258L</span><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">#6</span></div>
+      <div style="background:#111827;border:2px solid #374151;border-radius:8px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f1f5f9;">H224N</span><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">#7</span></div>
+      <div style="background:#111827;border:2px solid #f87171;border-radius:8px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f1f5f9;">N322M</span><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">#8</span></div>
+      <div style="background:#111827;border:2px solid #374151;border-radius:8px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f1f5f9;">S209A</span><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">#9</span></div>
+      <div style="background:#111827;border:2px solid #f87171;border-radius:8px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f1f5f9;">N322R</span><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">#10</span></div>
+    </div>
+  </div>
+  <div style="background:#0c1222;border:1px solid #2d3748;border-radius:12px;padding:18px 26px;display:flex;flex-direction:column;gap:10px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#4ade80;">위치당 1개 규칙 적용 · 서로 다른 위치 10곳</div>
+    <div style="display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:10px;">
+      <div style="background:#111827;border:2px solid #4ade80;border-radius:8px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f1f5f9;">L168A</span><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">#1</span></div>
+      <div style="background:#111827;border:2px solid #4ade80;border-radius:8px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f1f5f9;">N322L</span><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">#2</span></div>
+      <div style="background:#111827;border:2px solid #4ade80;border-radius:8px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f1f5f9;">T152L</span><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">#3</span></div>
+      <div style="background:#111827;border:2px solid #4ade80;border-radius:8px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f1f5f9;">S258L</span><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">#6</span></div>
+      <div style="background:#111827;border:2px solid #4ade80;border-radius:8px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f1f5f9;">H224N</span><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">#7</span></div>
+      <div style="background:#111827;border:2px solid #4ade80;border-radius:8px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f1f5f9;">S209A</span><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">#9</span></div>
+      <div style="background:#111827;border:2px solid #4ade80;border-radius:8px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f1f5f9;">T271L</span><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">#11</span></div>
+      <div style="background:#111827;border:2px solid #4ade80;border-radius:8px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f1f5f9;">V257A</span><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">#16</span></div>
+      <div style="background:#111827;border:2px solid #4ade80;border-radius:8px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f1f5f9;">H193R</span><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">#19</span></div>
+      <div style="background:#111827;border:2px solid #4ade80;border-radius:8px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f1f5f9;">S45A</span><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">#23</span></div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;">
+    <div style="background:#0c1222;border:1px solid #1f2937;border-left:3px solid #facc15;border-radius:12px;padding:14px 24px;font-size:28px;color:#94a3b8;line-height:1.4;">칸 위 = 변이 · 칸 아래 = 원래 순위 · 같은 색 = 같은 위치</div>
+    <div style="background:#0c1222;border:1px solid #1f2937;border-left:3px solid #60a5fa;border-radius:12px;padding:14px 24px;font-size:28px;color:#94a3b8;line-height:1.4;">건설소재 적용: 그룹 키 = 첨가제 종류 또는 조성 셀</div>
+  </div>
+</section>
+
+<section data-label="[10-S7] 섹션" data-screen-label="16" data-speaker-notes="세 번째 차시 10분. 정보량을 비용으로 나눠 고르는 방법과 COMID tier 비용, 실제 예산 배분 사례입니다." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:100px;display:flex;flex-direction:column;justify-content:center;gap:40px;">
+  <div style="width:200px;height:6px;background:linear-gradient(135deg,#3377ff,#8b5cf6);border-radius:999px;"></div>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:120px;color:#1f2937;font-weight:700;line-height:1;">10-S7</div>
+  <h2 style="font-size:68px;font-weight:700;letter-spacing:-0.02em;margin:0;line-height:1.1;">계산 비용 인지 탐색</h2>
+  <p style="font-size:30px;color:#94a3b8;margin:0;">10분 · 정보량 ÷ 비용 · tier 설정 · 예산 배분 사례</p>
+</section>
+
+<section data-label="비용 인지" data-screen-label="17" data-speaker-notes="티어별 비용과 비용 대비 획득, 다단계 전략입니다. 표의 상대 비용 1·5·50·100은 개념 설명용 값입니다. 정책 파일의 원자 수·시간 설정에서 계산한 비용 지표는 다음 장에 있습니다. 다단계 전략의 「한 자릿수 이상 증가」는 개념적 추정입니다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:22px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">10-S7 · COST-AWARE</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">비용 대비 정보량 기준 선택</h2>
+  <div style="background:#111827;border:1px solid #2d3748;border-radius:12px;padding:22px 30px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#8ec0ff;">α<sub>cost</sub>(x) = α(x) / c(x)<sup>λ</sup> &nbsp;&nbsp;·&nbsp;&nbsp; c(x) = 예상 GPU 시간 · λ = 비용 민감도</div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1.2fr;gap:0;background:#111827;border:1px solid #1f2937;border-radius:12px;overflow:hidden;">
+    <div style="padding:12px 28px;font-size:28px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">티어</div>
+    <div style="padding:12px 28px;font-size:28px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">계산</div>
+    <div style="padding:12px 28px;font-size:28px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">상대 비용</div>
+    <div style="padding:12px 28px;font-size:28px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">쓰임</div>
+
+    <div style="padding:11px 28px;font-size:30px;color:#60a5fa;border-bottom:1px solid rgba(51,65,85,0.5);">screening</div>
+    <div style="padding:11px 28px;font-size:30px;border-bottom:1px solid rgba(51,65,85,0.5);">짧은 NPT · 밀도</div>
+    <div style="padding:11px 28px;font-size:28px;font-family:'JetBrains Mono',monospace;color:#4ade80;border-bottom:1px solid rgba(51,65,85,0.5);">1</div>
+    <div style="padding:11px 28px;font-size:28px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">후보 전체 선별</div>
+
+    <div style="padding:11px 28px;font-size:30px;color:#a78bfa;border-bottom:1px solid rgba(51,65,85,0.5);">confirm</div>
+    <div style="padding:11px 28px;font-size:30px;border-bottom:1px solid rgba(51,65,85,0.5);">CED · 구조 분석</div>
+    <div style="padding:11px 28px;font-size:28px;font-family:'JetBrains Mono',monospace;color:#facc15;border-bottom:1px solid rgba(51,65,85,0.5);">5</div>
+    <div style="padding:11px 28px;font-size:28px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">상위 후보 확인</div>
+
+    <div style="padding:11px 28px;font-size:30px;color:#fb923c;border-bottom:1px solid rgba(51,65,85,0.5);">viscosity</div>
+    <div style="padding:11px 28px;font-size:30px;border-bottom:1px solid rgba(51,65,85,0.5);">장시간 NVT</div>
+    <div style="padding:11px 28px;font-size:28px;font-family:'JetBrains Mono',monospace;color:#fb923c;border-bottom:1px solid rgba(51,65,85,0.5);">50</div>
+    <div style="padding:11px 28px;font-size:28px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">소수 후보만</div>
+
+    <div style="padding:11px 28px;font-size:30px;color:#f87171;">validation</div>
+    <div style="padding:11px 28px;font-size:30px;">계면 · 다중 시드</div>
+    <div style="padding:11px 28px;font-size:28px;font-family:'JetBrains Mono',monospace;color:#f87171;">100</div>
+    <div style="padding:11px 28px;font-size:28px;color:#94a3b8;">최종 추천 조성</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:26px;background:#111827;border:1px solid #2d3748;border-radius:12px;padding:18px 26px;">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#4ade80;">다단계 전략</span>
+    <span style="font-size:28px;color:#94a3b8;line-height:1.45;flex:1;">저비용 티어로 선별 후 상위 후보만 고비용 티어로 승급 — 같은 예산에서 검토 조성 수 한 자릿수 이상 증가</span>
+  </div>
+  <p style="font-size:24px;color:#64748b;margin:0;">상대 비용 = 개념 설명용 값 · 정책 설정 기반 비용 지표 = 다음 장</p>
+</section>
+
+<section data-label="tier 설정과 비용 지표" data-screen-label="18" data-speaker-notes="COMID tier 정책 파일의 실제 설정입니다. 비용 지표는 원자 수 × 스텝 수(= 총 시뮬레이션 시간 ÷ Δt)로 계산해 screening을 1로 둔 상대값입니다. screening 10만 원자 × 130만 스텝 = 1.3×10¹¹, confirm 20만 × 330만 = 6.6×10¹¹(5.1배), viscosity 15만 × 830만(NVT 300 ps + NPT 3000 ps + 점도 5 ns를 합산했다고 가정) = 1.245×10¹²(9.6배), validation 10만 × 260만(Δt 0.5 fs) = 2.6×10¹¹(2.0배)입니다. 이 지표는 힘장별 한 스텝 비용 차이(ReaxFF는 고정 전하 힘장보다 스텝당 비용이 큼)와 실제 GPU 시간을 반영하지 않습니다. 앞 장 개념표의 validation은 「계면·다중 시드」로 적혀 있지만 정책 파일의 validation tier는 ReaxFF 검증이라 서로 다릅니다(사람 검토 필요 항목). 원천: LAMMPS_Asphalt/src/contracts/policies/tier.py (DEFAULT tiers). 값 종류: 정책 설정값 + 그로부터 계산한 값." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:22px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">10-S7 · TIER CONFIG</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">정책 설정 기반 비용 지표: 1 · 5.1 · 9.6 · 2.0</h2>
+  <div style="display:grid;grid-template-columns:1fr 0.8fr 1.1fr 0.6fr 1.1fr 0.9fr;gap:0;background:#0c1222;border:1px solid #1f2937;border-radius:12px;overflow:hidden;">
+    <div style="padding:12px 24px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;">tier</div>
+    <div style="padding:12px 24px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;">원자 수</div>
+    <div style="padding:12px 24px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;">NVT + NPT</div>
+    <div style="padding:12px 24px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;">Δt</div>
+    <div style="padding:12px 24px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;">추가</div>
+    <div style="padding:12px 24px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;">비용 지표</div>
+    <div style="padding:11px 24px;font-size:28px;color:#60a5fa;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">screening</div>
+    <div style="padding:11px 24px;font-size:28px;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">100k</div>
+    <div style="padding:11px 24px;font-size:28px;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">300 + 1000 ps</div>
+    <div style="padding:11px 24px;font-size:28px;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">1 fs</div>
+    <div style="padding:11px 24px;font-size:26px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">—</div>
+    <div style="padding:11px 24px;font-size:28px;font-family:'JetBrains Mono',monospace;color:#4ade80;border-bottom:1px solid rgba(51,65,85,0.5);">1.0</div>
+    <div style="padding:11px 24px;font-size:28px;color:#a78bfa;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">confirm</div>
+    <div style="padding:11px 24px;font-size:28px;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">200k</div>
+    <div style="padding:11px 24px;font-size:28px;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">300 + 3000 ps</div>
+    <div style="padding:11px 24px;font-size:28px;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">1 fs</div>
+    <div style="padding:11px 24px;font-size:26px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">—</div>
+    <div style="padding:11px 24px;font-size:28px;font-family:'JetBrains Mono',monospace;color:#facc15;border-bottom:1px solid rgba(51,65,85,0.5);">5.1</div>
+    <div style="padding:11px 24px;font-size:28px;color:#fb923c;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">viscosity</div>
+    <div style="padding:11px 24px;font-size:28px;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">150k</div>
+    <div style="padding:11px 24px;font-size:28px;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">300 + 3000 ps</div>
+    <div style="padding:11px 24px;font-size:28px;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">1 fs</div>
+    <div style="padding:11px 24px;font-size:26px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">점도 5 ns</div>
+    <div style="padding:11px 24px;font-size:28px;font-family:'JetBrains Mono',monospace;color:#fb923c;border-bottom:1px solid rgba(51,65,85,0.5);">9.6</div>
+    <div style="padding:11px 24px;font-size:28px;color:#f87171;font-family:'JetBrains Mono',monospace;">validation</div>
+    <div style="padding:11px 24px;font-size:28px;font-family:'JetBrains Mono',monospace;">100k</div>
+    <div style="padding:11px 24px;font-size:28px;font-family:'JetBrains Mono',monospace;">300 + 1000 ps</div>
+    <div style="padding:11px 24px;font-size:28px;font-family:'JetBrains Mono',monospace;">0.5 fs</div>
+    <div style="padding:11px 24px;font-size:26px;color:#94a3b8;">ReaxFF · 배치당 5</div>
+    <div style="padding:11px 24px;font-size:28px;font-family:'JetBrains Mono',monospace;color:#f87171;">2.0</div>
+  </div>
+  <div style="background:#0c1222;border:1px solid #2d3748;border-radius:12px;padding:16px 26px;">
+    <div style="font-family:'STIX Two Text','Cambria Math',serif;word-spacing:0.14em;font-feature-settings:'ss04';letter-spacing:0.01em;font-size:30px;color:#8ec0ff;line-height:1.5;">비용 지표 = <i>N</i><sub>원자</sub> × (<i>t</i><sub>NVT</sub> + <i>t</i><sub>NPT</sub> + <i>t</i><sub>점도</sub>) / Δ<i>t</i> ÷ screening 값</div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;">
+    <div style="background:#0c1222;border:1px solid #1f2937;border-left:3px solid #f87171;border-radius:12px;padding:14px 24px;font-size:26px;color:#94a3b8;line-height:1.4;">미반영: 힘장별 스텝 비용 · 실제 GPU 시간 · ReaxFF 스텝당 추가 비용</div>
+    <div style="background:#0c1222;border:1px solid #1f2937;border-left:3px solid #facc15;border-radius:12px;padding:14px 24px;font-size:26px;color:#94a3b8;line-height:1.4;">가정: 점도 tier 시간 = NVT + NPT + 점도 5 ns 합산</div>
+  </div>
+</section>
+
+<section data-label="tier 승급 규칙" data-screen-label="19" data-speaker-notes="다단계 전략을 규칙으로 적은 것이 tier 승급입니다. screening에서 추천 후보가 되거나 밀도 z 점수 절댓값이 2를 넘으면 confirm으로, confirm에서 추천 선택 후보가 되면 viscosity로 올립니다. 실행 우선순위는 screening > confirm > validation > viscosity이며, 20만 원자 confirm은 단독 실행, viscosity는 큐가 비었을 때만 돌립니다. 밀도 또는 CED z 점수 절댓값이 2를 넘거나 안정성 플래그(energy_drift, pressure_blowup, packing_overlap_suspected)가 있으면 ReaxFF 검증을 트리거합니다. 반면 역설계 자동화 파이프라인은 승급 사다리를 쓰지 않고, 목표 물성에 따라 고정 프로토콜 프리셋(점도 목표 → viscosity, 그 외 → bulk)을 바로 고릅니다. 원천: docs/DECISION_RULES.md R3·R4, src/contracts/policies/tier.py, docs/plans/INVERSE_DESIGN_AUTOMATION_PLAN.md §1·§5.1." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:22px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">10-S7 · PROMOTION</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">tier 승급(promotion) 규칙 = 다단계 전략의 정책화</h2>
+  <div style="display:grid;grid-template-columns:0.9fr 1.8fr 0.9fr;gap:0;background:#111827;border:1px solid #1f2937;border-radius:12px;overflow:hidden;">
+    <div style="padding:12px 26px;font-size:28px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;">현재 tier</div>
+    <div style="padding:12px 26px;font-size:28px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;">승급 조건</div>
+    <div style="padding:12px 26px;font-size:28px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;">다음 tier</div>
+    <div style="padding:12px 26px;font-size:34px;color:#60a5fa;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">screening</div>
+    <div style="padding:12px 26px;font-size:30px;border-bottom:1px solid rgba(51,65,85,0.5);">추천 후보 또는 |밀도 z 점수| &gt; 2.0</div>
+    <div style="padding:12px 26px;font-size:34px;color:#a78bfa;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">confirm</div>
+    <div style="padding:12px 26px;font-size:34px;color:#a78bfa;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">confirm</div>
+    <div style="padding:12px 26px;font-size:30px;border-bottom:1px solid rgba(51,65,85,0.5);">추천 선택 후보</div>
+    <div style="padding:12px 26px;font-size:34px;color:#fb923c;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">viscosity</div>
+    <div style="padding:12px 26px;font-size:34px;color:#94a3b8;font-family:'JetBrains Mono',monospace;">임의 tier</div>
+    <div style="padding:12px 26px;font-size:30px;">|밀도 · CED z 점수| &gt; 2.0 또는 안정성 플래그</div>
+    <div style="padding:12px 26px;font-size:34px;color:#f87171;font-family:'JetBrains Mono',monospace;">ReaxFF 검증</div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-left:3px solid #60a5fa;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#60a5fa;">실행 우선순위</div>
+      <div style="font-size:30px;color:#94a3b8;line-height:1.4;">screening &gt; confirm &gt; validation &gt; viscosity</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:3px solid #fb923c;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#fb923c;">큐 규칙</div>
+      <div style="font-size:30px;color:#94a3b8;line-height:1.4;">20만 원자 confirm = 단독 실행 · viscosity = 빈 큐에서만</div>
+    </div>
+    <div style="background:#111827;border:1px solid #2d3748;border-left:3px solid #facc15;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#facc15;">역설계 파이프라인</div>
+      <div style="font-size:30px;color:#94a3b8;line-height:1.4;">승급 미사용 · 목표 물성 → 고정 프리셋 직접 선택</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="라이브 · 비용 대비 정보량" data-screen-label="20" data-speaker-notes="후보 8개(가정)의 정보량 α와 tier를 두고, 비용 민감도 λ와 예산을 바꿔 선택이 어떻게 달라지는지 봅니다. 점수 = α / c^λ 순서로 정렬해 예산을 넘지 않는 한 차례로 담습니다(탐욕 선택). 비용 c는 앞 장의 정책 설정 기반 비용 지표(screening 1.0, confirm 5.1, viscosity 9.6)를 씁니다. λ = 0이면 비용을 무시하고 정보량 큰 고비용 후보 2개를 고르고, λ = 1이면 저비용 후보 여러 개를 섞어 고릅니다. 두 경우 정보량 합은 비슷하지만 후보 수와 조성 다양성이 다릅니다. 후보 정보량은 가정 값입니다." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:40px 80px 28px;display:flex;flex-direction:column;gap:12px;">
+  <div style="display:flex;align-items:baseline;gap:28px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">10-S7 · LIVE</div>
+    <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">λ · 예산 변경 → 선택 후보 조합 변화</h2>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;background:#0c1222;border:1px solid #2d3748;border-radius:12px;padding:10px 18px;">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;">비용 민감도 λ</span>
+    <button type="button" onClick="{{ ctLd }}" style="width:42px;height:38px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:#f1f5f9;font-family:'JetBrains Mono',monospace;font-size:24px;cursor:pointer;">−</button>
+    <span id="ct_l" style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#f1f5f9;min-width:54px;text-align:center;">1.0</span>
+    <button type="button" onClick="{{ ctLi }}" style="width:42px;height:38px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:#f1f5f9;font-family:'JetBrains Mono',monospace;font-size:24px;cursor:pointer;">+</button>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#4ade80;margin-left:16px;">예산</span>
+    <button type="button" onClick="{{ ctBd }}" style="width:42px;height:38px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:#f1f5f9;font-family:'JetBrains Mono',monospace;font-size:24px;cursor:pointer;">−</button>
+    <span id="ct_b" style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#f1f5f9;min-width:54px;text-align:center;">15</span>
+    <button type="button" onClick="{{ ctBi }}" style="width:42px;height:38px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:#f1f5f9;font-family:'JetBrains Mono',monospace;font-size:24px;cursor:pointer;">+</button>
+    <button type="button" onClick="{{ ctReset }}" style="padding:7px 14px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:#94a3b8;font-size:24px;cursor:pointer;margin-left:10px;">초기화</button>
+    <span style="font-size:24px;color:#64748b;margin-left:14px;">후보 α = 가정 · 비용 = 정책 기반 지표</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:16px;align-items:start;">
+    <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:10px 20px;display:flex;flex-direction:column;gap:4px;">
+      <div style="display:flex;gap:24px;font-size:24px;color:#94a3b8;">
+        <span>점수 = α / c<sup>λ</sup> 내림차순</span>
+        <span><span style="color:#60a5fa;">■</span> screening</span>
+        <span><span style="color:#a78bfa;">■</span> confirm</span>
+        <span><span style="color:#fb923c;">■</span> viscosity</span>
+        <span><span style="color:#475569;">■</span> 미선택</span>
+      </div>
+      <svg viewBox="0 0 980 520" style="width:100%;height:auto;display:block;"><g id="ct_dyn"></g></svg>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="background:#0c1222;border:1px solid #1f2937;border-top:3px solid #facc15;border-radius:12px;padding:14px 22px;display:flex;flex-direction:column;gap:4px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#facc15;">선택 후보</div>
+        <div id="ct_sel" style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#f1f5f9;line-height:1.4;">—</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div style="background:#0c1222;border:1px solid #1f2937;border-top:3px solid #4ade80;border-radius:12px;padding:14px 22px;display:flex;flex-direction:column;gap:4px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#4ade80;">사용 비용</div>
+          <div id="ct_cost" style="font-family:'JetBrains Mono',monospace;font-size:44px;color:#f1f5f9;">0</div>
+        </div>
+        <div style="background:#0c1222;border:1px solid #1f2937;border-top:3px solid #60a5fa;border-radius:12px;padding:14px 22px;display:flex;flex-direction:column;gap:4px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#60a5fa;">정보량 합</div>
+          <div id="ct_gain" style="font-family:'JetBrains Mono',monospace;font-size:44px;color:#f1f5f9;">0</div>
+        </div>
+      </div>
+      <div style="background:#0c1222;border:1px solid #2d3748;border-left:3px solid #a78bfa;border-radius:12px;padding:14px 22px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;">관찰</div>
+        <div id="ct_msg" style="font-size:26px;color:#94a3b8;line-height:1.4;">—</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="예산 배분 사례" data-screen-label="21" data-speaker-notes="COMID 함량(첨가제 분자 개수) 확장 계획이 계산 예산을 어떻게 나눴는지 보여 주는 실제 사례입니다. 신규 계산 총합은 692건으로, 오프그리드 온도의 개별 분자 진공 E_intra 148건(37분자 × 4온도), 점도 신규 0건(진행 중 18건), 벌크 544건입니다. 벌크는 CNT·그래핀 count 2 정합 216건, 신규 개수 × 4온도 288건, 오프그리드 검증 40건입니다. 비용을 줄인 결정은 네 가지입니다. 개수 4는 분산 한계·과포화 우려로 제외, 신규 개수는 12온도가 아닌 4온도(293·333·373·433 K)만, 오프그리드 검증은 비노화·AAA1 한 조합만, 그리고 CED·E_inter를 계산하려면 같은 온도의 E_intra가 먼저 있어야 하므로 148건을 선결로 둔 것입니다. 온·오프그리드 계획서도 추가 계산은 전량 재계산이 아니라 검증 설계가 요구하는 최소 셀만 제출하라고 적습니다. 원천: claude_science_export/comid_dosage_simulation_plan.md (v23, §0·§2b·§3), ~/.claude-science/…/comid_dosage_plan_v2.md(동일 내용), docs/plans/ONGRID_OFFGRID_ML_VALIDATION_PLAN.md §5. 값 종류: 계획 수치." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:22px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">10-S7 · BUDGET CASE</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">함량 확장 계획: 신규 692건의 배분과 비용 절감 결정</h2>
+  <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:16px 26px;display:flex;flex-direction:column;gap:10px;">
+    <div style="font-size:26px;color:#64748b;">신규 계산 692건 비율 · 계획 수치</div>
+    <div style="display:flex;height:44px;gap:4px;">
+      <div style="flex:148;background:#a78bfa;border-radius:6px 0 0 6px;"></div>
+      <div style="flex:216;background:#60a5fa;"></div>
+      <div style="flex:288;background:#4ade80;"></div>
+      <div style="flex:40;background:#fb923c;border-radius:0 6px 6px 0;"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;">
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;"><span style="color:#a78bfa;font-family:'JetBrains Mono',monospace;">148</span> · 오프그리드 E_intra 선결</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;"><span style="color:#60a5fa;font-family:'JetBrains Mono',monospace;">216</span> · count 2 정합 벌크</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;"><span style="color:#4ade80;font-family:'JetBrains Mono',monospace;">288</span> · 신규 개수 × 4온도</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;"><span style="color:#fb923c;font-family:'JetBrains Mono',monospace;">40</span> · 오프그리드 검증</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-left:3px solid #f87171;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f87171;">결정 1 · 수준 제외</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">개수 4 제외 · 분산 한계 · 과포화 우려</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:3px solid #4ade80;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#4ade80;">결정 2 · 온도 축소</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">신규 개수 = 12온도 대신 4온도 (293 · 333 · 373 · 433 K)</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:3px solid #fb923c;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#fb923c;">결정 3 · 검증 최소화</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">오프그리드 검증 = 비노화 · AAA1 1조합 × 4온도 × 개수 1 · 3 × 첨가제 5종</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:3px solid #a78bfa;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#a78bfa;">결정 4 · 선결 순서</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">CED · E_inter 계산 전제 = 같은 온도 E_intra → 148건 먼저</div>
+    </div>
+  </div>
+  <p style="font-size:26px;color:#64748b;margin:0;">원칙: 전량 재계산 대신 검증 설계가 요구하는 최소 셀만 제출 · 비용 대비 검증력 최대</p>
+</section>
+
+<section data-label="[10-S8] 섹션" data-screen-label="22" data-speaker-notes="마지막 차시 10분. 사람이 계속 지켜보지 않아도 반복되는 루프 구조와 정지 규칙, 실패 처리입니다." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:100px;display:flex;flex-direction:column;justify-content:center;gap:40px;">
+  <div style="width:200px;height:6px;background:linear-gradient(135deg,#3377ff,#8b5cf6);border-radius:999px;"></div>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:120px;color:#1f2937;font-weight:700;line-height:1;">10-S8</div>
+  <h2 style="font-size:68px;font-weight:700;letter-spacing:-0.02em;margin:0;line-height:1.1;">루프 자동화</h2>
+  <p style="font-size:30px;color:#94a3b8;margin:0;">10분 · 사람 감시 없이 반복되는 구조 · 승인 게이트 · 정지 규칙 · 실패 처리</p>
+</section>
+
+<section data-label="루프 자동화" data-screen-label="23" data-speaker-notes="다섯 단계 루프와 중단 조건입니다. 작업 상태는 DB로 추적하고 실패는 자동 재시도하며, 반복마다 선정 이유·모델 버전·성능을 기록합니다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:20px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">10-S8 · AUTOMATION</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">자동 반복 능동학습 루프</h2>
+  <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:14px 24px;">
+    <svg viewBox="0 0 1480 250" style="width:100%;height:auto;">
+      <rect x="40" y="36" width="230" height="86" rx="10" fill="#0c1222" stroke="#3377ff" stroke-width="2"></rect>
+      <text x="155" y="88" fill="#8ec0ff" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">모델 예측</text>
+      <rect x="320" y="36" width="230" height="86" rx="10" fill="#0c1222" stroke="#6366f1" stroke-width="2"></rect>
+      <text x="435" y="88" fill="#a5b4fc" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">후보 선정</text>
+      <rect x="600" y="36" width="230" height="86" rx="10" fill="#0c1222" stroke="#8b5cf6" stroke-width="2"></rect>
+      <text x="715" y="88" fill="#a78bfa" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">작업 제출</text>
+      <rect x="880" y="36" width="230" height="86" rx="10" fill="#0c1222" stroke="#f59e0b" stroke-width="2"></rect>
+      <text x="995" y="88" fill="#facc15" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">결과 적재</text>
+      <rect x="1160" y="36" width="230" height="86" rx="10" fill="#0c1222" stroke="#34d399" stroke-width="2"></rect>
+      <text x="1275" y="88" fill="#4ade80" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">재학습</text>
+      <line x1="270" y1="79" x2="308" y2="79" stroke="#475569" stroke-width="3"></line>
+      <line x1="550" y1="79" x2="588" y2="79" stroke="#475569" stroke-width="3"></line>
+      <line x1="830" y1="79" x2="868" y2="79" stroke="#475569" stroke-width="3"></line>
+      <line x1="1110" y1="79" x2="1148" y2="79" stroke="#475569" stroke-width="3"></line>
+      <path d="M1275 130 L1275 176 L155 176 L155 130" stroke="#34d399" stroke-width="3" fill="none" stroke-dasharray="10 7"></path>
+      <polygon points="155,124 147,142 163,142" fill="#34d399"></polygon>
+      <text x="715" y="232" fill="#94a3b8" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle">반복마다 데이터 증가 · 모델 갱신</text>
+    </svg>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #3377ff;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#8ec0ff;">상태 관리</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">작업 상태(queued · running · failed)를 DB로 추적 · 실패는 자동 재시도</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #facc15;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#facc15;">중단 조건</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">예산 소진 · 개선 정체 · 표적 달성 중 하나 명시</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #4ade80;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#4ade80;">기록</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">반복 회차마다 선정 이유 · 모델 버전 · 성능 기록</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="6단계 파이프라인" data-screen-label="24" data-speaker-notes="COMID 결정론적 역설계 자동화 파이프라인의 6단계입니다. 사용자는 목표 물성과 최소 조건만 입력하고, ① 의사결정(run_inverse_design, 추천 조성·첨가제·실현가능성·파레토·감사 기록) → ② 계획 도출(목표 물성 → 실험 유형, 제출 없음) → ③ 존재 확인(조성 기반 유사 실험 검색, 있으면 재사용) → 사용자 승인 게이트 → ④ 빌드·제출 → ⑤ 진행률 → ⑥ 결과·분석 순서로 진행합니다. 닫힌 루프를 켜면 ⑥에서 ①로 돌아갑니다. 계획은 서버에 저장하지 않고 계획 문서 전체와 plan_hash를 돌려주며, 승인 때 해시를 다시 검증해 변조나 정책 변경이면 409로 거부합니다. 핵심 의사결정은 정책 + 베이지안 최적화로만 하고 LLM은 핵심 경로에 두지 않습니다(v1). 원천: docs/plans/INVERSE_DESIGN_AUTOMATION_PLAN.md §4.2·§4.6·§6, P1–P7 구현 완료(v01.05.30–36)." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:22px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">10-S8 · PIPELINE</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">역설계 자동화 6단계 · 승인 게이트 1곳</h2>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) 0.9fr;gap:16px;">
+    <div style="background:#0c1222;border:1px solid #1f2937;border-top:3px solid #60a5fa;border-radius:12px;padding:16px 22px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#60a5fa;">① 의사결정</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">추천 조성 · 첨가제 · 실현가능성 · 파레토 · 감사 기록</div>
+    </div>
+    <div style="background:#0c1222;border:1px solid #1f2937;border-top:3px solid #60a5fa;border-radius:12px;padding:16px 22px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#60a5fa;">② 계획 도출</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">목표 물성 → 실험 유형 · 제출 없음</div>
+    </div>
+    <div style="background:#0c1222;border:1px solid #1f2937;border-top:3px solid #60a5fa;border-radius:12px;padding:16px 22px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#60a5fa;">③ 존재 확인</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">조성 기반 유사 실험 검색 · 있으면 재사용</div>
+    </div>
+    <div style="background:#0c1222;border:1px solid #facc15;border-radius:12px;padding:16px 22px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#facc15;">승인 게이트</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">승인 · 수정 · 거부</div>
+    </div>
+    <div style="background:#0c1222;border:1px solid #1f2937;border-top:3px solid #4ade80;border-radius:12px;padding:16px 22px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#4ade80;">④ 빌드 · 제출</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">binder cell · 계면 인장 의존성 · 반복 시드 앙상블</div>
+    </div>
+    <div style="background:#0c1222;border:1px solid #1f2937;border-top:3px solid #4ade80;border-radius:12px;padding:16px 22px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#4ade80;">⑤ 진행률</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">pipeline_id 단위 상태 집계 · 3초 주기 조회</div>
+    </div>
+    <div style="background:#0c1222;border:1px solid #1f2937;border-top:3px solid #4ade80;border-radius:12px;padding:16px 22px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#4ade80;">⑥ 결과 · 분석</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">목표 대비 달성도 · mean ± SE · (선택) 닫힌 루프 → ①</div>
+    </div>
+    <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:16px 22px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#64748b;">흐름</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">① → ② → ③ → 게이트 → ④ → ⑤ → ⑥</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;">
+    <div style="background:#0c1222;border:1px solid #2d3748;border-left:3px solid #a78bfa;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#a78bfa;">상태 비저장 계획</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">계획 문서 + plan_hash 반환 · 승인 시 재검증 · 불일치 → 409</div>
+    </div>
+    <div style="background:#0c1222;border:1px solid #2d3748;border-left:3px solid #60a5fa;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#60a5fa;">추적 키</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">승인 시 pipeline_id 발급 · 실험 메타데이터에 태깅</div>
+    </div>
+    <div style="background:#0c1222;border:1px solid #2d3748;border-left:3px solid #f87171;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f87171;">결정론 코어</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">정책 + BO만 핵심 결정 · LLM 핵심 경로 제외</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="닫힌 루프 정지 규칙" data-screen-label="25" data-speaker-notes="닫힌 루프(closed loop) 결정 규칙입니다. 라운드 시작 때 모드를 판정하고, 모든 멤버 실험이 종료 상태(completed, failed, cancelled, timeout)일 때만 다음 단계로 갑니다. 정지는 세 종류입니다. 어떤 후보든 목표를 만족하면 목표 달성 정지, 라운드 수가 5 이상이거나 누적 실험이 60 이상이면 예산 정지, 연속 2라운드 무개선이면 무개선 정지입니다. 개선은 최고 후보의 목표 거리 감소가 관측 표준오차(SE) × 1.0을 넘을 때만 인정합니다. 단일 시드 잡음을 개선으로 오인하지 않기 위해서입니다. 계속할 때는 완료 라벨을 능동학습에 넣고, 갱신된 모델로 다시 제안받은 뒤 plan_hash를 검증하고 자동 승인합니다. 닫힌 루프는 기본 OFF이며 배포별로 켭니다. 원천: docs/DECISION_RULES.md R8, src/contracts/policies/inverse_pipeline.py (ClosedLoopPolicy)." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:22px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">10-S8 · STOP RULES</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">닫힌 루프 정지 3종 · 개선 = SE 초과 감소만 인정</h2>
+  <div style="display:grid;grid-template-columns:0.9fr 2fr 0.8fr;gap:0;background:#111827;border:1px solid #1f2937;border-radius:12px;overflow:hidden;">
+    <div style="padding:12px 26px;font-size:26px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;">결정</div>
+    <div style="padding:12px 26px;font-size:26px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;">규칙</div>
+    <div style="padding:12px 26px;font-size:26px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;">정책값</div>
+    <div style="padding:10px 26px;font-size:28px;color:#60a5fa;border-bottom:1px solid rgba(51,65,85,0.5);">라운드 종료</div>
+    <div style="padding:10px 26px;font-size:28px;border-bottom:1px solid rgba(51,65,85,0.5);">모든 멤버 종료 상태일 때만 다음 단계</div>
+    <div style="padding:10px 26px;font-size:28px;font-family:'JetBrains Mono',monospace;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">—</div>
+    <div style="padding:10px 26px;font-size:28px;color:#4ade80;border-bottom:1px solid rgba(51,65,85,0.5);">목표 달성 정지</div>
+    <div style="padding:10px 26px;font-size:28px;border-bottom:1px solid rgba(51,65,85,0.5);">어떤 후보든 목표 만족</div>
+    <div style="padding:10px 26px;font-size:28px;font-family:'JetBrains Mono',monospace;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">—</div>
+    <div style="padding:10px 26px;font-size:28px;color:#fb923c;border-bottom:1px solid rgba(51,65,85,0.5);">예산 정지</div>
+    <div style="padding:10px 26px;font-size:28px;border-bottom:1px solid rgba(51,65,85,0.5);">라운드 수 ≥ 상한 또는 누적 실험 ≥ 상한</div>
+    <div style="padding:10px 26px;font-size:28px;font-family:'JetBrains Mono',monospace;color:#fb923c;border-bottom:1px solid rgba(51,65,85,0.5);">5 · 60</div>
+    <div style="padding:10px 26px;font-size:28px;color:#f87171;border-bottom:1px solid rgba(51,65,85,0.5);">무개선 정지</div>
+    <div style="padding:10px 26px;font-size:28px;border-bottom:1px solid rgba(51,65,85,0.5);">목표 거리 감소 ≤ SE × 배수 → 무개선 · 연속 K회</div>
+    <div style="padding:10px 26px;font-size:28px;font-family:'JetBrains Mono',monospace;color:#f87171;border-bottom:1px solid rgba(51,65,85,0.5);">1.0 · 2</div>
+    <div style="padding:10px 26px;font-size:28px;color:#a78bfa;">계속</div>
+    <div style="padding:10px 26px;font-size:28px;">완료 라벨 반영 → 재제안 → plan_hash 검증 → 자동 승인</div>
+    <div style="padding:10px 26px;font-size:28px;font-family:'JetBrains Mono',monospace;color:#94a3b8;">—</div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;">
+    <div style="background:#111827;border:1px solid #2d3748;border-left:3px solid #facc15;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#facc15;">SE 기준 이유</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">단일 시드 잡음 → 개선 오인 방지</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:3px solid #64748b;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#94a3b8;">기본 설정</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">닫힌 루프 기본 OFF · 배포별 활성화</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="라이브 · 정지 판정" data-screen-label="26" data-speaker-notes="COMID 닫힌 루프 정책값(최대 5라운드, 누적 60실험, 연속 2라운드 무개선 정지, 개선 = SE × 1.0 초과)으로 가정 시나리오 세 개를 한 라운드씩 진행해 봅니다. 라운드당 12실험(60 ÷ 5에 맞춘 가정), 목표 만족 기준은 목표 거리 ≤ 0.10(가정)입니다. 시나리오 A는 목표 거리가 꾸준히 줄어 5라운드에 목표 달성으로 멈춥니다. 시나리오 B는 3·4라운드 감소폭 0.02가 SE 0.05보다 작아 연속 2회 무개선으로 4라운드에 멈춥니다. 시나리오 C는 매 라운드 SE보다 크게 개선되지만 목표에 닿지 못하고 5라운드에서 라운드 상한과 누적 실험 상한에 동시에 도달해 예산 정지합니다. 판정 순서는 DECISION_RULES R8 표 순서(목표 달성 → 예산 → 무개선)를 따릅니다. 목표 거리와 SE는 가정 값입니다." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:40px 80px 28px;display:flex;flex-direction:column;gap:12px;">
+  <div style="display:flex;align-items:baseline;gap:28px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">10-S8 · LIVE</div>
+    <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">라운드 진행 → 정지 규칙 판정</h2>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;background:#0c1222;border:1px solid #2d3748;border-radius:12px;padding:10px 18px;">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#64748b;">시나리오</span>
+    <button type="button" id="lpB0" onClick="{{ lpA }}" style="padding:7px 14px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:#f1f5f9;font-size:24px;cursor:pointer;">A 꾸준한 개선</button>
+    <button type="button" id="lpB1" onClick="{{ lpB }}" style="padding:7px 14px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:#f1f5f9;font-size:24px;cursor:pointer;">B 정체</button>
+    <button type="button" id="lpB2" onClick="{{ lpC }}" style="padding:7px 14px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:#f1f5f9;font-size:24px;cursor:pointer;">C 느린 개선</button>
+    <button type="button" onClick="{{ lpNext }}" style="padding:7px 14px;border-radius:8px;border:1px solid #4ade80;background:rgba(74,222,128,0.16);color:#f1f5f9;font-size:24px;cursor:pointer;margin-left:16px;">다음 라운드</button>
+    <button type="button" onClick="{{ lpReset }}" style="padding:7px 14px;border-radius:8px;border:1px solid #374151;background:#1f2937;color:#94a3b8;font-size:24px;cursor:pointer;">처음부터</button>
+    <span style="font-size:24px;color:#64748b;margin-left:14px;">정책값 = COMID · 목표 거리 · SE = 가정</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;">
+    <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:10px 20px;display:flex;flex-direction:column;gap:4px;">
+      <div style="display:flex;gap:24px;font-size:24px;color:#94a3b8;">
+        <span><span style="color:#60a5fa;">●</span> 최고 후보 목표 거리 ± SE</span>
+        <span><span style="color:#4ade80;">╌</span> 목표 만족 0.10</span>
+      </div>
+      <svg viewBox="0 0 820 520" style="width:100%;height:auto;display:block;">
+        <line x1="100" y1="450" x2="800" y2="450" stroke="#374151" stroke-width="2"></line>
+        <line x1="100" y1="450" x2="100" y2="20" stroke="#374151" stroke-width="2"></line>
+        <line x1="100" y1="407" x2="800" y2="407" stroke="#4ade80" stroke-width="2" stroke-dasharray="10 8"></line>
+        <text x="86" y="457" fill="#94a3b8" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="end">0</text>
+        <text x="86" y="242" fill="#94a3b8" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="end">0.5</text>
+        <text x="86" y="34" fill="#94a3b8" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="end">1.0</text>
+        <text x="200" y="484" fill="#94a3b8" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="middle">1</text>
+        <text x="340" y="484" fill="#94a3b8" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="middle">2</text>
+        <text x="480" y="484" fill="#94a3b8" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="middle">3</text>
+        <text x="620" y="484" fill="#94a3b8" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="middle">4</text>
+        <text x="760" y="484" fill="#94a3b8" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="middle">5</text>
+        <text x="450" y="514" fill="#94a3b8" font-size="22" font-family="Pretendard Variable, Pretendard, sans-serif" text-anchor="middle">라운드</text>
+        <g id="lp_dyn"></g>
+      </svg>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="display:grid;grid-template-columns:0.7fr 1fr 1fr 2fr;gap:0;background:#0c1222;border:1px solid #1f2937;border-radius:12px;overflow:hidden;">
+        <div style="padding:8px 16px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;">R</div>
+        <div style="padding:8px 16px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;">거리</div>
+        <div style="padding:8px 16px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;">감소</div>
+        <div style="padding:8px 16px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;">판정</div>
+        <div id="lp_r0_0" style="padding:7px 16px;font-size:24px;color:#94a3b8;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">R1</div>
+        <div id="lp_r0_1" style="padding:7px 16px;font-size:24px;color:#94a3b8;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">—</div>
+        <div id="lp_r0_2" style="padding:7px 16px;font-size:24px;color:#94a3b8;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">—</div>
+        <div id="lp_r0_3" style="padding:7px 16px;font-size:24px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">—</div>
+        <div id="lp_r1_0" style="padding:7px 16px;font-size:24px;color:#94a3b8;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">R2</div>
+        <div id="lp_r1_1" style="padding:7px 16px;font-size:24px;color:#94a3b8;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">—</div>
+        <div id="lp_r1_2" style="padding:7px 16px;font-size:24px;color:#94a3b8;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">—</div>
+        <div id="lp_r1_3" style="padding:7px 16px;font-size:24px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">—</div>
+        <div id="lp_r2_0" style="padding:7px 16px;font-size:24px;color:#94a3b8;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">R3</div>
+        <div id="lp_r2_1" style="padding:7px 16px;font-size:24px;color:#94a3b8;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">—</div>
+        <div id="lp_r2_2" style="padding:7px 16px;font-size:24px;color:#94a3b8;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">—</div>
+        <div id="lp_r2_3" style="padding:7px 16px;font-size:24px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">—</div>
+        <div id="lp_r3_0" style="padding:7px 16px;font-size:24px;color:#94a3b8;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">R4</div>
+        <div id="lp_r3_1" style="padding:7px 16px;font-size:24px;color:#94a3b8;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">—</div>
+        <div id="lp_r3_2" style="padding:7px 16px;font-size:24px;color:#94a3b8;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">—</div>
+        <div id="lp_r3_3" style="padding:7px 16px;font-size:24px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">—</div>
+        <div id="lp_r4_0" style="padding:7px 16px;font-size:24px;color:#94a3b8;font-family:'JetBrains Mono',monospace;">R5</div>
+        <div id="lp_r4_1" style="padding:7px 16px;font-size:24px;color:#94a3b8;font-family:'JetBrains Mono',monospace;">—</div>
+        <div id="lp_r4_2" style="padding:7px 16px;font-size:24px;color:#94a3b8;font-family:'JetBrains Mono',monospace;">—</div>
+        <div id="lp_r4_3" style="padding:7px 16px;font-size:24px;color:#94a3b8;">—</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:10px 18px;font-size:24px;color:#94a3b8;">누적 실험 <span id="lp_exp" style="font-family:'JetBrains Mono',monospace;color:#f1f5f9;">0</span> / 60</div>
+        <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:10px 18px;font-size:24px;color:#94a3b8;">연속 무개선 <span id="lp_k" style="font-family:'JetBrains Mono',monospace;color:#f1f5f9;">0</span> / 2</div>
+      </div>
+      <div style="background:#0c1222;border:1px solid #2d3748;border-left:3px solid #facc15;border-radius:12px;padding:12px 20px;display:flex;flex-direction:column;gap:4px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#facc15;">루프 상태</div>
+        <div id="lp_state" style="font-size:28px;color:#f1f5f9;line-height:1.4;">라운드 0 · 대기</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="실패 처리와 라벨 무결성" data-screen-label="27" data-speaker-notes="자동 루프는 실패 복구도 자동이어야 합니다. COMID 실패 재시도 정책은 겹침 불안정(SHAKE·원자 손실)이면 시드 변경, 압력 발산·에너지 표류면 Δt 절반, QEq 발산이면 Δt 축소 또는 실패 처리, 패킹 겹침 의심이면 시드 변경 후 재빌드입니다. 실제로 겪은 문제도 있습니다. 재시도 제출 경로(experiment_lifecycle.py:809)가 material_id를 retry_experiment로 고정해 넘기는 바람에, 재시도된 304건의 binder_type이 retry, aging_state가 non_aging으로 잘못 저장되었습니다(노화 불일치 192/304). exp_id와 물성값은 정상이라 삭제하지 않고 exp_id에서 파싱한 값으로 다시 라벨링하기로 했고, 근본 수정은 정상 경로와 같은 헬퍼(exp_id_to_material_id)를 쓰는 한 줄 변경입니다. 재실행으로 대체된 옛 실험은 행을 지우지 않고 메트릭을 NULL로 바꾸고 대체 관계를 기록해 감사 추적을 남깁니다. 원천: docs/DECISION_RULES.md R6·R9, claude_science_export/comid_dosage_simulation_plan.md §0c." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:22px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">10-S8 · FAILURE</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">자동 재시도 경로도 정상 경로와 같은 라벨 규칙 적용</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;">
+    <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:0;background:#111827;border:1px solid #1f2937;border-radius:12px;overflow:hidden;">
+      <div style="padding:10px 22px;font-size:28px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;">실패 분류</div>
+      <div style="padding:10px 22px;font-size:28px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;">재시도 전략</div>
+      <div style="padding:9px 22px;font-size:30px;border-bottom:1px solid rgba(51,65,85,0.5);">겹침 불안정</div>
+      <div style="padding:9px 22px;font-size:30px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">시드 변경</div>
+      <div style="padding:9px 22px;font-size:30px;border-bottom:1px solid rgba(51,65,85,0.5);">압력 발산</div>
+      <div style="padding:9px 22px;font-size:30px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">Δt 절반</div>
+      <div style="padding:9px 22px;font-size:30px;border-bottom:1px solid rgba(51,65,85,0.5);">에너지 표류</div>
+      <div style="padding:9px 22px;font-size:30px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">Δt 절반</div>
+      <div style="padding:9px 22px;font-size:30px;border-bottom:1px solid rgba(51,65,85,0.5);">QEq 전하 발산</div>
+      <div style="padding:9px 22px;font-size:30px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">Δt 축소 또는 실패</div>
+      <div style="padding:9px 22px;font-size:30px;">패킹 겹침 의심</div>
+      <div style="padding:9px 22px;font-size:30px;color:#94a3b8;">시드 변경 + 재빌드</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div style="background:#111827;border:1px solid #1f2937;border-left:3px solid #f87171;border-radius:12px;padding:14px 22px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#f87171;">사례 · 재시도 라벨 오염</div>
+        <div style="font-size:30px;color:#94a3b8;line-height:1.4;">재시도 경로의 material_id 고정값 → 304건 바인더 · 노화 라벨 오염</div>
+      </div>
+      <div style="background:#111827;border:1px solid #1f2937;border-left:3px solid #facc15;border-radius:12px;padding:14px 22px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#facc15;">조치</div>
+        <div style="font-size:30px;color:#94a3b8;line-height:1.4;">삭제 대신 exp_id 기반 재라벨 · 정상 경로 헬퍼 재사용 1줄 수정</div>
+      </div>
+      <div style="background:#111827;border:1px solid #1f2937;border-left:3px solid #4ade80;border-radius:12px;padding:14px 22px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#4ade80;">대체 실험 정리</div>
+        <div style="font-size:30px;color:#94a3b8;line-height:1.4;">옛 실험 행 삭제 금지 · 메트릭 NULL + 대체 관계 기록</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="실습 안내" data-screen-label="28" data-speaker-notes="무작위 대비 효율 비교가 핵심 결과입니다. 보충 A에서 만든 예측 함수(값, σ, 적용 영역 플래그)를 그대로 호출합니다." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:28px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">PRACTICE</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">실습 · 능동학습 루프 구현</h2>
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:32px;">
+    <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:32px 36px;display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#64748b;letter-spacing:0.1em;">PRACTICE</div>
+      <div style="display:flex;gap:20px;"><span style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#599eff;width:50px;">01</span><span style="font-size:26px;color:#94a3b8;line-height:1.45;flex:1;">보유 데이터의 20%만으로 초기 모델을 학습</span></div>
+      <div style="display:flex;gap:20px;"><span style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#599eff;width:50px;">02</span><span style="font-size:26px;color:#94a3b8;line-height:1.45;flex:1;">UCB로 배치 10개를 골라 "계산"(보유 라벨 공개)하고 재학습</span></div>
+      <div style="display:flex;gap:20px;"><span style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#599eff;width:50px;">03</span><span style="font-size:26px;color:#94a3b8;line-height:1.45;flex:1;">무작위 선정과 같은 회차까지 반복해 곡선을 비교</span></div>
+      <div style="display:flex;gap:20px;"><span style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;width:50px;">04</span><span style="font-size:26px;color:#94a3b8;line-height:1.45;flex:1;">다양성 제약을 켜고 끈 경우를 비교</span></div>
+    </div>
+    <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:32px 36px;display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#64748b;letter-spacing:0.1em;">DELIVERABLE</div>
+      <div style="font-size:26px;color:#94a3b8;line-height:1.5;">반복별 검증 오차 곡선 (능동 vs 무작위)</div>
+      <div style="font-size:26px;color:#94a3b8;line-height:1.5;">선정 이력 로그 — 회차 · 후보 · 획득값 · 선정 이유</div>
+      <div style="border-top:1px solid #1f2937;padding-top:18px;font-size:24px;color:#64748b;line-height:1.45;">몇 회차 만에 같은 오차에 도달하는지로 효율을 보고</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:24px;"><span style="font-size:28px;padding:12px 26px;border-radius:999px;background:rgba(59,130,246,0.20);color:#60a5fa;border:1px solid rgba(59,130,246,0.30);font-family:'JetBrains Mono',monospace;">퀴즈 10주차 보충 B</span></div>
+</section>
+
+<section data-label="10주차 보충 B 정리" data-screen-label="29" data-speaker-notes="정리 후 11주차 예고: 문헌 고찰(Obsidian · 자동 스크래핑). 다목적 최적화는 13주차에서 다룹니다." style="background:linear-gradient(135deg,#111827,#0c1222);color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:52px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">SUMMARY</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">10주차 보충 B 정리</h2>
+  <div style="display:flex;flex-direction:column;gap:36px;max-width:1600px;">
+    <div style="display:flex;gap:36px;align-items:baseline;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#599eff;width:80px;">01</div>
+      <div style="font-size:38px;line-height:1.45;flex:1;">획득함수 = 예측값 + 불확실성을 한 점수로 합산 → 다음 계산 결정</div>
+    </div>
+    <div style="display:flex;gap:36px;align-items:baseline;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#a5b4fc;width:80px;">02</div>
+      <div style="font-size:38px;line-height:1.45;flex:1;">배치 선정 시 다양성 제약 없음 → 같은 질문 반복</div>
+    </div>
+    <div style="display:flex;gap:36px;align-items:baseline;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#a78bfa;width:80px;">03</div>
+      <div style="font-size:38px;line-height:1.45;flex:1;">획득값 ÷ 비용 기준 적용 → 티어 전략으로 연결</div>
+    </div>
+  </div>
+  <div style="margin-top:auto;display:flex;gap:40px;align-items:center;border-top:1px solid #1f2937;padding-top:36px;">
+    <span style="font-size:28px;padding:14px 28px;border-radius:999px;background:rgba(59,130,246,0.20);color:#60a5fa;border:1px solid rgba(59,130,246,0.30);font-family:'JetBrains Mono',monospace;">퀴즈 10주차 보충 B</span>
+    <span style="font-size:32px;color:#94a3b8;">다음 주차 — 문헌 고찰: Obsidian 기반 문헌 검색 · 관리와 자동 스크래핑</span>
+  </div>
+</section>
+
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1920,&quot;height&quot;:1080}}">class Component extends DCLogic {
+  // 모든 곡선 · 후보 = 가정(예시). 정책값(5 라운드 · 60 실험 · 무개선 2회 · SE×1.0)은 COMID inverse_pipeline.py ClosedLoopPolicy.
+  GA_X0 = [0.05, 0.35, 0.50, 0.62, 0.95];
+  GA_XI = [0, 0.01, 0.05, 0.1, 0.2];
+  BT_PEAKS = [0.30, 0.62, 0.85];
+  CT_C = [['C1', 0.30, 0], ['C2', 0.25, 0], ['C3', 0.18, 0], ['C4', 0.12, 0], ['C5', 0.90, 1], ['C6', 0.70, 1], ['C7', 1.60, 2], ['C8', 1.10, 2]];
+  CT_COST = [1.0, 5.1, 9.6];
+  CT_COL = ['#60a5fa', '#a78bfa', '#fb923c'];
+  LP_S = [[0.80, 0.55, 0.38, 0.22, 0.08], [0.80, 0.62, 0.60, 0.58, 0.57], [0.90, 0.78, 0.66, 0.55, 0.45]];
+  LP_SE = [0.05, 0.05, 0.03];
+
+  componentDidMount() {
+    this.ga = { mode: 1, k: 2.0, xi: 0, obs: this.GA_X0.slice() };
+    this.bt = { mode: 0, b: 5, r: 0.06 };
+    this.ct = { l: 1.0, b: 15 };
+    this.lp = { s: 0, r: 1 };
+    this.drawAll();
+  }
+  componentDidUpdate() { this.drawAll(); }
+  drawAll() {
+    try { this.gaDraw(); } catch (e) { }
+    try { this.btDraw(); } catch (e) { }
+    try { this.ctDraw(); } catch (e) { }
+    try { this.lpDraw(); } catch (e) { }
+  }
+
+  renderVals() {
+    const self = this, v = {};
+    const ga = (f) => () => { f(self.ga); self.gaDraw(); };
+    v.gaEI = ga((s) => { s.mode = 0; });
+    v.gaUCB = ga((s) => { s.mode = 1; });
+    v.gaPI = ga((s) => { s.mode = 2; });
+    v.gaVar = ga((s) => { s.mode = 3; });
+    v.gaKd = ga((s) => { s.k = Math.max(0, Math.round((s.k - 0.5) * 10) / 10); });
+    v.gaKi = ga((s) => { s.k = Math.min(5, Math.round((s.k + 0.5) * 10) / 10); });
+    v.gaXd = ga((s) => { const i = self.GA_XI.indexOf(s.xi); s.xi = self.GA_XI[Math.max(0, i - 1)]; });
+    v.gaXi = ga((s) => { const i = self.GA_XI.indexOf(s.xi); s.xi = self.GA_XI[Math.min(self.GA_XI.length - 1, i + 1)]; });
+    v.gaAdd = ga((s) => { if (self.gaNextX !== undefined && s.obs.length < 16) s.obs.push(self.gaNextX); });
+    v.gaReset = ga((s) => { s.obs = self.GA_X0.slice(); s.mode = 1; s.k = 2.0; s.xi = 0; });
+    const bt = (f) => () => { f(self.bt); self.btDraw(); };
+    v.btM0 = bt((s) => { s.mode = 0; });
+    v.btM1 = bt((s) => { s.mode = 1; });
+    v.btM2 = bt((s) => { s.mode = 2; });
+    v.btBd = bt((s) => { s.b = Math.max(1, s.b - 1); });
+    v.btBi = bt((s) => { s.b = Math.min(8, s.b + 1); });
+    v.btRd = bt((s) => { s.r = Math.max(0.02, Math.round((s.r - 0.02) * 100) / 100); });
+    v.btRi = bt((s) => { s.r = Math.min(0.20, Math.round((s.r + 0.02) * 100) / 100); });
+    const ct = (f) => () => { f(self.ct); self.ctDraw(); };
+    v.ctLd = ct((s) => { s.l = Math.max(0, Math.round((s.l - 0.5) * 10) / 10); });
+    v.ctLi = ct((s) => { s.l = Math.min(2, Math.round((s.l + 0.5) * 10) / 10); });
+    v.ctBd = ct((s) => { s.b = Math.max(5, s.b - 5); });
+    v.ctBi = ct((s) => { s.b = Math.min(40, s.b + 5); });
+    v.ctReset = ct((s) => { s.l = 1.0; s.b = 15; });
+    const lp = (f) => () => { f(self.lp); self.lpDraw(); };
+    v.lpA = lp((s) => { s.s = 0; s.r = 0; });
+    v.lpB = lp((s) => { s.s = 1; s.r = 0; });
+    v.lpC = lp((s) => { s.s = 2; s.r = 0; });
+    v.lpNext = lp((s) => { if (!self.lpStopped) s.r = Math.min(5, s.r + 1); });
+    v.lpReset = lp((s) => { s.r = 0; });
+    return v;
+  }
+
+  g(id) { return document.getElementById(id); }
+  txt(id, s) { const e = this.g(id); if (e) e.textContent = s; }
+  btn(id, on) {
+    const e = this.g(id); if (!e) return;
+    e.style.background = on ? 'rgba(250,204,21,0.18)' : '#1f2937';
+    e.style.borderColor = on ? '#facc15' : '#374151';
+  }
+  T(x, y, s, col, fs, anchor, mono) {
+    const fam = mono ? 'JetBrains Mono, monospace' : 'Pretendard Variable, Pretendard, sans-serif';
+    return '<text x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" fill="' + col + '" font-size="' + fs + '" font-family="' + fam + '" text-anchor="' + anchor + '">' + s + '</text>';
+  }
+  poly(pts, col, w, dash) {
+    return '<polyline points="' + pts + '" fill="none" stroke="' + col + '" stroke-width="' + w + '"' + (dash ? ' stroke-dasharray="' + dash + '"' : '') + '></polyline>';
+  }
+  Phi(x) {
+    const t = 1 / (1 + 0.2316419 * Math.abs(x));
+    const d = 0.3989423 * Math.exp(-x * x / 2);
+    const p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+    return x > 0 ? 1 - p : p;
+  }
+  phi(x) { return 0.3989423 * Math.exp(-x * x / 2); }
+
+  // ---------------- 1차원 GP 획득함수 ----------------
+  gaF(x) {
+    return 0.9 * Math.exp(-Math.pow(x - 0.22, 2) / (2 * 0.06 * 0.06)) + 1.2 * Math.exp(-Math.pow(x - 0.76, 2) / (2 * 0.035 * 0.035)) + 0.25 * Math.sin(9 * x);
+  }
+  gaFit(xs) {
+    const n = xs.length, ell = 0.08, sf2 = 0.36, sn2 = 1e-4;
+    const kf = (a, b) => sf2 * Math.exp(-Math.pow(a - b, 2) / (2 * ell * ell));
+    const ys = xs.map((x) => this.gaF(x));
+    const m0 = ys.reduce((a, b) => a + b, 0) / n;
+    const K = [];
+    for (let i = 0; i < n; i++) { K.push([]); for (let j = 0; j < n; j++) K[i].push(kf(xs[i], xs[j]) + (i === j ? sn2 : 0)); }
+    const L = [];
+    for (let i = 0; i < n; i++) {
+      L.push(new Array(n).fill(0));
+      for (let j = 0; j <= i; j++) {
+        let s = K[i][j];
+        for (let k = 0; k < j; k++) s -= L[i][k] * L[j][k];
+        L[i][j] = i === j ? Math.sqrt(Math.max(s, 1e-12)) : s / L[j][j];
+      }
+    }
+    const solve = (b) => {
+      const z = new Array(n).fill(0), x = new Array(n).fill(0);
+      for (let i = 0; i < n; i++) { let s = b[i]; for (let k = 0; k < i; k++) s -= L[i][k] * z[k]; z[i] = s / L[i][i]; }
+      for (let i = n - 1; i >= 0; i--) { let s = z[i]; for (let k = i + 1; k < n; k++) s -= L[k][i] * x[k]; x[i] = s / L[i][i]; }
+      return x;
+    };
+    const alpha = solve(ys.map((y) => y - m0));
+    const pred = (x) => {
+      const ks = xs.map((a) => kf(x, a));
+      let mu = m0; for (let i = 0; i < n; i++) mu += ks[i] * alpha[i];
+      const v = solve(ks); let q = 0; for (let i = 0; i < n; i++) q += ks[i] * v[i];
+      return [mu, Math.sqrt(Math.max(sf2 - q, 1e-10))];
+    };
+    return { ys, pred };
+  }
+  gaDraw() {
+    if (!this.ga) return;
+    const s = this.ga;
+    for (let i = 0; i < 4; i++) this.btn('gaB' + i, i === s.mode);
+    const fit = this.gaFit(s.obs);
+    const best = Math.max.apply(null, fit.ys);
+    const N = 201, xs = [], mu = [], sd = [], ac = [];
+    for (let i = 0; i < N; i++) {
+      const x = i / (N - 1), p = fit.pred(x);
+      xs.push(x); mu.push(p[0]); sd.push(p[1]);
+      const z = (p[0] - best - s.xi) / p[1];
+      let a;
+      if (s.mode === 0) a = (p[0] - best - s.xi) * this.Phi(z) + p[1] * this.phi(z);
+      else if (s.mode === 1) a = p[0] + s.k * p[1];
+      else if (s.mode === 2) a = this.Phi(z);
+      else a = p[1];
+      ac.push(a);
+    }
+    let bi = 0; for (let i = 1; i < N; i++) if (ac[i] > ac[bi]) bi = i;
+    this.gaNextX = xs[bi];
+    const X = (x) => 90 + x * 1490, Y = (y) => 250 - y * 130;
+    let up = '', lo = '', m = '', f = '';
+    for (let i = 0; i < N; i++) {
+      up += X(xs[i]).toFixed(1) + ',' + Math.max(12, Y(mu[i] + 2 * sd[i])).toFixed(1) + ' ';
+      m += X(xs[i]).toFixed(1) + ',' + Math.max(12, Math.min(298, Y(mu[i]))).toFixed(1) + ' ';
+      f += X(xs[i]).toFixed(1) + ',' + Y(this.gaF(xs[i])).toFixed(1) + ' ';
+    }
+    for (let i = N - 1; i >= 0; i--) lo += X(xs[i]).toFixed(1) + ',' + Math.min(298, Y(mu[i] - 2 * sd[i])).toFixed(1) + ' ';
+    let q = '<polygon points="' + up + lo.trim() + '" fill="rgba(96,165,250,0.16)"></polygon>';
+    q += this.poly(f.trim(), '#64748b', 2, '8 6');
+    q += this.poly(m.trim(), '#60a5fa', 3);
+    const amin = Math.min.apply(null, ac), amax = Math.max.apply(null, ac), span = Math.max(1e-9, amax - amin);
+    const AY = (a) => 466 - (a - amin) / span * 120;
+    let a = '';
+    for (let i = 0; i < N; i++) a += X(xs[i]).toFixed(1) + ',' + AY(ac[i]).toFixed(1) + ' ';
+    q += this.poly(a.trim(), '#4ade80', 3);
+    q += '<line x1="' + X(xs[bi]).toFixed(1) + '" y1="14" x2="' + X(xs[bi]).toFixed(1) + '" y2="476" stroke="#facc15" stroke-width="2" stroke-dasharray="6 5"></line>';
+    s.obs.forEach((x, i) => { q += '<circle cx="' + X(x).toFixed(1) + '" cy="' + Y(fit.ys[i]).toFixed(1) + '" r="9" fill="#facc15" stroke="#0c1222" stroke-width="2"></circle>'; });
+    const gd = this.g('ga_dyn'); if (gd) gd.innerHTML = q;
+    const names = ['EI', 'UCB', 'PI', '최대 분산'];
+    this.txt('ga_mode', names[s.mode]);
+    this.txt('ga_k', s.k.toFixed(1));
+    this.txt('ga_x', s.xi.toFixed(2));
+    this.txt('ga_next', xs[bi].toFixed(3));
+    this.txt('ga_mu', mu[bi].toFixed(2));
+    this.txt('ga_sd', sd[bi].toFixed(2));
+    this.txt('ga_best', best.toFixed(2));
+    this.txt('ga_n', String(s.obs.length));
+  }
+
+  // ---------------- 배치 다양성 ----------------
+  btA(x) {
+    return 1.0 * Math.exp(-Math.pow(x - 0.30, 2) / (2 * 0.03 * 0.03)) + 0.85 * Math.exp(-Math.pow(x - 0.62, 2) / (2 * 0.05 * 0.05)) + 0.6 * Math.exp(-Math.pow(x - 0.85, 2) / (2 * 0.02 * 0.02)) + 0.12;
+  }
+  btDraw() {
+    if (!this.bt) return;
+    const s = this.bt;
+    for (let i = 0; i < 3; i++) this.btn('btB' + i, i === s.mode);
+    const N = 301, xs = [], a0 = [];
+    for (let i = 0; i < N; i++) { const x = i / (N - 1); xs.push(x); a0.push(this.btA(x)); }
+    const a = a0.slice(), sel = [];
+    if (s.mode === 0) {
+      const idx = xs.map((x, i) => i).sort((p, q) => a0[q] - a0[p]);
+      for (let k = 0; k < s.b; k++) sel.push(xs[idx[k]]);
+    } else {
+      for (let k = 0; k < s.b; k++) {
+        let bi = -1;
+        for (let i = 0; i < N; i++) {
+          if (s.mode === 2 && sel.some((x) => Math.abs(x - xs[i]) < s.r)) continue;
+          if (bi < 0 || a[i] > a[bi]) bi = i;
+        }
+        if (bi < 0) break;
+        sel.push(xs[bi]);
+        if (s.mode === 1) for (let i = 0; i < N; i++) a[i] *= 1 - Math.exp(-Math.pow(xs[i] - xs[bi], 2) / (2 * s.r * s.r));
+      }
+    }
+    const X = (x) => 90 + x * 1490, Y = (v) => 370 - v * 300;
+    let q = '';
+    this.BT_PEAKS.forEach((p) => { q += '<rect x="' + (X(p) - 40).toFixed(1) + '" y="40" width="80" height="330" fill="rgba(139,92,246,0.10)"></rect>'; });
+    let p0 = '', p1 = '';
+    for (let i = 0; i < N; i++) { p0 += X(xs[i]).toFixed(1) + ',' + Y(a0[i]).toFixed(1) + ' '; p1 += X(xs[i]).toFixed(1) + ',' + Y(a[i]).toFixed(1) + ' '; }
+    q += this.poly(p0.trim(), '#64748b', 2, '8 6');
+    if (s.mode === 1) q += this.poly(p1.trim(), '#60a5fa', 3);
+    sel.forEach((x) => {
+      const xx = X(x), yy = Y(this.btA(x)) - 14;
+      q += '<polygon points="' + (xx - 11).toFixed(1) + ',' + (yy - 18).toFixed(1) + ' ' + (xx + 11).toFixed(1) + ',' + (yy - 18).toFixed(1) + ' ' + xx.toFixed(1) + ',' + yy.toFixed(1) + '" fill="#facc15"></polygon>';
+    });
+    const gd = this.g('bt_dyn'); if (gd) gd.innerHTML = q;
+    const srt = sel.slice().sort((p, r) => p - r);
+    let gap = 9; for (let i = 1; i < srt.length; i++) gap = Math.min(gap, srt[i] - srt[i - 1]);
+    const covered = this.BT_PEAKS.filter((p) => sel.some((x) => Math.abs(x - p) <= 0.08)).length;
+    this.txt('bt_b', String(s.b));
+    this.txt('bt_r', s.r.toFixed(2));
+    this.txt('bt_list', srt.map((x) => x.toFixed(2)).join(' · '));
+    this.txt('bt_gap', srt.length > 1 ? gap.toFixed(3) : '—');
+    this.txt('bt_peak', String(covered));
+  }
+
+  // ---------------- 비용 대비 정보량 ----------------
+  ctDraw() {
+    if (!this.ct) return;
+    const s = this.ct;
+    const rows = this.CT_C.map((c) => ({ n: c[0], a: c[1], t: c[2], c: this.CT_COST[c[2]], sc: c[1] / Math.pow(this.CT_COST[c[2]], s.l) }));
+    rows.sort((p, q) => q.sc - p.sc);
+    let used = 0, gain = 0; const pick = [];
+    rows.forEach((r) => { if (used + r.c <= s.b + 1e-9) { used += r.c; gain += r.a; r.sel = true; pick.push(r.n); } });
+    const mx = Math.max.apply(null, rows.map((r) => r.sc));
+    let q = '';
+    rows.forEach((r, i) => {
+      const y = 16 + i * 62, w = r.sc / mx * 520;
+      q += this.T(70, y + 34, r.n, r.sel ? '#f1f5f9' : '#64748b', 24, 'end', true);
+      q += '<rect x="90" y="' + (y + 8) + '" width="' + Math.max(3, w).toFixed(1) + '" height="36" rx="4" fill="' + (r.sel ? this.CT_COL[r.t] : '#475569') + '"></rect>';
+      q += this.T(90 + w + 14, y + 34, r.sc.toFixed(3) + ' · α ' + r.a.toFixed(2) + ' · c ' + r.c.toFixed(1), r.sel ? '#f1f5f9' : '#64748b', 22, 'start', true);
+    });
+    const gd = this.g('ct_dyn'); if (gd) gd.innerHTML = q;
+    this.txt('ct_l', s.l.toFixed(1));
+    this.txt('ct_b', String(s.b));
+    this.txt('ct_sel', pick.join(' · ') + ' (' + pick.length + '개)');
+    this.txt('ct_cost', used.toFixed(1) + ' / ' + s.b);
+    this.txt('ct_gain', gain.toFixed(2));
+    this.txt('ct_msg', s.l === 0 ? 'λ = 0 → 비용 무시 · 고비용 · 고정보량 후보 위주' : (s.l >= 1 ? 'λ ≥ 1 → 저비용 후보 다수 · 후보 수 증가' : 'λ 중간 → 두 경향 혼합'));
+  }
+
+  // ---------------- 정지 규칙 ----------------
+  lpDraw() {
+    if (!this.lp) return;
+    const s = this.lp, D = this.LP_S[s.s], se = this.LP_SE[s.s];
+    for (let i = 0; i < 3; i++) this.btn('lpB' + i, i === s.s);
+    const X = (r) => 200 + (r - 1) * 140, Y = (d) => 450 - d * 430;
+    let q = '', k = 0, stop = '', path = '';
+    for (let r = 1; r <= s.r; r++) {
+      const d = D[r - 1];
+      const dec = r > 1 ? D[r - 2] - d : null;
+      let judge;
+      if (r > 1) { if (dec > se * 1.0) k = 0; else k += 1; }
+      if (d <= 0.10) { judge = '정지 · 목표 달성'; stop = judge; }
+      else if (r >= 5 || r * 12 >= 60) { judge = '정지 · 예산 (5 라운드 · 60 실험)'; stop = judge; }
+      else if (k >= 2) { judge = '정지 · 연속 2회 무개선'; stop = judge; }
+      else judge = r === 1 ? '계속 · 시드 라운드' : (dec > se ? '계속 · 개선 인정' : '계속 · 무개선 ' + k + '회');
+      this.txt('lp_r' + (r - 1) + '_1', d.toFixed(2));
+      this.txt('lp_r' + (r - 1) + '_2', dec === null ? '—' : dec.toFixed(2));
+      this.txt('lp_r' + (r - 1) + '_3', judge);
+      const c = this.g('lp_r' + (r - 1) + '_3'); if (c) c.style.color = stop ? '#facc15' : '#94a3b8';
+      q += '<line x1="' + X(r) + '" y1="' + Y(d + se).toFixed(1) + '" x2="' + X(r) + '" y2="' + Y(d - se).toFixed(1) + '" stroke="#60a5fa" stroke-width="3"></line>';
+      q += '<circle cx="' + X(r) + '" cy="' + Y(d).toFixed(1) + '" r="10" fill="' + (stop ? '#facc15' : '#60a5fa') + '"></circle>';
+      path += X(r) + ',' + Y(d).toFixed(1) + ' ';
+      if (stop) break;
+    }
+    for (let r = s.r + 1; r <= 5; r++) {
+      this.txt('lp_r' + (r - 1) + '_1', '—'); this.txt('lp_r' + (r - 1) + '_2', '—'); this.txt('lp_r' + (r - 1) + '_3', '—');
+      const c = this.g('lp_r' + (r - 1) + '_3'); if (c) c.style.color = '#94a3b8';
+    }
+    if (path) q = this.poly(path.trim(), '#475569', 2) + q;
+    const gd = this.g('lp_dyn'); if (gd) gd.innerHTML = q;
+    this.lpStopped = !!stop;
+    this.txt('lp_exp', String(s.r * 12));
+    this.txt('lp_k', String(k));
+    this.txt('lp_state', s.r === 0 ? '라운드 0 · 대기' : (stop ? '라운드 ' + s.r + ' · ' + stop : '라운드 ' + s.r + ' · 계속'));
+  }
+}
+</script>
+</body>
+</html>

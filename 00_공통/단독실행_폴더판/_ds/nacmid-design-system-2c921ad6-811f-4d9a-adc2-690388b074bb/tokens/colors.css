@@ -1,0 +1,98 @@
+/* ============================================================================
+   NACMID — Color Tokens
+   Dark scientific dashboard. KICT-inspired deep blue primary + indigo/violet
+   accent on a near-black slate canvas. Translucent semantic badges.
+   ============================================================================ */
+
+:root {
+  /* ---- Brand: Primary (deep blue, KICT-inspired) ---- */
+  --primary-50:  #eef5ff;
+  --primary-100: #d9e8ff;
+  --primary-200: #bcd7ff;
+  --primary-300: #8ec0ff;
+  --primary-400: #599eff;
+  --primary-500: #3377ff;   /* brand blue */
+  --primary-600: #1a56f5;
+  --primary-700: #1444e1;
+  --primary-800: #1738b6;
+  --primary-900: #19338f;
+  --primary-950: #142157;
+
+  /* ---- Brand: Accent (Korean-inspired indigo / violet) ---- */
+  --accent-50:  #f5f3ff;
+  --accent-100: #ede9fe;
+  --accent-200: #ddd6fe;
+  --accent-300: #c4b5fd;
+  --accent-400: #a78bfa;
+  --accent-500: #8b5cf6;    /* brand violet */
+  --accent-600: #7c3aed;
+  --accent-700: #6d28d9;
+  --accent-800: #5b21b6;
+  --accent-900: #4c1d95;
+
+  /* Korean-inspired deep accents (logo / CI) */
+  --kict-blue:  #1a4480;
+  --kict-light: #4b7eb8;
+
+  /* ---- Surfaces (dark canvas, layered) ---- */
+  --bg:            #0c1222;   /* app canvas */
+  --bg-secondary:  #111827;   /* cards, header, sidebar */
+  --bg-tertiary:   #1f2937;   /* inset / hover surface */
+  --surface-hover: #1e293b;   /* row / item hover */
+  --surface-input: #334155;   /* slate-700 form fields */
+
+  /* ---- Borders ---- */
+  --border:        #1f2937;   /* default card/divider */
+  --border-strong: #2d3748;
+  --border-light:  #374151;
+
+  /* ---- Text ---- */
+  --text:           #f1f5f9;  /* slate-100, primary */
+  --text-secondary: #94a3b8;  /* slate-400, labels */
+  --text-muted:     #64748b;  /* slate-500, meta */
+  --text-faint:     #475569;  /* slate-600, disabled */
+  --text-on-accent: #ffffff;
+
+  /* ---- Semantic status (solid reference values) ---- */
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error:   #ef4444;
+  --info:    #06b6d4;
+
+  /* ---- Semantic status — translucent badge fills (color/20) ---- */
+  --status-pending-bg:   rgba(234, 179, 8, 0.20);
+  --status-pending-fg:   #facc15;
+  --status-queued-bg:    rgba(59, 130, 246, 0.20);
+  --status-queued-fg:    #60a5fa;
+  --status-building-bg:  rgba(99, 102, 241, 0.20);
+  --status-building-fg:  #a5b4fc;
+  --status-running-bg:   rgba(34, 197, 94, 0.20);
+  --status-running-fg:   #4ade80;
+  --status-completed-bg: rgba(107, 114, 128, 0.20);
+  --status-completed-fg: #9ca3af;
+  --status-failed-bg:    rgba(239, 68, 68, 0.20);
+  --status-failed-fg:    #f87171;
+
+  /* ---- Tier accents (simulation tiers) ---- */
+  --tier-screening:  #60a5fa;  /* blue   */
+  --tier-confirm:    #a78bfa;  /* violet */
+  --tier-viscosity:  #fb923c;  /* orange */
+  --tier-validation: #f87171;  /* red    */
+
+  /* ---- SARA molecule families (domain color SSOT) ---- */
+  --sara-saturate:   #34d399;  /* green  */
+  --sara-aromatic:   #60a5fa;  /* blue   */
+  --sara-resin:      #fbbf24;  /* amber  */
+  --sara-asphaltene: #f87171;  /* red    */
+  --sara-additive:   #a78bfa;  /* violet */
+
+  /* ---- CPK element colors (3D molecule viewer) ---- */
+  --el-carbon:   #606060;
+  --el-hydrogen: #ffffff;
+  --el-nitrogen: #3b5bdb;
+  --el-oxygen:   #e03131;
+  --el-sulfur:   #f2c94c;
+  --el-silicon:  #e6c78f;
+  --el-calcium:  #4caf50;
+  --el-iron:     #c46a2b;
+}

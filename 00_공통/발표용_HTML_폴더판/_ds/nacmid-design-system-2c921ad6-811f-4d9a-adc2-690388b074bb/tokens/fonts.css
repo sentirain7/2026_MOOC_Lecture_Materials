@@ -1,0 +1,67 @@
+/* ============================================================================
+   NACMID — Webfonts
+   Pretendard Variable (Korean + Latin UI face) and JetBrains Mono (numeric/code).
+   Sourced from CDN — the asphalt MD/ML platform loads Pretendard from jsDelivr.
+   ⚠️ CDN-referenced (binaries not vendored locally). Swap src: url() for local
+   files if offline use is required.
+   ============================================================================ */
+
+/* Pretendard — static weights (resolvable CDN paths; bundler-safe) */
+@font-face {
+  font-family: 'Pretendard Variable';
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/gh/fonts-archive/Pretendard/Pretendard-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Pretendard Variable';
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/gh/fonts-archive/Pretendard/Pretendard-Medium.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Pretendard Variable';
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/gh/fonts-archive/Pretendard/Pretendard-SemiBold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Pretendard Variable';
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/gh/fonts-archive/Pretendard/Pretendard-Bold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Pretendard Variable';
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/gh/fonts-archive/Pretendard/Pretendard-ExtraBold.woff2') format('woff2');
+}
+
+/* JetBrains Mono — tabular figures for metrics, IDs, code */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/fontsource/fonts/jetbrains-mono@latest/latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/fontsource/fonts/jetbrains-mono@latest/latin-500-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/fontsource/fonts/jetbrains-mono@latest/latin-700-normal.woff2') format('woff2');
+}

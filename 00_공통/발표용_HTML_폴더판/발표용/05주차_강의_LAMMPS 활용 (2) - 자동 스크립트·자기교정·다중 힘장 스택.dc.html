@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/tokens/fonts.css">
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/tokens/colors.css">
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/tokens/typography.css">
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/tokens/spacing.css">
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/tokens/effects.css">
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/tokens/base.css">
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/styles.css">
+<script src="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/_ds_bundle.js"></script>
+<style>
+  body { margin: 0; background: #0c1222; }
+  a { color: #599eff; }
+  a:hover { color: #8ec0ff; }
+</style>
+</helmet>
+<x-import component-from-global-scope="deck-stage" from="../deck-stage.js" width="1920" height="1080" hint-size="100%,100%">
+
+<section data-label="표지" data-screen-label="01" data-speaker-notes="5주차. 손으로 짜던 입력을 자동 생성으로 바꾼다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:100px 100px 80px;display:flex;flex-direction:column;justify-content:space-between;">
+  <div style="display:flex;align-items:center;gap:28px;">
+    <div style="width:64px;height:64px;border-radius:14px;background:linear-gradient(135deg,#3377ff,#8b5cf6);"></div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:28px;letter-spacing:0.16em;color:#94a3b8;">COMID</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:40px;max-width:1500px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:28px;letter-spacing:0.14em;color:#599eff;">WEEK 05 · 차시 5-1 ~ 5-4 · 50분</div>
+    <h1 style="font-size:88px;font-weight:700;letter-spacing:-0.03em;line-height:1.08;margin:0;">자동화 워크플로우와 다중 힘장 스택</h1>
+    <p style="font-size:40px;color:#94a3b8;margin:0;line-height:1.4;">자동 스크립트 생성 · 오류 자기교정 루프 · FF-neutral 토폴로지 · 다중 힘장 운용</p>
+  </div>
+  <div style="display:flex;gap:56px;font-size:28px;color:#64748b;font-family:'JetBrains Mono',monospace;">
+    <span>윤태영 (Taeyoung Yun)</span>
+    <span>실습 · 입력 자동 생성기</span>
+    <span>퀴즈 5주차</span>
+  </div>
+</section>
+
+<section data-label="지난 주차" data-screen-label="02" data-speaker-notes="4주차까지 손으로 만든 입력을 이제 기계가 만들게 한다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:52px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">RECAP · WEEK 04</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">지난 주차 요약과 이번 주차의 위치</h2>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:40px;display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">4주차</div>
+      <div style="font-size:32px;line-height:1.45;">입력 스크립트 · data 파일 · 다층구조 직접 작성</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:40px;display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">문제</div>
+      <div style="font-size:32px;line-height:1.45;">조성이 수백 개가 되면 손으로 만드는 순간 오류와 불일치가 발생</div>
+    </div>
+    <div style="background:#111827;border:1px solid #2d3748;border-radius:12px;padding:40px;display:flex;flex-direction:column;gap:18px;box-shadow:0 0 20px rgba(59,130,246,0.15);">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#60a5fa;">이번 주차</div>
+      <div style="font-size:32px;line-height:1.45;">조성 목록 → 입력 세트 자동 생성 · 실패 시 자동 수정</div>
+    </div>
+  </div>
+  <p style="font-size:32px;color:#64748b;margin:0;">자율 탐색 파이프라인의 무인 실행을 위한 최소 조건</p>
+</section>
+
+<section data-label="학습목표" data-screen-label="03" data-speaker-notes="자동화와 다중 힘장 운용이 목표." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:52px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">OBJECTIVE</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">5주차 학습목표</h2>
+  <div style="display:flex;flex-direction:column;gap:32px;max-width:1600px;">
+    <div style="display:flex;gap:36px;align-items:baseline;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:32px;color:#599eff;width:80px;">01</div>
+      <div style="font-size:36px;line-height:1.45;flex:1;">조성 명세에서 입력 스크립트 세트를 자동 생성하는 구조를 구성</div>
+    </div>
+    <div style="display:flex;gap:36px;align-items:baseline;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:32px;color:#8ec0ff;width:80px;">02</div>
+      <div style="font-size:36px;line-height:1.45;flex:1;">실패 로그를 읽고 설정을 고쳐 재제출하는 자기교정(self-correction) 루프를 설계</div>
+    </div>
+    <div style="display:flex;gap:36px;align-items:baseline;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:32px;color:#a5b4fc;width:80px;">03</div>
+      <div style="font-size:36px;line-height:1.45;flex:1;">힘장(FF, force field)에 중립적인(FF-neutral) 토폴로지(topology) 표현을 정의</div>
+    </div>
+    <div style="display:flex;gap:36px;align-items:baseline;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:32px;color:#a78bfa;width:80px;">04</div>
+      <div style="font-size:36px;line-height:1.45;flex:1;">여러 힘장을 한 계에 함께 쓰는 다중 힘장 스택(force-field stack)을 운용</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="5주차 구성" data-screen-label="04" data-speaker-notes="차시별 분량 안내. 총 50분." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:52px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">AGENDA</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">5주차 구성</h2>
+  <div style="display:flex;flex-direction:column;gap:24px;">
+    <div style="display:flex;align-items:center;gap:40px;background:#111827;border:1px solid #1f2937;border-radius:12px;padding:32px 40px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#599eff;width:120px;">5-1</div>
+      <div style="font-size:38px;font-weight:600;flex:1;">자동 스크립트 생성</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#64748b;">12분</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:40px;background:#111827;border:1px solid #1f2937;border-radius:12px;padding:32px 40px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#599eff;width:120px;">5-2</div>
+      <div style="font-size:38px;font-weight:600;flex:1;">오류 자기교정 루프</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#64748b;">12분</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:40px;background:#111827;border:1px solid #1f2937;border-radius:12px;padding:32px 40px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#599eff;width:120px;">5-3</div>
+      <div style="font-size:38px;font-weight:600;flex:1;">FF-neutral 토폴로지 설계</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#64748b;">14분</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:40px;background:#111827;border:1px solid #1f2937;border-radius:12px;padding:32px 40px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#599eff;width:120px;">5-4</div>
+      <div style="font-size:38px;font-weight:600;flex:1;">다중 힘장 스택 운용</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#64748b;">12분</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="[5-1] 섹션" data-screen-label="05" data-speaker-notes="첫 차시 12분." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:100px;display:flex;flex-direction:column;justify-content:center;gap:40px;">
+  <div style="width:200px;height:6px;background:linear-gradient(135deg,#3377ff,#8b5cf6);border-radius:999px;"></div>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:120px;color:#1f2937;font-weight:700;line-height:1;">5-1</div>
+  <h2 style="font-size:68px;font-weight:700;letter-spacing:-0.02em;margin:0;line-height:1.1;">자동 스크립트 생성</h2>
+  <p style="font-size:32px;color:#94a3b8;margin:0;">12분 · 명세 → 입력 세트</p>
+</section>
+
+<section data-label="Claude Code 관여 지점" data-screen-label="06" data-speaker-notes="이 파이프라인을 사람이 전부 손으로 쓰지 않는다. 저장소를 읽고 코드를 쓰는 에이전트에게 다섯 지점을 맡기고, 사람은 물리적 판단만 검토한다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:40px 80px 28px;display:flex;flex-direction:column;gap:18px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#a78bfa;">5-1 · AGENT-ASSISTED BUILD</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">Claude Code로 파이프라인을 구축하는 방법</h2>
+  <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:12px 20px;">
+    <svg viewBox="-34 0 1800 520" style="width:100%;height:auto;">
+      <rect x="20" y="16" width="1700" height="104" rx="14" fill="#111827" stroke="#8b5cf6" stroke-width="2"></rect>
+      <g transform="translate(56,44)" fill="none" stroke="#a78bfa" stroke-width="2.5" stroke-linecap="round">
+        <rect x="0" y="4" width="40" height="40" rx="6"></rect>
+        <line x1="9" y1="16" x2="31" y2="16"></line>
+        <line x1="9" y1="24" x2="31" y2="24"></line>
+        <line x1="9" y1="32" x2="23" y2="32"></line>
+      </g>
+      <text x="124" y="62" fill="#a78bfa" font-size="30" font-family="JetBrains Mono, monospace">Claude Code · 코딩 에이전트</text>
+      <text x="124" y="98" fill="#94a3b8" font-size="24">저장소 판독 · 코드와 템플릿 작성 · 테스트 실행 후 자체 수정 · 사람은 물리적 판단만 검토</text>
+
+      <g stroke="#8b5cf6" stroke-width="2.5" stroke-dasharray="7 7">
+        <line x1="170" y1="120" x2="170" y2="138"></line>
+        <line x1="170" y1="178" x2="170" y2="196"></line>
+        <line x1="520" y1="120" x2="520" y2="138"></line>
+        <line x1="520" y1="178" x2="520" y2="196"></line>
+        <line x1="870" y1="120" x2="870" y2="138"></line>
+        <line x1="870" y1="178" x2="870" y2="196"></line>
+        <line x1="1220" y1="120" x2="1220" y2="138"></line>
+        <line x1="1220" y1="178" x2="1220" y2="196"></line>
+        <line x1="1570" y1="120" x2="1570" y2="138"></line>
+        <line x1="1570" y1="178" x2="1570" y2="196"></line>
+      </g>
+      <g fill="#0c1222" stroke="#8b5cf6" stroke-width="2">
+        <circle cx="170" cy="158" r="19"></circle>
+        <circle cx="520" cy="158" r="19"></circle>
+        <circle cx="870" cy="158" r="19"></circle>
+        <circle cx="1220" cy="158" r="19"></circle>
+        <circle cx="1570" cy="158" r="19"></circle>
+      </g>
+      <g fill="#a78bfa" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle">
+        <text x="170" y="167">1</text>
+        <text x="520" y="167">2</text>
+        <text x="870" y="167">3</text>
+        <text x="1220" y="167">4</text>
+        <text x="1570" y="167">5</text>
+      </g>
+
+      <rect x="20" y="196" width="300" height="140" rx="12" fill="#0c1222" stroke="#34d399" stroke-width="2"></rect>
+      <text x="170" y="242" fill="#4ade80" font-size="27" font-family="JetBrains Mono, monospace" text-anchor="middle">명세 스키마</text>
+      <text x="170" y="278" fill="#94a3b8" font-size="24" text-anchor="middle">필드 · 단위 · 검증 규칙</text>
+      <text x="170" y="312" fill="#64748b" font-size="24" text-anchor="middle">목표 물성 → 필드로 번역</text>
+
+      <rect x="370" y="196" width="300" height="140" rx="12" fill="#0c1222" stroke="#3377ff" stroke-width="2"></rect>
+      <text x="520" y="242" fill="#8ec0ff" font-size="27" font-family="JetBrains Mono, monospace" text-anchor="middle">템플릿 · 빌더</text>
+      <text x="520" y="278" fill="#94a3b8" font-size="24" text-anchor="middle">in.*.j2 · 셀 조립 코드</text>
+      <text x="520" y="312" fill="#64748b" font-size="24" text-anchor="middle">물성별 프로토콜 1개씩</text>
+
+      <rect x="720" y="196" width="300" height="140" rx="12" fill="#0c1222" stroke="#6366f1" stroke-width="2"></rect>
+      <text x="870" y="242" fill="#a5b4fc" font-size="27" font-family="JetBrains Mono, monospace" text-anchor="middle">큐 제출 · 감시</text>
+      <text x="870" y="278" fill="#94a3b8" font-size="24" text-anchor="middle">run.sh · 작업 상태 기록</text>
+      <text x="870" y="312" fill="#64748b" font-size="24" text-anchor="middle">GPU 노드에서 LAMMPS</text>
+
+      <rect x="1070" y="196" width="300" height="140" rx="12" fill="#0c1222" stroke="#facc15" stroke-width="2"></rect>
+      <text x="1220" y="242" fill="#facc15" font-size="27" font-family="JetBrains Mono, monospace" text-anchor="middle">로그 진단</text>
+      <text x="1220" y="278" fill="#94a3b8" font-size="24" text-anchor="middle">증상 → 원인 → 조치 규칙</text>
+      <text x="1220" y="312" fill="#64748b" font-size="24" text-anchor="middle">실패 자동 분류 · 재시도</text>
+
+      <rect x="1420" y="196" width="300" height="140" rx="12" fill="#0c1222" stroke="#8b5cf6" stroke-width="2"></rect>
+      <text x="1570" y="242" fill="#a78bfa" font-size="27" font-family="JetBrains Mono, monospace" text-anchor="middle">후처리 · 물성</text>
+      <text x="1570" y="278" fill="#94a3b8" font-size="24" text-anchor="middle">밀도 · Tg · 강도 · 파괴모드</text>
+      <text x="1570" y="312" fill="#64748b" font-size="24" text-anchor="middle">곡선 피팅 · 지표 산출</text>
+
+      <g stroke="#475569" stroke-width="3">
+        <line x1="332" y1="266" x2="348" y2="266"></line>
+        <line x1="682" y1="266" x2="698" y2="266"></line>
+        <line x1="1032" y1="266" x2="1048" y2="266"></line>
+        <line x1="1382" y1="266" x2="1398" y2="266"></line>
+      </g>
+      <g fill="#475569">
+        <path d="M348 258 L366 266 L348 274 Z"></path>
+        <path d="M698 258 L716 266 L698 274 Z"></path>
+        <path d="M1048 258 L1066 266 L1048 274 Z"></path>
+        <path d="M1398 258 L1416 266 L1398 274 Z"></path>
+      </g>
+
+      <rect x="1180" y="400" width="540" height="96" rx="12" fill="#111827" stroke="#2d3748" stroke-width="2"></rect>
+      <text x="1450" y="440" fill="#cbd5e1" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">결과 DB · 실험 ID 단위 물성표</text>
+      <text x="1450" y="474" fill="#64748b" font-size="24" text-anchor="middle">6주차 후처리 · 9주차 학습 데이터로 연결</text>
+      <line x1="1570" y1="336" x2="1570" y2="392" stroke="#475569" stroke-width="3"></line>
+      <path d="M1562 392 L1570 410 L1578 392 Z" fill="#475569"></path>
+      <path d="M1180 448 H-14 V126" fill="none" stroke="#8b5cf6" stroke-width="2.5" stroke-dasharray="7 7"></path>
+      <path d="M-22 126 L-14 108 L-6 126 Z" fill="#8b5cf6"></path>
+      <text x="640" y="434" fill="#a78bfa" font-size="24" text-anchor="middle">목표 미달 · 실패 패턴을 에이전트가 읽고 명세와 설정을 수정 — 자기교정 루프</text>
+    </svg>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #4ade80;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#4ade80;">사람이 정하는 것</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">목표 물성과 허용 오차 · 힘장 선택과 혼용 가능성 · 프로토콜의 물리적 타당성</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #a78bfa;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;">에이전트에게 맡기는 것</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">반복 코드 · 템플릿 · 파서 · 단위 변환 · 회귀 테스트 · 실패 로그 분류</div>
+    </div>
+    <div style="background:#111827;border:1px solid #2d3748;border-left:2px solid #facc15;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#facc15;">반드시 사람이 검토</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">생성된 물성값의 문헌 범위 이내 여부 · 자동 수정에 의한 물리 조건 변경 여부</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="자동화 대상 물성" data-screen-label="07" data-speaker-notes="자동화의 목적은 코드가 아니라 물성표다. 여섯 가지 물성 각각에 프로토콜 · 판단 · 에이전트 산출물을 대응시킨다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:40px 80px 28px;display:flex;flex-direction:column;gap:20px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">5-1 · WHAT GETS AUTOMATED</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">자동화 대상 — 물성별 절차</h2>
+  <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;display:grid;grid-template-columns:1.3fr 1.45fr 1.3fr 1.35fr;overflow:hidden;flex:1 1 auto;align-content:start;">
+    <div style="padding:12px 22px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#599eff;background:#0c1222;letter-spacing:0.06em;">물성</div>
+    <div style="padding:12px 22px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#599eff;background:#0c1222;letter-spacing:0.06em;">MD 프로토콜</div>
+    <div style="padding:12px 22px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#599eff;background:#0c1222;letter-spacing:0.06em;">자동화되는 판단</div>
+    <div style="padding:12px 22px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#599eff;background:#0c1222;letter-spacing:0.06em;">Claude Code 산출물</div>
+
+    <div style="padding:11px 22px;font-size:24px;color:#4ade80;border-top:1px solid rgba(51,65,85,0.5);display:flex;align-items:center;gap:14px;"><svg viewBox="0 0 44 44" style="width:44px;height:44px;flex:0 0 auto;"><rect x="6" y="8" width="32" height="28" rx="4" fill="none" stroke="#4ade80" stroke-width="2"></rect><g fill="#4ade80"><circle cx="13" cy="15" r="2.4"></circle><circle cx="22" cy="19" r="2.4"></circle><circle cx="31" cy="14" r="2.4"></circle><circle cx="16" cy="27" r="2.4"></circle><circle cx="27" cy="29" r="2.4"></circle><circle cx="34" cy="24" r="2.4"></circle></g></svg><span>벌크 밀도</span></div>
+    <div style="padding:11px 22px;font-size:24px;color:#94a3b8;border-top:1px solid rgba(51,65,85,0.5);">NPT 298 K 평형 후 부피 블록 평균</div>
+    <div style="padding:11px 22px;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">평형 도달 시점 · 표본 구간 선택</div>
+    <div style="padding:11px 22px;font-size:24px;color:#a78bfa;border-top:1px solid rgba(51,65,85,0.5);">수렴 판정 · 블록 평균 스크립트</div>
+
+    <div style="padding:11px 22px;font-size:24px;color:#4ade80;border-top:1px solid rgba(51,65,85,0.5);display:flex;align-items:center;gap:14px;"><svg viewBox="0 0 44 44" style="width:44px;height:44px;flex:0 0 auto;"><path d="M8 6 V36 H38" fill="none" stroke="#475569" stroke-width="2"></path><path d="M11 31 L24 25 L37 10" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round"></path><circle cx="24" cy="25" r="3" fill="#facc15"></circle></svg><span>유리전이온도(Tg, glass transition temperature)</span></div>
+    <div style="padding:11px 22px;font-size:24px;color:#94a3b8;border-top:1px solid rgba(51,65,85,0.5);">단계 냉각 스캔 · 비체적–온도 곡선</div>
+    <div style="padding:11px 22px;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">두 직선의 교점 · 냉각률 의존성</div>
+    <div style="padding:11px 22px;font-size:24px;color:#a78bfa;border-top:1px solid rgba(51,65,85,0.5);">온도 스윕 입력 생성 · 이중선형 회귀</div>
+
+    <div style="padding:11px 22px;font-size:24px;color:#4ade80;border-top:1px solid rgba(51,65,85,0.5);display:flex;align-items:center;gap:14px;"><svg viewBox="0 0 44 44" style="width:44px;height:44px;flex:0 0 auto;"><g stroke="#4ade80" stroke-width="2" fill="none"><rect x="10" y="14" width="24" height="6" rx="1.5"></rect><rect x="10" y="24" width="24" height="6" rx="1.5"></rect></g><path d="M22 12 V4 M18.5 7 L22 3.5 L25.5 7" fill="none" stroke="#8ec0ff" stroke-width="2.5" stroke-linecap="round"></path><path d="M22 32 V40 M18.5 37 L22 40.5 L25.5 37" fill="none" stroke="#8ec0ff" stroke-width="2.5" stroke-linecap="round"></path></svg><span>층상구조 인장강도</span></div>
+    <div style="padding:11px 22px;font-size:24px;color:#94a3b8;border-top:1px solid rgba(51,65,85,0.5);">층 법선 방향 일정 변형률 인장 · 응력–변형 곡선</div>
+    <div style="padding:11px 22px;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">최대 응력 추출 · 변형률 속도 스윕</div>
+    <div style="padding:11px 22px;font-size:24px;color:#a78bfa;border-top:1px solid rgba(51,65,85,0.5);">deform 입력 세트 · 피크 검출 코드</div>
+
+    <div style="padding:11px 22px;font-size:24px;color:#4ade80;border-top:1px solid rgba(51,65,85,0.5);display:flex;align-items:center;gap:14px;"><svg viewBox="0 0 44 44" style="width:44px;height:44px;flex:0 0 auto;"><g stroke="#4ade80" stroke-width="2" fill="none"><rect x="6" y="9" width="32" height="9" rx="2"></rect><rect x="6" y="26" width="32" height="9" rx="2"></rect></g><path d="M6 22 L14 22 L18 18 L24 26 L30 20 L38 22" fill="none" stroke="#f87171" stroke-width="2.5" stroke-linecap="round"></path></svg><span>파괴모드</span></div>
+    <div style="padding:11px 22px;font-size:24px;color:#94a3b8;border-top:1px solid rgba(51,65,85,0.5);">파단 후 궤적의 파단면 원자 분포</div>
+    <div style="padding:11px 22px;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">계면 박리(adhesive) vs 응집 파괴(cohesive) 판정</div>
+    <div style="padding:11px 22px;font-size:24px;color:#a78bfa;border-top:1px solid rgba(51,65,85,0.5);">파단면 원자 분류 · 판정 규칙 구현</div>
+
+    <div style="padding:11px 22px;font-size:24px;color:#4ade80;border-top:1px solid rgba(51,65,85,0.5);display:flex;align-items:center;gap:14px;"><svg viewBox="0 0 44 44" style="width:44px;height:44px;flex:0 0 auto;"><g stroke="#4ade80" stroke-width="2" fill="none"><rect x="6" y="8" width="32" height="7" rx="2"></rect><rect x="6" y="29" width="32" height="7" rx="2"></rect></g><rect x="9" y="18" width="26" height="8" rx="2" fill="none" stroke="#a78bfa" stroke-width="2"></rect><path d="M14 5 H33 M29.5 1.5 L33 5 L29.5 8.5" fill="none" stroke="#8ec0ff" stroke-width="2.5" stroke-linecap="round"></path><path d="M30 39 H11 M14.5 35.5 L11 39 L14.5 42.5" fill="none" stroke="#8ec0ff" stroke-width="2.5" stroke-linecap="round"></path></svg><span>샌드위치 전단</span></div>
+    <div style="padding:11px 22px;font-size:24px;color:#94a3b8;border-top:1px solid rgba(51,65,85,0.5);">집합체 · 바인더 · 집합체 셀에 전단 변형</div>
+    <div style="padding:11px 22px;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">전단 응력 정점 · 층 두께 의존성</div>
+    <div style="padding:11px 22px;font-size:24px;color:#a78bfa;border-top:1px solid rgba(51,65,85,0.5);">샌드위치 셀 조립 빌더 · 전단 후처리</div>
+
+    <div style="padding:11px 22px;font-size:24px;color:#4ade80;border-top:1px solid rgba(51,65,85,0.5);display:flex;align-items:center;gap:14px;"><svg viewBox="0 0 44 44" style="width:44px;height:44px;flex:0 0 auto;"><g stroke="#4ade80" stroke-width="2" fill="none"><rect x="6" y="11" width="32" height="7" rx="2"></rect><rect x="6" y="26" width="32" height="7" rx="2"></rect></g><line x1="12" y1="22" x2="32" y2="22" stroke="#a78bfa" stroke-width="2" stroke-dasharray="3 3"></line><path d="M22 9 V3 M18.5 6 L22 2.5 L25.5 6" fill="none" stroke="#8ec0ff" stroke-width="2.5" stroke-linecap="round"></path><path d="M22 35 V41 M18.5 38 L22 41.5 L25.5 38" fill="none" stroke="#8ec0ff" stroke-width="2.5" stroke-linecap="round"></path></svg><span>샌드위치 인장</span></div>
+    <div style="padding:11px 22px;font-size:24px;color:#94a3b8;border-top:1px solid rgba(51,65,85,0.5);">계면 수직 분리 · 분리일(work of separation)</div>
+    <div style="padding:11px 22px;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">힘–거리 곡선 적분 · 이상치 제거</div>
+    <div style="padding:11px 22px;font-size:24px;color:#a78bfa;border-top:1px solid rgba(51,65,85,0.5);">적분 · 단위 변환(mJ/m²) 유틸리티</div>
+  </div>
+  <p style="font-size:24px;color:#64748b;margin:0;">여섯 물성 = 같은 생성기 + 물성별 프로토콜 교체 — 자동화의 목표: 물성 하나 추가 = 템플릿 하나 + 파서(parser) 하나 추가</p>
+</section>
+
+<section data-label="생성 파이프라인" data-screen-label="08" data-speaker-notes="템플릿 + 명세 → 입력. 해시는 생성 시점에 부여." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:20px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">5-1 · GENERATOR</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">명세 하나에서 입력 세트로</h2>
+  <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:14px 24px;">
+    <svg viewBox="0 0 1760 380" style="width:100%;height:auto;">
+      <rect x="20" y="100" width="300" height="180" rx="12" fill="#0c1222" stroke="#34d399" stroke-width="2"></rect>
+      <g transform="translate(150,122)" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round">
+        <rect x="5" y="0" width="30" height="40" rx="3"></rect>
+        <line x1="12" y1="12" x2="28" y2="12"></line>
+        <line x1="12" y1="20" x2="28" y2="20"></line>
+        <line x1="12" y1="28" x2="22" y2="28"></line>
+      </g>
+      <text x="170" y="206" fill="#4ade80" font-size="30" font-family="JetBrains Mono, monospace" text-anchor="middle">조성 명세</text>
+      <text x="170" y="244" fill="#94a3b8" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle">composition spec</text>
+      <text x="170" y="326" fill="#cbd5e1" font-size="24" text-anchor="middle">사람이 정하는 값만 선언</text>
+      <text x="170" y="358" fill="#64748b" font-size="24" text-anchor="middle">분자 · 비율 · 온도 · 티어</text>
+
+      <line x1="332" y1="190" x2="478" y2="190" stroke="#475569" stroke-width="3"></line>
+      <path d="M478 182 L496 190 L478 198 Z" fill="#475569"></path>
+      <text x="414" y="36" fill="#94a3b8" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle">검증된</text>
+      <text x="414" y="68" fill="#94a3b8" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle">명세 객체</text>
+
+      <rect x="500" y="100" width="300" height="180" rx="12" fill="#0c1222" stroke="#3377ff" stroke-width="2"></rect>
+      <g transform="translate(630,122)" fill="none" stroke="#8ec0ff" stroke-width="2.5" stroke-linecap="round">
+        <path d="M16 2 C10 2 12 16 4 20 C12 24 10 38 16 38"></path>
+        <path d="M24 2 C30 2 28 16 36 20 C28 24 30 38 24 38"></path>
+      </g>
+      <text x="650" y="206" fill="#8ec0ff" font-size="30" font-family="JetBrains Mono, monospace" text-anchor="middle">템플릿 엔진</text>
+      <text x="650" y="244" fill="#94a3b8" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle">template engine</text>
+      <text x="650" y="326" fill="#cbd5e1" font-size="24" text-anchor="middle">값을 스크립트 문장으로</text>
+      <text x="650" y="358" fill="#64748b" font-size="24" text-anchor="middle">Jinja2 · 티어별 분기</text>
+
+      <line x1="812" y1="190" x2="958" y2="190" stroke="#475569" stroke-width="3"></line>
+      <path d="M958 182 L976 190 L958 198 Z" fill="#475569"></path>
+      <text x="894" y="36" fill="#94a3b8" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle">in.* 스크립트</text>
+      <text x="894" y="68" fill="#94a3b8" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle">+ 빌드 지시</text>
+
+      <rect x="980" y="100" width="300" height="180" rx="12" fill="#0c1222" stroke="#6366f1" stroke-width="2"></rect>
+      <g transform="translate(1110,122)" fill="none" stroke="#a5b4fc" stroke-width="2.5" stroke-linecap="round">
+        <path d="M20 2 L36 11 V29 L20 38 L4 29 V11 Z"></path>
+        <path d="M4 11 L20 20 L36 11"></path>
+        <line x1="20" y1="20" x2="20" y2="38"></line>
+      </g>
+      <text x="1130" y="206" fill="#a5b4fc" font-size="30" font-family="JetBrains Mono, monospace" text-anchor="middle">빌더</text>
+      <text x="1130" y="244" fill="#94a3b8" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle">builder</text>
+      <text x="1130" y="326" fill="#cbd5e1" font-size="24" text-anchor="middle">RDKit · Packmol로 셀 조립</text>
+      <text x="1130" y="358" fill="#64748b" font-size="24" text-anchor="middle">좌표 · 토폴로지 · 타이핑</text>
+
+      <line x1="1292" y1="190" x2="1438" y2="190" stroke="#475569" stroke-width="3"></line>
+      <path d="M1438 182 L1456 190 L1438 198 Z" fill="#475569"></path>
+      <text x="1374" y="36" fill="#94a3b8" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle">data 파일</text>
+      <text x="1374" y="68" fill="#94a3b8" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle">· ff 맵</text>
+
+      <rect x="1460" y="100" width="300" height="180" rx="12" fill="#0c1222" stroke="#8b5cf6" stroke-width="2"></rect>
+      <g transform="translate(1590,122)" fill="none" stroke="#a78bfa" stroke-width="2.5" stroke-linecap="round">
+        <rect x="2" y="12" width="36" height="26" rx="3"></rect>
+        <rect x="2" y="2" width="36" height="10" rx="2"></rect>
+        <line x1="15" y1="24" x2="25" y2="24"></line>
+      </g>
+      <text x="1610" y="206" fill="#a78bfa" font-size="30" font-family="JetBrains Mono, monospace" text-anchor="middle">실행 패키지</text>
+      <text x="1610" y="244" fill="#94a3b8" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle">run package</text>
+      <text x="1610" y="326" fill="#cbd5e1" font-size="24" text-anchor="middle">재현 단위로 묶음</text>
+      <text x="1610" y="358" fill="#64748b" font-size="24" text-anchor="middle">in + data + ff + 해시</text>
+    </svg>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;">
+      <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #4ade80;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#4ade80;">명세 = 유일한 기준(single source of truth)</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">입력 파일 = 산출물 — 직접 수정 금지 · 명세를 수정</div>
+      </div>
+      <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #8ec0ff;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#8ec0ff;">조합 전개</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">온도 3 × 시드 3 = 9개 실행 자동 전개</div>
+      </div>
+      <div style="background:#111827;border:1px solid #2d3748;border-left:2px solid #a78bfa;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;">해시 부여</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">생성 시점에 4주차 규약의 실험 ID와 입력 해시(hash) 부여</div>
+      </div>
+  </div>
+  <p style="font-size:24px;color:#64748b;margin:0;">네 단계의 입력 · 출력 · 실패 지점 → 다음 네 슬라이드에서 단계별 설명</p>
+</section>
+
+<section data-label="조성 명세" data-screen-label="09" data-speaker-notes="1단계. 사람이 결정하는 값만 선언하고, 나머지는 아래 단계가 계산한다. 조성 합과 티어 검증이 여기서 끝나야 한다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:22px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#4ade80;">5-1 · STAGE 1 · COMPOSITION SPEC</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">조성 명세 — 사람이 결정하는 값의 선언</h2>
+  <div style="background:#111827;border:1px solid #1f2937;border-left:3px solid #34d399;border-radius:12px;padding:18px 28px;display:flex;align-items:center;gap:26px;">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#4ade80;letter-spacing:0.08em;">역할</span>
+    <span style="font-size:26px;color:#cbd5e1;line-height:1.4;flex:1;">실험자가 정하는 값만 한 파일에 모아 물리적 성립 여부 검증 · 파일 경로 · 원자 수 · 스텝 수처럼 계산으로 얻는 값은 기재 금지</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1.05fr 1fr;gap:24px;align-items:start;">
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:22px 28px;display:flex;flex-direction:column;gap:12px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#64748b;letter-spacing:0.08em;">spec.yaml</div>
+      <div style="white-space:pre-wrap;font-family:'JetBrains Mono',monospace;font-size:24px;line-height:1.5;color:#8ec0ff;">binder: A
+composition: { saturate: 15, aromatic: 45,
+               resin: 25, asphaltene: 15 }   # wt%, 합 100
+additive: { name: SBS, wt: 3 }
+temperatures: [298, 333, 373]   # K
+tier: screening
+seeds: 3</div>
+      <div style="font-size:24px;color:#64748b;line-height:1.4;">필드는 단위와 함께 · 주석으로 허용 범위 기록</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #4ade80;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#4ade80;">필수 필드</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">binder · composition(wt%) · additive · temperatures · tier · seeds — 이 여섯 개로 실행 목록 결정</div>
+      </div>
+      <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #8ec0ff;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#8ec0ff;">검증(validation)</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">조성 합 100 · 온도는 Tg 이상 · 티어별 허용 원자 수 — 하나라도 어긋나면 생성을 시작하지 않고 중단</div>
+      </div>
+      <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #a78bfa;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;">전개(expansion)</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">온도 3 × 시드 3 의 곱집합(Cartesian product)으로 9개 실행 — 명세 한 줄 추가 시 실행 수가 곱으로 증가</div>
+      </div>
+      <div style="background:#111827;border:1px solid #2d3748;border-left:2px solid #facc15;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#facc15;">실패 지점</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">명세 대신 입력 파일을 직접 수정하면 재현 불가 · 버전 관리 대상은 명세뿐</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="템플릿 엔진" data-screen-label="10" data-speaker-notes="2단계. 명세 값을 LAMMPS 문장으로 바꾼다. 템플릿에 실험 값이 하드코딩되면 자동화가 성립하지 않는다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:22px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#8ec0ff;">5-1 · STAGE 2 · TEMPLATE ENGINE</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">템플릿 엔진 — 값에서 스크립트 문장으로</h2>
+  <div style="background:#111827;border:1px solid #1f2937;border-left:3px solid #3377ff;border-radius:12px;padding:18px 28px;display:flex;align-items:center;gap:26px;">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#8ec0ff;letter-spacing:0.08em;">역할</span>
+    <span style="font-size:26px;color:#cbd5e1;line-height:1.4;flex:1;">명세의 값을 자리(placeholder)에 넣어 in.* 스크립트 렌더링(rendering) · 티어 · 앙상블(ensemble) · 힘장 스택에 따른 분기와 반복은 템플릿 담당, 생성기 코드는 값만 전달</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1.05fr 1fr;gap:24px;align-items:start;">
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:22px 28px;display:flex;flex-direction:column;gap:12px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#64748b;letter-spacing:0.08em;">in.equil.j2</div>
+      <div style="white-space:pre-wrap;font-family:'JetBrains Mono',monospace;font-size:24px;line-height:1.5;color:#8ec0ff;">units real
+atom_style full
+read_data &#123;<span>&#123;</span> data_file &#125;<span>&#125;</span>
+pair_style hybrid/overlay &amp;
+  &#123;<span>%</span> for p in ff_stack <span>%</span>&#125;&#123;<span>&#123;</span> p.style &#125;<span>&#125;</span> &#123;<span>%</span> endfor <span>%</span>&#125;
+velocity all create &#123;<span>&#123;</span> temp &#125;<span>&#125;</span> &#123;<span>&#123;</span> seed &#125;<span>&#125;</span>
+fix eq all npt temp &#123;<span>&#123;</span> temp &#125;<span>&#125;</span> &#123;<span>&#123;</span> temp &#125;<span>&#125;</span> 100 iso 1 1 1000
+run &#123;<span>&#123;</span> steps[tier] &#125;<span>&#125;</span></div>
+      <div style="font-size:24px;color:#64748b;line-height:1.4;">이중 중괄호는 값 치환 · &#123;<span>%</span> <span>%</span>&#125; 는 반복과 분기</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #8ec0ff;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#8ec0ff;">렌더 단위</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">템플릿 1개 + 값 1벌 = 스크립트 1개 = 실행 1개 · 온도 · 시드마다 별도 파일 생성</div>
+      </div>
+      <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #a5b4fc;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#a5b4fc;">분기 처리</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">티어별 run 길이 · 앙상블 순서(NVT → NPT) · 힘장 개수에 따른 pair_style 하위 스타일 목록을 반복문으로 표현 (pair_style 줄은 1개)</div>
+      </div>
+      <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #facc15;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#facc15;">금지 사항</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">온도 · 스텝 수 · 파일명의 템플릿 직접 기재 금지 — 하드코딩(hard-coding) 시 해당 실행만 경고 없이 달라짐</div>
+      </div>
+      <div style="background:#111827;border:1px solid #2d3748;border-left:2px solid #4ade80;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#4ade80;">기록</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">템플릿 수정 = 방법론 변경 → 템플릿 버전 태그를 실행 기록에 함께 기록</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="빌더" data-screen-label="11" data-speaker-notes="3단계. wt%를 분자 개수로 바꾸고 좌표와 토폴로지를 만든다. Packmol 수렴 실패와 타입 누락이 가장 흔한 사고." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:22px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#a5b4fc;">5-1 · STAGE 3 · BUILDER</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">빌더 — 조성비에서 계산 대상 셀까지</h2>
+  <div style="background:#111827;border:1px solid #1f2937;border-left:3px solid #6366f1;border-radius:12px;padding:18px 28px;display:flex;align-items:center;gap:26px;">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#a5b4fc;letter-spacing:0.08em;">역할</span>
+    <span style="font-size:26px;color:#cbd5e1;line-height:1.4;flex:1;">무게비(wt%)를 실제 분자 개수로 환산하고, 3D 좌표 · 결합 목록 · 원자 타입 · 전하를 갖춘 data 파일 생성 · 스크립트가 읽을 계산 대상 자체를 만드는 단계</span>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-top:3px solid #3377ff;border-radius:12px;padding:20px 24px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#8ec0ff;">01 개수 환산</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">wt% ÷ 분자량 → 몰비 → 목표 원자 수에 맞춘 정수 개수 · 반올림 오차를 조성표에 재기록</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-top:3px solid #6366f1;border-radius:12px;padding:20px 24px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#a5b4fc;">02 단분자 구조</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">SMILES(Simplified Molecular Input Line Entry System) → RDKit 3D 임베딩(embedding) · 간단 최적화로 뒤틀린 초기 구조를 제거</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-top:3px solid #8b5cf6;border-radius:12px;padding:20px 24px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;">03 셀 충전</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">Packmol로 목표보다 낮은 밀도의 셀에 배치 · 이후 NPT 압축으로 실제 밀도에 도달</div>
+    </div>
+    <div style="background:#111827;border:1px solid #2d3748;border-top:3px solid #34d399;border-radius:12px;padding:20px 24px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#4ade80;">04 타이핑</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">원자 타이핑(atom typing) · 전하 부여 · 결합 · 각 · 이면각 목록 생성 → data 파일</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #facc15;border-radius:12px;padding:18px 26px;display:flex;flex-direction:column;gap:8px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#facc15;">실패 지점</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">Packmol 수렴 실패 · 타입 누락으로 생기는 결합 항 0 · 겹친 원자로 인한 초기 발산 — 셋 다 첫 스텝 로그에 표시</div>
+    </div>
+    <div style="background:#111827;border:1px solid #2d3748;border-left:2px solid #4ade80;border-radius:12px;padding:18px 26px;display:flex;flex-direction:column;gap:8px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#4ade80;">자동 점검</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">원자 수 · 총 전하 0 · 최근접 거리 하한 · 목표 조성과의 편차를 빌드 직후 검사 · 통과한 셀만 다음 단계로 전달</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="빌더 · 개수 환산" data-screen-label="12" data-speaker-notes="무게비가 분자 개수로 바뀌는 과정을 숫자로 보인다. 반올림 오차는 버리지 않고 조성표에 다시 적는다. 분자량은 화학식과 원자량(C 12.011 · H 1.008 · N 14.007 · O 15.999)으로 계산: asphaltene-phenol C42H54O = 574.9 g/mol(2026-09-22 정정, 이전 599.0). 몰% · 개수 · 원자 수는 이 값으로 다시 계산 — 목표 원자 100,000 / ⟨a⟩ 86.1 ≈ 1,161분자, 원자 수 = 개수 × 분자당 원자(92 · 76 · 100 · 97)." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:40px 80px 28px;display:flex;flex-direction:column;gap:20px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#8ec0ff;">5-1 · STAGE 3.1 · MOLECULE COUNTS</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">빌더 1 — wt%에서 분자 개수로</h2>
+  <div style="display:flex;gap:20px;align-items:stretch;">
+    <div style="background:#111827;border:1px solid #1f2937;border-left:3px solid #3377ff;border-radius:12px;padding:16px 26px;display:flex;flex-direction:column;gap:8px;flex:1;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#8ec0ff;">환산 식</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f1f5f9;line-height:1.5;">n<sub style="font-size:1em;vertical-align:-0.2em;">i</sub> ∝ w<sub style="font-size:1em;vertical-align:-0.2em;">i</sub> / M<sub style="font-size:1em;vertical-align:-0.2em;">i</sub> &nbsp;→&nbsp; N<sub style="font-size:1em;vertical-align:-0.2em;">mol</sub> = N<sub style="font-size:1em;vertical-align:-0.2em;">목표 원자</sub> / ⟨a⟩</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">w = 무게비 · M = 분자량 · ⟨a⟩ = 몰비 가중 평균 원자 수</div>
+    </div>
+    <div style="background:#111827;border:1px solid #2d3748;border-left:3px solid #facc15;border-radius:12px;padding:16px 26px;display:flex;flex-direction:column;gap:8px;flex:1;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#facc15;">정수 반올림</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">분자는 분할 불가 → 개수는 정수 — 반올림 후 재계산한 실제 wt%를 명세 사본(spec.lock)에 재기록 · 목표와의 편차 표시</div>
+    </div>
+  </div>
+  <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;display:grid;grid-template-columns:0.9fr 1.5fr 0.85fr 0.7fr 0.7fr 0.8fr 0.85fr;overflow:hidden;align-content:start;">
+    <div style="padding:12px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#599eff;background:#0c1222;">그룹</div>
+    <div style="padding:12px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#599eff;background:#0c1222;">대표 분자</div>
+    <div style="padding:12px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#599eff;background:#0c1222;">M g/mol</div>
+    <div style="padding:12px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#599eff;background:#0c1222;">wt%</div>
+    <div style="padding:12px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#599eff;background:#0c1222;">몰%</div>
+    <div style="padding:12px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#599eff;background:#0c1222;">개수</div>
+    <div style="padding:12px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#599eff;background:#0c1222;">원자 수</div>
+
+    <div style="padding:11px 20px;font-size:24px;color:#4ade80;border-top:1px solid rgba(51,65,85,0.5);">Saturate</div>
+    <div style="padding:11px 20px;font-size:24px;color:#94a3b8;border-top:1px solid rgba(51,65,85,0.5);">squalane C<sub style="font-size:1em;vertical-align:-0.2em;">30</sub>H<sub style="font-size:1em;vertical-align:-0.2em;">62</sub></div>
+    <div style="padding:11px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">422.8</div>
+    <div style="padding:11px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">15</div>
+    <div style="padding:11px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">16.3</div>
+    <div style="padding:11px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;border-top:1px solid rgba(51,65,85,0.5);">190</div>
+    <div style="padding:11px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">17,480</div>
+
+    <div style="padding:11px 20px;font-size:24px;color:#60a5fa;border-top:1px solid rgba(51,65,85,0.5);">Aromatic</div>
+    <div style="padding:11px 20px;font-size:24px;color:#94a3b8;border-top:1px solid rgba(51,65,85,0.5);">DOCHN C<sub style="font-size:1em;vertical-align:-0.2em;">30</sub>H<sub style="font-size:1em;vertical-align:-0.2em;">46</sub></div>
+    <div style="padding:11px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">406.7</div>
+    <div style="padding:11px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">45</div>
+    <div style="padding:11px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">50.9</div>
+    <div style="padding:11px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;border-top:1px solid rgba(51,65,85,0.5);">591</div>
+    <div style="padding:11px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">44,916</div>
+
+    <div style="padding:11px 20px;font-size:24px;color:#facc15;border-top:1px solid rgba(51,65,85,0.5);">Resin</div>
+    <div style="padding:11px 20px;font-size:24px;color:#94a3b8;border-top:1px solid rgba(51,65,85,0.5);">quinolinohopane C<sub style="font-size:1em;vertical-align:-0.2em;">40</sub>H<sub style="font-size:1em;vertical-align:-0.2em;">59</sub>N</div>
+    <div style="padding:11px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">553.9</div>
+    <div style="padding:11px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">25</div>
+    <div style="padding:11px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">20.8</div>
+    <div style="padding:11px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;border-top:1px solid rgba(51,65,85,0.5);">241</div>
+    <div style="padding:11px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">24,100</div>
+
+    <div style="padding:11px 20px;font-size:24px;color:#f87171;border-top:1px solid rgba(51,65,85,0.5);">Asphaltene</div>
+    <div style="padding:11px 20px;font-size:24px;color:#94a3b8;border-top:1px solid rgba(51,65,85,0.5);">asphaltene-phenol C<sub style="font-size:1em;vertical-align:-0.2em;">42</sub>H<sub style="font-size:1em;vertical-align:-0.2em;">54</sub>O</div>
+    <div style="padding:11px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">574.9</div>
+    <div style="padding:11px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">15</div>
+    <div style="padding:11px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">12.0</div>
+    <div style="padding:11px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;border-top:1px solid rgba(51,65,85,0.5);">139</div>
+    <div style="padding:11px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">13,483</div>
+
+    <div style="padding:11px 20px;font-size:24px;color:#cbd5e1;border-top:1px solid #2d3748;">합계</div>
+    <div style="padding:11px 20px;font-size:24px;color:#64748b;border-top:1px solid #2d3748;">4종 혼합 벌크</div>
+    <div style="padding:11px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#64748b;border-top:1px solid #2d3748;">—</div>
+    <div style="padding:11px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#cbd5e1;border-top:1px solid #2d3748;">100</div>
+    <div style="padding:11px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#cbd5e1;border-top:1px solid #2d3748;">100</div>
+    <div style="padding:11px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;border-top:1px solid #2d3748;">1,161</div>
+    <div style="padding:11px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#cbd5e1;border-top:1px solid #2d3748;">99,979</div>
+  </div>
+  <p style="font-size:24px;color:#64748b;margin:0;">목표 원자 수 100,000 기준 · 반올림 후 재계산한 wt%는 15.0 / 45.0 / 25.0 / 15.0 — 허용 편차 ±0.5 wt% 이내일 때만 다음 단계 진행</p>
+</section>
+
+<section data-label="빌더 · 구조와 충전" data-screen-label="13" data-speaker-notes="단분자 3D 구조를 만들고 낮은 밀도로 배치한 뒤 다시 압축한다. 처음부터 목표 밀도로 채워 넣으면 Packmol이 수렴하지 않는다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:40px 80px 28px;display:flex;flex-direction:column;gap:20px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#a5b4fc;">5-1 · STAGE 3.2 · GEOMETRY &amp; PACKING</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">빌더 2 — 단분자 구조와 셀 충전</h2>
+  <div style="display:grid;grid-template-columns:1fr 1.05fr;gap:22px;align-items:start;">
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #a5b4fc;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#a5b4fc;">01 SMILES → 3D</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">RDKit ETKDG(Experimental-Torsion Knowledge Distance Geometry) 임베딩으로 좌표 생성 · MMFF(Merck Molecular Force Field) 가벼운 최적화로 겹침과 뒤틀림 제거 · 분자당 1개 표본을 pdb로 저장</div>
+      </div>
+      <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #a78bfa;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;">02 셀 치수 결정</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">초기 밀도를 목표의 절반(≈ 0.5 g/cm³)으로 잡아 변 120 Å 정입방으로 설정 — 여유 공간이 있어야 배치 수렴</div>
+      </div>
+      <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #8ec0ff;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#8ec0ff;">03 배치 · 압축</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">Packmol로 공간 배치 → 에너지 최소화 → NVT 단시간 → NPT 압축으로 실제 밀도 도달</div>
+      </div>
+      <div style="background:#111827;border:1px solid #2d3748;border-left:2px solid #facc15;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#facc15;">실패와 재시도</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">tolerance 2.0 Å 는 원자 간 최소 거리 — 너무 크면 수렴 실패, 너무 작으면 초기 발산 · tolerance를 맞추지 못하면 상자를 5% 넓혔다가 재시도 · 시드만 바꿔 다시 도는 재시도도 자동화 대상</div>
+      </div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:20px 26px;display:flex;flex-direction:column;gap:12px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#64748b;letter-spacing:0.08em;">pack.inp · Packmol 입력 (생성된 개수 그대로 입력)</div>
+      <div style="white-space:pre-wrap;font-family:'JetBrains Mono',monospace;font-size:24px;line-height:1.45;color:#a5b4fc;">tolerance 2.0
+filetype pdb
+output cell_binderA.pdb
+
+structure squalane.pdb
+  number 190
+  inside box 0. 0. 0. 120. 120. 120.
+end structure
+
+structure dochn.pdb
+  number 591
+  inside box 0. 0. 0. 120. 120. 120.
+end structure
+
+# resin 241 · asphaltene 139 동일 형식으로 계속</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="빌더 · 타이핑과 data" data-screen-label="14" data-speaker-notes="좌표만으로는 계산할 수 없다. 타입 · 전하 · 결합 목록이 들어가야 data 파일이 된다. 결합 수 = 원자 수 − 분자 수 + 고리 수(분자별 합). 분자당 결합 수는 LAMMPS_Asphalt/build/trackp/U-*/U-*.data 기준 squalane 91 · DOCHN 78 · quinolinohopane 106 · asphaltene-phenol 101(이 파일은 O 없는 C42H54, 96원자 · 고리 6) → C42H54O는 O–H 결합 1개를 더해 102. 190×91 + 591×78 + 241×106 + 139×102 = 103,112. 고리가 없다고 해도 하한은 99,979 − 1,161 = 98,818이므로 원자 수보다 결합 수가 적을 수 없다. 이전 화면의 97,640은 이 하한보다 작아 불가능한 값이었다(2026-09-22 정정). 타입 수 28은 예시 값." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:40px 80px 28px;display:flex;flex-direction:column;gap:20px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#4ade80;">5-1 · STAGE 3.3 · TYPING &amp; DATA FILE</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">빌더 3 — 타이핑과 data 파일 생성</h2>
+  <div style="display:grid;grid-template-columns:1fr 1.05fr;gap:22px;align-items:start;">
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:20px 26px;display:flex;flex-direction:column;gap:12px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#64748b;letter-spacing:0.08em;">data.binderA · 섹션 구조</div>
+      <div style="white-space:pre-wrap;font-family:'JetBrains Mono',monospace;font-size:24px;line-height:1.5;color:#4ade80;">99979 atoms      원자 수
+103112 bonds     결합 목록 수
+   28 atom types 타입 수 = Masses 행 수
+0.0 120.0 xlo xhi
+
+Masses           타입별 질량
+Atoms  # full    id mol type q x y z
+Bonds            id type i j
+Angles           id type i j k
+Dihedrals        id type i j k l
+Impropers        평면성 유지 항</div>
+      <div style="font-size:24px;color:#64748b;line-height:1.4;">atom_style full 이면 Atoms 행에 분자 ID와 전하 q 포함 · 결합 수 = 원자 − 분자 + 고리 수 (예시 셀 계산값)</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #4ade80;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#4ade80;">원자 타이핑(atom typing)</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">원소가 아니라 환경이 타입을 결정 — 방향족 C · sp³ C · 티오펜 S 는 같은 원소여도 다른 타입 · GAFF2 정의에 맞춰 자동 부여</div>
+      </div>
+      <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #8ec0ff;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#8ec0ff;">전하 부여</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">3주차의 부분전하 방식을 분자당 한 번 계산해 동일 분자 전체에 복제 · 분자당 총전하 0으로 보정</div>
+      </div>
+      <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #a78bfa;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;">결합 목록 생성</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">분자 한 종류의 결합 · 각 · 이면각 패턴을 한 번 만들고 개수만큼 오프셋을 더해 복제 — 수백만 행을 수초에 생성</div>
+      </div>
+      <div style="background:#111827;border:1px solid #2d3748;border-left:2px solid #facc15;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#facc15;">마지막 점검 4가지</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">타입 수 = Masses 행 수 · 총전하 0 · 모든 타입 쌍에 pair_coeff 정의 · 상자 경계 밖 원자 없음</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="실행 패키지" data-screen-label="15" data-speaker-notes="4단계. 재현에 필요한 모든 것을 한 디렉터리로 묶는다. 해시가 같으면 재실행하지 않는다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:22px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#a78bfa;">5-1 · STAGE 4 · RUN PACKAGE</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">실행 패키지 — 재현 단위의 묶음</h2>
+  <div style="background:#111827;border:1px solid #1f2937;border-left:3px solid #8b5cf6;border-radius:12px;padding:18px 28px;display:flex;align-items:center;gap:26px;">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;letter-spacing:0.08em;">역할</span>
+    <span style="font-size:26px;color:#cbd5e1;line-height:1.4;flex:1;">스크립트 · 구조 · 힘장 · 명세 사본 · 메타데이터를 한 디렉터리에 모아 실험 ID와 입력 해시 부여 · 이 디렉터리 하나로 같은 결과 재현 가능</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1.05fr 1fr;gap:24px;align-items:start;">
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:22px 28px;display:flex;flex-direction:column;gap:12px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#64748b;letter-spacing:0.08em;">run directory</div>
+      <div style="white-space:pre-wrap;font-family:'JetBrains Mono',monospace;font-size:24px;line-height:1.5;color:#a78bfa;">A1_SBS3_298K_s1__h=6b2072/
+  in.equil          렌더된 스크립트
+  data.binderA      좌표 · 토폴로지
+  ff/gaff2.prm      파라미터 사본
+  spec.lock.yaml    사용된 명세 고정본
+  meta.json         해시 · 커밋 · 생성 시각
+  run.sh            큐 제출 명령</div>
+      <div style="font-size:24px;color:#64748b;line-height:1.4;">디렉터리 이름 = 4주차 실험 ID 규약</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #a78bfa;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;">입력 해시(input hash)</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">in · data · ff · spec.lock 네 파일의 내용을 이어 해시하고 앞 6자리를 ID 접미어로 부여</div>
+      </div>
+      <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #8ec0ff;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#8ec0ff;">멱등성(idempotency)</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">같은 명세 재생성 → 같은 해시 → 완료된 실행은 생략 — 수백 개 스윕(sweep) 반복에도 중복 계산 없음</div>
+      </div>
+      <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #4ade80;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#4ade80;">하류 연결</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">meta.json 의 실험 ID가 6주차 물성 표와 9주차 학습 데이터의 조인 키(join key)로 사용</div>
+      </div>
+      <div style="background:#111827;border:1px solid #2d3748;border-left:2px solid #facc15;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#facc15;">실패 지점</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">ff 파일을 사본 없이 공용 경로로 참조하면 그 파일 변경 시 과거 결과 재현 불가</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="[5-2] 섹션" data-screen-label="16" data-speaker-notes="두 번째 차시 12분. 규칙표 → 실패 분류와 처방 → 실제 사고 두 건." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:100px;display:flex;flex-direction:column;justify-content:center;gap:40px;">
+  <div style="width:200px;height:6px;background:linear-gradient(135deg,#3377ff,#8b5cf6);border-radius:999px;"></div>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:120px;color:#1f2937;font-weight:700;line-height:1;">5-2</div>
+  <h2 style="font-size:68px;font-weight:700;letter-spacing:-0.02em;margin:0;line-height:1.1;">오류 자기교정 루프</h2>
+  <p style="font-size:32px;color:#94a3b8;margin:0;">12분 · 실패 로그 판독 · 자동 수정 루프 · 실제 사고와 복구 사례</p>
+</section>
+
+<section data-label="자기교정" data-screen-label="17" data-speaker-notes="앞 주차의 실패 유형 진단(2주차 원래 슬라이드, 3주차 3-4로 옮김)을 규칙으로 옮긴 것이 자기교정. 다음 장부터 플랫폼의 실제 분류표와 사고 사례로 확인한다. lost atoms 줄은 플랫폼 규칙과 같게 맞춤(2026-09-22): Lost atoms는 overlap_instability로 분류 → 1차 시드 변경, 그래도 실패하면 2차 Δt 절반, 재시도 상한 2회. 출처: LAMMPS_Asphalt/src/contracts/policies/failure.py(RetryPolicy max_retries=2, strategies = change_seed → reduce_dt 0.5), docs/DECISION_RULES.md R6." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:20px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">5-2 · SELF-CORRECTION</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">로그 판독 → 설정 수정</h2>
+  <div style="display:grid;grid-template-columns:1fr 1.3fr 1.1fr;gap:0;background:#111827;border:1px solid #1f2937;border-radius:12px;overflow:hidden;">
+    <div style="padding:12px 30px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">감지 신호</div>
+    <div style="padding:12px 30px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">자동 조치</div>
+    <div style="padding:12px 30px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">한계</div>
+
+    <div style="padding:11px 30px;font-size:26px;color:#f87171;border-bottom:1px solid rgba(51,65,85,0.5);">lost atoms</div>
+    <div style="padding:11px 30px;font-size:24px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">1차 시드 변경 → 2차 Δt 절반 · 최소화 재실행 후 재제출</div>
+    <div style="padding:11px 30px;font-size:26px;border-bottom:1px solid rgba(51,65,85,0.5);">재시도 2회(max_retries) 후에도 실패 시 사람 확인</div>
+
+    <div style="padding:11px 30px;font-size:26px;color:#facc15;border-bottom:1px solid rgba(51,65,85,0.5);">dangerous builds</div>
+    <div style="padding:11px 30px;font-size:24px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">neighbor skin 증가 · check yes 확인</div>
+    <div style="padding:11px 30px;font-size:26px;border-bottom:1px solid rgba(51,65,85,0.5);">성능 저하 감수</div>
+
+    <div style="padding:11px 30px;font-size:26px;color:#facc15;border-bottom:1px solid rgba(51,65,85,0.5);">energy drift</div>
+    <div style="padding:11px 30px;font-size:24px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">kspace 정확도 강화 · 컷오프 재검토</div>
+    <div style="padding:11px 30px;font-size:26px;border-bottom:1px solid rgba(51,65,85,0.5);">비용 증가</div>
+
+    <div style="padding:11px 30px;font-size:26px;color:#60a5fa;border-bottom:1px solid rgba(51,65,85,0.5);">부피 미수렴</div>
+    <div style="padding:11px 30px;font-size:24px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">어닐링 · 평형화 구간 연장 후 이어서 실행</div>
+    <div style="padding:11px 30px;font-size:26px;border-bottom:1px solid rgba(51,65,85,0.5);">총 시간 상한 설정</div>
+
+    <div style="padding:11px 30px;font-size:26px;color:#a78bfa;">walltime 초과</div>
+    <div style="padding:11px 30px;font-size:24px;color:#94a3b8;">restart에서 재개 · 분할 제출</div>
+    <div style="padding:11px 30px;font-size:26px;">restart 주기 설정</div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #3377ff;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#8ec0ff;">규칙 기반이 먼저</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">예측 가능한 실패는 정규식(regular expression)과 임계값으로 처리</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #a78bfa;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;">LLM(large language model) 보조</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">처음 보는 오류만 요약 · 후보 조치 제안 → 사람이 승인</div>
+    </div>
+    <div style="background:#111827;border:1px solid #2d3748;border-left:2px solid #f87171;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#f87171;">무한 루프 방지</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">조치 이력과 재시도 횟수를 DB에 기록 · 재시도 상한 설정</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="실패 유형별 처방" data-screen-label="18" data-speaker-notes="앞 장의 규칙표를 플랫폼이 실제로 쓰는 분류로 본다. 실패는 먼저 분류하고, 분류마다 다른 처방을 쓴다. 표의 다섯 줄은 DECISION_RULES R6(SSOT contracts/policies/failure.py), 마지막 줄은 층상 캠페인 E08. overlap_instability의 재실패 처리(2차 Δt 절반)는 failure.py RetryPolicy의 재시도 순서(change_seed → reduce_dt, 최대 2회)로, 앞 장 lost atoms 줄과 같은 규칙. 결정론적 실패에 시드 재시도를 반복하면 GPU 시간만 소모한다 — 성패가 섞이는 한계선상 실패에서만 재시도가 유효하다(이벤트 로그 교훈 1·2). 근사 파라미터로 우회하지 않고 실패로 남기는 것이 fail-closed(R2). 출처: LAMMPS_Asphalt/docs/DECISION_RULES.md R2·R6, docs/ops/EVENT_LOG_LAYERED_CAMPAIGN.md §2·E08·E17." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:26px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">5-2 · FAILURE RULES</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">실패 분류 우선 · 분류별 다른 처방</h2>
+  <div style="display:grid;grid-template-columns:1.05fr 1.2fr 0.95fr;background:#0c1222;border:1px solid #1f2937;border-radius:12px;overflow:hidden;">
+    <div style="padding:14px 30px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;">실패 분류</div>
+    <div style="padding:14px 30px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;">로그에 보이는 신호</div>
+    <div style="padding:14px 30px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;">자동 처방</div>
+    <div style="padding:14px 30px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#f87171;border-bottom:1px solid #1f2937;">overlap_instability</div>
+    <div style="padding:14px 30px;font-size:26px;color:#94a3b8;border-bottom:1px solid #1f2937;">SHAKE 실패 · Lost atoms · Bond atoms missing</div>
+    <div style="padding:14px 30px;font-size:26px;color:#f1f5f9;border-bottom:1px solid #1f2937;">시드 변경 (재실패 시 Δt 절반)</div>
+    <div style="padding:14px 30px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#facc15;border-bottom:1px solid #1f2937;">pressure_blowup</div>
+    <div style="padding:14px 30px;font-size:26px;color:#94a3b8;border-bottom:1px solid #1f2937;">압력 NaN · Inf · 발산</div>
+    <div style="padding:14px 30px;font-size:26px;color:#f1f5f9;border-bottom:1px solid #1f2937;">Δt 절반</div>
+    <div style="padding:14px 30px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#facc15;border-bottom:1px solid #1f2937;">energy_drift</div>
+    <div style="padding:14px 30px;font-size:26px;color:#94a3b8;border-bottom:1px solid #1f2937;">총에너지 표류</div>
+    <div style="padding:14px 30px;font-size:26px;color:#f1f5f9;border-bottom:1px solid #1f2937;">Δt 절반</div>
+    <div style="padding:14px 30px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;border-bottom:1px solid #1f2937;">qeq_divergence</div>
+    <div style="padding:14px 30px;font-size:26px;color:#94a3b8;border-bottom:1px solid #1f2937;">QEq 전하 평형 발산</div>
+    <div style="padding:14px 30px;font-size:26px;color:#f1f5f9;border-bottom:1px solid #1f2937;">Δt 축소 또는 실패 처리</div>
+    <div style="padding:14px 30px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#fb923c;border-bottom:1px solid #1f2937;">packing_overlap_suspected</div>
+    <div style="padding:14px 30px;font-size:26px;color:#94a3b8;border-bottom:1px solid #1f2937;">초기 패킹 겹침 의심</div>
+    <div style="padding:14px 30px;font-size:26px;color:#f1f5f9;border-bottom:1px solid #1f2937;">시드 변경 + 재빌드</div>
+    <div style="padding:14px 30px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#60a5fa;border-bottom:1px solid #1f2937;">PPPM out of range</div>
+    <div style="padding:14px 30px;font-size:26px;color:#94a3b8;border-bottom:1px solid #1f2937;">층상 셀 · 원자가 진공 밖으로</div>
+    <div style="padding:14px 30px;font-size:26px;color:#f1f5f9;border-bottom:1px solid #1f2937;">진공 확대 (사례 1)</div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+    <div style="background:#0c1222;border:1px solid #1f2937;border-left:3px solid #f87171;border-radius:12px;padding:24px 30px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;letter-spacing:0.06em;color:#f87171;">재시도 남발 금지</div>
+      <div style="font-size:26px;color:#cbd5e1;line-height:1.45;">결정론적(deterministic) 실패는 시드 변경 후에도 같은 곳에서 중단 — 재시도는 성패가 섞이는 한계선상 실패에만 유효</div>
+    </div>
+    <div style="background:#0c1222;border:1px solid #1f2937;border-left:3px solid #4ade80;border-radius:12px;padding:24px 30px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;letter-spacing:0.06em;color:#4ade80;">fail-closed · 실패 시 차단</div>
+      <div style="font-size:26px;color:#cbd5e1;line-height:1.45;">힘장 생성이 실패하면 근사 파라미터로 우회하지 않고 실패로 기록 → 사람이 검토</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="사례 1 진공 단계 확대" data-screen-label="19" data-speaker-notes="플랫폼 층상 직접인장 캠페인(결정 3종 × 바인더 18종 × 온도 × 인장률)의 실제 사고 E08. 평형 시대의 진공 40 Å는 인장 당김거리를 감당하지 못해 PPPM out of range로 멈췄다. SiO₂는 계통 실패 29조합 후 사후 교체, Al₂O₃는 한계선상(같은 부모도 성패 혼재)이라 실패 조합만 선별 승격, Fe₂O₃는 착수 전 전량 선제 전환. 결과가 표준값 X1=60 Å, X3=80 Å로 확정됐다. Bond atoms missing(E17)은 패킹 접촉 문제라 처방이 시드 변경 — 에러 문자열로 구분한다. 출처: LAMMPS_Asphalt/docs/ops/EVENT_LOG_LAYERED_CAMPAIGN.md §1·§2(교훈 1·8)·E08·E17." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:30px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">5-2 · CASE 1 · VACUUM</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">사례 1 — 진공 부족 시 PPPM 중단</h2>
+    <div style="font-size:30px;color:#94a3b8;line-height:1.45;">층상 인장 캠페인 · 증상 <span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f87171;">PPPM out of range</span> · 원인 — 평형용 진공 40 Å < 인장 당김거리 · PPPM = particle–particle particle–mesh</div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:28px 32px;display:flex;flex-direction:column;gap:12px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#f87171;">SiO₂ · 사후 대응</div>
+      <div style="font-size:28px;color:#cbd5e1;line-height:1.45;">계통 실패 29조합 누적 후 진공을 60 Å로 교체</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:28px 32px;display:flex;flex-direction:column;gap:12px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#facc15;">Al₂O₃ · 선별 승격</div>
+      <div style="font-size:28px;color:#cbd5e1;line-height:1.45;">40 Å에서 실패 38% · 같은 부모도 성패가 섞이는 한계선상 → 실패한 조합만 자동으로 60 Å 승격</div>
+    </div>
+    <div style="background:#111827;border:1px solid #2d3748;border-radius:12px;padding:28px 32px;display:flex;flex-direction:column;gap:12px;box-shadow:0 0 20px rgba(59,130,246,0.15);">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#4ade80;">Fe₂O₃ · 선제 적용</div>
+      <div style="font-size:28px;color:#cbd5e1;line-height:1.45;">같은 결정 구조인 Al₂O₃의 실패율을 예상해 착수 전 전량 60 Å로 전환</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-left:3px solid #60a5fa;border-radius:12px;padding:24px 30px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;letter-spacing:0.06em;color:#60a5fa;">결과 — 규칙을 표준값으로 확정</div>
+      <div style="font-size:28px;color:#cbd5e1;line-height:1.45;">진공 표준 X1 = 60 Å · X3 = 80 Å — 다음 캠페인은 첫 스택부터 이 값으로 생성</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:3px solid #a78bfa;border-radius:12px;padding:24px 30px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;letter-spacing:0.06em;color:#a78bfa;">혼동 주의</div>
+      <div style="font-size:28px;color:#cbd5e1;line-height:1.45;"><span style="font-family:'JetBrains Mono',monospace;font-size:24px;">Bond atoms missing</span>은 패킹 접촉 문제 → 처방은 시드 변경 · 에러 문자열로 구분</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="사례 2 원인 분석과 3단계 대응" data-screen-label="20" data-speaker-notes="같은 실패가 반복될 때의 사례 E38. 무첨가 부모 한 건이 어닐 램프에서 Bond atoms missing으로 3연속 실패했고 매번 다른 스텝에서 멈췄다. 재시도가 무력했던 이유: layered 부모의 velocity seed가 exp_id·attempt와 무관한 상수였다. 프레임별 원인 분석에서 바인더 필름 중앙 높이(p50-z)가 등가속으로 떠올랐다 — 서모스탯이 질량중심 병진을 가열하는 flying ice cube의 특징적 징후. 수정은 layered 부모 평형 NVT에 한정해 z 방향 질량중심 운동을 매 스텝 제거(fix momentum). 같은 조립에서 변경은 이것뿐이라 인과가 확정됐다. 이후 E39로 3단계 대응 절차를 표준화. 출처: LAMMPS_Asphalt/docs/ops/EVENT_LOG_LAYERED_CAMPAIGN.md E38·E38-후속3·후속4·후속5·E39." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:26px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">5-2 · CASE 2 · ROOT CAUSE</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">사례 2 — 같은 실패 반복 시 재시도 중단 · 원인 분석</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:stretch;">
+    <div style="display:flex;flex-direction:column;gap:20px;">
+    <div style="background:#0c1222;border:1px solid #1f2937;border-left:3px solid #f87171;border-radius:12px;padding:24px 30px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;letter-spacing:0.06em;color:#f87171;">증상</div>
+      <div style="font-size:26px;color:#cbd5e1;line-height:1.45;">어닐 램프에서 <span style="font-family:'JetBrains Mono',monospace;font-size:24px;">Bond atoms missing</span> 3연속 · 멈춘 스텝이 매번 다름 · 재시도의 속도 시드가 사실상 상수여서 같은 조건 반복</div>
+    </div>
+    <div style="background:#0c1222;border:1px solid #1f2937;border-left:3px solid #facc15;border-radius:12px;padding:24px 30px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;letter-spacing:0.06em;color:#facc15;">원인 분석 · 필름 높이 추적</div>
+      <div style="font-size:26px;color:#cbd5e1;line-height:1.45;">필름이 등가속으로 부상 → 서모스탯(thermostat)이 질량중심 병진운동을 증폭하는 <span style="color:#8ec0ff;">flying ice cube 인공물(artifact)</span></div>
+    </div>
+    <div style="background:#0c1222;border:1px solid #1f2937;border-left:3px solid #4ade80;border-radius:12px;padding:24px 30px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;letter-spacing:0.06em;color:#4ade80;">수정 · 층상 부모 평형 NVT 한정</div>
+      <div style="font-size:26px;color:#cbd5e1;line-height:1.45;"><span style="font-family:'JetBrains Mono',monospace;font-size:24px;">fix momentum 1 linear 0 0 1</span> — z 방향 질량중심 운동을 매 스텝 제거</div>
+    </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:20px;">
+      <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:24px 30px;display:flex;flex-direction:column;gap:12px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;letter-spacing:0.06em;color:#60a5fa;">검증 · 같은 조립, 필름 중앙 높이 (Å)</div>
+        <div style="display:grid;grid-template-columns:0.8fr 1fr 1fr;gap:8px 20px;font-family:'JetBrains Mono',monospace;font-size:26px;">
+          <span style="font-size:24px;color:#64748b;">스텝</span><span style="font-size:24px;color:#64748b;">수정 전</span><span style="font-size:24px;color:#64748b;">수정 후</span>
+          <span style="color:#94a3b8;">10k</span><span style="color:#f87171;">185.5</span><span style="color:#4ade80;">174.1</span>
+          <span style="color:#94a3b8;">20k</span><span style="color:#f87171;">200.7</span><span style="color:#4ade80;">174.2</span>
+          <span style="color:#94a3b8;">30k</span><span style="color:#f87171;">222.5</span><span style="color:#4ade80;">174.1</span>
+          <span style="color:#94a3b8;">40k</span><span style="color:#f87171;">251.1</span><span style="color:#4ade80;">174.2</span>
+        </div>
+      </div>
+      <div style="background:#0c1222;border:1px solid #2d3748;border-radius:12px;padding:24px 30px;display:flex;flex-direction:column;gap:12px;flex:1;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;letter-spacing:0.06em;color:#a78bfa;">표준 3단계 대응 · 반복 실패 시</div>
+        <div style="display:flex;gap:16px;align-items:baseline;"><span style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#599eff;">1</span><span style="font-size:26px;color:#cbd5e1;line-height:1.4;">정규 재시도 — 수정이 렌더됐는지 먼저 확인</span></div>
+        <div style="display:flex;gap:16px;align-items:baseline;"><span style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#8ec0ff;">2</span><span style="font-size:26px;color:#cbd5e1;line-height:1.4;">조립 미세변경 — 새 좌표로 다른 궤적 생성</span></div>
+        <div style="display:flex;gap:16px;align-items:baseline;"><span style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#a5b4fc;">3</span><span style="font-size:26px;color:#cbd5e1;line-height:1.4;">원인 분석 후 물리 진단 — 새 기전이면 새 규칙 추가</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="[5-3] 섹션" data-screen-label="21" data-speaker-notes="세 번째 차시 14분." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:100px;display:flex;flex-direction:column;justify-content:center;gap:40px;">
+  <div style="width:200px;height:6px;background:linear-gradient(135deg,#3377ff,#8b5cf6);border-radius:999px;"></div>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:120px;color:#1f2937;font-weight:700;line-height:1;">5-3</div>
+  <h2 style="font-size:68px;font-weight:700;letter-spacing:-0.02em;margin:0;line-height:1.1;">FF-neutral 토폴로지 설계</h2>
+  <p style="font-size:32px;color:#94a3b8;margin:0;">14분 · 힘장에 묶이지 않는 구조 표현</p>
+</section>
+
+<section data-label="FF-neutral" data-screen-label="22" data-speaker-notes="구조와 파라미터를 분리한다. 힘장 교체가 재빌드 없이 가능해진다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:20px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">5-3 · FF-NEUTRAL</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">구조와 파라미터의 분리</h2>
+  <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:14px 24px;">
+    <svg viewBox="0 0 1480 200" style="width:100%;height:auto;">
+      <rect x="40" y="40" width="420" height="110" rx="10" fill="#0c1222" stroke="#34d399" stroke-width="2"></rect>
+      <text x="250" y="82" fill="#4ade80" font-size="27" font-family="JetBrains Mono, monospace" text-anchor="middle">중립 토폴로지</text>
+      <text x="250" y="118" fill="#94a3b8" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle">원소 · 결합 · 좌표 · 분자 소속</text>
+      <line x1="460" y1="95" x2="540" y2="95" stroke="#475569" stroke-width="3"></line>
+      <polygon points="554,95 536,86 536,104" fill="#475569"></polygon>
+      <rect x="570" y="14" width="380" height="76" rx="10" fill="#0c1222" stroke="#3377ff" stroke-width="2"></rect>
+      <text x="760" y="60" fill="#8ec0ff" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">GAFF2 타이핑 · 전하</text>
+      <rect x="570" y="104" width="380" height="76" rx="10" fill="#0c1222" stroke="#8b5cf6" stroke-width="2"></rect>
+      <text x="760" y="150" fill="#a78bfa" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">ClayFF · COMPASS 타이핑</text>
+      <line x1="950" y1="52" x2="1030" y2="80" stroke="#475569" stroke-width="3"></line>
+      <line x1="950" y1="142" x2="1030" y2="112" stroke="#475569" stroke-width="3"></line>
+      <rect x="1050" y="50" width="390" height="92" rx="10" fill="#0c1222" stroke="#f59e0b" stroke-width="2"></rect>
+      <text x="1245" y="90" fill="#facc15" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">힘장별 data + ff include</text>
+      <text x="1245" y="124" fill="#94a3b8" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle">구조는 그대로 · 파라미터만 교체</text>
+    </svg>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #4ade80;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#4ade80;">담는 정보</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">원소 · 결합 차수 · 좌표 · 분자 ID — 힘장 타입 번호는 담지 않음</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #8ec0ff;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#8ec0ff;">얻는 것</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">구조 재생성 없이 힘장 비교 실험 가능</div>
+    </div>
+    <div style="background:#111827;border:1px solid #2d3748;border-left:2px solid #facc15;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#facc15;">기록</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">같은 구조 해시 + 다른 힘장 해시로 두 실행을 묶어 비교</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="중립 토폴로지 가시화 (1/2)" data-screen-label="23" data-speaker-notes="중립 토폴로지가 실제로 무엇을 담는지 분자 하나로 보여준다. 원소 · 좌표 · 결합 차수만 있고 힘장 타입과 전하는 없다. 같은 기록에서 두 힘장의 타이핑이 각각 나온다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:34px 80px 22px;display:flex;flex-direction:column;gap:18px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#4ade80;">5-3 · NEUTRAL TOPOLOGY · 1 / 2</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">중립 토폴로지의 내용 — 원소 · 좌표 · 결합</h2>
+  <div style="background:#111827;border:1px solid #1f2937;border-left:3px solid #34d399;border-radius:12px;padding:16px 26px;display:flex;align-items:center;gap:26px;">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#4ade80;letter-spacing:0.08em;">의미</span>
+    <span style="font-size:26px;color:#cbd5e1;line-height:1.4;flex:1;">data 파일은 힘장에 종속 · 그 앞단의 <span style="color:#f1f5f9;">구조 기록은 힘장과 무관</span> — 원소 · 좌표 · 결합 차수만 남기면 같은 구조에서 GAFF2 · COMPASS 입력을 각각 생성 가능</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start;">
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:16px 20px;display:flex;flex-direction:column;gap:8px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#64748b;letter-spacing:0.08em;">메틸페놀 단분자 · 기록된 원자와 결합</div>
+      <svg viewBox="0 0 780 560" style="width:100%;height:auto;">
+        <g stroke="#64748b" stroke-width="4">
+          <line x1="383.4" y1="163.5" x2="431.6" y2="191.5"></line>
+          <line x1="455.0" y1="232.0" x2="455.0" y2="288.0"></line>
+          <line x1="431.6" y1="328.5" x2="383.4" y2="356.5"></line>
+          <line x1="336.6" y1="356.5" x2="288.4" y2="328.5"></line>
+          <line x1="265.0" y1="288.0" x2="265.0" y2="232.0"></line>
+          <line x1="288.4" y1="191.5" x2="336.6" y2="163.5"></line>
+          <line x1="360.0" y1="123.0" x2="360.0" y2="97.0"></line>
+          <line x1="384.1" y1="57.9" x2="411.4" y2="44.3"></line>
+          <line x1="360.0" y1="397.0" x2="360.0" y2="443.0"></line>
+          <line x1="478.9" y1="192.5" x2="524.6" y2="168.6"></line>
+          <line x1="478.9" y1="327.5" x2="524.6" y2="351.4"></line>
+          <line x1="241.1" y1="327.5" x2="195.4" y2="351.4"></line>
+          <line x1="241.1" y1="192.5" x2="195.4" y2="168.6"></line>
+        </g>
+        <circle cx="360" cy="260" r="62" fill="none" stroke="#475569" stroke-width="3" stroke-dasharray="7 8"></circle>
+
+        <g stroke="#0c1222" stroke-width="2">
+          <circle cx="360" cy="150" r="26" fill="#94a3b8"></circle>
+          <circle cx="455" cy="205" r="26" fill="#94a3b8"></circle>
+          <circle cx="455" cy="315" r="26" fill="#94a3b8"></circle>
+          <circle cx="360" cy="370" r="26" fill="#94a3b8"></circle>
+          <circle cx="265" cy="315" r="26" fill="#94a3b8"></circle>
+          <circle cx="265" cy="205" r="26" fill="#94a3b8"></circle>
+          <circle cx="360" cy="470" r="26" fill="#94a3b8"></circle>
+          <circle cx="360" cy="70" r="26" fill="#f87171"></circle>
+          <circle cx="432" cy="34" r="22" fill="#e2e8f0"></circle>
+          <circle cx="545" cy="158" r="22" fill="#e2e8f0"></circle>
+          <circle cx="545" cy="362" r="22" fill="#e2e8f0"></circle>
+          <circle cx="175" cy="362" r="22" fill="#e2e8f0"></circle>
+          <circle cx="175" cy="158" r="22" fill="#e2e8f0"></circle>
+        </g>
+        <g fill="#0c1222" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="700">
+          <text x="360" y="159">C</text>
+          <text x="455" y="214">C</text>
+          <text x="455" y="324">C</text>
+          <text x="360" y="379">C</text>
+          <text x="265" y="324">C</text>
+          <text x="265" y="214">C</text>
+          <text x="360" y="479">C</text>
+          <text x="360" y="79">O</text>
+          <text x="432" y="43">H</text>
+          <text x="545" y="167">H</text>
+          <text x="545" y="371">H</text>
+          <text x="175" y="371">H</text>
+          <text x="175" y="167">H</text>
+        </g>
+        <g fill="#8ec0ff" font-size="24" font-family="JetBrains Mono, monospace">
+          <text x="316" y="140">1</text>
+          <text x="316" y="60">7</text>
+          <text x="464" y="26">8</text>
+          <text x="298" y="510">13</text>
+        </g>
+        <text x="360" y="266" fill="#94a3b8" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle">1.5</text>
+        <text x="620" y="258" fill="#64748b" font-size="24" font-family="JetBrains Mono, monospace">방향족</text>
+        <text x="620" y="292" fill="#64748b" font-size="24" font-family="JetBrains Mono, monospace">= 차수 1.5</text>
+        <g font-size="24" font-family="JetBrains Mono, monospace">
+          <circle cx="60" cy="470" r="14" fill="#94a3b8"></circle>
+          <text x="86" y="479" fill="#94a3b8">C</text>
+          <circle cx="60" cy="510" r="14" fill="#e2e8f0"></circle>
+          <text x="86" y="519" fill="#94a3b8">H</text>
+          <circle cx="150" cy="470" r="14" fill="#f87171"></circle>
+          <text x="176" y="479" fill="#94a3b8">O</text>
+          <circle cx="150" cy="510" r="14" fill="#facc15"></circle>
+          <text x="176" y="519" fill="#94a3b8">S</text>
+        </g>
+      </svg>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:8px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#64748b;letter-spacing:0.08em;">topology.json · 같은 분자의 기록 (발췌)</div>
+        <div style="white-space:pre-wrap;font-family:'JetBrains Mono',monospace;font-size:24px;line-height:1.4;color:#4ade80;">atoms:
+  - id: 1   el: C  xyz: [12.40, 8.12, 3.61]  mol: 57
+  - id: 7   el: O  xyz: [11.18, 8.83, 3.55]  mol: 57
+  - id: 8   el: H  xyz: [10.42, 8.31, 3.49]  mol: 57
+  - id: 13  el: C  xyz: [13.05, 5.94, 3.72]  mol: 57
+bonds:
+  - [1, 2, 1.5]    # 방향족 고리
+  - [1, 7, 1.0]    # C-O
+  - [7, 8, 1.0]    # O-H
+  - [4, 13, 1.0]   # C-CH3</div>
+        <div style="font-size:24px;color:#facc15;line-height:1.4;">없는 것 — 타입 번호 · 전하 q · ε · σ · special_bonds</div>
+      </div>
+  </div>
+</section>
+
+<section data-label="중립 토폴로지 가시화 (2/2)" data-screen-label="24" data-speaker-notes="[분할] 앞 장에서 이어짐. 같은 원자가 힘장마다 어떤 타입으로 번역되는지 짚는다. 중립 토폴로지가 실제로 무엇을 담는지 분자 하나로 보여준다. 원소 · 좌표 · 결합 차수만 있고 힘장 타입과 전하는 없다. 같은 기록에서 두 힘장의 타이핑이 각각 나온다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:34px 80px 22px;display:flex;flex-direction:column;gap:18px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#4ade80;">5-3 · NEUTRAL TOPOLOGY · 2 / 2</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">같은 원자, 힘장마다 다른 타입 — GAFF2 · COMPASS</h2>
+  <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;display:grid;grid-template-columns:0.5fr 1.15fr 1fr 1fr;overflow:hidden;align-content:start;">
+        <div style="padding:10px 18px;font-family:'JetBrains Mono',monospace;font-size:28px;color:#599eff;background:#0c1222;">id</div>
+        <div style="padding:10px 18px;font-family:'JetBrains Mono',monospace;font-size:28px;color:#599eff;background:#0c1222;">원소 · 환경</div>
+        <div style="padding:10px 18px;font-family:'JetBrains Mono',monospace;font-size:28px;color:#599eff;background:#0c1222;">GAFF2 타입</div>
+        <div style="padding:10px 18px;font-family:'JetBrains Mono',monospace;font-size:28px;color:#599eff;background:#0c1222;">COMPASS 타입</div>
+
+        <div style="padding:9px 18px;font-family:'JetBrains Mono',monospace;font-size:28px;color:#8ec0ff;border-top:1px solid rgba(51,65,85,0.5);">1</div>
+        <div style="padding:9px 18px;font-size:28px;color:#94a3b8;border-top:1px solid rgba(51,65,85,0.5);">C · 방향족 고리</div>
+        <div style="padding:9px 18px;font-family:'JetBrains Mono',monospace;font-size:28px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">ca</div>
+        <div style="padding:9px 18px;font-family:'JetBrains Mono',monospace;font-size:28px;color:#a78bfa;border-top:1px solid rgba(51,65,85,0.5);">c3a</div>
+
+        <div style="padding:9px 18px;font-family:'JetBrains Mono',monospace;font-size:28px;color:#8ec0ff;border-top:1px solid rgba(51,65,85,0.5);">7</div>
+        <div style="padding:9px 18px;font-size:28px;color:#94a3b8;border-top:1px solid rgba(51,65,85,0.5);">O · 히드록시</div>
+        <div style="padding:9px 18px;font-family:'JetBrains Mono',monospace;font-size:28px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">oh</div>
+        <div style="padding:9px 18px;font-family:'JetBrains Mono',monospace;font-size:28px;color:#a78bfa;border-top:1px solid rgba(51,65,85,0.5);">o2h</div>
+
+        <div style="padding:9px 18px;font-family:'JetBrains Mono',monospace;font-size:28px;color:#8ec0ff;border-top:1px solid rgba(51,65,85,0.5);">8</div>
+        <div style="padding:9px 18px;font-size:28px;color:#94a3b8;border-top:1px solid rgba(51,65,85,0.5);">H · O에 결합</div>
+        <div style="padding:9px 18px;font-family:'JetBrains Mono',monospace;font-size:28px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">ho</div>
+        <div style="padding:9px 18px;font-family:'JetBrains Mono',monospace;font-size:28px;color:#a78bfa;border-top:1px solid rgba(51,65,85,0.5);">h1o</div>
+
+        <div style="padding:9px 18px;font-family:'JetBrains Mono',monospace;font-size:28px;color:#8ec0ff;border-top:1px solid #2d3748;">13</div>
+        <div style="padding:9px 18px;font-size:28px;color:#94a3b8;border-top:1px solid #2d3748;">C · 메틸 sp³</div>
+        <div style="padding:9px 18px;font-family:'JetBrains Mono',monospace;font-size:28px;color:#cbd5e1;border-top:1px solid #2d3748;">c3</div>
+        <div style="padding:9px 18px;font-family:'JetBrains Mono',monospace;font-size:28px;color:#a78bfa;border-top:1px solid #2d3748;">c4</div>
+      </div>
+  <div style="background:#111827;border:1px solid #2d3748;border-left:2px solid #8ec0ff;border-radius:12px;padding:14px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-size:28px;color:#94a3b8;line-height:1.4;">원자 좌표와 결합은 한 벌 · 타입 열만 힘장별로 새로 채워 data 파일 두 개 생성 — 구조 해시 동일 · 힘장 해시만 상이 (COMPASS = Condensed-phase Optimized Molecular Potentials for Atomistic Simulation Studies)</div>
+      </div>
+</section>
+
+<section data-label="[5-4] 섹션" data-screen-label="25" data-speaker-notes="마지막 차시 12분. hybrid/overlay 입력 → 힘장 라우팅 → 스택 이름과 검증 수준." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:100px;display:flex;flex-direction:column;justify-content:center;gap:40px;">
+  <div style="width:200px;height:6px;background:linear-gradient(135deg,#3377ff,#8b5cf6);border-radius:999px;"></div>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:120px;color:#1f2937;font-weight:700;line-height:1;">5-4</div>
+  <h2 style="font-size:68px;font-weight:700;letter-spacing:-0.02em;margin:0;line-height:1.1;">다중 힘장 스택 운용</h2>
+  <p style="font-size:32px;color:#94a3b8;margin:0;">12분 · 한 계에 여러 힘장을 쌓을 때 · 라우팅과 스택 라벨</p>
+</section>
+
+<section data-label="다중 힘장" data-screen-label="26" data-speaker-notes="3주차 혼용 조건을 실제 입력으로 옮긴다. 코드 정정(2026-09-22): 이전 예시는 lj/cut/coul/long을 hybrid/overlay로 두 번 써서 같은 쌍의 쿨롱 항이 두 번 더해지는 구조였다. overlay는 하위 스타일의 힘을 모두 합산하므로, 쿨롱은 coul/long 하나로 모든 쌍(* *)에 한 번만 두고, LJ는 힘장별 lj/cut 두 개로 나눠 pair_coeff에 하위 스타일 번호(1 · 2)를 붙인다. 같은 스타일을 두 번 쓰면 번호가 필수(LAMMPS pair_style hybrid 문서). coul/long에는 kspace_style(예: pppm)이 함께 필요하다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:20px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">5-4 · FF STACK</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">hybrid/overlay로 여러 힘장 결합</h2>
+  <div style="display:grid;grid-template-columns:1.15fr 1fr;gap:28px;align-items:start;">
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:24px 28px;display:flex;flex-direction:column;gap:12px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#64748b;letter-spacing:0.08em;">LAMMPS</div>
+      <div style="white-space:pre-wrap;font-family:'JetBrains Mono',monospace;font-size:24px;line-height:1.5;color:#8ec0ff;">pair_style hybrid/overlay &amp;
+     lj/cut 12.0  lj/cut 12.0  coul/long 12.0
+
+pair_coeff * * coul/long         # 쿨롱은 한 번만
+pair_coeff 1 1 lj/cut 1 0.086 3.400
+pair_coeff 5 5 lj/cut 2 0.155 3.166
+pair_coeff 1 5 lj/cut 1 0.116 3.283
+
+special_bonds amber   # 계 전체에 하나만</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #4ade80;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#4ade80;">이종쌍(unlike pair)은 명시</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">3주차 판정에서 "조건부"인 조합은 모든 교차쌍을 직접 기재</div>
+      </div>
+      <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #facc15;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#facc15;">자동 검사</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">생성기가 "정의되지 않은 pair_coeff"를 사전 검출</div>
+      </div>
+      <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #f87171;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#f87171;">불가 조합 차단</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">12-6 + 9-6 처럼 함수 형태가 다른 조합은 생성 단계에서 거부</div>
+      </div>
+      <div style="background:#111827;border:1px solid #2d3748;border-left:2px solid #a78bfa;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;">검증 연결</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">혼용 계는 6주차 물성으로 반드시 검증 후 데이터에 추가</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="힘장 결정론적 라우팅" data-screen-label="27" data-speaker-notes="5-3의 중립 토폴로지를 받은 뒤 분자마다 어느 힘장 경로로 보낼지 정하는 규칙. 분류기(typing_router)가 분자 성격으로 경로를 고르고, 경로에 없는 분자는 막는다. 유기 분자에 UFF·원소 LJ 폴백, 기록 없는 힘장 혼합, 임의 결합 상수는 모두 차단된다(R1). 그림 출처: LAMMPS_Asphalt/docs/figures/fig3_ff_workflow.png. 그림의 inorganic 상자는 &quot;INTERFACE-FF LJ&quot;로 적혀 있으나 이는 라벨 오기이며 실제 Si·O LJ는 ClayFF다(docs/architecture/ff-standard-reference-20260906.md D2·§6·§10.3). 그림의 fragment_fallback은 탄소나노튜브처럼 SCF가 수렴하지 않는 분자에만 남아 research_only로 표시되고 ML에서 제외된다. 규칙 출처: docs/DECISION_RULES.md R1·R2." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:26px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">5-4 · ROUTING</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">분자별 힘장 경로의 규칙 기반 선택</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center;flex:1;">
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="background:#f8fafc;border-radius:12px;padding:16px;">
+        <img src="../assets/w05-ff-routing.png" alt="분자 메타데이터에서 typing_router가 organic · inorganic · water · ionic · unknown 경로를 고르는 힘장 결정 흐름도" style="width:100%;max-height:700px;object-fit:contain;display:block;">
+      </div>
+      <div style="font-size:24px;color:#64748b;">플랫폼 힘장 결정 흐름 · INTERFACE-FF LJ 표기는 라벨 오기 (실제 ClayFF)</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:22px;">
+      <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:28px 32px;display:flex;flex-direction:column;gap:18px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;letter-spacing:0.06em;color:#64748b;">경로 (route) → 적용 힘장</div>
+      <div style="display:flex;gap:22px;align-items:baseline;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#4ade80;width:140px;flex-shrink:0;">organic</span><span style="font-size:26px;color:#cbd5e1;line-height:1.4;">GAFF2(General AMBER Force Field 2) + AM1-BCC(Austin Model 1 – bond charge correction) 전하 · SCF(self-consistent field) 실패 시 sqm_robust 한 번 더</span></div>
+      <div style="display:flex;gap:22px;align-items:baseline;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#60a5fa;width:140px;flex-shrink:0;">inorganic</span><span style="font-size:26px;color:#cbd5e1;line-height:1.4;">ClayFF 전하 · LJ · 유기 쪽과는 L-B(Lorentz–Berthelot) 조합 규칙(combining rule) + PPPM</span></div>
+      <div style="display:flex;gap:22px;align-items:baseline;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#8ec0ff;width:140px;flex-shrink:0;">water</span><span style="font-size:26px;color:#cbd5e1;line-height:1.4;">SPC/E (ClayFF 스택) · TIP3P (순수 유기 스택) · 강체</span></div>
+      <div style="display:flex;gap:22px;align-items:baseline;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#facc15;width:140px;flex-shrink:0;">ionic</span><span style="font-size:26px;color:#cbd5e1;line-height:1.4;">운영자 승인이 있어야 열리는 경로</span></div>
+      <div style="display:flex;gap:22px;align-items:baseline;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f87171;width:140px;flex-shrink:0;">unknown</span><span style="font-size:26px;color:#cbd5e1;line-height:1.4;">blocked — 경로가 없으면 제출 금지</span></div>
+      </div>
+    <div style="background:#0c1222;border:1px solid #1f2937;border-left:3px solid #f87171;border-radius:12px;padding:24px 30px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;letter-spacing:0.06em;color:#f87171;">차단되는 것</div>
+      <div style="font-size:26px;color:#cbd5e1;line-height:1.45;">유기 분자의 UFF · 원소 LJ 폴백 · 기록 없는 힘장 혼합 · 임의 결합 상수</div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="스택 이름과 검증 수준" data-screen-label="28" data-speaker-notes="다중 힘장 계를 배치로 돌릴 때 재현성은 스택 이름과 검증 수준으로 확보한다. 생산 스택 clayff_gaff2_v1은 GAFF2 유기 + ClayFF 무기, 12-6, L-B(mix arithmetic), AM1-BCC, 물 SPC/E, PPPM 1e-4를 한 이름에 묶는다. 결과마다 stack_id를 붙이고, 제출 시점에 검증 수준을 강제한다 — 알 수 없는 스택은 미리보기만 허용(R7). 라벨 사고: inorganic_vdw_family가 실제와 다르게 interface_ff로 기록돼 있었고 clayff로 정정했다 — 논문에 &quot;GAFF2 + INTERFACE FF&quot;로 쓰면 사실과 다르다(§10.3). 출처: LAMMPS_Asphalt/docs/architecture/ff-standard-reference-20260906.md §6·§10.3, docs/DECISION_RULES.md R7." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:26px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">5-4 · STACK REGISTRY</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">스택 = 이름 하나로 관리 · 결과마다 스택 이름 기록</h2>
+  <div style="background:#111827;border:1px solid #2d3748;border-left:3px solid #599eff;border-radius:12px;padding:24px 30px;display:flex;flex-direction:column;gap:10px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:24px;letter-spacing:0.06em;color:#599eff;">생산 스택 clayff_gaff2_v1</div>
+    <div style="font-size:28px;color:#cbd5e1;line-height:1.45;">GAFF2 유기 + ClayFF 무기 · 12-6 · Lorentz–Berthelot · AM1-BCC · 물 SPC/E · PPPM 1e-4</div>
+  </div>
+  <div style="display:grid;grid-template-columns:1.5fr 1fr 0.8fr;background:#111827;border:1px solid #1f2937;border-radius:12px;overflow:hidden;">
+    <div style="padding:14px 30px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;">결과에 붙는 stack_id</div>
+    <div style="padding:14px 30px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;">쓰는 곳</div>
+    <div style="padding:14px 30px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;">검증 수준</div>
+    <div style="padding:14px 30px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#cbd5e1;border-bottom:1px solid #1f2937;">gaff2_am1bcc_v1</div>
+    <div style="padding:14px 30px;font-size:26px;color:#94a3b8;border-bottom:1px solid #1f2937;">벌크 · 단분자</div>
+    <div style="padding:14px 30px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#4ade80;border-bottom:1px solid #1f2937;">validated</div>
+    <div style="padding:14px 30px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#cbd5e1;border-bottom:1px solid #1f2937;">gaff2_org__inorganic_profile__arith_v1</div>
+    <div style="padding:14px 30px;font-size:26px;color:#94a3b8;border-bottom:1px solid #1f2937;">층상 (유기 + 무기)</div>
+    <div style="padding:14px 30px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#facc15;border-bottom:1px solid #1f2937;">research_only</div>
+    <div style="padding:14px 30px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#cbd5e1;border-bottom:1px solid #1f2937;">reaxff_v1</div>
+    <div style="padding:14px 30px;font-size:26px;color:#94a3b8;border-bottom:1px solid #1f2937;">반응성 검증 레인</div>
+    <div style="padding:14px 30px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#facc15;border-bottom:1px solid #1f2937;">research_only</div>
+    <div style="padding:14px 30px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#cbd5e1;border-bottom:1px solid #1f2937;">pcff_iff_v1</div>
+    <div style="padding:14px 30px;font-size:26px;color:#94a3b8;border-bottom:1px solid #1f2937;">9-6 · sixth-power 계열</div>
+    <div style="padding:14px 30px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#f87171;border-bottom:1px solid #1f2937;">미구현 · 차단</div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-left:3px solid #4ade80;border-radius:12px;padding:24px 30px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;letter-spacing:0.06em;color:#4ade80;">제출 게이트</div>
+      <div style="font-size:26px;color:#cbd5e1;line-height:1.45;">validated · research_only · blocked 중 하나 · 모르는 스택은 미리보기만 — 제출 시점에 코드가 강제</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:3px solid #fb923c;border-radius:12px;padding:24px 30px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;letter-spacing:0.06em;color:#fb923c;">라벨 사고</div>
+      <div style="font-size:26px;color:#cbd5e1;line-height:1.45;">무기 LJ 계열이 interface_ff로 잘못 기록 → clayff로 정정 · 라벨 오류 → 논문의 방법 서술 오류</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="실습 안내" data-screen-label="29" data-speaker-notes="실습: 생성기 만들기." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:28px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">PRACTICE</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">실습 · 입력 자동 생성기</h2>
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:32px;">
+    <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:32px 36px;display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#64748b;letter-spacing:0.1em;">PRACTICE</div>
+      <div style="display:flex;gap:20px;"><span style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#599eff;width:50px;">01</span><span style="font-size:26px;color:#94a3b8;line-height:1.45;flex:1;">spec.yaml → in · data · ff 를 만드는 생성기를 작성</span></div>
+      <div style="display:flex;gap:20px;"><span style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#599eff;width:50px;">02</span><span style="font-size:26px;color:#94a3b8;line-height:1.45;flex:1;">온도 3 × 시드 3 조합을 자동 전개하고 실험 ID 부여</span></div>
+      <div style="display:flex;gap:20px;"><span style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#599eff;width:50px;">03</span><span style="font-size:26px;color:#94a3b8;line-height:1.45;flex:1;">일부러 Δt를 크게 만든 실행을 넣어 자기교정 규칙을 시험</span></div>
+      <div style="display:flex;gap:20px;"><span style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;width:50px;">04</span><span style="font-size:26px;color:#94a3b8;line-height:1.45;flex:1;">같은 중립 토폴로지로 두 힘장 입력을 뽑아 비교</span></div>
+    </div>
+    <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:32px 36px;display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#64748b;letter-spacing:0.1em;">DELIVERABLE</div>
+      <div style="font-size:26px;color:#94a3b8;line-height:1.5;">생성기 코드 · spec 예제 · 생성된 실행 패키지 목록</div>
+      <div style="font-size:26px;color:#94a3b8;line-height:1.5;">자기교정 규칙표와 적용 로그</div>
+      <div style="border-top:1px solid #1f2937;padding-top:18px;font-size:24px;color:#64748b;line-height:1.45;">6주차 이후 물성 계산은 모두 이 생성기로 만든 입력 사용</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:24px;"><span style="font-size:26px;padding:12px 26px;border-radius:999px;background:rgba(59,130,246,0.20);color:#60a5fa;border:1px solid rgba(59,130,246,0.30);font-family:'JetBrains Mono',monospace;">퀴즈 5주차</span></div>
+</section>
+
+<section data-label="설치 · 실행 순서도" data-screen-label="30" data-speaker-notes="실습 진행 순서를 순서도로 본다. 각 단계가 왜 그 자리에 있는지, 무엇을 산출하는지, 실패하면 어떤 단계로 돌아가는지가 핵심." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:40px 80px 28px;display:flex;flex-direction:column;gap:20px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">PRACTICE · ORDER OF OPERATIONS</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">실습 순서도 — 설치에서 큐 제출까지</h2>
+  <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:14px 20px;">
+    <svg viewBox="0 0 1760 330" style="width:100%;height:auto;">
+      <g fill="#0c1222" stroke="#3377ff" stroke-width="2">
+        <circle cx="144" cy="32" r="19"></circle>
+        <circle cx="442" cy="32" r="19"></circle>
+        <circle cx="740" cy="32" r="19"></circle>
+        <circle cx="1038" cy="32" r="19"></circle>
+        <circle cx="1336" cy="32" r="19"></circle>
+        <circle cx="1634" cy="32" r="19"></circle>
+      </g>
+      <g fill="#8ec0ff" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle">
+        <text x="144" y="41">1</text>
+        <text x="442" y="41">2</text>
+        <text x="740" y="41">3</text>
+        <text x="1038" y="41">4</text>
+        <text x="1336" y="41">5</text>
+        <text x="1634" y="41">6</text>
+      </g>
+
+      <rect x="20" y="64" width="248" height="148" rx="12" fill="#0c1222" stroke="#3377ff" stroke-width="2"></rect>
+      <text x="144" y="106" fill="#8ec0ff" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">LAMMPS 빌드</text>
+      <text x="144" y="146" fill="#94a3b8" font-size="24" text-anchor="middle">패키지 포함 확인</text>
+      <text x="144" y="180" fill="#64748b" font-size="24" text-anchor="middle">엔진이 먼저</text>
+
+      <rect x="318" y="64" width="248" height="148" rx="12" fill="#0c1222" stroke="#6366f1" stroke-width="2"></rect>
+      <text x="442" y="106" fill="#a5b4fc" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">빌더 환경</text>
+      <text x="442" y="146" fill="#94a3b8" font-size="24" text-anchor="middle">conda 환경 · 종속성</text>
+      <text x="442" y="180" fill="#64748b" font-size="24" text-anchor="middle">입력을 만들 도구</text>
+
+      <rect x="616" y="64" width="248" height="148" rx="12" fill="#0c1222" stroke="#34d399" stroke-width="2"></rect>
+      <text x="740" y="106" fill="#4ade80" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">명세 → 생성</text>
+      <text x="740" y="146" fill="#94a3b8" font-size="24" text-anchor="middle">in · data · ff · meta</text>
+      <text x="740" y="180" fill="#64748b" font-size="24" text-anchor="middle">실행 패키지 산출</text>
+
+      <rect x="914" y="64" width="248" height="148" rx="12" fill="#0c1222" stroke="#f59e0b" stroke-width="2"></rect>
+      <text x="1038" y="106" fill="#facc15" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">정합성 점검</text>
+      <text x="1038" y="146" fill="#94a3b8" font-size="24" text-anchor="middle">gen.check</text>
+      <text x="1038" y="180" fill="#64748b" font-size="24" text-anchor="middle">실행 전 사전 검사</text>
+
+      <rect x="1212" y="64" width="248" height="148" rx="12" fill="#0c1222" stroke="#8b5cf6" stroke-width="2"></rect>
+      <text x="1336" y="106" fill="#a78bfa" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">시험 실행</text>
+      <text x="1336" y="146" fill="#94a3b8" font-size="24" text-anchor="middle">1000스텝 · 4코어</text>
+      <text x="1336" y="180" fill="#64748b" font-size="24" text-anchor="middle">짧은 사전 실행</text>
+
+      <rect x="1510" y="64" width="248" height="148" rx="12" fill="#0c1222" stroke="#2d3748" stroke-width="2"></rect>
+      <text x="1634" y="106" fill="#cbd5e1" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">큐 제출</text>
+      <text x="1634" y="146" fill="#94a3b8" font-size="24" text-anchor="middle">sbatch run.sh</text>
+      <text x="1634" y="180" fill="#64748b" font-size="24" text-anchor="middle">본 실행 · 재현 기록</text>
+
+      <g stroke="#475569" stroke-width="3">
+        <line x1="274" y1="138" x2="298" y2="138"></line>
+        <line x1="572" y1="138" x2="596" y2="138"></line>
+        <line x1="870" y1="138" x2="894" y2="138"></line>
+        <line x1="1168" y1="138" x2="1192" y2="138"></line>
+        <line x1="1466" y1="138" x2="1490" y2="138"></line>
+      </g>
+      <g fill="#475569">
+        <path d="M298 130 L314 138 L298 146 Z"></path>
+        <path d="M596 130 L612 138 L596 146 Z"></path>
+        <path d="M894 130 L910 138 L894 146 Z"></path>
+        <path d="M1192 130 L1208 138 L1192 146 Z"></path>
+        <path d="M1490 130 L1506 138 L1490 146 Z"></path>
+      </g>
+
+      <path d="M1336 212 V272 H740 V218" fill="none" stroke="#f87171" stroke-width="2.5" stroke-dasharray="7 7"></path>
+      <path d="M732 218 L740 200 L748 218 Z" fill="#f87171"></path>
+      <text x="1038" y="306" fill="#f87171" font-size="24" text-anchor="middle">시험 실행 · 점검 실패 시 명세 수정 후 생성 단계로 복귀 — 생성된 파일 직접 수정 금지</text>
+    </svg>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #8ec0ff;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#8ec0ff;">순서의 이유</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">엔진 없이는 생성물 검사 불가 · 점검 없이 실행하면 대기열 시간 낭비</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #4ade80;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#4ade80;">단계마다 산출물</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">1 lmp 실행파일 · 2 conda 환경 · 3 실행 패키지 · 4 점검 보고서 · 5 test.log · 6 작업 ID</div>
+    </div>
+    <div style="background:#111827;border:1px solid #2d3748;border-left:2px solid #f87171;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#f87171;">실패 상황 대응</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">모든 수정은 명세에서 수행 · 생성물 직접 수정 시 해시 불일치 → 재현 불가</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="종속성 설치 (1/2)" data-screen-label="31" data-speaker-notes="설치하는 것만으로는 부족하다. 각 종속성이 파이프라인의 어떤 단계를 맡아 왜 뺄 수 없는지를 구체적인 이유와 함께 기억하게 한다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:34px 80px 22px;display:flex;flex-direction:column;gap:18px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#a5b4fc;">PRACTICE · DEPENDENCIES · 1 / 2</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">종속성(dependency) — 설치 항목과 이유</h2>
+  <div style="display:flex;flex-direction:column;gap:18px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;display:grid;grid-template-columns:0.85fr 1.05fr 1.5fr 1.15fr;overflow:hidden;align-content:start;">
+      <div style="padding:10px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#599eff;background:#0c1222;">종속성</div>
+      <div style="padding:10px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#599eff;background:#0c1222;">기능</div>
+      <div style="padding:10px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#599eff;background:#0c1222;">없으면 생기는 일</div>
+      <div style="padding:10px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#599eff;background:#0c1222;">확인 명령</div>
+
+      <div style="padding:9px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#8ec0ff;border-top:1px solid rgba(51,65,85,0.5);">LAMMPS</div>
+      <div style="padding:9px 20px;font-size:24px;color:#94a3b8;border-top:1px solid rgba(51,65,85,0.5);">MD 엔진</div>
+      <div style="padding:9px 20px;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">MOLECULE · KSPACE · RIGID 패키지가 빠지면 결합 · 장거리 쿨롱 · 구속 명령 인식 불가</div>
+      <div style="padding:9px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;border-top:1px solid rgba(51,65,85,0.5);">lmp -h | grep -A4 Installed</div>
+
+      <div style="padding:9px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#8ec0ff;border-top:1px solid rgba(51,65,85,0.5);">OpenMPI</div>
+      <div style="padding:9px 20px;font-size:24px;color:#94a3b8;border-top:1px solid rgba(51,65,85,0.5);">병렬 실행</div>
+      <div style="padding:9px 20px;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">10만 원자 셀을 단일 코어로 실행 → 시험 실행에도 수십 분</div>
+      <div style="padding:9px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;border-top:1px solid rgba(51,65,85,0.5);">mpirun --version</div>
+
+      <div style="padding:9px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#8ec0ff;border-top:1px solid rgba(51,65,85,0.5);">RDKit</div>
+      <div style="padding:9px 20px;font-size:24px;color:#94a3b8;border-top:1px solid rgba(51,65,85,0.5);">SMILES → 3D · 결합 인지</div>
+      <div style="padding:9px 20px;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">단분자 구조와 결합 목록을 사람이 직접 작성 — 분자 13종이면 현실적으로 불가능</div>
+      <div style="padding:9px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;border-top:1px solid rgba(51,65,85,0.5);">python -c "import rdkit"</div>
+
+      <div style="padding:9px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#8ec0ff;border-top:1px solid rgba(51,65,85,0.5);">Packmol</div>
+      <div style="padding:9px 20px;font-size:24px;color:#94a3b8;border-top:1px solid rgba(51,65,85,0.5);">셀 충전</div>
+      <div style="padding:9px 20px;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">겹침 없는 배치를 직접 구현 · 초기 구조가 나쁜 셀은 첫 스텝에서 발산</div>
+      <div style="padding:9px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;border-top:1px solid rgba(51,65,85,0.5);">packmol &lt; pack.inp</div>
+
+      <div style="padding:9px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#8ec0ff;border-top:1px solid rgba(51,65,85,0.5);">Jinja2</div>
+      <div style="padding:9px 20px;font-size:24px;color:#94a3b8;border-top:1px solid rgba(51,65,85,0.5);">템플릿 렌더</div>
+      <div style="padding:9px 20px;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">분기·반복이 필요한 in.* 생성을 복사·붙여넣기로 처리 → 하드코딩 누적</div>
+      <div style="padding:9px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;border-top:1px solid rgba(51,65,85,0.5);">python -c "import jinja2"</div>
+
+      <div style="padding:9px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#8ec0ff;border-top:1px solid rgba(51,65,85,0.5);">PyYAML</div>
+      <div style="padding:9px 20px;font-size:24px;color:#94a3b8;border-top:1px solid rgba(51,65,85,0.5);">명세 파싱 · lock 기록</div>
+      <div style="padding:9px 20px;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">spec.yaml 판독 불가 → 생성기 입력 없음 · spec.lock 재기록도 불가</div>
+      <div style="padding:9px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;border-top:1px solid rgba(51,65,85,0.5);">python -c "import yaml"</div>
+
+      <div style="padding:9px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#8ec0ff;border-top:1px solid rgba(51,65,85,0.5);">NumPy · Pandas</div>
+      <div style="padding:9px 20px;font-size:24px;color:#94a3b8;border-top:1px solid rgba(51,65,85,0.5);">로그 통계 · 회귀</div>
+      <div style="padding:9px 20px;font-size:24px;color:#cbd5e1;border-top:1px solid rgba(51,65,85,0.5);">밀도 블록 평균 · Tg 이중선형 회귀 같은 판정의 자동화 불가</div>
+      <div style="padding:9px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;border-top:1px solid rgba(51,65,85,0.5);">python -c "import pandas"</div>
+
+      <div style="padding:9px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#64748b;border-top:1px solid #2d3748;">MDAnalysis</div>
+      <div style="padding:9px 20px;font-size:24px;color:#94a3b8;border-top:1px solid #2d3748;">궤적 통계 (선택)</div>
+      <div style="padding:9px 20px;font-size:24px;color:#cbd5e1;border-top:1px solid #2d3748;">파괴모드 · 계면 분석은 6주차에 필수 → 사전 설치</div>
+      <div style="padding:9px 20px;font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;border-top:1px solid #2d3748;">python -c "import MDAnalysis"</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="종속성 설치 (2/2)" data-screen-label="32" data-speaker-notes="[분할] 앞 장에서 이어짐. 설치하는 것만으로는 부족하다. 각 종속성이 파이프라인의 어떤 단계를 맡아 왜 뺄 수 없는지를 구체적인 이유와 함께 기억하게 한다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:34px 80px 22px;display:flex;flex-direction:column;gap:18px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#a5b4fc;">PRACTICE · DEPENDENCIES · 2 / 2</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">종속성 — 설치 명령과 버전 고정</h2>
+  <div style="display:flex;flex-direction:column;gap:18px;">
+    <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:20px;align-items:start;">
+      <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:8px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#64748b;letter-spacing:0.08em;">설치 명령 · 순서도 1–2단계에 대응</div>
+        <div style="white-space:pre-wrap;font-family:'JetBrains Mono',monospace;font-size:28px;line-height:1.45;color:#8ec0ff;">cmake -D PKG_MOLECULE=on -D PKG_KSPACE=on \
+      -D PKG_RIGID=on -D BUILD_MPI=on ../cmake
+cmake --build . -j 16
+
+conda create -n comid -c conda-forge \
+      python=3.11 rdkit jinja2
+conda activate comid
+conda install -c conda-forge packmol \
+      pyyaml pandas mdanalysis</div>
+      </div>
+      <div style="background:#111827;border:1px solid #2d3748;border-left:2px solid #facc15;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:8px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#facc15;">버전을 고정하는 이유</div>
+        <div style="font-size:28px;color:#94a3b8;line-height:1.4;">LAMMPS 버전 변경 시 기본값 · 명령 이름 변경 가능 · RDKit 임베딩 알고리즘 변경 시 같은 시드에서 다른 초기 구조 생성 · 도구 버전을 meta.json 에 기록하지 않으면 밀도 0.01 g/cm³ 차이의 원인 추적 불가</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="5주차 정리" data-screen-label="33" data-speaker-notes="정리 후 6주차 예고: 물성 계산과 후처리." style="background:linear-gradient(135deg,#111827,#0c1222);color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:52px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">SUMMARY</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">5주차 정리</h2>
+  <div style="display:flex;flex-direction:column;gap:30px;max-width:1600px;">
+    <div style="display:flex;gap:36px;align-items:baseline;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#599eff;width:80px;">01</div>
+      <div style="font-size:38px;line-height:1.45;flex:1;">입력 파일은 손으로 쓰는 것이 아니라 명세에서 생성되는 산출물</div>
+    </div>
+    <div style="display:flex;gap:36px;align-items:baseline;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#8ec0ff;width:80px;">02</div>
+      <div style="font-size:38px;line-height:1.45;flex:1;">예측 가능한 실패는 규칙으로 고치고, 반복되는 실패는 원인 분석 후 새 규칙으로 — 처음 보는 실패만 사람이 확인</div>
+    </div>
+    <div style="display:flex;gap:36px;align-items:baseline;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#a5b4fc;width:80px;">03</div>
+      <div style="font-size:38px;line-height:1.45;flex:1;">구조와 힘장 분리 → 힘장 교체와 다중 힘장 운용 용이</div>
+    </div>
+    <div style="display:flex;gap:36px;align-items:baseline;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#a78bfa;width:80px;">04</div>
+      <div style="font-size:38px;line-height:1.45;flex:1;">다중 힘장 계 = 규칙 기반 경로 선택 + 결과마다 스택 이름 · 검증 수준 기록으로 재현</div>
+    </div>
+  </div>
+  <div style="margin-top:auto;display:flex;gap:40px;align-items:center;border-top:1px solid #1f2937;padding-top:36px;">
+    <span style="font-size:28px;padding:14px 28px;border-radius:999px;background:rgba(59,130,246,0.20);color:#60a5fa;border:1px solid rgba(59,130,246,0.30);font-family:'JetBrains Mono',monospace;">퀴즈 5주차</span>
+    <span style="font-size:32px;color:#94a3b8;">다음 주차 — 물성 계산과 후처리: 역학 · 부착 · 점도 · CED</span>
+  </div>
+</section>
+
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1920,&quot;height&quot;:1080}}"></script>
+</body>
+</html>

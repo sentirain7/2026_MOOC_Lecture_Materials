@@ -1,0 +1,8 @@
+/* 폴더 안 글꼴 — 인터넷 없이 쓰도록 */
+@font-face{font-family:'Pretendard';font-weight:400;font-display:swap;src:url('Pretendard-Regular.woff2') format('woff2');}
+@font-face{font-family:'Pretendard';font-weight:500;font-display:swap;src:url('Pretendard-Medium.woff2') format('woff2');}
+@font-face{font-family:'Pretendard';font-weight:600;font-display:swap;src:url('Pretendard-SemiBold.woff2') format('woff2');}
+@font-face{font-family:'Pretendard';font-weight:700;font-display:swap;src:url('Pretendard-Bold.woff2') format('woff2');}
+@font-face{font-family:'JetBrains Mono';font-weight:400;font-display:swap;src:url('jbmono-400.woff2') format('woff2');}
+@font-face{font-family:'JetBrains Mono';font-weight:500;font-display:swap;src:url('jbmono-500.woff2') format('woff2');}
+@font-face{font-family:'JetBrains Mono';font-weight:700;font-display:swap;src:url('jbmono-700.woff2') format('woff2');}

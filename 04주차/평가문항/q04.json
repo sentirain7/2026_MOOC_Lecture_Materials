@@ -1,0 +1,106 @@
+{
+  "week": 4,
+  "title": "LAMMPS 활용 (1) — 환경 구축·입력 스크립트·초기 및 다층구조 생성",
+  "items": [
+    {
+      "no": 1,
+      "type": "객관식",
+      "difficulty": "하",
+      "session": "4-1",
+      "question": "LAMMPS의 두 가지 가속 경로인 GPU 패키지와 KOKKOS 패키지에 대한 설명으로 옳은 것은?",
+      "options": [
+        "KOKKOS 패키지는 원자 데이터를 CPU에 두고 짧은 거리 상호작용만 GPU로 보낸다",
+        "KOKKOS 패키지는 원자 데이터를 GPU 메모리에 상주시켜 대형 계에서 유리하다",
+        "가속 패키지를 바꾸면 같은 입력이라도 계산되는 물리 모델이 달라진다",
+        "KOKKOS가 지원하지 않는 스타일을 쓰면 GPU 전용 경로로 전환되어 더 빨라진다"
+      ],
+      "answer": 2,
+      "explanation": "KOKKOS 패키지는 원자 데이터를 GPU 메모리에 상주시켜 전송을 줄이므로 수십만 원자 이상의 계에서 유리하다. 원자 데이터를 CPU에 두고 짧은 거리 상호작용만 GPU로 보내는 것은 GPU 패키지이며, 가속 패키지는 속도만 바꾸고 물리는 같다. KOKKOS 미지원 스타일은 CPU로 폴백(fallback)되어 오히려 느려진다.",
+      "source": {
+        "slide": 10,
+        "label": "패키지 구조와 가속"
+      }
+    },
+    {
+      "no": 2,
+      "type": "OX",
+      "difficulty": "하",
+      "session": "4-2",
+      "question": "units metal 로 설정한 입력 스크립트에서 timestep 1.0 은 1 fs 를 뜻한다.",
+      "answer": "X",
+      "explanation": "틀린 부분은 시간 단위이다. units metal 의 시간 단위는 ps이므로 timestep 1.0 은 1 ps이고, 1 fs가 되는 것은 units real 일 때이다. 같은 숫자라도 두 단위계에서 시간 간격이 1000배 차이 난다.",
+      "source": {
+        "slide": 17,
+        "label": "단위계와 data 파일"
+      }
+    },
+    {
+      "no": 3,
+      "type": "객관식",
+      "difficulty": "중",
+      "session": "4-2",
+      "question": "평형화 중인 계산을 속도와 써모스탯(thermostat) 상태, 스텝 수까지 보존한 채 끊김 없이 이어서 실행하려 할 때 사용할 파일로 옳은 것은?",
+      "options": [
+        "write_data 로 저장한 final.data",
+        "dump 명령으로 저장한 prod.lammpstrj",
+        "thermo 출력이 기록된 log.binderA",
+        "write_restart 로 저장한 final.restart"
+      ],
+      "answer": 4,
+      "explanation": "write_restart 는 좌표에 더해 속도, fix 내부 상태, 스텝 수까지 이진으로 저장하므로 read_restart 로 같은 계산을 이어 갈 수 있다. write_data 는 상자·좌표·전하·결합만 텍스트로 저장해 조건을 바꾼 새 계산의 출발 구조로 쓰며, 궤적과 log는 분석·평형 판정용 출력이다.",
+      "source": {
+        "slide": 22,
+        "label": "명령 한 줄씩 (2/2)"
+      }
+    },
+    {
+      "no": 4,
+      "type": "OX",
+      "difficulty": "중",
+      "session": "4-3",
+      "question": "힘장 계수 파일(ff_gaff2.inc)의 원자 타입 번호가 data 파일의 원자 타입 번호와 어긋나면, LAMMPS는 경고 없이 계산을 진행해 틀린 결과를 낼 수 있다.",
+      "answer": "O",
+      "explanation": "data 파일의 타입 번호 자체에는 의미가 없고, 그 번호에 붙는 힘장 계수가 의미를 정한다. 따라서 계수 파일과 data 파일의 타입 번호 대응이 어긋나도 LAMMPS는 오류 없이 계산을 돌려 틀린 결과를 내므로, 번호 대응을 반드시 확인해야 한다.",
+      "source": {
+        "slide": 30,
+        "label": "파일 ③ 힘장 include"
+      }
+    },
+    {
+      "no": 5,
+      "type": "객관식",
+      "difficulty": "상",
+      "session": "4-4",
+      "question": "Packmol로 만든 바인더 벌크 셀을 NPT로 압축한 뒤, 방향족 C–C 결합 길이가 2.67 Å(정상 약 1.40 Å)로 늘어나고 CED가 음수로 산출되었다. 원인과 대처로 가장 적절한 것은?",
+      "options": [
+        "timestep이 커서 생긴 에너지 표류이므로 Δt를 절반으로 줄여 이어서 실행한다",
+        "평형화 부족이므로 같은 셀로 NPT 평형화 구간을 더 길게 연장해 실행한다",
+        "고리 관통(ring threading)이므로 최소화로 풀리지 않아 시드를 바꿔 재패킹한다",
+        "장거리 쿨롱 오차이므로 pppm 정확도를 강화해 같은 셀로 다시 계산한다"
+      ],
+      "answer": 3,
+      "explanation": "한 분자의 결합이 다른 분자의 방향족 고리를 꿰뚫은 고리 관통은 위상 불변량(topological invariant)이라 최소화나 MD로 해소되지 않고, 압축 시 결합이 비정상적으로 늘어나 CED 음수로 드러난다. 따라서 같은 셀을 더 돌리거나 Δt·kspace를 바꾸는 것으로는 고칠 수 없고, 품질 게이트에서 걸러 시드를 바꿔 재패킹해야 한다.",
+      "source": {
+        "slide": 37,
+        "label": "Packmol 품질 게이트"
+      }
+    },
+    {
+      "no": 6,
+      "type": "단답형",
+      "difficulty": "중",
+      "session": "4-5",
+      "question": "다층 셀을 조립할 때 read_data binder.data add append 로 두 번째 data 파일을 병합하면서, 바인더 쪽 원자·결합·각·이면각 타입 번호가 슬래브의 타입 번호와 겹치지 않도록 번호를 더해 주는 키워드는?",
+      "answer": "offset",
+      "accept": [
+        "offset",
+        "오프셋"
+      ],
+      "explanation": "offset 은 병합하는 data 파일의 원자·결합·각·이면각·improper 타입 번호에 지정한 값을 더해 기존 슬래브 타입과 겹치지 않게 한다. 이를 빠뜨리면 바인더 원자가 슬래브 원자의 계수를 받는데도 경고가 나오지 않으며, 위치 이동은 별도 키워드인 shift 가 맡는다.",
+      "source": {
+        "slide": 41,
+        "label": "다층 셀 조립 절차"
+      }
+    }
+  ]
+}

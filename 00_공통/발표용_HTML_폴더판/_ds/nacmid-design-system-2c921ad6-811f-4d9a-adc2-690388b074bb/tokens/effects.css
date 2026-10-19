@@ -1,0 +1,37 @@
+/* ============================================================================
+   NACMID — Effects: Shadows, Glow, Blur, Transitions, Gradients
+   Cards carry deep drop shadows + backdrop blur; the brand wordmark and
+   active states use blue→indigo gradients with soft colored glow.
+   ============================================================================ */
+
+:root {
+  /* ---- Shadows (on dark canvas) ---- */
+  --shadow-sm:  0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md:  0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-lg:  0 10px 20px rgba(0, 0, 0, 0.4);
+  --shadow-xl:  0 20px 25px -5px rgba(0, 0, 0, 0.45), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+  --shadow-card-elevated: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  --shadow-header: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+  /* ---- Colored glow (focus accents, brand) ---- */
+  --glow-blue:   0 0 20px rgba(59, 130, 246, 0.30);
+  --glow-indigo: 0 0 20px rgba(99, 102, 241, 0.30);
+  --glow-btn-primary: 0 8px 24px rgba(59, 130, 246, 0.30);
+
+  /* ---- Backdrop blur ---- */
+  --blur-card: blur(8px); /* @kind other */
+
+  /* ---- Focus ring ---- */
+  --ring-focus: 0 0 0 2px var(--primary-500);
+
+  /* ---- Transitions ---- */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1); /* @kind other */
+  --duration-fast: 150ms; /* @kind other */
+  --duration-base: 200ms; /* @kind other */
+  --duration-slow: 300ms; /* @kind other */
+
+  /* ---- Signature gradients ---- */
+  --gradient-brand:  linear-gradient(135deg, #3377ff 0%, #8b5cf6 100%); /* @kind color */  /* arcane-title wordmark */
+  --gradient-button: linear-gradient(to right, #2563eb, #4f46e5); /* @kind color */  /* btn-primary blue→indigo */
+  --gradient-active: linear-gradient(to right, rgba(37, 99, 235, 0.20), rgba(79, 70, 229, 0.20)); /* @kind color */  /* active nav row */
+}

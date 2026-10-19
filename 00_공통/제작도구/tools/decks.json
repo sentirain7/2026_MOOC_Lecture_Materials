@@ -1,0 +1,111 @@
+{
+ "_note": "덱 파일 → 강의계획서 주차 매핑. supplement: null=본강의, \"A\"/\"B\"=보충. s_start: 보충 차시 코드 시작 번호(10-S1, 10-S5 …). STYLE_GUIDE.md §2 참조. orig: 2026-09-22 파일명 정리 전 이름(git 스냅샷 9557563 등 과거 커밋 조회용).",
+ "decks": [
+  {
+   "file": "01주차_강의_강의 개요 - 멀티스케일 모델링·디지털 트윈과 역설계 패러다임.dc.html",
+   "week": 1,
+   "supplement": null,
+   "orig": "1주차 강의 - 건설소재 역설계.dc.html"
+  },
+  {
+   "file": "02주차_강의_분자동역학 기초이론 (1) - 원리와 수치적분.dc.html",
+   "week": 2,
+   "supplement": null,
+   "orig": "2주차 강의 - 분자동역학 기초이론 (1) 원리와 수치적분.dc.html"
+  },
+  {
+   "file": "03주차_강의_분자동역학 기초이론 (2) - 힘장·전하 모델과 앙상블.dc.html",
+   "week": 3,
+   "supplement": null,
+   "orig": "3주차 강의 - 분자동역학 기초이론 (2) 힘장·전하·앙상블.dc.html"
+  },
+  {
+   "file": "04주차_강의_LAMMPS 활용 (1) - 환경 구축·입력 스크립트·초기 및 다층구조.dc.html",
+   "week": 4,
+   "supplement": null,
+   "orig": "4주차 강의 - LAMMPS 기초와 시스템 구축.dc.html"
+  },
+  {
+   "file": "05주차_강의_LAMMPS 활용 (2) - 자동 스크립트·자기교정·다중 힘장 스택.dc.html",
+   "week": 5,
+   "supplement": null,
+   "orig": "5주차 강의 - 자동화 워크플로우와 다중 힘장 스택.dc.html"
+  },
+  {
+   "file": "06주차_강의_물성 계산·후처리 - 역학·부착·점도·CED.dc.html",
+   "week": 6,
+   "supplement": null,
+   "orig": "6주차 강의 - 물성 계산과 후처리.dc.html"
+  },
+  {
+   "file": "06주차_보충A_계면 부착 물성.dc.html",
+   "week": 6,
+   "supplement": "A",
+   "s_start": 1,
+   "orig": "6주차 강의 - 보충 - 계면 부착 물성.dc.html"
+  },
+  {
+   "file": "07주차_강의_아스팔트 소재 - 혼합물 특성과 바인더 MD.dc.html",
+   "week": 7,
+   "supplement": null,
+   "orig": "7주차 강의 - 아스팔트 소재와 바인더 MD.dc.html"
+  },
+  {
+   "file": "08주차_강의_시멘트 소재 - 콘크리트 특성과 수화 MD.dc.html",
+   "week": 8,
+   "supplement": null,
+   "orig": "8주차 강의 - 시멘트 콘크리트와 C-S-H 모델링.dc.html"
+  },
+  {
+   "file": "09주차_강의_기계학습 (1) - 분자 표현자와 대리모델.dc.html",
+   "week": 9,
+   "supplement": null,
+   "orig": "9주차 강의 - 기계학습 (1) 표현자와 대리모델.dc.html"
+  },
+  {
+   "file": "10주차_강의_기계학습 (2) - 그래프 신경망과 능동학습.dc.html",
+   "week": 10,
+   "supplement": null,
+   "orig": "10주차 강의 - 기계학습 (2) GNN과 능동학습.dc.html"
+  },
+  {
+   "file": "10주차_보충A_대리모델 평가와 불확실성.dc.html",
+   "week": 10,
+   "supplement": "A",
+   "s_start": 1,
+   "orig": "10주차 강의 - 보충 - 대리모델 평가와 불확실성.dc.html"
+  },
+  {
+   "file": "10주차_보충B_능동학습과 탐색 전략.dc.html",
+   "week": 10,
+   "supplement": "B",
+   "s_start": 5,
+   "orig": "10주차 강의 - 보충 - 능동학습과 탐색 전략.dc.html"
+  },
+  {
+   "file": "11주차_강의_문헌 고찰 - Obsidian 문헌 관리와 자동 스크래핑.dc.html",
+   "week": 11,
+   "supplement": null,
+   "orig": "11주차 강의 - AI 기반 문헌조사와 자동 스크래핑.dc.html"
+  },
+  {
+   "file": "12주차_강의_자율 탐색 파이프라인 (1) - 구조와 데이터 큐레이션.dc.html",
+   "week": 12,
+   "supplement": null,
+   "orig": "12주차 강의 - 자율 탐색 파이프라인 (1) 구조와 데이터 큐레이션.dc.html"
+  },
+  {
+   "file": "13주차_강의_자율 탐색 파이프라인 (2) - 다목적 최적화·LLM 에이전트·검증.dc.html",
+   "week": 13,
+   "supplement": null,
+   "orig": "13주차 강의 - 자율 탐색 파이프라인 (2) 다목적 최적화와 역설계.dc.html"
+  },
+  {
+   "file": "13주차_보충A_플랫폼 통합과 최종 프로젝트.dc.html",
+   "week": 13,
+   "supplement": "A",
+   "s_start": 1,
+   "orig": "13주차 강의 - 보충 - 플랫폼 통합과 최종 프로젝트.dc.html"
+  }
+ ]
+}

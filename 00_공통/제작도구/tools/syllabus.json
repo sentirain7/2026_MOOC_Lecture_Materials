@@ -1,0 +1,433 @@
+{
+ "source": "uploads/강의계획서_건설소재역설계_MOOC.hwp",
+ "weeks": [
+  {
+   "week": 1,
+   "title": "강의 개요 — 멀티스케일 모델링·디지털 트윈과 건설소재 역설계 패러다임",
+   "goal": "순방향/역설계의 차이와 멀티스케일 모델링·디지털 트윈 개념을 이해하고, 자율 탐색 기반 역설계 연구의 전체 그림(자율 탐색 파이프라인)을 학습한다.",
+   "sessions": [
+    {
+     "code": "1-1",
+     "name": "강의 소개와 역설계 동기",
+     "content": "강좌의 목표와 범위, 건설소재에서 역설계가 중요한 이유, 순방향 vs 역설계와 표적 물성의 정의를 다룬다.",
+     "minutes": 15
+    },
+    {
+     "code": "1-2",
+     "name": "멀티스케일 모델링 개념",
+     "content": "양자·원자·메조·연속체 스케일의 연계와, 멀티스케일 체계에서 MD·ML이 차지하는 위치를 살펴본다.",
+     "minutes": 10
+    },
+    {
+     "code": "1-3",
+     "name": "디지털 트윈 개념",
+     "content": "디지털 트윈의 정의와 소재 연구 적용, 시뮬레이션–실험 간 데이터·모델 피드백을 다룬다.",
+     "minutes": 10
+    },
+    {
+     "code": "1-4",
+     "name": "자율 탐색 파이프라인 흐름",
+     "content": "문헌부터 최적화·특징 재정련까지 이어지는 자율 탐색 파이프라인을 학습한다.",
+     "minutes": 15
+    }
+   ],
+   "minutes": 50
+  },
+  {
+   "week": 2,
+   "title": "분자동역학 기초이론 (1) — 원리와 수치적분",
+   "goal": "고전 MD의 운동방정식과 퍼텐셜 에너지 구성, 수치적분 원리를 이해한다.",
+   "sessions": [
+    {
+     "code": "2-1",
+     "name": "고전 MD의 원리",
+     "content": "Newton 운동방정식과 입자의 위치·속도·힘 등 고전 분자동역학의 기본 원리를 다룬다.",
+     "minutes": 12
+    },
+    {
+     "code": "2-2",
+     "name": "퍼텐셜 에너지 분해",
+     "content": "결합 항(결합·각·이면각)과 비결합 항(반데르발스·Coulomb)의 구성과 역할을 설명한다.",
+     "minutes": 16
+    },
+    {
+     "code": "2-3",
+     "name": "수치적분",
+     "content": "Velocity Verlet 알고리즘, 시간 간격 선택과 수치적 안정성을 다룬다.",
+     "minutes": 12
+    },
+    {
+     "code": "2-4",
+     "name": "경계조건과 장거리 상호작용",
+     "content": "주기경계조건(PBC), cutoff, 장거리 정전기 상호작용(PPPM/Ewald)을 설명한다.",
+     "minutes": 10
+    }
+   ],
+   "minutes": 50
+  },
+  {
+   "week": 3,
+   "title": "분자동역학 기초이론 (2) — 힘장·전하 모델과 앙상블",
+   "goal": "건설소재에 쓰이는 힘장·전하 모델과 통계 앙상블, 다중 힘장 개념을 이해한다.",
+   "sessions": [
+    {
+     "code": "3-1",
+     "name": "힘장 개관",
+     "content": "OPLS-AA·GAFF2 등 유기·무기·이온계 힘장과 반응성 ReaxFF를 개관한다.",
+     "minutes": 16
+    },
+    {
+     "code": "3-2",
+     "name": "전하 모델",
+     "content": "고정전하, AM1-BCC 전하 산정, 전하평형(QEq) 방법을 다룬다.",
+     "minutes": 12
+    },
+    {
+     "code": "3-3",
+     "name": "통계 앙상블",
+     "content": "NVE·NVT·NPT 앙상블과 온도·압력 제어를 위한 thermostat·barostat을 설명한다.",
+     "minutes": 12
+    },
+    {
+     "code": "3-4",
+     "name": "평형화와 다중 힘장",
+     "content": "평형화·생산 단계의 구분과 여러 힘장을 결합하는 개념을 다룬다.",
+     "minutes": 10
+    }
+   ],
+   "minutes": 50
+  },
+  {
+   "week": 4,
+   "title": "LAMMPS 활용 (1) — 환경 구축·입력 스크립트·초기 및 다층구조 생성",
+   "goal": "LAMMPS 설치와 입력 스크립트 구조, 초기 구조 및 다층구조 생성 방법을 익힌다.",
+   "sessions": [
+    {
+     "code": "4-1",
+     "name": "LAMMPS 개요와 설치",
+     "content": "LAMMPS 개요, GPU/KOKKOS 빌드와 패키지 구조를 다룬다.",
+     "minutes": 8
+    },
+    {
+     "code": "4-2",
+     "name": "입력 스크립트 해부",
+     "content": "입력 스크립트 분석: units·atom_style·pair_style·fix·run 명령.",
+     "minutes": 16
+    },
+    {
+     "code": "4-3",
+     "name": "데이터 파일과 토폴로지",
+     "content": "원자 좌표·토폴로지·힘장 파라미터로 구성되는 데이터 파일 구조.",
+     "minutes": 8
+    },
+    {
+     "code": "4-4",
+     "name": "초기 구조 생성",
+     "content": "Packmol·Moltemplate·RDKit을 이용한 초기 구조 생성.",
+     "minutes": 10
+    },
+    {
+     "code": "4-5",
+     "name": "다층구조 생성",
+     "content": "부착·계면 연구를 위한 다층(계면 포함) 시스템 생성.",
+     "minutes": 8
+    }
+   ],
+   "minutes": 50
+  },
+  {
+   "week": 5,
+   "title": "LAMMPS 활용 (2) — 자동 스크립트 생성·자기교정과 다중 힘장 스택",
+   "goal": "자동 스크립트 생성·자기교정 워크플로우와 FF-neutral 토폴로지 기반 다중 힘장 스택 운용을 익힌다.",
+   "sessions": [
+    {
+     "code": "5-1",
+     "name": "자동 스크립트 생성",
+     "content": "LAMMPS 입력 스크립트를 자동 생성하는 워크플로우.",
+     "minutes": 12
+    },
+    {
+     "code": "5-2",
+     "name": "오류 자기교정 루프",
+     "content": "스크립트·실행 오류를 자동 탐지·교정하는 반복 루프.",
+     "minutes": 12
+    },
+    {
+     "code": "5-3",
+     "name": "FF-neutral 토폴로지 설계",
+     "content": "OPLS-AA·GAFF2·ReaxFF에 재사용 가능한 힘장 중립 토폴로지 설계.",
+     "minutes": 14
+    },
+    {
+     "code": "5-4",
+     "name": "다중 힘장 스택 운용",
+     "content": "다중 힘장(multi-FF) 스택 운용, 배치 실행과 재현성 확보.",
+     "minutes": 12
+    }
+   ],
+   "minutes": 50
+  },
+  {
+   "week": 6,
+   "title": "물성 계산·후처리 — 역학·부착·점도·응집에너지밀도(CED) 산출",
+   "goal": "MD 궤적에서 역학·열물성과 다층 소재 부착력·인장강도, 점도, 응집에너지밀도를 산출하는 자동 후처리 파이프라인을 이해한다.",
+   "sessions": [
+    {
+     "code": "6-1",
+     "name": "후처리 개요와 부착·인장",
+     "content": "역학·열물성 개요와 다층 소재의 부착력·인장강도 평가.",
+     "minutes": 12
+    },
+    {
+     "code": "6-2",
+     "name": "응집에너지밀도(CED)",
+     "content": "CED 개념과 계산법(분자간 상호작용 에너지 직접 산출 방식 vs 간접 차감 방식, Method A vs B).",
+     "minutes": 14
+    },
+    {
+     "code": "6-3",
+     "name": "CED·용해도 파라미터 산출",
+     "content": "두 지표를 정의·산출한다 — ① 응집에너지밀도(CED): 분자간 상호작용 에너지를 부피로 나눈 값, ② Hildebrand 용해도 파라미터: CED의 제곱근 δ=√CED로 혼화성·용해도 예측.",
+     "minutes": 10
+    },
+    {
+     "code": "6-4",
+     "name": "점도 산출",
+     "content": "Green–Kubo 및 비평형 MD 방법으로 점도를 산출한다.",
+     "minutes": 8
+    },
+    {
+     "code": "6-5",
+     "name": "궤적 분석 자동화",
+     "content": "OVITO·MDAnalysis를 이용한 궤적 분석 자동화.",
+     "minutes": 6
+    }
+   ],
+   "minutes": 50
+  },
+  {
+   "week": 7,
+   "title": "아스팔트 소재 — 혼합물 활용·특성과 바인더 MD(SARA·첨가제·다중 힘장)",
+   "goal": "아스팔트 혼합물의 활용·특성을 이해하고, 바인더 분자 모델·첨가제 시스템과 다중 힘장 스택 시뮬레이션을 익힌다.",
+   "sessions": [
+    {
+     "code": "7-1",
+     "name": "아스팔트 혼합물과 SARA 모델",
+     "content": "아스팔트 혼합물의 활용·특성(점탄성·노화·PG 등급)과 SARA 4성분 분자 모델 구성을 다룬다.",
+     "minutes": 16
+    },
+    {
+     "code": "7-2",
+     "name": "첨가제 분자 라이브러리",
+     "content": "SMILES·RDKit 기술자로 표현한 21종 첨가제 분자 라이브러리.",
+     "minutes": 12
+    },
+    {
+     "code": "7-3",
+     "name": "다중 힘장 적용",
+     "content": "아스팔트 바인더 시스템에 OPLS-AA·GAFF2·ReaxFF 스택을 적용.",
+     "minutes": 12
+    },
+    {
+     "code": "7-4",
+     "name": "노화·점탄성 분석",
+     "content": "6주 물성 후처리 방법을 활용해 바인더의 노화·점착·점탄성 거동을 분석한다.",
+     "minutes": 10
+    }
+   ],
+   "minutes": 50
+  },
+  {
+   "week": 8,
+   "title": "시멘트 소재 — 콘크리트 활용·특성과 수화 MD(C-S-H·ReaxFF·ML 힘장)",
+   "goal": "시멘트 콘크리트의 활용·특성을 이해하고, 클링커 수화 반응을 ReaxFF로 모델링하여 C-S-H 구조·물성을 해석하며, 기계학습 기반 힘장으로의 대체를 이해한다.",
+   "sessions": [
+    {
+     "code": "8-1",
+     "name": "시멘트 콘크리트와 클링커 모델",
+     "content": "시멘트 콘크리트의 활용·특성(강도·내구성)과 클링커 4상(C3S·C2S·C3A·C4AF) 모델링.",
+     "minutes": 16
+    },
+    {
+     "code": "8-2",
+     "name": "ReaxFF 수화 시뮬레이션",
+     "content": "반응성 힘장 ReaxFF로 클링커 수화 반응을 시뮬레이션.",
+     "minutes": 14
+    },
+    {
+     "code": "8-3",
+     "name": "C-S-H 구조·물성",
+     "content": "6주 물성 후처리 방법으로 C-S-H의 구조와 역학물성을 해석한다.",
+     "minutes": 10
+    },
+    {
+     "code": "8-4",
+     "name": "ML 힘장 대체",
+     "content": "고비용 ReaxFF를 기계학습 원자간 퍼텐셜(ML 퍼텐셜)로 대체한다.",
+     "minutes": 10
+    }
+   ],
+   "minutes": 50
+  },
+  {
+   "week": 9,
+   "title": "기계학습 (1) — 분자 표현자와 대리모델(XGBoost+SHAP)",
+   "goal": "분자 표현자 설계와 XGBoost+SHAP 대리모델, 모델 해석·검증을 이해한다.",
+   "sessions": [
+    {
+     "code": "9-1",
+     "name": "표현자와 feature library",
+     "content": "분자 표현자(RDKit·SMILES·fingerprint)와 feature library 구축.",
+     "minutes": 18
+    },
+    {
+     "code": "9-2",
+     "name": "XGBoost 대리모델",
+     "content": "적절한 데이터 분할로 XGBoost 대리모델을 학습·검증한다.",
+     "minutes": 16
+    },
+    {
+     "code": "9-3",
+     "name": "SHAP 해석",
+     "content": "SHAP으로 모델 예측을 해석하고 특징을 재정련한다.",
+     "minutes": 16
+    }
+   ],
+   "minutes": 50
+  },
+  {
+   "week": 10,
+   "title": "기계학습 (2) — 그래프 신경망(GNN)과 능동학습",
+   "goal": "분자·결정의 그래프 표현과 GNN(Graphormer-3D) 물성 예측, 불확실성 기반 능동학습을 이해한다.",
+   "sessions": [
+    {
+     "code": "10-1",
+     "name": "분자 그래프와 message passing",
+     "content": "분자·결정의 그래프 표현과 메시지 전달(message passing) 메커니즘.",
+     "minutes": 12
+    },
+    {
+     "code": "10-2",
+     "name": "등변 GNN과 Graphormer-3D",
+     "content": "등변(equivariant) GNN과 3D 구조 인코딩을 갖춘 Graphormer-3D.",
+     "minutes": 16
+    },
+    {
+     "code": "10-3",
+     "name": "MD 데이터 학습",
+     "content": "MD로 생성한 데이터로 GNN 물성 예측 모델을 학습·검증.",
+     "minutes": 10
+    },
+    {
+     "code": "10-4",
+     "name": "불확실성과 능동학습",
+     "content": "불확실성 정량화와, 자율 탐색 파이프라인의 능동학습 단계에 연계되는 샘플링 전략.",
+     "minutes": 12
+    }
+   ],
+   "minutes": 50
+  },
+  {
+   "week": 11,
+   "title": "문헌 고찰 — Obsidian 기반 문헌 검색·관리와 자동 스크래핑",
+   "goal": "Obsidian으로 연구 문헌을 체계적으로 검색·정리하고, 자동 문헌 스크래핑(자율 탐색 파이프라인의 문헌 단계) 개념을 익힌다.",
+   "sessions": [
+    {
+     "code": "11-1",
+     "name": "문헌 검색 전략",
+     "content": "문헌 검색 전략과 서지 데이터베이스.",
+     "minutes": 10
+    },
+    {
+     "code": "11-2",
+     "name": "Obsidian 지식그래프",
+     "content": "Obsidian 노트·백링크·지식그래프 구축.",
+     "minutes": 15
+    },
+    {
+     "code": "11-3",
+     "name": "자동 문헌 스크래핑",
+     "content": "자동 문헌 스크래핑과 후보 추출(자율 탐색 파이프라인의 문헌 단계).",
+     "minutes": 15
+    },
+    {
+     "code": "11-4",
+     "name": "참고문헌 관리",
+     "content": "Zotero 연계를 통한 참고문헌 관리.",
+     "minutes": 10
+    }
+   ],
+   "minutes": 50
+  },
+  {
+   "week": 12,
+   "title": "자율 탐색 파이프라인 (1) — 파이프라인 구조와 데이터 큐레이션",
+   "goal": "자율 탐색 파이프라인의 구성과 후보 생성·데이터베이스 큐레이션을 이해한다.",
+   "sessions": [
+    {
+     "code": "12-1",
+     "name": "파이프라인 구조",
+     "content": "자율 탐색 파이프라인의 구조를 다루며, 능동학습 단계는 9·10주의 대리모델(XGBoost+SHAP·GNN)을 활용한다.",
+     "minutes": 12
+    },
+    {
+     "code": "12-2",
+     "name": "후보 분자 생성",
+     "content": "라이브러리와 생성 규칙으로 후보 분자를 생성한다.",
+     "minutes": 12
+    },
+    {
+     "code": "12-3",
+     "name": "PostgreSQL 데이터 큐레이션",
+     "content": "PostgreSQL 데이터베이스에 시뮬레이션 데이터·메타데이터를 큐레이션.",
+     "minutes": 16
+    },
+    {
+     "code": "12-4",
+     "name": "이상치 처리·재현성",
+     "content": "이상치·실패 실행 처리와 재현성 확보.",
+     "minutes": 10
+    }
+   ],
+   "minutes": 50
+  },
+  {
+   "week": 13,
+   "title": "자율 탐색 파이프라인 (2) — 다목적 최적화·LLM 에이전트와 통합 사례·검증",
+   "goal": "다목적 최적화 기반 역설계와 LLM 에이전트 오케스트레이션을 이해하고, 전체 자율 탐색 파이프라인을 아스팔트·시멘트·바이오 역설계 사례로 통합 적용하며 실험으로 검증한다.",
+   "sessions": [
+    {
+     "code": "13-1",
+     "name": "다목적 최적화",
+     "content": "탐색 vs 활용, Pareto front, 베이지안 최적화.",
+     "minutes": 14
+    },
+    {
+     "code": "13-2",
+     "name": "LLM 에이전트 오케스트레이션",
+     "content": "제안자–비평자 구조를 활용한 LLM 에이전트 기반 오케스트레이션.",
+     "minutes": 10
+    },
+    {
+     "code": "13-3",
+     "name": "특징 재정련 루프",
+     "content": "대리모델 특징 재정련과 탐색의 반복 개선.",
+     "minutes": 6
+    },
+    {
+     "code": "13-4",
+     "name": "통합 사례연구: 아스팔트·시멘트·바이오",
+     "content": "아스팔트 첨가제·시멘트 소재에 더해 바이오소재(바이오폴리머·바이오 바인더)의 역설계 통합 사례를 다룬다.",
+     "minutes": 12
+    },
+    {
+     "code": "13-5",
+     "name": "실험 검증과 재현성",
+     "content": "아스팔트 DSR·BBR, 시멘트 강도시험, 밀도·유리전이온도(Tg) 등 실험치와 시뮬레이션·예측 결과를 대조하고 재현성을 확보한다.",
+     "minutes": 8
+    }
+   ],
+   "minutes": 50
+  }
+ ]
+}

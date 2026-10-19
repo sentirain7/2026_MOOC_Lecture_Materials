@@ -1,0 +1,32 @@
+/* ============================================================================
+   NACMID — Spacing, Radius, Layout Tokens
+   Tailwind-derived 4px base scale. The app uses a fixed 64px header and a
+   288px (w-72) left sidebar; cards round to xl (12px).
+   ============================================================================ */
+
+:root {
+  /* ---- Spacing scale (4px base) ---- */
+  --space-0:  0;
+  --space-1:  0.25rem;   /* 4px  */
+  --space-2:  0.5rem;    /* 8px  */
+  --space-3:  0.75rem;   /* 12px */
+  --space-4:  1rem;      /* 16px — default card padding (card-body p-5 ≈ 20) */
+  --space-5:  1.25rem;   /* 20px — card padding */
+  --space-6:  1.5rem;    /* 24px — page gutter / section gap */
+  --space-8:  2rem;      /* 32px */
+  --space-10: 2.5rem;    /* 40px */
+  --space-12: 3rem;      /* 48px */
+
+  /* ---- Radius ---- */
+  --radius-sm:   0.375rem;  /* 6px  — btn-sm, small chips */
+  --radius-md:   0.5rem;    /* 8px  — buttons, inputs */
+  --radius-lg:   0.75rem;   /* 12px — cards (rounded-xl) */
+  --radius-xl:   1rem;      /* 16px — btn-lg, elevated cards */
+  --radius-full: 9999px;    /* pills, badges, scrollbar */
+
+  /* ---- Layout chrome ---- */
+  --header-height:  4rem;     /* 64px fixed top bar */
+  --sidebar-width:  18rem;    /* 288px (w-72) */
+  --page-gutter:    1.5rem;   /* 24px content padding */
+  --content-max:    96rem;    /* 1536px */
+}

@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/tokens/fonts.css">
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/tokens/colors.css">
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/tokens/typography.css">
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/tokens/spacing.css">
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/tokens/effects.css">
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/tokens/base.css">
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/styles.css">
+<script src="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/_ds_bundle.js"></script>
+<style>
+  body { margin: 0; background: #0c1222; }
+  a { color: #599eff; }
+  a:hover { color: #8ec0ff; }
+</style>
+</helmet>
+<x-import component-from-global-scope="deck-stage" from="../deck-stage.js" width="1920" height="1080" hint-size="100%,100%">
+
+<section data-label="표지" data-screen-label="01" data-speaker-notes="6주차. 평형 궤적에서 물성을 뽑고 후처리를 자동화한다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:100px 100px 80px;display:flex;flex-direction:column;justify-content:space-between;">
+  <div style="display:flex;align-items:center;gap:28px;">
+    <div style="width:64px;height:64px;border-radius:14px;background:linear-gradient(135deg,#3377ff,#8b5cf6);"></div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:28px;letter-spacing:0.16em;color:#94a3b8;">COMID</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:40px;max-width:1500px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:28px;letter-spacing:0.14em;color:#599eff;">WEEK 06 · 차시 6-1 ~ 6-5 · 50분</div>
+    <h1 style="font-size:88px;font-weight:700;letter-spacing:-0.03em;line-height:1.08;margin:0;">물성 계산과 후처리</h1>
+    <p style="font-size:40px;color:#94a3b8;margin:0;line-height:1.4;">후처리 개요와 부착·인장 · 응집에너지밀도(CED) · 용해도 파라미터 · 점도 · 궤적 분석 자동화</p>
+  </div>
+  <div style="display:flex;gap:56px;font-size:28px;color:#64748b;font-family:'JetBrains Mono',monospace;">
+    <span>윤태영 (Taeyoung Yun)</span>
+    <span>실습 · 밀도 · CED · δ · 점도</span>
+    <span>퀴즈 6주차</span>
+  </div>
+</section>
+
+<section data-label="지난 주차" data-screen-label="02" data-speaker-notes="4–5주차에 만든 평형 궤적이 이번 주차 입력." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:52px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">RECAP · WEEK 05</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">지난 주차 요약과 이번 주차의 위치</h2>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:40px;display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">4–5주차 산출물</div>
+      <div style="font-size:32px;line-height:1.45;">평형 궤적 · 실험 ID가 붙은 로그와 구조</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:40px;display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">남은 질문</div>
+      <div style="font-size:32px;line-height:1.45;">궤적에서 물성 수치를 얻는 방법</div>
+    </div>
+    <div style="background:#111827;border:1px solid #2d3748;border-radius:12px;padding:40px;display:flex;flex-direction:column;gap:18px;box-shadow:0 0 20px rgba(59,130,246,0.15);">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#60a5fa;">이번 주차</div>
+      <div style="font-size:32px;line-height:1.45;">밀도 · CED · δ · 점도 · 확산 · 부착 물성과 후처리 자동화</div>
+    </div>
+  </div>
+  <p style="font-size:32px;color:#64748b;margin:0;">여기서 나온 수치가 9주차 학습 데이터의 첫 라벨</p>
+</section>
+
+<section data-label="학습목표" data-screen-label="03" data-speaker-notes="계산 절차와 함께 오차 보고까지 익힌다." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:52px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">OBJECTIVE</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">6주차 학습목표</h2>
+  <div style="display:flex;flex-direction:column;gap:32px;max-width:1600px;">
+    <div style="display:flex;gap:36px;align-items:baseline;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:32px;color:#599eff;width:80px;">01</div>
+      <div style="font-size:32px;line-height:1.45;flex:1;">평형 구간의 부피 평균에서 밀도 · 열팽창 · 유리전이온도 T<sub>g</sub>(glass transition temperature) 산출 · 다층 소재의 부착력 · 인장강도 지표 이해</div>
+    </div>
+    <div style="display:flex;gap:36px;align-items:baseline;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:32px;color:#8ec0ff;width:80px;">02</div>
+      <div style="font-size:32px;line-height:1.45;flex:1;">CED(cohesive energy density)를 직접 산출(Method A) · 간접 차감(Method B) 두 방식으로 계산</div>
+    </div>
+    <div style="display:flex;gap:36px;align-items:baseline;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:32px;color:#a5b4fc;width:80px;">03</div>
+      <div style="font-size:32px;line-height:1.45;flex:1;">용해도 파라미터(solubility parameter) δ = √CED 로 혼화성(miscibility) · 용해도 예측 및 한계 설명</div>
+    </div>
+    <div style="display:flex;gap:36px;align-items:baseline;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:32px;color:#a78bfa;width:80px;">04</div>
+      <div style="font-size:32px;line-height:1.45;flex:1;">Green–Kubo · 비평형 분자동역학(NEMD, non-equilibrium molecular dynamics)으로 점도, 평균제곱변위(MSD, mean squared displacement) 기울기로 확산계수(diffusion coefficient) 산출</div>
+    </div>
+    <div style="display:flex;gap:36px;align-items:baseline;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:32px;color:#4ade80;width:80px;">05</div>
+      <div style="font-size:32px;line-height:1.45;flex:1;">OVITO · MDAnalysis 로 궤적 분석 자동화 · 평균 ± 오차로 보고</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="6주차 구성" data-screen-label="04" data-speaker-notes="다섯 세부절과 분량 안내. 총 50분." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:46px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">AGENDA</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">6주차 구성</h2>
+  <div style="display:flex;flex-direction:column;gap:20px;">
+    <div style="display:flex;align-items:center;gap:40px;background:#111827;border:1px solid #1f2937;border-radius:12px;padding:26px 40px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#599eff;width:120px;">6-1</div>
+      <div style="font-size:36px;font-weight:600;flex:1;">후처리 개요와 부착·인장</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#64748b;">12분</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:40px;background:#111827;border:1px solid #1f2937;border-radius:12px;padding:26px 40px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#599eff;width:120px;">6-2</div>
+      <div style="font-size:36px;font-weight:600;flex:1;">응집에너지밀도(CED)</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#64748b;">14분</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:40px;background:#111827;border:1px solid #1f2937;border-radius:12px;padding:26px 40px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#599eff;width:120px;">6-3</div>
+      <div style="font-size:36px;font-weight:600;flex:1;">CED · 용해도 파라미터 산출</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#64748b;">10분</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:40px;background:#111827;border:1px solid #1f2937;border-radius:12px;padding:26px 40px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#599eff;width:120px;">6-4</div>
+      <div style="font-size:36px;font-weight:600;flex:1;">점도 산출</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#64748b;">8분</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:40px;background:#111827;border:1px solid #1f2937;border-radius:12px;padding:26px 40px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#599eff;width:120px;">6-5</div>
+      <div style="font-size:36px;font-weight:600;flex:1;">궤적 분석 자동화</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#64748b;">6분</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="[6-1] 섹션" data-screen-label="05" data-speaker-notes="12분 · 역학 · 열물성 개요 · 다층 소재의 부착력과 인장강도" style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:100px;display:flex;flex-direction:column;justify-content:center;gap:40px;">
+  <div style="width:200px;height:6px;background:linear-gradient(135deg,#3377ff,#8b5cf6);border-radius:999px;"></div>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:120px;color:#1f2937;font-weight:700;line-height:1;">6-1</div>
+  <h2 style="font-size:68px;font-weight:700;letter-spacing:-0.02em;margin:0;line-height:1.1;">후처리 개요와 부착·인장</h2>
+  <p style="font-size:32px;color:#94a3b8;margin:0;">12분 · 역학 · 열물성 개요 · 다층 소재의 부착력과 인장강도</p>
+</section>
+
+<section data-label="후처리 개요" data-screen-label="06" data-speaker-notes="궤적 한 벌에서 어떤 물성이 어떤 경로로 나오는지 전체 구성을 먼저 보여준다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:42px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">6-1 · POST-PROCESSING MAP</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">궤적 하나에서 산출하는 물성</h2>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:30px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #8ec0ff;border-radius:12px;padding:36px 38px;display:flex;flex-direction:column;gap:16px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#8ec0ff;">역학 · 열물성</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.45;">밀도 ρ · 열팽창계수 α · 유리전이온도 T<sub>g</sub> — NPT(등온 · 등압, isothermal–isobaric) 궤적의 부피 통계에서</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #a5b4fc;border-radius:12px;padding:36px 38px;display:flex;flex-direction:column;gap:16px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#a5b4fc;">에너지 물성</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.45;">응집에너지밀도 CED · 용해도 파라미터 δ — 응집 상태와 기상 상태의 에너지 차이에서</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #4ade80;border-radius:12px;padding:36px 38px;display:flex;flex-direction:column;gap:16px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#4ade80;">수송 물성</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.45;">점도 η · 확산계수 D — 응력 자기상관(stress autocorrelation)과 평균제곱변위의 시간 적분 · 기울기에서</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #facc15;border-radius:12px;padding:36px 38px;display:flex;flex-direction:column;gap:16px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#facc15;">계면 물성</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.45;">부착력(분리일 · work of separation, W<sub>sep</sub>) · 인장강도 — 다층 셀의 에너지 차이와 응력–변위 곡선에서</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #a78bfa;border-radius:12px;padding:36px 38px;display:flex;flex-direction:column;gap:16px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#a78bfa;">필요한 궤적</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.45;">정적 물성은 수 ns · 점도는 수십 ns 또는 다중 시드(random seed) — 물성별 요구 길이 상이</div>
+    </div>
+    <div style="background:#111827;border:1px solid #2d3748;border-left:2px solid #64748b;border-radius:12px;padding:36px 38px;display:flex;flex-direction:column;gap:16px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#94a3b8;">공통 규칙</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.45;">평형 구간만 사용 · 값은 평균 ± 오차로 보고 · 같은 후처리 스크립트를 모든 조성에 적용</div>
+    </div>
+  </div>
+  <p style="font-size:30px;color:#64748b;margin:0;">후처리 = 궤적을 데이터로 변환하는 단계 · 8주차 데이터베이스 라벨의 생성 단계</p>
+</section>
+
+<section data-label="밀도 산출" data-screen-label="07" data-speaker-notes="정의와 실제 산출 절차. 평형 구간 평균. 수치는 5주차 예시 셀(1,161분자 · 99,979원자 · 질량 534,100 g/mol)과 맞춤(2026-09-22 정정): 초기 120 Å → ρ = 534,100 / (6.022×10²³ × 1.728×10⁻¹⁸ cm³) ≈ 0.51 g/cm³(5주차 #13 「약 0.5」), 압축 중 105 Å ≈ 0.77, 평형 95.4 Å ≈ 1.02 g/cm³(참고 범위 1.00–1.04 안). 이전 값(120 → 108 Å, 0.997)은 초기 밀도 약 0.73을 뜻해 5주차와 모순이었고, 0.997은 참고 범위보다 낮았다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:40px 80px 28px;display:flex;flex-direction:column;gap:22px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">6-1 · DENSITY</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">밀도 = 질량 ÷ 평형 구간 평균 부피</h2>
+  <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:26px 34px;display:flex;flex-direction:column;gap:12px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#8ec0ff;">ρ = M / ⟨V⟩ = Σmᵢ / ⟨V⟩ &nbsp;&nbsp;[ g/cm³ ]</div>
+    <div style="font-size:24px;color:#64748b;">M 고정 · 요동 성분은 V뿐 → 밀도 불확실성 = 부피 요동</div>
+  </div>
+  <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:16px 26px;">
+    <svg viewBox="0 0 1480 430" style="width:100%;height:auto;">
+      <text x="255" y="24" fill="#f87171" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">평형화 구간 · 평균에서 제외</text>
+      <text x="915" y="24" fill="#4ade80" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">생산 구간 · 이 구간만 평균</text>
+      <g transform="translate(0,30)">
+      <rect x="90" y="30" width="330" height="120" fill="rgba(248,113,113,0.08)"></rect>
+      <rect x="420" y="30" width="990" height="120" fill="rgba(74,222,128,0.10)"></rect>
+      <line x1="90" y1="150" x2="1445" y2="150" stroke="#374151" stroke-width="2"></line>
+      <line x1="90" y1="150" x2="90" y2="30" stroke="#374151" stroke-width="2"></line>
+      <path d="M90 42 C200 70 320 96 420 104 C700 112 1000 106 1410 108" stroke="#4ade80" stroke-width="3" fill="none"></path>
+      <line x1="420" y1="30" x2="420" y2="150" stroke="#a78bfa" stroke-width="2" stroke-dasharray="7 6"></line>
+      <line x1="420" y1="107" x2="1410" y2="107" stroke="#facc15" stroke-width="2" stroke-dasharray="10 7"></line>
+      <text x="1080" y="92" fill="#facc15" font-size="27" font-family="JetBrains Mono, monospace">⟨ρ⟩ = 1.02 g/cm³</text>
+      <text x="44" y="90" fill="#94a3b8" font-size="27" font-family="JetBrains Mono, monospace" text-anchor="middle" transform="rotate(-90 44 90)">ρ</text>
+
+      <g stroke="#334155" stroke-width="1.5" stroke-dasharray="5 6">
+        <line x1="170" y1="152" x2="170" y2="164"></line>
+        <line x1="400" y1="152" x2="400" y2="194"></line>
+        <line x1="700" y1="152" x2="700" y2="210"></line>
+        <line x1="1150" y1="152" x2="1150" y2="202"></line>
+      </g>
+
+      <rect x="95" y="200" width="150" height="150" rx="6" fill="rgba(248,113,113,0.06)" stroke="#f87171" stroke-width="2"></rect>
+      <g fill="#60a5fa" opacity="0.85"><circle cx="124" cy="232" r="7"></circle><circle cx="205" cy="222" r="7"></circle><circle cx="156" cy="278" r="7"></circle><circle cx="220" cy="300" r="7"></circle><circle cx="118" cy="322" r="7"></circle><circle cx="186" cy="336" r="7"></circle></g>
+      <text x="170" y="192" fill="#94a3b8" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle">120 Å</text>
+      <text x="170" y="382" fill="#f87171" font-size="24" text-anchor="middle">초기 배치 · 여유 많음</text>
+
+      <rect x="340" y="230" width="120" height="120" rx="6" fill="rgba(250,204,21,0.06)" stroke="#facc15" stroke-width="2"></rect>
+      <g fill="#60a5fa" opacity="0.85"><circle cx="366" cy="258" r="7"></circle><circle cx="430" cy="250" r="7"></circle><circle cx="392" cy="292" r="7"></circle><circle cx="438" cy="310" r="7"></circle><circle cx="358" cy="322" r="7"></circle><circle cx="412" cy="334" r="7"></circle></g>
+      <text x="400" y="222" fill="#94a3b8" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle">105 Å</text>
+      <text x="400" y="382" fill="#facc15" font-size="24" text-anchor="middle">NPT 압축 진행</text>
+
+      <rect x="648" y="246" width="104" height="104" rx="6" fill="rgba(74,222,128,0.06)" stroke="#4ade80" stroke-width="2"></rect>
+      <g fill="#60a5fa" opacity="0.85"><circle cx="672" cy="272" r="7"></circle><circle cx="726" cy="266" r="7"></circle><circle cx="694" cy="300" r="7"></circle><circle cx="732" cy="316" r="7"></circle><circle cx="664" cy="324" r="7"></circle><circle cx="710" cy="336" r="7"></circle></g>
+      <text x="700" y="238" fill="#94a3b8" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle">95.4 Å</text>
+      <text x="700" y="382" fill="#4ade80" font-size="24" text-anchor="middle">평형 도달 · 크기 안정</text>
+
+      <rect x="1098" y="246" width="104" height="104" rx="6" fill="rgba(74,222,128,0.06)" stroke="#4ade80" stroke-width="2"></rect>
+      <rect x="1092" y="240" width="116" height="116" rx="7" fill="none" stroke="#4ade80" stroke-width="1.5" stroke-dasharray="5 6"></rect>
+      <g fill="#60a5fa" opacity="0.85"><circle cx="1122" cy="272" r="7"></circle><circle cx="1176" cy="266" r="7"></circle><circle cx="1144" cy="300" r="7"></circle><circle cx="1182" cy="316" r="7"></circle><circle cx="1114" cy="324" r="7"></circle><circle cx="1160" cy="336" r="7"></circle></g>
+      <text x="1150" y="230" fill="#94a3b8" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle">95.4 Å ± 0.3%</text>
+      <text x="1150" y="382" fill="#4ade80" font-size="24" text-anchor="middle">생산 구간 · 부피 요동</text>
+
+      <text x="1350" y="296" fill="#64748b" font-size="24" text-anchor="middle">셀 크기 감소</text>
+      <text x="1350" y="330" fill="#64748b" font-size="24" text-anchor="middle">원자 수 불변</text>
+      </g>
+    </svg>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #4ade80;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#4ade80;">수렴 기준</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">후반 1 ns 평균과 전반 1 ns 평균의 차이 &lt; 0.5%</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #60a5fa;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#60a5fa;">참고 실험값</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">아스팔트 바인더 298 K : 약 1.00 ~ 1.04 g/cm³</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #f87171;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#f87171;">과소 밀도 원인</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">평형 부족 · 전하 누락 · 컷오프(cutoff) 꼬리 보정(tail correction) 미적용</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="수렴의 이유" data-screen-label="08" data-speaker-notes="왜 부피가 한 값으로 수렴하는가 — 앙상블 분포, 압력 되먹임, 구조 완화 세 층으로 설명." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:20px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">6-1 · WHY IT CONVERGES</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">밀도가 한 값으로 수렴하는 이유</h2>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;">
+    <div style="background:#0c1222;border:1px solid #1f2937;border-top:3px solid #3377ff;border-radius:12px;padding:22px 28px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#8ec0ff;">01 앙상블(ensemble)이 부피 분포 결정</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#f1f5f9;line-height:1.5;">P(V) ∝ Ω(V) e<sup>−(U+PV)/k<sub>B</sub>T</sup></div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">NPT: Gibbs 자유에너지(Gibbs free energy) 최소 부피 분포로 이동 → 분포 평균 = 평형 부피</div>
+    </div>
+    <div style="background:#0c1222;border:1px solid #1f2937;border-top:3px solid #6366f1;border-radius:12px;padding:22px 28px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#a5b4fc;">02 압력 되먹임(pressure feedback)으로 부피 조정</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#f1f5f9;line-height:1.5;">dV/dt ∝ (P_int − P_ext)<br>V(t) = V<sub>∞</sub> + ΔV e<sup>−t/τ</sup></div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">내부 압력이 높으면 상자 팽창, 낮으면 축소 · τ는 P_damp로 결정</div>
+    </div>
+    <div style="background:#0c1222;border:1px solid #2d3748;border-top:3px solid #8b5cf6;border-radius:12px;padding:22px 28px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;">03 소요 시간 = 구조 완화 시간</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#f1f5f9;line-height:1.5;">τ_total ≈ max(τ_baro , τ_struct)</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">초기 무작위 배치의 과잉 자유부피(free volume)가 분자 재배열로 소멸하는 시간 · 바인더에서는 τ_struct가 훨씬 김</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1.05fr 1fr;gap:26px;align-items:center;">
+    <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:14px 24px;">
+      <svg viewBox="0 0 900 260" style="width:100%;height:auto;">
+        <line x1="90" y1="210" x2="860" y2="210" stroke="#374151" stroke-width="2"></line>
+        <line x1="90" y1="210" x2="90" y2="26" stroke="#374151" stroke-width="2"></line>
+        <line x1="90" y1="150" x2="860" y2="150" stroke="#facc15" stroke-width="2" stroke-dasharray="10 7"></line>
+        <path d="M90 50 C200 96 300 128 420 142 C560 150 700 150 860 150" stroke="#4ade80" stroke-width="3" fill="none"></path>
+        <line x1="290" y1="26" x2="290" y2="210" stroke="#a78bfa" stroke-width="2" stroke-dasharray="6 6"></line>
+        <text x="302" y="48" fill="#a78bfa" font-size="28" font-family="JetBrains Mono, monospace">t = τ</text>
+        <text x="600" y="132" fill="#facc15" font-size="28" font-family="JetBrains Mono, monospace">V∞ · 평형 부피</text>
+        <text x="470" y="250" fill="#94a3b8" font-size="28" font-family="JetBrains Mono, monospace" text-anchor="middle">시간</text>
+        <text x="46" y="118" fill="#94a3b8" font-size="28" font-family="JetBrains Mono, monospace" text-anchor="middle" transform="rotate(-90 46 118)">V</text>
+      </svg>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:18px 26px;display:flex;flex-direction:column;gap:8px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#8ec0ff;">평형 후에도 남는 요동</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#f1f5f9;">⟨δV²⟩ = k<sub>B</sub>T V κ<sub>T</sub></div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">요동 자체는 소멸하지 않음 · 상대 크기 δV/V ∝ 1/√N → 계가 클수록 평평하게 관측</div>
+      </div>
+      <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:18px 26px;display:flex;flex-direction:column;gap:8px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#f87171;">수렴하지 않는다면</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">원인: τ_struct &gt; 계산 길이 → 어닐링(annealing) 연장 또는 온도 상승으로 재배열 촉진</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="P(V) 읽기" data-screen-label="09" data-speaker-notes="01 식의 변수 정의와, 변수가 바뀔 때 부피 분포가 어떻게 움직이는지." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:20px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">6-1 · READING P(V)</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">부피 분포 P(V)의 변수와 거동</h2>
+  <div style="display:flex;align-items:center;gap:28px;background:#111827;border:1px solid #2d3748;border-radius:12px;padding:16px 28px;">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#8ec0ff;">P(V) ∝ Ω(V) e<sup>−(U+PV)/k<sub>B</sub>T</sup></span>
+    <span style="font-size:24px;color:#64748b;line-height:1.4;flex:1;">부피 V가 나올 확률 = 배치 수(엔트로피) × 에너지 가중치(볼츠만 인자, Boltzmann factor)</span>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #34d399;border-radius:12px;padding:14px 22px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#4ade80;">Ω(V)</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">그 부피에서 가능한 배치의 수 · V가 클수록 증가</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #60a5fa;border-radius:12px;padding:14px 22px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#60a5fa;">U</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">포텐셜에너지 · 좁으면 반발, 넓으면 인력 손실</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #f59e0b;border-radius:12px;padding:14px 22px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#facc15;">PV</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">외부 압력의 일 · P가 클수록 큰 V의 확률 감소</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #8b5cf6;border-radius:12px;padding:14px 22px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;">k<sub>B</sub>T</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">열에너지 · 클수록 분포 폭 증가</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;">
+      <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:14px 18px;display:flex;flex-direction:column;gap:8px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#8ec0ff;">두 항의 곱</div>
+        <svg viewBox="0 0 420 230" style="width:100%;height:auto;">
+          <line x1="40" y1="190" x2="400" y2="190" stroke="#374151" stroke-width="2"></line>
+          <line x1="40" y1="190" x2="40" y2="20" stroke="#374151" stroke-width="2"></line>
+          <path d="M40 180 C140 168 220 120 400 36" stroke="#4ade80" stroke-width="3" fill="none"></path>
+          <path d="M40 30 C160 84 260 158 400 184" stroke="#facc15" stroke-width="3" fill="none"></path>
+          <path d="M40 186 C120 160 165 60 205 60 C255 60 310 150 400 184" stroke="#60a5fa" stroke-width="4" fill="none"></path>
+          <text x="395" y="104" fill="#4ade80" font-size="22" font-family="JetBrains Mono, monospace" text-anchor="end">Ω(V)</text>
+          <text x="112" y="40" fill="#facc15" font-size="22" font-family="JetBrains Mono, monospace">e^(−(U+PV)/kT)</text>
+          <text x="205" y="222" fill="#60a5fa" font-size="22" font-family="JetBrains Mono, monospace" text-anchor="middle">곱 = P(V)</text>
+        </svg>
+      </div>
+      <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:14px 18px;display:flex;flex-direction:column;gap:8px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;">온도 T ↑</div>
+        <svg viewBox="0 0 420 230" style="width:100%;height:auto;">
+          <line x1="40" y1="190" x2="400" y2="190" stroke="#374151" stroke-width="2"></line>
+          <line x1="40" y1="190" x2="40" y2="20" stroke="#374151" stroke-width="2"></line>
+          <path d="M40 188 C120 186 140 40 175 40 C210 40 230 186 400 188" stroke="#60a5fa" stroke-width="3" fill="none"></path>
+          <path d="M40 186 C130 178 180 78 245 78 C310 78 330 180 400 186" stroke="#a78bfa" stroke-width="3" fill="none"></path>
+          <text x="48" y="36" fill="#60a5fa" font-size="22" font-family="JetBrains Mono, monospace">낮은 T</text>
+          <text x="400" y="72" fill="#a78bfa" font-size="22" font-family="JetBrains Mono, monospace" text-anchor="end">높은 T</text>
+          <text x="220" y="222" fill="#94a3b8" font-size="22" font-family="JetBrains Mono, monospace" text-anchor="middle">평균 V ↑ · 폭 ↑</text>
+        </svg>
+      </div>
+      <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:14px 18px;display:flex;flex-direction:column;gap:8px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#facc15;">압력 P ↑ · 계 크기 N ↑</div>
+        <svg viewBox="0 0 420 230" style="width:100%;height:auto;">
+          <line x1="40" y1="190" x2="400" y2="190" stroke="#374151" stroke-width="2"></line>
+          <line x1="40" y1="190" x2="40" y2="20" stroke="#374151" stroke-width="2"></line>
+          <path d="M40 186 C120 178 150 70 205 70 C265 70 300 180 400 186" stroke="#f87171" stroke-width="3" fill="none"></path>
+          <path d="M40 188 C150 186 230 52 268 52 C306 52 330 186 400 188" stroke="#4ade80" stroke-width="3" fill="none"></path>
+          <text x="48" y="36" fill="#f87171" font-size="22" font-family="JetBrains Mono, monospace">P 높음</text>
+          <text x="400" y="44" fill="#4ade80" font-size="22" font-family="JetBrains Mono, monospace" text-anchor="end">N 큼</text>
+          <text x="220" y="222" fill="#94a3b8" font-size="22" font-family="JetBrains Mono, monospace" text-anchor="middle">V 작아짐 · 상대 폭 좁아짐</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <p style="font-size:24px;color:#64748b;margin:0;">MD의 역할 = 이 분포에서 표본 추출 · 평형 구간 평균 = 분포의 봉우리 위치</p>
+</section>
+
+<section data-label="온도 의존성" data-screen-label="10" data-speaker-notes="여러 온도에서 계산하면 열팽창계수와 Tg 예고까지 이어진다." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:24px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">6-1 · TEMPERATURE</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">온도에 따른 밀도와 열팽창</h2>
+  <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:32px;align-items:center;">
+    <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:16px 24px;">
+      <svg viewBox="0 0 700 330" style="width:100%;height:auto;">
+        <line x1="90" y1="250" x2="660" y2="250" stroke="#374151" stroke-width="2"></line>
+        <line x1="90" y1="250" x2="90" y2="30" stroke="#374151" stroke-width="2"></line>
+        <path d="M120 80 L240 118 L360 158 L480 196 L600 232" stroke="#60a5fa" stroke-width="3" fill="none"></path>
+        <circle cx="120" cy="80" r="8" fill="#60a5fa"></circle>
+        <circle cx="240" cy="118" r="8" fill="#60a5fa"></circle>
+        <circle cx="360" cy="158" r="8" fill="#60a5fa"></circle>
+        <circle cx="480" cy="196" r="8" fill="#60a5fa"></circle>
+        <circle cx="600" cy="232" r="8" fill="#60a5fa"></circle>
+        <text x="375" y="320" fill="#94a3b8" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle">온도 T (K)</text>
+        <text x="40" y="140" fill="#94a3b8" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle" transform="rotate(-90 40 140)">밀도 ρ</text>
+        <text x="120" y="274" fill="#64748b" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">273</text>
+        <text x="360" y="274" fill="#64748b" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">333</text>
+        <text x="600" y="274" fill="#64748b" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">393</text>
+      </svg>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:18px;">
+      <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:20px 26px;display:flex;flex-direction:column;gap:8px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#8ec0ff;">열팽창계수</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f1f5f9;">α = (1/V)(∂V/∂T)<sub>P</sub></div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">ρ–T 직선 기울기에서 산출</div>
+      </div>
+      <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:20px 26px;display:flex;flex-direction:column;gap:8px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;">기울기 변화</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">저온에서 기울기가 꺾이면 유리전이 — 바로 다음 장에서 Tg 로 다룸</div>
+      </div>
+      <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:20px 26px;display:flex;flex-direction:column;gap:8px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#facc15;">계산 설계</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">온도 최소 3점 · 같은 시드 · 같은 프로토콜 적용</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="Tg 판정" data-screen-label="11" data-speaker-notes="두 직선의 교점. MD 냉각률은 실험보다 훨씬 빠르다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:20px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">6-1 · GLASS TRANSITION</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">부피–온도 곡선에서 Tg 찾기</h2>
+  <div style="display:flex;flex-direction:column;gap:26px;flex:1;min-height:0;">
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:18px 24px;flex:1;min-height:0;display:flex;justify-content:center;align-items:center;">
+      <svg viewBox="0 0 900 320" style="width:100%;height:100%;max-height:540px;">
+        <line x1="90" y1="270" x2="860" y2="270" stroke="#374151" stroke-width="2"></line>
+        <line x1="90" y1="270" x2="90" y2="30" stroke="#374151" stroke-width="2"></line>
+        <line x1="120" y1="228" x2="460" y2="164" stroke="#60a5fa" stroke-width="4"></line>
+        <line x1="460" y1="164" x2="840" y2="52" stroke="#a78bfa" stroke-width="4"></line>
+        <line x1="460" y1="270" x2="460" y2="164" stroke="#facc15" stroke-width="2" stroke-dasharray="7 6"></line>
+        <circle cx="460" cy="164" r="9" fill="#facc15"></circle>
+        <text x="150" y="182" fill="#60a5fa" font-size="16" font-family="JetBrains Mono, monospace">유리 상태</text>
+        <text x="640" y="142" fill="#a78bfa" font-size="16" font-family="JetBrains Mono, monospace">고무 · 액체 상태</text>
+        <text x="470" y="296" fill="#facc15" font-size="16" font-family="JetBrains Mono, monospace" text-anchor="middle">Tg</text>
+        <text x="60" y="150" fill="#94a3b8" font-size="16" font-family="JetBrains Mono, monospace" text-anchor="middle" transform="rotate(-90 60 150)">V</text>
+        <text x="840" y="296" fill="#94a3b8" font-size="16" font-family="JetBrains Mono, monospace" text-anchor="end">T</text>
+      </svg>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;">
+      <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #60a5fa;border-radius:12px;padding:22px 28px;display:flex;flex-direction:column;gap:10px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#60a5fa;">절차</div>
+        <div style="font-size:28px;color:#94a3b8;line-height:1.4;">고온에서 단계적으로 냉각하며 각 온도의 평형 부피를 기록 → 두 직선 적합 → 교점이 Tg</div>
+      </div>
+      <div style="background:#111827;border:1px solid #2d3748;border-left:2px solid #f87171;border-radius:12px;padding:22px 28px;display:flex;flex-direction:column;gap:10px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#f87171;">냉각률 의존성</div>
+        <div style="font-size:28px;color:#94a3b8;line-height:1.4;">MD 냉각률은 실험보다 10<sup>10</sup>배 이상 빠름 — Tg가 수십 K 높게 산출</div>
+      </div>
+      <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #4ade80;border-radius:12px;padding:22px 28px;display:flex;flex-direction:column;gap:10px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#4ade80;">쓰는 법</div>
+        <div style="font-size:28px;color:#94a3b8;line-height:1.4;">절대값 대신 조성 간 상대 비교에 사용 · 여러 냉각률 결과를 외삽하면 개선</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="부착력과 인장강도" data-screen-label="12" data-speaker-notes="다층 소재에서 얻는 두 지표. 자세한 계면 계산은 보충 강의에서 다룬다." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:40px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">6-1 · ADHESION &amp; TENSILE</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">다층 소재의 부착력과 인장강도</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:start;">
+    <div style="background:#0c1222;border:1px solid #1f2937;border-left:2px solid #facc15;border-radius:12px;padding:34px 38px;display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#facc15;">부착력 — 분리일 W<sub>sep</sub></div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#f1f5f9;line-height:1.5;">W<sub>sep</sub> = (E<sub>slab</sub> + E<sub>binder</sub> − E<sub>interface</sub>) / A</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.45;">같은 조건에서 세 번 계산 — 계면 계 · 분리된 슬래브 · 분리된 바인더 · 면적 A 는 x · y 단면적</div>
+      <div style="font-size:26px;color:#64748b;line-height:1.45;">단위는 mJ/m² · 건조 조건과 습윤 조건의 차이가 수분 민감도</div>
+    </div>
+    <div style="background:#0c1222;border:1px solid #1f2937;border-left:2px solid #8ec0ff;border-radius:12px;padding:34px 38px;display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#8ec0ff;">인장강도 — 응력–변위 곡선</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#f1f5f9;line-height:1.5;">σ(d) → σ<sub>max</sub> · 파괴에너지 ∫σ dd</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.45;">바닥층을 고정하고 상부를 일정 속도로 당기며 z 방향 응력을 기록 — 최대 응력이 인장강도</div>
+      <div style="font-size:26px;color:#64748b;line-height:1.45;">인장 속도가 빠를수록 값 상승 · 조성 비교는 같은 속도 조건에서만</div>
+    </div>
+  </div>
+  <div style="background:#0c1222;border:1px solid #2d3748;border-radius:12px;padding:28px 34px;display:flex;flex-direction:column;gap:10px;">
+    <div style="font-size:28px;color:#f1f5f9;line-height:1.45;">파괴모드(failure mode)는 세 가지로 나눠 기록 — <span style="color:#facc15;">계면 박리(adhesive failure)</span> · <span style="color:#8ec0ff;">바인더 응집 파괴(cohesive failure)</span> · <span style="color:#a78bfa;">혼합</span></div>
+    <div style="font-size:26px;color:#64748b;line-height:1.45;">다층 셀 생성은 4-5, 계면 계산의 세부 절차 · 수분 손상 · 통계 처리는 보충 강의 「계면 부착 물성」에서</div>
+  </div>
+</section>
+
+<section data-label="[6-2] 섹션" data-screen-label="13" data-speaker-notes="14분 · 개념과 두 가지 계산 방식 — 직접 산출 vs 간접 차감" style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:100px;display:flex;flex-direction:column;justify-content:center;gap:40px;">
+  <div style="width:200px;height:6px;background:linear-gradient(135deg,#3377ff,#8b5cf6);border-radius:999px;"></div>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:120px;color:#1f2937;font-weight:700;line-height:1;">6-2</div>
+  <h2 style="font-size:68px;font-weight:700;letter-spacing:-0.02em;margin:0;line-height:1.1;">응집에너지밀도(CED)</h2>
+  <p style="font-size:32px;color:#94a3b8;margin:0;">14분 · 개념과 두 가지 계산 방식 — 직접 산출 vs 간접 차감</p>
+</section>
+
+<section data-label="CED 정의" data-screen-label="14" data-speaker-notes="두 계산을 짝지어야 한다는 점이 핵심. 기상은 단분자 계산." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:22px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">6-2 · CED</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">응집에너지밀도의 정의와 계산</h2>
+  <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:26px 34px;display:flex;flex-direction:column;gap:12px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#8ec0ff;">CED = (⟨E_gas⟩ − ⟨E_bulk⟩) / ⟨V⟩ &nbsp;&nbsp;·&nbsp;&nbsp; δ = √CED</div>
+    <div style="font-size:24px;color:#64748b;">CED : MJ/m³ · δ : MPa^0.5 — 두 값은 같은 정보의 다른 표현</div>
+  </div>
+  <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:16px 26px;">
+    <svg viewBox="0 0 1480 200" style="width:100%;height:auto;">
+      <rect x="60" y="34" width="330" height="130" rx="10" fill="#0c1222" stroke="#3377ff" stroke-width="2"></rect>
+      <text x="225" y="26" fill="#8ec0ff" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">벌크 (응축상)</text>
+      <circle cx="130" cy="72" r="13" fill="#60a5fa" opacity="0.8"></circle>
+      <circle cx="196" cy="100" r="13" fill="#a78bfa" opacity="0.8"></circle>
+      <circle cx="270" cy="70" r="13" fill="#34d399" opacity="0.8"></circle>
+      <circle cx="330" cy="112" r="13" fill="#fbbf24" opacity="0.8"></circle>
+      <circle cx="150" cy="134" r="13" fill="#f87171" opacity="0.8"></circle>
+      <circle cx="252" cy="140" r="13" fill="#60a5fa" opacity="0.7"></circle>
+      <text x="225" y="192" fill="#94a3b8" font-size="27" font-family="JetBrains Mono, monospace" text-anchor="middle">분자 간 인력 작동 → E_bulk 낮음</text>
+
+      <text x="620" y="82" fill="#facc15" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">기화</text>
+      <line x1="540" y1="104" x2="690" y2="104" stroke="#facc15" stroke-width="3"></line>
+      <polygon points="704,104 686,95 686,113" fill="#facc15"></polygon>
+
+      <rect x="740" y="34" width="500" height="130" rx="10" fill="#0c1222" stroke="#8b5cf6" stroke-width="2"></rect>
+      <text x="990" y="26" fill="#a78bfa" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">기상 (분자 하나씩 따로)</text>
+      <circle cx="810" cy="70" r="13" fill="#60a5fa" opacity="0.8"></circle>
+      <circle cx="940" cy="130" r="13" fill="#a78bfa" opacity="0.8"></circle>
+      <circle cx="1070" cy="66" r="13" fill="#34d399" opacity="0.8"></circle>
+      <circle cx="1180" cy="128" r="13" fill="#fbbf24" opacity="0.8"></circle>
+      <text x="990" y="192" fill="#94a3b8" font-size="27" font-family="JetBrains Mono, monospace" text-anchor="middle">분자 간 인력 없음 → E_gas 높음</text>
+
+      <text x="1290" y="86" fill="#f1f5f9" font-size="27" font-family="JetBrains Mono, monospace">차이 = 응집</text>
+      <text x="1290" y="122" fill="#4ade80" font-size="27" font-family="JetBrains Mono, monospace">에너지</text>
+    </svg>
+  </div>
+  <p style="font-size:24px;color:#64748b;margin:0;">기상 항은 각 분자를 단독으로 NVT(등온 · 등적, canonical) 계산 후 평균 — 벌크와 같은 힘장 · 같은 온도로 정합</p>
+</section>
+
+<section data-label="CED · 두 분자 예시" data-screen-label="15" data-speaker-notes="분자 단 두 개만 남기면 CED 식의 의미가 정확하게 보인다. 기상은 무한히 떼어놓은 상황이며, 분자 내부 에너지는 상쇄되고 분자 사이 항만 살아남는다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:40px 80px 28px;display:flex;flex-direction:column;gap:18px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">6-2 · CED WITH TWO MOLECULES</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">분자 두 개로 보는 식의 의미</h2>
+  <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:14px 24px;">
+    <svg viewBox="0 0 1720 290" style="width:100%;height:auto;">
+      <rect x="20" y="34" width="520" height="190" rx="12" fill="#0c1222" stroke="#3377ff" stroke-width="2"></rect>
+      <text x="280" y="26" fill="#8ec0ff" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">벌크 상황 — 두 분자 접촉</text>
+      <g stroke="#60a5fa" stroke-width="3" fill="#60a5fa">
+        <line x1="120" y1="100" x2="186" y2="134"></line>
+        <line x1="186" y1="134" x2="120" y2="168"></line>
+        <circle cx="120" cy="100" r="13"></circle><circle cx="186" cy="134" r="13"></circle><circle cx="120" cy="168" r="13"></circle>
+      </g>
+      <g stroke="#a78bfa" stroke-width="3" fill="#a78bfa">
+        <line x1="432" y1="100" x2="366" y2="134"></line>
+        <line x1="366" y1="134" x2="432" y2="168"></line>
+        <circle cx="432" cy="100" r="13"></circle><circle cx="366" cy="134" r="13"></circle><circle cx="432" cy="168" r="13"></circle>
+      </g>
+      <g stroke="#facc15" stroke-width="2" stroke-dasharray="5 6">
+        <line x1="186" y1="134" x2="366" y2="134"></line>
+        <line x1="120" y1="100" x2="366" y2="134"></line>
+        <line x1="120" y1="168" x2="366" y2="134"></line>
+        <line x1="186" y1="134" x2="432" y2="100"></line>
+        <line x1="186" y1="134" x2="432" y2="168"></line>
+      </g>
+      <text x="276" y="180" fill="#facc15" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle">r_ij</text>
+      <text x="280" y="212" fill="#94a3b8" font-size="24" text-anchor="middle">노란 점선 = 분자 사이 원자쌍 9개</text>
+      <text x="280" y="266" fill="#8ec0ff" font-size="25" font-family="JetBrains Mono, monospace" text-anchor="middle">E_bulk = E_A,내부 + E_B,내부 + E_AB</text>
+
+      <line x1="578" y1="130" x2="698" y2="130" stroke="#facc15" stroke-width="3"></line>
+      <path d="M698 120 L720 130 L698 140 Z" fill="#facc15"></path>
+      <text x="648" y="104" fill="#facc15" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle">r → ∞</text>
+
+      <rect x="750" y="34" width="600" height="190" rx="12" fill="#0c1222" stroke="#8b5cf6" stroke-width="2"></rect>
+      <text x="1050" y="26" fill="#a78bfa" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">기상 상황 — 하나씩 따로 계산</text>
+      <g stroke="#60a5fa" stroke-width="3" fill="#60a5fa">
+        <line x1="820" y1="100" x2="886" y2="134"></line>
+        <line x1="886" y1="134" x2="820" y2="168"></line>
+        <circle cx="820" cy="100" r="13"></circle><circle cx="886" cy="134" r="13"></circle><circle cx="820" cy="168" r="13"></circle>
+      </g>
+      <g stroke="#a78bfa" stroke-width="3" fill="#a78bfa">
+        <line x1="1280" y1="100" x2="1214" y2="134"></line>
+        <line x1="1214" y1="134" x2="1280" y2="168"></line>
+        <circle cx="1280" cy="100" r="13"></circle><circle cx="1214" cy="134" r="13"></circle><circle cx="1280" cy="168" r="13"></circle>
+      </g>
+      <text x="1050" y="140" fill="#64748b" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle">분자 사이 항 없음</text>
+      <text x="1050" y="208" fill="#94a3b8" font-size="24" text-anchor="middle">같은 힘장 · 같은 온도로 단분자 NVT</text>
+      <text x="1050" y="266" fill="#a78bfa" font-size="25" font-family="JetBrains Mono, monospace" text-anchor="middle">E_gas = E_A,내부 + E_B,내부</text>
+
+      <rect x="1400" y="64" width="300" height="132" rx="12" fill="#111827" stroke="#34d399" stroke-width="2"></rect>
+      <text x="1550" y="110" fill="#4ade80" font-size="25" font-family="JetBrains Mono, monospace" text-anchor="middle">내부 항은 상쇄</text>
+      <text x="1550" y="150" fill="#f1f5f9" font-size="25" font-family="JetBrains Mono, monospace" text-anchor="middle">ΔE = − E_AB</text>
+      <text x="1550" y="186" fill="#94a3b8" font-size="24" text-anchor="middle">남는 것은 사이 항뿐</text>
+    </svg>
+  </div>
+  <div style="display:grid;grid-template-columns:1.25fr 1fr;gap:20px;align-items:start;">
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:16px 26px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#64748b;letter-spacing:0.08em;">식과의 관계</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f1f5f9;line-height:1.5;">ΔE<sub style="font-size:1em;vertical-align:-0.2em;">coh</sub> = ⟨E<sub style="font-size:1em;vertical-align:-0.2em;">gas</sub>⟩ − ⟨E<sub style="font-size:1em;vertical-align:-0.2em;">bulk</sub>⟩ = − ⟨E<sub style="font-size:1em;vertical-align:-0.2em;">AB</sub>⟩</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#8ec0ff;line-height:1.5;">E<sub style="font-size:1em;vertical-align:-0.2em;">AB</sub> = Σ<sub style="font-size:1em;vertical-align:-0.2em;">i∈A</sub> Σ<sub style="font-size:1em;vertical-align:-0.2em;">j∈B</sub> [ 4ε<sub style="font-size:1em;vertical-align:-0.2em;">ij</sub>( (σ/r)<sup style="font-size:1em;vertical-align:0.4em;">12</sup> − (σ/r)<sup style="font-size:1em;vertical-align:0.4em;">6</sup> ) + q<sub style="font-size:1em;vertical-align:-0.2em;">i</sub>q<sub style="font-size:1em;vertical-align:-0.2em;">j</sub> / 4πε<sub style="font-size:1em;vertical-align:-0.2em;">0</sub>r<sub style="font-size:1em;vertical-align:-0.2em;">ij</sub> ]</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">원자 3개 × 3개 = 9개 원자쌍의 반데르발스(vdW, van der Waals) · 정전기 항 합산 · 합이 음수 = 두 분자 사이 인력</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#4ade80;line-height:1.5;">CED = ΔE<sub style="font-size:1em;vertical-align:-0.2em;">coh</sub> / ⟨V⟩ &nbsp;·&nbsp; δ = √CED</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #facc15;border-radius:12px;padding:14px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#facc15;">숫자로 한 번</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#cbd5e1;line-height:1.45;">⟨E_AB⟩ = −12.4 kcal/mol<br>ΔE = +12.4 kcal/mol = 8.62×10⁻²⁰ J<br>V = 1.2 nm³ = 1.2×10⁻²⁷ m³<br>CED = 71.8 MJ/m³ → δ = 8.5 MPa⁰·⁵</div>
+      </div>
+      <div style="background:#111827;border:1px solid #2d3748;border-left:2px solid #f87171;border-radius:12px;padding:14px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#f87171;">완전한 상쇄 아님</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">기상에서는 분자가 자유롭게 이완 → 내부 에너지 소폭 감소 · 두 계산의 힘장 · 온도 · 계산 길이를 맞춰 차이 축소</div>
+      </div>
+      <div style="background:#111827;border:1px solid #2d3748;border-left:2px solid #8ec0ff;border-radius:12px;padding:14px 24px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">실제 바인더는 분자 수백 개 — 사이 항 수만 N²로 증가 · 식의 구조는 두 분자 예제와 동일</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="CED 계산 두 방식" data-screen-label="16" data-speaker-notes="Method A 직접 산출과 Method B 간접 차감. 같은 값을 두 경로로 얻는다." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:40px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">6-2 · METHOD A vs B</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">CED 를 구하는 두 가지 경로</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:start;">
+    <div style="background:#0c1222;border:1px solid #1f2937;border-left:2px solid #4ade80;border-radius:12px;padding:34px 38px;display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#4ade80;">Method A · 직접 산출</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#f1f5f9;line-height:1.5;">CED = −E<sub>inter</sub> / V</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.45;">분자 사이 에너지 직접 집계 — 분자 내 결합 항 제외 · 분자간(intermolecular) vdW · Coulomb 만 합산</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#64748b;line-height:1.5;">compute inter all pair lj/cut/coul/long<br>compute_modify · exclude intra</div>
+      <div style="font-size:26px;color:#64748b;line-height:1.45;">장점 — 계산 한 번 · 단점 — 분자 내/분자 간 분리 설정에 민감</div>
+    </div>
+    <div style="background:#0c1222;border:1px solid #1f2937;border-left:2px solid #a5b4fc;border-radius:12px;padding:34px 38px;display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#a5b4fc;">Method B · 간접 차감</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#f1f5f9;line-height:1.5;">CED = (E<sub>gas</sub> − E<sub>liquid</sub>) / V</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.45;">응집 상태 전체 에너지와 분자를 무한히 떼어놓은 기상 상태 에너지의 차이 ÷ 부피</div>
+      <div style="font-size:26px;color:#94a3b8;line-height:1.45;">기상 계산은 단분자를 상자 하나에 하나씩 두고 같은 힘장 · 같은 온도로 평균</div>
+      <div style="font-size:26px;color:#64748b;line-height:1.45;">장점 — 정의에 충실 · 단점 — 계산 두 벌, 기상 표본 부족 시 값 불안정</div>
+    </div>
+  </div>
+  <div style="background:#0c1222;border:1px solid #2d3748;border-radius:12px;padding:28px 34px;display:flex;flex-direction:column;gap:10px;">
+    <div style="font-size:28px;color:#f1f5f9;line-height:1.45;">두 방식의 값은 원칙적으로 동일 · 차이 10 % 초과 시 exclude 설정 · 기상 표본부터 점검</div>
+    <div style="font-size:26px;color:#64748b;line-height:1.45;">데이터셋 전체에서 한 방식을 고정 — 조성 비교는 같은 방식으로 얻은 값끼리만 유효</div>
+  </div>
+</section>
+
+<section data-label="[6-3] 섹션" data-screen-label="17" data-speaker-notes="10분 · δ = √CED 로 혼화성 · 용해도 예측" style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:100px;display:flex;flex-direction:column;justify-content:center;gap:40px;">
+  <div style="width:200px;height:6px;background:linear-gradient(135deg,#3377ff,#8b5cf6);border-radius:999px;"></div>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:120px;color:#1f2937;font-weight:700;line-height:1;">6-3</div>
+  <h2 style="font-size:68px;font-weight:700;letter-spacing:-0.02em;margin:0;line-height:1.1;">CED · 용해도 파라미터 산출</h2>
+  <p style="font-size:32px;color:#94a3b8;margin:0;">10분 · δ = √CED 로 혼화성 · 용해도 예측</p>
+</section>
+
+<section data-label="δ 계산 예시" data-screen-label="18" data-speaker-notes="숫자로 한 번 계산해 본다. 단위 환산 주의. 검산(2026-09-22 입력 정정): CED = ΔE / (N_A · V) = 25,670 × 4184 J/mol ÷ 6.022×10²³ ÷ 4.82×10⁻²⁵ m³ ≈ 3.70×10⁸ J/m³ = 370 MJ/m³, δ = √CED ≈ 1.92×10⁴ Pa^0.5 = 19.2 MPa^0.5. 역산식 ΔE = CED · V · N_A / 4184. 이전 입력 ΔE = 1284 kcal/mol로는 CED ≈ 18.5 MJ/m³에 그쳐 결과 칸 및 #27 시드 표(368 · 373 · 366)와 맞지 않았다. E_gas는 그대로 두고 E_bulk를 −43,490으로 조정. 주의 칸: pe만 쓰므로 운동에너지는 빠진다." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:24px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">6-3 · WORKED EXAMPLE</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">숫자로 따라가는 CED · δ</h2>
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:1fr;gap:24px;flex:1;min-height:0;">
+    <div style="background:#0c1222;border:1px solid #1f2937;border-top:3px solid #3377ff;border-radius:12px;padding:30px 40px;display:flex;flex-direction:column;justify-content:center;gap:16px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#8ec0ff;">01 입력</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:32px;color:#f1f5f9;line-height:1.5;">E_bulk = −43490 kcal/mol<br>E_gas = −17820 kcal/mol</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">같은 계 · 같은 온도의 평균값</div>
+    </div>
+    <div style="background:#0c1222;border:1px solid #1f2937;border-top:3px solid #6366f1;border-radius:12px;padding:30px 40px;display:flex;flex-direction:column;justify-content:center;gap:16px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#a5b4fc;">02 응집에너지</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:32px;color:#f1f5f9;line-height:1.5;">ΔE = 25670 kcal/mol<br>= 1.074×10⁸ J/mol</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">1 kcal = 4184 J</div>
+    </div>
+    <div style="background:#0c1222;border:1px solid #1f2937;border-top:3px solid #8b5cf6;border-radius:12px;padding:30px 40px;display:flex;flex-direction:column;justify-content:center;gap:16px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#a78bfa;">03 부피</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:32px;color:#f1f5f9;line-height:1.5;">V = 482,000 Å³<br>= 4.82×10⁻²⁵ m³</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">1 Å³ = 10⁻³⁰ m³</div>
+    </div>
+    <div style="background:#0c1222;border:1px solid #2d3748;border-top:3px solid #34d399;border-radius:12px;padding:30px 40px;display:flex;flex-direction:column;justify-content:center;gap:16px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#34d399;">04 결과</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:32px;color:#f1f5f9;line-height:1.5;">CED ≈ 370 MJ/m³<br>δ ≈ 19.2 MPa^0.5</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">CED = ΔE / (N_A · V) · 바인더 문헌값과 같은 자릿수</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:26px;background:#0c1222;border:1px solid #2d3748;border-radius:12px;padding:22px 30px;">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#facc15;">주의</span>
+    <span style="font-size:28px;color:#94a3b8;line-height:1.45;flex:1;">E = 전위에너지(pe)만 사용 · 운동에너지(ke) 제외 · 기상 계산은 컷오프 밖 상호작용이 없을 만큼 큰 상자에서 수행</span>
+  </div>
+</section>
+
+<section data-label="상용성 판정" data-screen-label="19" data-speaker-notes="δ 차이 기준과 한계. 극성 성분에서는 δ만으로 부족하다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:22px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">6-3 · COMPATIBILITY</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">δ 차이로 보는 상용성</h2>
+  <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:24px 32px;display:flex;flex-direction:column;gap:12px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#8ec0ff;">χ(Flory–Huggins 파라미터) ≈ (V_ref / RT)(δ₁ − δ₂)² &nbsp;&nbsp;→&nbsp;&nbsp; |Δδ| 가 작을수록 혼합 용이</div>
+  </div>
+  <div style="display:grid;grid-template-columns:0.6fr 1fr 1.2fr;gap:0;background:#111827;border:1px solid #1f2937;border-radius:12px;overflow:hidden;">
+    <div style="padding:12px 30px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">|Δδ|</div>
+    <div style="padding:12px 30px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">판정</div>
+    <div style="padding:12px 30px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">MD로 확인할 것</div>
+
+    <div style="padding:12px 30px;font-size:26px;font-family:'JetBrains Mono',monospace;color:#4ade80;border-bottom:1px solid rgba(51,65,85,0.5);">&lt; 2</div>
+    <div style="padding:12px 30px;font-size:26px;border-bottom:1px solid rgba(51,65,85,0.5);">잘 혼합</div>
+    <div style="padding:12px 30px;font-size:24px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">혼합 후 밀도가 단순 가중 평균에 가까운지</div>
+
+    <div style="padding:12px 30px;font-size:26px;font-family:'JetBrains Mono',monospace;color:#facc15;border-bottom:1px solid rgba(51,65,85,0.5);">2 ~ 5</div>
+    <div style="padding:12px 30px;font-size:26px;border-bottom:1px solid rgba(51,65,85,0.5);">부분 상용</div>
+    <div style="padding:12px 30px;font-size:24px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">장시간 계산에서 국소 뭉침 여부를 동경분포함수(RDF, radial distribution function)로 확인</div>
+
+    <div style="padding:12px 30px;font-size:26px;font-family:'JetBrains Mono',monospace;color:#f87171;">&gt; 5</div>
+    <div style="padding:12px 30px;font-size:26px;">상 분리</div>
+    <div style="padding:12px 30px;font-size:24px;color:#94a3b8;">계면이 형성되는지 · 첨가제가 한쪽으로 모이는지</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:26px;background:#111827;border:1px solid #2d3748;border-radius:12px;padding:18px 26px;">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;">한계</span>
+    <span style="font-size:24px;color:#94a3b8;line-height:1.45;flex:1;">δ = 분산 · 극성 · 수소결합 기여를 합친 단일 값 · 극성이 큰 첨가제는 Hansen 3성분(Hansen solubility parameters)으로 분리하거나 혼합 엔탈피를 직접 계산해 판정</span>
+  </div>
+</section>
+
+<section data-label="[6-4] 섹션" data-screen-label="20" data-speaker-notes="8분 · Green–Kubo 와 비평형 MD · 확산계수" style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:100px;display:flex;flex-direction:column;justify-content:center;gap:40px;">
+  <div style="width:200px;height:6px;background:linear-gradient(135deg,#3377ff,#8b5cf6);border-radius:999px;"></div>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:120px;color:#1f2937;font-weight:700;line-height:1;">6-4</div>
+  <h2 style="font-size:68px;font-weight:700;letter-spacing:-0.02em;margin:0;line-height:1.1;">점도 산출</h2>
+  <p style="font-size:32px;color:#94a3b8;margin:0;">8분 · Green–Kubo 와 비평형 MD · 확산계수</p>
+</section>
+
+<section data-label="점도 정의" data-screen-label="21" data-speaker-notes="요동–소산 정리. 평형 요동에서 수송계수를 얻는다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:20px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">6-4 · GREEN–KUBO</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">평형 요동에서 점도 산출</h2>
+  <div style="background:#111827;border:1px solid #2d3748;border-radius:12px;padding:24px 32px;display:flex;flex-direction:column;gap:12px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#8ec0ff;">η = (V / k<sub>B</sub>T) ∫₀<sup>∞</sup> ⟨ P<sub>αβ</sub>(0) P<sub>αβ</sub>(t) ⟩ dt</div>
+    <div style="font-size:24px;color:#64748b;">P<sub>αβ</sub> = 비대각 응력 성분 (xy · xz · yz) · V = 부피 · 단위 mPa·s</div>
+  </div>
+  <div style="display:grid;grid-template-columns:1.15fr 1fr;gap:26px;align-items:center;">
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:14px 22px;">
+      <svg viewBox="0 0 860 300" style="width:100%;height:auto;">
+        <line x1="80" y1="150" x2="820" y2="150" stroke="#374151" stroke-width="2"></line>
+        <line x1="80" y1="270" x2="80" y2="30" stroke="#374151" stroke-width="2"></line>
+        <path d="M80 44 C120 160 150 200 190 168 C220 146 240 176 270 160 C310 142 340 166 380 154 C440 146 520 152 820 150" stroke="#60a5fa" stroke-width="3" fill="none"></path>
+        <path d="M80 268 C160 210 260 176 380 166 C520 158 660 156 820 156" stroke="#4ade80" stroke-width="3" fill="none" stroke-dasharray="10 7"></path>
+        <text x="300" y="52" fill="#60a5fa" font-size="26" font-family="JetBrains Mono, monospace">응력 자기상관 C(t)</text>
+        <text x="430" y="240" fill="#4ade80" font-size="26" font-family="JetBrains Mono, monospace">누적 적분 → η</text>
+        <text x="450" y="292" fill="#94a3b8" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="middle">시간 t</text>
+      </svg>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #60a5fa;border-radius:12px;padding:18px 26px;display:flex;flex-direction:column;gap:8px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#60a5fa;">상관은 빠르게 소멸</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">C(t)는 수 ps 안에 0 근처로 떨어지지만 꼬리가 길게 잔존</div>
+      </div>
+      <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #4ade80;border-radius:12px;padding:18px 26px;display:flex;flex-direction:column;gap:8px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#4ade80;">적분은 천천히 수렴</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">꼬리의 잡음이 그대로 누적되므로 평평해지는 구간을 확인</div>
+      </div>
+      <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #facc15;border-radius:12px;padding:18px 26px;display:flex;flex-direction:column;gap:8px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#facc15;">평균 대상</div>
+        <div style="font-size:24px;color:#94a3b8;line-height:1.4;">xy · xz · yz 세 성분과 여러 시간 원점을 모두 평균</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="점도 실행 설정" data-screen-label="22" data-speaker-notes="LAMMPS 설정과 대안 방법. NEMD는 고전단 영역." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:22px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">6-4 · SETUP</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">점도 계산 설정과 대안</h2>
+  <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:30px;align-items:stretch;flex:1;min-height:0;max-height:680px;">
+    <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:32px 36px;display:flex;flex-direction:column;justify-content:center;gap:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#64748b;letter-spacing:0.08em;">LAMMPS · Green–Kubo</div>
+      <div style="white-space:pre-wrap;font-family:'JetBrains Mono',monospace;font-size:28px;line-height:1.7;color:#8ec0ff;">variable pxy equal pxy
+variable pxz equal pxz
+variable pyz equal pyz
+
+fix ss all ave/correlate 5 20000 100000 &amp;
+    v_pxy v_pxz v_pyz type auto &amp;
+    file profile.stress ave running
+
+run 10000000   # 10 ns · NVT 298 K</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:22px;">
+      <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:24px 30px;display:flex;flex-direction:column;justify-content:center;gap:10px;flex:1;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#8ec0ff;">앙상블</div>
+        <div style="font-size:28px;color:#94a3b8;line-height:1.4;">NPT로 부피를 정한 뒤 그 부피에서 NVT · 약한 조절기로 샘플링</div>
+      </div>
+      <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:24px 30px;display:flex;flex-direction:column;justify-content:center;gap:10px;flex:1;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#a78bfa;">대안 · NEMD</div>
+        <div style="font-size:28px;color:#94a3b8;line-height:1.4;">SLLOD 운동방정식으로 전단 부여, η = τ / γ̇ · 수렴은 빠르나 고전단 조건 → 저전단 외삽 필수</div>
+      </div>
+      <div style="background:#0c1222;border:1px solid #2d3748;border-radius:12px;padding:24px 30px;display:flex;flex-direction:column;justify-content:center;gap:10px;flex:1;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#facc15;">현실적 비용</div>
+        <div style="font-size:28px;color:#94a3b8;line-height:1.4;">상온 바인더는 점도가 커서 수렴이 느림 — 고온에서 계산해 Arrhenius로 외삽</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="MSD 구간" data-screen-label="23" data-speaker-notes="탄도 · 케이지 · 확산 세 구간. 확산 구간에서만 기울기를 잰다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:20px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">6-4 · MSD</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">MSD의 세 구간과 확산계수</h2>
+  <div style="background:#111827;border:1px solid #2d3748;border-radius:12px;padding:22px 30px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#8ec0ff;">MSD(t) = ⟨ |r(t) − r(0)|² ⟩ &nbsp;&nbsp;·&nbsp;&nbsp; D = lim<sub>t→∞</sub> MSD(t) / 6t</div>
+  </div>
+  <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:14px 24px;">
+    <svg viewBox="0 0 1480 250" style="width:100%;height:auto;">
+      <line x1="90" y1="200" x2="1440" y2="200" stroke="#374151" stroke-width="2"></line>
+      <line x1="90" y1="200" x2="90" y2="26" stroke="#374151" stroke-width="2"></line>
+      <path d="M90 196 C150 150 200 120 280 108" stroke="#f87171" stroke-width="4" fill="none"></path>
+      <path d="M280 108 C420 100 560 98 700 94" stroke="#facc15" stroke-width="4" fill="none"></path>
+      <path d="M700 94 L1410 40" stroke="#4ade80" stroke-width="4" fill="none"></path>
+      <text x="200" y="240" fill="#f87171" font-size="27" font-family="JetBrains Mono, monospace" text-anchor="middle">탄도 (t²)</text>
+      <text x="490" y="240" fill="#facc15" font-size="27" font-family="JetBrains Mono, monospace" text-anchor="middle">케이지(cage) 정체</text>
+      <text x="1050" y="240" fill="#4ade80" font-size="27" font-family="JetBrains Mono, monospace" text-anchor="middle">확산 (t¹) — 여기서 기울기 측정</text>
+      <text x="46" y="110" fill="#94a3b8" font-size="27" font-family="JetBrains Mono, monospace" text-anchor="middle" transform="rotate(-90 46 110)">MSD</text>
+      <text x="1420" y="196" fill="#64748b" font-size="26" font-family="JetBrains Mono, monospace" text-anchor="end">log t</text>
+    </svg>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #4ade80;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#4ade80;">적합 조건</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">log–log 기울기가 1에 가까운 구간에서만 직선 적합</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #facc15;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#facc15;">바인더의 특징</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">상온에서는 케이지 구간이 길어 확산 영역 도달까지 수십 ns</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #a78bfa;border-radius:12px;padding:16px 24px;display:flex;flex-direction:column;gap:6px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;">분자별 분해</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.4;">SARA(포화분 · 방향족 · 레진 · 아스팔텐) 분류별 MSD 분리 시 아스팔텐(asphaltene)의 이동 정체 확인</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="[6-5] 섹션" data-screen-label="24" data-speaker-notes="6분 · OVITO · MDAnalysis 기반 후처리 파이프라인" style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:100px;display:flex;flex-direction:column;justify-content:center;gap:40px;">
+  <div style="width:200px;height:6px;background:linear-gradient(135deg,#3377ff,#8b5cf6);border-radius:999px;"></div>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:120px;color:#1f2937;font-weight:700;line-height:1;">6-5</div>
+  <h2 style="font-size:68px;font-weight:700;letter-spacing:-0.02em;margin:0;line-height:1.1;">궤적 분석 자동화</h2>
+  <p style="font-size:32px;color:#94a3b8;margin:0;">6분 · OVITO · MDAnalysis 기반 후처리 파이프라인</p>
+</section>
+
+<section data-label="OVITO · MDAnalysis" data-screen-label="25" data-speaker-notes="후처리 도구 두 가지의 역할 분담과 자동화가 필요한 이유." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:42px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">6-5 · TOOLS</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">궤적 분석 도구 — OVITO 와 MDAnalysis</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:start;">
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #8ec0ff;border-radius:12px;padding:36px 40px;display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#8ec0ff;">OVITO</div>
+      <div style="font-size:28px;color:#f1f5f9;line-height:1.45;">구조를 보고 판정하는 도구</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.45;">궤적 시각화 · 공통 이웃 분석(common neighbor analysis) · 클러스터 · 보이드 · 계면 단면 렌더링 — GUI 에서 만든 파이프라인을 <span style="font-family:'JetBrains Mono',monospace;">ovito</span> 파이썬 모듈로 그대로 재실행</div>
+      <div style="font-size:26px;color:#64748b;line-height:1.45;">쓰임 — 파괴모드 판정용 측면도 · 평면도, 상 분리 확인</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #4ade80;border-radius:12px;padding:36px 40px;display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#4ade80;">MDAnalysis</div>
+      <div style="font-size:28px;color:#f1f5f9;line-height:1.45;">수치를 뽑는 도구</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.45;">원자 선택 문법으로 부분 집합을 잡고 MSD · RDF · 밀도 프로파일 · 수소결합을 배열로 계산 — numpy · pandas 로 바로 연결</div>
+      <div style="font-size:26px;color:#64748b;line-height:1.45;">쓰임 — 확산계수, 계면 밀도 프로파일, 조성별 표 자동 생성</div>
+    </div>
+  </div>
+  <p style="font-size:30px;color:#64748b;margin:0;">수작업 후처리는 조성 수 증가 시 한계 · 모든 실험 ID 폴더를 같은 스크립트 · 같은 방식으로 처리해야 결과 비교 가능</p>
+</section>
+
+<section data-label="후처리 파이프라인" data-screen-label="26" data-speaker-notes="실험 ID 폴더를 입력으로 받아 표 한 줄을 내놓는 후처리 스크립트의 기본 구조." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:38px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">6-5 · PIPELINE</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">폴더 하나 → 표 한 줄 — 후처리 자동화</h2>
+  <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:34px;align-items:start;">
+    <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:32px 34px;display:flex;flex-direction:column;gap:16px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#4ade80;letter-spacing:0.08em;">postprocess.py</div>
+      <div style="display:flex;flex-direction:column;gap:10px;font-family:'JetBrains Mono',monospace;font-size:24px;line-height:1.45;">
+        <div style="white-space:pre-wrap;color:#8ec0ff;background:rgba(51,119,255,0.12);border-radius:6px;padding:8px 12px;">u = mda.Universe("final.data", "prod.lammpstrj",
+                 format="LAMMPSDUMP")</div>
+        <div style="white-space:pre-wrap;color:#4ade80;background:rgba(34,197,94,0.12);border-radius:6px;padding:8px 12px;">msd = einstein_msd(u, select="all")
+D   = slope(msd, t0=200, t1=2000) / 6</div>
+        <div style="white-space:pre-wrap;color:#a78bfa;background:rgba(139,92,246,0.14);border-radius:6px;padding:8px 12px;">rho, rho_err = block_average(log["Density"])</div>
+        <div style="white-space:pre-wrap;color:#facc15;background:rgba(234,179,8,0.12);border-radius:6px;padding:8px 12px;">row = dict(exp_id=exp_id, rho=rho, rho_err=rho_err,
+           D=D, ced=ced, delta=delta, eta=eta)
+append_csv("results.csv", row)</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:22px;">
+      <div style="display:flex;gap:20px;align-items:baseline;"><span style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#8ec0ff;width:64px;">01</span><span style="font-size:26px;color:#94a3b8;line-height:1.45;flex:1;">입력 = 실험 ID 폴더 · 구조 · 궤적 · log 파일을 정해진 이름으로 저장</span></div>
+      <div style="display:flex;gap:20px;align-items:baseline;"><span style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#4ade80;width:64px;">02</span><span style="font-size:26px;color:#94a3b8;line-height:1.45;flex:1;">물성별 함수는 평형 구간 · 적합 구간을 인수로 받음 · 구간을 코드 안에 고정하지 않음</span></div>
+      <div style="display:flex;gap:20px;align-items:baseline;"><span style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#a78bfa;width:64px;">03</span><span style="font-size:26px;color:#94a3b8;line-height:1.45;flex:1;">모든 값은 평균과 오차를 함께 반환 · 오차 없는 값은 표에서 제외</span></div>
+      <div style="display:flex;gap:20px;align-items:baseline;"><span style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#facc15;width:64px;">04</span><span style="font-size:26px;color:#94a3b8;line-height:1.45;flex:1;">출력은 CSV 한 줄 — 열 이름은 8주차 데이터베이스 스키마와 동일하게</span></div>
+      <div style="display:flex;gap:20px;align-items:baseline;"><span style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#94a3b8;width:64px;">05</span><span style="font-size:26px;color:#94a3b8;line-height:1.45;flex:1;">OVITO 렌더링은 같은 스크립트에서 PNG 로 저장해 결과와 함께 보관</span></div>
+      <div style="font-size:26px;color:#64748b;line-height:1.45;">후처리 스크립트도 입력 해시에 포함 · 버전 변경 시 값도 변경</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="오차 산출" data-screen-label="27" data-speaker-notes="블록 평균과 시드 반복. 두 오차의 성격이 다르다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:24px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">6-5 · UNCERTAINTY</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">두 종류의 오차 · 표준오차(SE, standard error)</h2>
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:30px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-top:3px solid #60a5fa;border-radius:12px;padding:28px 32px;display:flex;flex-direction:column;gap:14px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#60a5fa;">궤적 내 오차 · 블록 평균(block averaging)</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#f1f5f9;">SE = σ_block / √N_block</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.45;">생산 구간을 5~10개 블록으로 나눠 블록 평균의 흩어짐 확인 · 샘플링 충분성 판단</div>
+    </div>
+    <div style="background:#111827;border:1px solid #2d3748;border-top:3px solid #a78bfa;border-radius:12px;padding:28px 32px;display:flex;flex-direction:column;gap:14px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#a78bfa;">궤적 간 오차 · 시드 반복</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#f1f5f9;">SE = σ_seed / √N_seed</div>
+      <div style="font-size:24px;color:#94a3b8;line-height:1.45;">초기 배치와 속도 시드를 바꿔 3회 이상 · 구조가 한 국소 상태에 머무르는지 판단</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;background:#111827;border:1px solid #1f2937;border-radius:12px;overflow:hidden;">
+    <div style="padding:12px 28px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">seed</div>
+    <div style="padding:12px 28px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">ρ (g/cm³)</div>
+    <div style="padding:12px 28px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">CED (MJ/m³)</div>
+    <div style="padding:12px 28px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">비고</div>
+
+    <div style="padding:11px 28px;font-size:24px;font-family:'JetBrains Mono',monospace;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">01</div>
+    <div style="padding:11px 28px;font-size:24px;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">1.019</div>
+    <div style="padding:11px 28px;font-size:24px;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">368</div>
+    <div style="padding:11px 28px;font-size:24px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">기준 실행</div>
+
+    <div style="padding:11px 28px;font-size:24px;font-family:'JetBrains Mono',monospace;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">02</div>
+    <div style="padding:11px 28px;font-size:24px;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">1.022</div>
+    <div style="padding:11px 28px;font-size:24px;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">373</div>
+    <div style="padding:11px 28px;font-size:24px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">초기 배치만 변경</div>
+
+    <div style="padding:11px 28px;font-size:24px;font-family:'JetBrains Mono',monospace;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">03</div>
+    <div style="padding:11px 28px;font-size:24px;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">1.018</div>
+    <div style="padding:11px 28px;font-size:24px;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">366</div>
+    <div style="padding:11px 28px;font-size:24px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">속도 시드만 변경</div>
+
+    <div style="padding:11px 28px;font-size:24px;font-family:'JetBrains Mono',monospace;color:#4ade80;">평균 ± SE</div>
+    <div style="padding:11px 28px;font-size:24px;font-family:'JetBrains Mono',monospace;color:#4ade80;">1.020 ± 0.001</div>
+    <div style="padding:11px 28px;font-size:24px;font-family:'JetBrains Mono',monospace;color:#4ade80;">369 ± 2</div>
+    <div style="padding:11px 28px;font-size:24px;color:#94a3b8;">보고 형식</div>
+  </div>
+  <p style="font-size:24px;color:#64748b;margin:0;">오차 없이 적힌 물성은 학습 데이터로 쓰지 않음 — 10주차 불확실성 모델이 이 값을 기준으로 설정</p>
+</section>
+
+<section data-label="오차 관리" data-screen-label="28" data-speaker-notes="물성마다 필요한 길이가 다르다. 예산 배분 표." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:30px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">6-5 · BUDGET</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">물성별 계산 길이와 오차</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1.3fr;gap:0;background:#111827;border:1px solid #1f2937;border-radius:12px;overflow:hidden;">
+    <div style="padding:18px 28px;font-size:28px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">물성</div>
+    <div style="padding:18px 28px;font-size:28px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">권장 궤적</div>
+    <div style="padding:18px 28px;font-size:28px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">전형적 오차</div>
+    <div style="padding:18px 28px;font-size:28px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">수렴 진단</div>
+
+    <div style="padding:20px 28px;font-size:30px;color:#4ade80;border-bottom:1px solid rgba(51,65,85,0.5);">밀도</div>
+    <div style="padding:20px 28px;font-size:28px;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">2 ns</div>
+    <div style="padding:20px 28px;font-size:28px;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">&lt; 0.5%</div>
+    <div style="padding:20px 28px;font-size:28px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">블록 평균이 겹치는지</div>
+
+    <div style="padding:20px 28px;font-size:30px;color:#60a5fa;border-bottom:1px solid rgba(51,65,85,0.5);">확산계수 D</div>
+    <div style="padding:20px 28px;font-size:28px;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">20 ~ 50 ns</div>
+    <div style="padding:20px 28px;font-size:28px;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">10 ~ 30%</div>
+    <div style="padding:20px 28px;font-size:28px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">log–log 기울기 ≈ 1 구간 존재</div>
+
+    <div style="padding:20px 28px;font-size:30px;color:#fb923c;border-bottom:1px solid rgba(51,65,85,0.5);">점도 η</div>
+    <div style="padding:20px 28px;font-size:28px;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">10 ~ 100 ns</div>
+    <div style="padding:20px 28px;font-size:28px;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">20 ~ 50%</div>
+    <div style="padding:20px 28px;font-size:28px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">누적 적분의 평탄 구간 · 시드 간 일치</div>
+
+    <div style="padding:20px 28px;font-size:30px;color:#a78bfa;">Tg</div>
+    <div style="padding:20px 28px;font-size:28px;font-family:'JetBrains Mono',monospace;">온도 8점 × 1 ns</div>
+    <div style="padding:20px 28px;font-size:28px;font-family:'JetBrains Mono',monospace;">± 10 K</div>
+    <div style="padding:20px 28px;font-size:28px;color:#94a3b8;">두 직선 적합 구간을 바꿔도 교점이 안정한지</div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #3377ff;border-radius:12px;padding:26px 30px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#8ec0ff;">짧게 여러 번 &gt; 길게 한 번</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">같은 총 시간이면 독립 시드로 나눈 계산의 오차가 더 작음</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #f59e0b;border-radius:12px;padding:26px 30px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#facc15;">고온 계산 후 외삽</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">고온에서 낮은 비용으로 계산 후 Arrhenius 식으로 상온 외삽</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-left:2px solid #34d399;border-radius:12px;padding:26px 30px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#4ade80;">단계별(tier) 전략</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">선별(screening): 짧은 계산 다수 · 검증(validation): 긴 계산 소수</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="실습 안내" data-screen-label="29" data-speaker-notes="한 조성에 대해 다섯 물성을 모두 산출하고 자동화 스크립트로 표를 만든다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:40px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">PRACTICE</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">실습 · 밀도 · CED · δ · 점도 · 확산</h2>
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:34px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:36px 40px;display:flex;flex-direction:column;gap:22px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;letter-spacing:0.1em;">PRACTICE</div>
+      <div style="display:flex;gap:20px;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#599eff;width:56px;">01</span><span style="font-size:28px;color:#94a3b8;line-height:1.45;flex:1;">4주차 평형 궤적에서 밀도 평균과 블록 표준오차를 산출</span></div>
+      <div style="display:flex;gap:20px;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#599eff;width:56px;">02</span><span style="font-size:28px;color:#94a3b8;line-height:1.45;flex:1;">CED 를 Method A · B 두 방식으로 구해 값을 대조하고 δ 를 계산</span></div>
+      <div style="display:flex;gap:20px;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#599eff;width:56px;">03</span><span style="font-size:28px;color:#94a3b8;line-height:1.45;flex:1;">Green–Kubo 로 점도, MSD 기울기로 확산계수를 산출</span></div>
+      <div style="display:flex;gap:20px;"><span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#a78bfa;width:56px;">04</span><span style="font-size:28px;color:#94a3b8;line-height:1.45;flex:1;">MDAnalysis 후처리 스크립트로 위 값을 CSV 한 줄로 자동 출력</span></div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:36px 40px;display:flex;flex-direction:column;gap:22px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;letter-spacing:0.1em;">DELIVERABLE</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.5;">물성표 1장 — 밀도 · CED · δ · η · D, 각 값에 평균 ± 오차</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.5;">판정 근거 그래프 — 부피 시계열 · 점도 러닝 적분 · MSD 로그–로그</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.5;">후처리 스크립트 (postprocess.py) 와 실행 로그</div>
+      <div style="border-top:1px solid #1f2937;padding-top:20px;font-size:26px;color:#64748b;line-height:1.45;">CSV 열 이름 = 8주차 데이터베이스 스키마와 동일</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:24px;"><span style="font-size:28px;padding:12px 26px;border-radius:999px;background:rgba(59,130,246,0.20);color:#60a5fa;border:1px solid rgba(59,130,246,0.30);font-family:'JetBrains Mono',monospace;">퀴즈 6주차</span></div>
+</section>
+
+<section data-label="6주차 정리" data-screen-label="30" data-speaker-notes="다섯 세부절을 한 줄씩 정리하고 7주차 예고." style="background:linear-gradient(135deg,#111827,#0c1222);color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:44px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">SUMMARY</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">6주차 정리</h2>
+  <div style="display:flex;flex-direction:column;gap:30px;max-width:1620px;">
+    <div style="display:flex;gap:36px;align-items:baseline;"><div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#599eff;width:80px;">01</div><div style="font-size:32px;line-height:1.45;flex:1;">후처리 = 궤적을 데이터로 변환하는 단계 · 역학 · 열 · 에너지 · 수송 · 계면 물성을 같은 궤적에서 산출</div></div>
+    <div style="display:flex;gap:36px;align-items:baseline;"><div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#8ec0ff;width:80px;">02</div><div style="font-size:32px;line-height:1.45;flex:1;">CED 는 직접 산출(Method A)과 간접 차감(Method B) 두 경로 — 데이터셋 전체에서 한 방식을 고정</div></div>
+    <div style="display:flex;gap:36px;align-items:baseline;"><div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#a5b4fc;width:80px;">03</div><div style="font-size:32px;line-height:1.45;flex:1;">δ = √CED 로 혼화성 예측 · 극성 성분에서는 δ 하나로 부족</div></div>
+    <div style="display:flex;gap:36px;align-items:baseline;"><div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#4ade80;width:80px;">04</div><div style="font-size:32px;line-height:1.45;flex:1;">점도는 Green–Kubo 러닝 적분의 평탄 구간, 확산계수는 MSD 확산 구간의 기울기에서</div></div>
+    <div style="display:flex;gap:36px;align-items:baseline;"><div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#a78bfa;width:80px;">05</div><div style="font-size:32px;line-height:1.45;flex:1;">OVITO · MDAnalysis 로 후처리 자동화 → 조성 수가 늘어도 같은 기준으로 비교 가능</div></div>
+  </div>
+  <div style="margin-top:auto;display:flex;gap:40px;align-items:center;border-top:1px solid #1f2937;padding-top:32px;">
+    <span style="font-size:28px;padding:14px 28px;border-radius:999px;background:rgba(59,130,246,0.20);color:#60a5fa;border:1px solid rgba(59,130,246,0.30);font-family:'JetBrains Mono',monospace;">퀴즈 6주차</span>
+    <span style="font-size:32px;color:#94a3b8;">다음 주차 — 아스팔트 소재와 바인더 MD · 계면 부착 물성은 보충 강의</span>
+  </div>
+</section>
+
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1920,&quot;height&quot;:1080}}"></script>
+</body>
+</html>

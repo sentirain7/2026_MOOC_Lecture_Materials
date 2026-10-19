@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/tokens/fonts.css">
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/tokens/colors.css">
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/tokens/typography.css">
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/tokens/spacing.css">
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/tokens/effects.css">
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/tokens/base.css">
+<link rel="stylesheet" href="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/styles.css">
+<script src="../_ds/nacmid-design-system-2c921ad6-811f-4d9a-adc2-690388b074bb/_ds_bundle.js"></script>
+<style>
+  body { margin: 0; background: #0c1222; }
+  a { color: #599eff; }
+  a:hover { color: #8ec0ff; }
+</style>
+</helmet>
+<template id="__bundler_thumbnail" data-bg-color="#0c1222">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" width="320" height="180">
+    <rect width="320" height="180" fill="#0c1222"></rect>
+    <circle cx="160" cy="84" r="34" fill="none" stroke="#60a5fa" stroke-width="3"></circle>
+    <circle cx="160" cy="84" r="7" fill="#a78bfa"></circle>
+    <circle cx="160" cy="50" r="5" fill="#60a5fa"></circle>
+    <circle cx="189" cy="101" r="5" fill="#60a5fa"></circle>
+    <circle cx="131" cy="101" r="5" fill="#60a5fa"></circle>
+    <text x="160" y="146" fill="#94a3b8" font-size="14" font-family="sans-serif" text-anchor="middle">1주차 · 건설소재 역설계</text>
+  </svg>
+</template>
+<x-import component-from-global-scope="deck-stage" from="../deck-stage.js" width="1920" height="1080" hint-size="100%,100%">
+
+<section data-label="표지" data-screen-label="01" data-speaker-notes="강좌 1주차 오리엔테이션. 13주 전체 구성을 먼저 보여준다는 점을 강조." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:100px 100px 80px;display:flex;flex-direction:column;justify-content:space-between;">
+  <div style="display:flex;align-items:center;gap:28px;">
+    <div style="width:64px;height:64px;border-radius:14px;background:linear-gradient(135deg,#3377ff,#8b5cf6);"></div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:28px;letter-spacing:0.16em;color:#94a3b8;">COMID</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:40px;max-width:1500px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:28px;letter-spacing:0.14em;color:#599eff;">WEEK 01 · 차시 1-1 ~ 1-4 · 50분</div>
+    <h1 style="font-size:88px;font-weight:700;letter-spacing:-0.03em;line-height:1.08;margin:0;">멀티스케일 모델링 · 디지털 트윈과<br>건설소재 역설계 패러다임</h1>
+    <p style="font-size:40px;color:#94a3b8;margin:0;line-height:1.4;">건설소재 역설계 도구 개발을 위한 AI와 분자동역학 활용</p>
+  </div>
+  <div style="display:flex;gap:56px;font-size:28px;color:#64748b;font-family:'JetBrains Mono',monospace;">
+    <span>윤태영 (Taeyoung Yun)</span>
+    <span>13주 · 대학원 과정</span>
+    <span>강의자료 PDF · 실습 코드 GitHub</span>
+  </div>
+</section>
+
+<section data-label="강좌 개요" data-screen-label="02" data-speaker-notes="운영 정보는 빠르게. 시험 주차 없이 퀴즈로 평가한다는 점만 확인." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:52px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">COURSE</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">강좌 대상 · 구성 · 교재</h2>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:56px;padding-bottom:40px;">
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;">
+      <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:40px;display:flex;flex-direction:column;gap:18px;">
+        <div style="font-size:28px;color:#64748b;font-family:'JetBrains Mono',monospace;letter-spacing:0.06em;">대상</div>
+        <div style="font-size:40px;font-weight:600;">대학원 연구자</div>
+        <div style="font-size:32px;color:#94a3b8;line-height:1.45;">전공심화 · 한국어 강의</div>
+      </div>
+      <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:40px;display:flex;flex-direction:column;gap:18px;">
+        <div style="font-size:28px;color:#64748b;font-family:'JetBrains Mono',monospace;letter-spacing:0.06em;">구성</div>
+        <div style="font-size:44px;font-weight:600;font-family:'JetBrains Mono',monospace;">13주 / 시험 0주</div>
+        <div style="font-size:32px;color:#94a3b8;line-height:1.45;">주차별 4개 차시 · 퀴즈 평가</div>
+      </div>
+      <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:40px;display:flex;flex-direction:column;gap:18px;">
+        <div style="font-size:28px;color:#64748b;font-family:'JetBrains Mono',monospace;letter-spacing:0.06em;">교재</div>
+        <div style="font-size:40px;font-weight:600;">강의자료 PDF</div>
+        <div style="font-size:32px;color:#94a3b8;line-height:1.45;">실습 코드는 GitHub 저장소로 제공</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;">
+      <span style="font-size:28px;padding:14px 28px;border-radius:999px;background:rgba(59,130,246,0.20);color:#60a5fa;border:1px solid rgba(59,130,246,0.30);font-family:'JetBrains Mono',monospace;">분자동역학(MD) 기초이론</span>
+      <span style="font-size:28px;padding:14px 28px;border-radius:999px;background:rgba(99,102,241,0.20);color:#a5b4fc;border:1px solid rgba(99,102,241,0.30);font-family:'JetBrains Mono',monospace;">LAMMPS</span>
+      <span style="font-size:28px;padding:14px 28px;border-radius:999px;background:rgba(34,197,94,0.20);color:#4ade80;border:1px solid rgba(34,197,94,0.30);font-family:'JetBrains Mono',monospace;">그래프 신경망(GNN)</span>
+      <span style="font-size:28px;padding:14px 28px;border-radius:999px;background:rgba(234,179,8,0.20);color:#facc15;border:1px solid rgba(234,179,8,0.30);font-family:'JetBrains Mono',monospace;">능동학습(active learning)</span>
+      <span style="font-size:28px;padding:14px 28px;border-radius:999px;background:rgba(239,68,68,0.20);color:#f87171;border:1px solid rgba(239,68,68,0.30);font-family:'JetBrains Mono',monospace;">다목적 최적화(multi-objective optimization)</span>
+    </div>
+  </div>
+</section>
+
+<section data-label="학습목표" data-screen-label="03" data-speaker-notes="강좌의 최종 산출물은 지식이 아니라 직접 구현한 역설계 도구라는 점을 명확히." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:52px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">OBJECTIVE</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">학습목표</h2>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:64px;padding-bottom:40px;">
+    <p style="font-size:40px;color:#f1f5f9;margin:0;line-height:1.5;max-width:1560px;text-wrap:pretty;">분자동역학 기초이론 · LAMMPS 시뮬레이션 · 그래프 신경망 기반 기계학습(ML, machine learning)의 단계적 학습 → 하나의 <span style="color:#599eff;">자율 탐색 파이프라인(autonomous exploration pipeline)</span>으로 통합 · 유기 · 무기 · 이온 분자로 구성된 건설소재의 역설계(inverse design) 도구 직접 설계 · 구현</p>
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;margin-top:20px;">
+      <div style="border-left:2px solid #3377ff;padding-left:32px;display:flex;flex-direction:column;gap:14px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:32px;color:#599eff;">01</div>
+        <div style="font-size:36px;line-height:1.45;">이론 → 계산 가능한 모델로 구현</div>
+      </div>
+      <div style="border-left:2px solid #6366f1;padding-left:32px;display:flex;flex-direction:column;gap:14px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:32px;color:#599eff;">02</div>
+        <div style="font-size:36px;line-height:1.45;">계산 결과 → 학습 데이터로 축적</div>
+      </div>
+      <div style="border-left:2px solid #8b5cf6;padding-left:32px;display:flex;flex-direction:column;gap:14px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:32px;color:#599eff;">03</div>
+        <div style="font-size:36px;line-height:1.45;">학습된 모델로 표적 물성에서 조성 역추정</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="1주차 구성" data-screen-label="04" data-speaker-notes="네 개 차시의 분량과 순서를 안내. 총 50분 분량(강의계획서 기준)." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:52px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">AGENDA</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">1주차 구성</h2>
+  <div style="display:flex;flex-direction:column;gap:24px;">
+    <div style="display:flex;align-items:center;gap:40px;background:#111827;border:1px solid #1f2937;border-radius:12px;padding:32px 40px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#599eff;width:120px;">1-1</div>
+      <div style="font-size:38px;font-weight:600;flex:1;">강의 소개와 역설계 동기</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#64748b;">15분</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:40px;background:#111827;border:1px solid #1f2937;border-radius:12px;padding:32px 40px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#599eff;width:120px;">1-2</div>
+      <div style="font-size:38px;font-weight:600;flex:1;">멀티스케일 모델링 개념</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#64748b;">10분</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:40px;background:#111827;border:1px solid #1f2937;border-radius:12px;padding:32px 40px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#599eff;width:120px;">1-3</div>
+      <div style="font-size:38px;font-weight:600;flex:1;">디지털 트윈 개념</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#64748b;">10분</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:40px;background:#111827;border:1px solid #1f2937;border-radius:12px;padding:32px 40px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#599eff;width:120px;">1-4</div>
+      <div style="font-size:38px;font-weight:600;flex:1;">자율 탐색 파이프라인 흐름</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#64748b;">15분</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="[1-1] 섹션" data-screen-label="05" data-speaker-notes="첫 차시 시작. 왜 역설계인가에서 출발." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:100px;display:flex;flex-direction:column;justify-content:center;gap:40px;">
+  <div style="width:200px;height:6px;background:linear-gradient(135deg,#3377ff,#8b5cf6);border-radius:999px;"></div>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:120px;color:#1f2937;font-weight:700;line-height:1;">1-1</div>
+  <h2 style="font-size:68px;font-weight:700;letter-spacing:-0.02em;margin:0;line-height:1.1;">강의 소개와 역설계 동기</h2>
+  <p style="font-size:32px;color:#94a3b8;margin:0;">순방향과 역설계의 차이 · 표적 물성의 정의</p>
+</section>
+
+<section data-label="배합 설계의 현실" data-screen-label="06" data-speaker-notes="경험·시행착오 기반 배합의 한계. 실험 1회의 시간·비용을 체감시킨다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:52px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">1-1 · MOTIVATION</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">건설소재 배합 설계의 현실</h2>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:64px;padding-bottom:40px;">
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;">
+      <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:40px;display:flex;flex-direction:column;gap:20px;">
+        <div style="font-size:36px;font-weight:600;color:#f87171;">경험 의존</div>
+        <div style="font-size:32px;color:#94a3b8;line-height:1.45;">배합비 = 선례와 숙련도 의존 · 새 첨가제는 선례 없음</div>
+      </div>
+      <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:40px;display:flex;flex-direction:column;gap:20px;">
+        <div style="font-size:36px;font-weight:600;color:#fbbf24;">긴 검증 주기</div>
+        <div style="font-size:32px;color:#94a3b8;line-height:1.45;">배합 · 양생 · 시험 → 한 조성 결과까지 수 주 걸림</div>
+      </div>
+      <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:40px;display:flex;flex-direction:column;gap:20px;">
+        <div style="font-size:36px;font-weight:600;color:#a78bfa;">관측의 한계</div>
+        <div style="font-size:32px;color:#94a3b8;line-height:1.45;">거동의 원인인 분자 수준 구조 · 시험체에서 직접 관측 불가</div>
+      </div>
+    </div>
+    <p style="font-size:36px;color:#f1f5f9;margin:0;line-height:1.45;max-width:1500px;">실험은 여전히 기준 · 다만 탐색의 폭은 실험만으로 감당 불가 — 이 강좌의 문제 설정</p>
+  </div>
+</section>
+
+<section data-label="순방향과 역설계" data-screen-label="07" data-speaker-notes="두 화살표의 방향 차이가 핵심. 역설계는 다대일 역문제라는 점 언급." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:40px 80px 28px;display:flex;flex-direction:column;gap:18px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">1-1 · FORWARD vs INVERSE</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">순방향 설계(forward design)와 역설계(inverse design)</h2>
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:32px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:32px 36px;display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#64748b;letter-spacing:0.1em;">FORWARD · 조성 → 물성</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#60a5fa;background:#1f2937;border-radius:8px;padding:18px 22px;">y = f(x)</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div style="font-size:24px;color:#64748b;line-height:1.3;"><span style="font-family:'JetBrains Mono',monospace;color:#60a5fa;">x</span> 설계 변수 — 조성·배합비 &nbsp;·&nbsp; <span style="font-family:'JetBrains Mono',monospace;color:#60a5fa;">f</span> 계산 또는 시험 &nbsp;·&nbsp; <span style="font-family:'JetBrains Mono',monospace;color:#60a5fa;">y</span> 산출 물성</div>
+      </div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.45;">주어진 배합의 성능 확인 · 해는 하나 · 비용은 조성 수에 비례</div>
+    </div>
+    <div style="background:#111827;border:1px solid #2d3748;border-radius:12px;padding:32px 36px;display:flex;flex-direction:column;gap:18px;box-shadow:0 0 20px rgba(59,130,246,0.15);">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#a78bfa;letter-spacing:0.1em;">INVERSE · 표적 물성 → 조성</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#a78bfa;background:#1f2937;border-radius:8px;padding:18px 22px;">x* = argmin ‖f(x) − y*‖</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div style="font-size:24px;color:#64748b;line-height:1.3;"><span style="font-family:'JetBrains Mono',monospace;color:#a78bfa;">y*</span> 표적 물성 &nbsp;·&nbsp; <span style="font-family:'JetBrains Mono',monospace;color:#a78bfa;">‖·‖</span> 표적과의 거리 &nbsp;·&nbsp; <span style="font-family:'JetBrains Mono',monospace;color:#a78bfa;">argmin</span> 거리 최소화 &nbsp;·&nbsp; <span style="font-family:'JetBrains Mono',monospace;color:#a78bfa;">x*</span> 해</div>
+      </div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.45;">성능을 먼저 지정 → 그 성능을 내는 조성 탐색 · 해는 복수 또는 부재</div>
+    </div>
+  </div>
+  <div data-om-raster="true" style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:20px 32px 12px;">
+    <svg viewBox="0 0 1720 344" style="width:100%;height:auto;display:block;max-height:344px;" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="ar-b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#60a5fa"></path></marker>
+        <marker id="ar-v" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"></path></marker>
+      </defs>
+
+      <text x="40" y="26" font-family="JetBrains Mono, monospace" font-size="24" fill="#60a5fa">설계 공간 — 조성 x</text>
+      <rect x="40" y="46" width="600" height="286" rx="8" fill="#0c1222" stroke="#2d3748"></rect>
+      <line x1="80" y1="300" x2="610" y2="300" stroke="#374151" stroke-width="2" marker-end="url(#ar-b)"></line>
+      <line x1="80" y1="300" x2="80" y2="76" stroke="#374151" stroke-width="2" marker-end="url(#ar-b)"></line>
+      <text x="600" y="326" font-family="JetBrains Mono, monospace" font-size="21" fill="#64748b" text-anchor="end">x₁ 아스팔텐 wt%</text>
+      <text x="96" y="70" font-family="JetBrains Mono, monospace" font-size="21" fill="#64748b">x₂ 첨가제 wt%</text>
+      <circle cx="180" cy="160" r="9" fill="#60a5fa" opacity="0.55"></circle>
+      <text x="196" y="153" font-family="JetBrains Mono, monospace" font-size="20" fill="#64748b">x⁽¹⁾</text>
+      <circle cx="300" cy="250" r="9" fill="#60a5fa" opacity="0.55"></circle>
+      <text x="316" y="243" font-family="JetBrains Mono, monospace" font-size="20" fill="#64748b">x⁽²⁾</text>
+      <circle cx="520" cy="130" r="9" fill="#60a5fa" opacity="0.55"></circle>
+      <text x="536" y="123" font-family="JetBrains Mono, monospace" font-size="20" fill="#64748b">x⁽³⁾</text>
+      <circle cx="560" cy="262" r="9" fill="#60a5fa" opacity="0.55"></circle>
+      <text x="470" y="282" font-family="JetBrains Mono, monospace" font-size="20" fill="#64748b">x⁽⁴⁾</text>
+      <circle cx="396" cy="186" r="15" fill="#a78bfa"></circle>
+      <circle cx="396" cy="186" r="26" fill="none" stroke="#a78bfa" stroke-width="2" opacity="0.5"></circle>
+      <text x="430" y="180" font-family="JetBrains Mono, monospace" font-size="26" fill="#a78bfa">x*</text>
+      <text x="430" y="210" font-size="20" fill="#94a3b8">채택 배합</text>
+
+      <path d="M672,120 L1028,120" stroke="#60a5fa" stroke-width="3" marker-end="url(#ar-b)"></path>
+      <text x="850" y="100" font-family="JetBrains Mono, monospace" font-size="27" fill="#60a5fa" text-anchor="middle">y = f(x)</text>
+      <text x="850" y="150" font-size="21" fill="#94a3b8" text-anchor="middle">MD · ML 계산</text>
+      <text x="850" y="176" font-size="21" fill="#94a3b8" text-anchor="middle">조성 1개 → 물성 1점</text>
+      <path d="M1028,262 L672,262" stroke="#a78bfa" stroke-width="3" stroke-dasharray="10 8" marker-end="url(#ar-v)"></path>
+      <text x="850" y="242" font-family="JetBrains Mono, monospace" font-size="25" fill="#a78bfa" text-anchor="middle">argmin ‖y − y*‖</text>
+      <text x="850" y="292" font-size="21" fill="#94a3b8" text-anchor="middle">표적 최근접 물성 점</text>
+      <text x="850" y="318" font-size="21" fill="#94a3b8" text-anchor="middle">→ 해당 조성 선택</text>
+
+      <text x="1060" y="26" font-family="JetBrains Mono, monospace" font-size="24" fill="#a78bfa">물성 공간 — 성능 y</text>
+      <rect x="1060" y="46" width="620" height="286" rx="8" fill="#0c1222" stroke="#2d3748"></rect>
+      <line x1="1100" y1="300" x2="1650" y2="300" stroke="#374151" stroke-width="2" marker-end="url(#ar-v)"></line>
+      <line x1="1100" y1="300" x2="1100" y2="76" stroke="#374151" stroke-width="2" marker-end="url(#ar-v)"></line>
+      <text x="1640" y="326" font-family="JetBrains Mono, monospace" font-size="21" fill="#64748b" text-anchor="end">y₁ 점도</text>
+      <text x="1116" y="70" font-family="JetBrains Mono, monospace" font-size="21" fill="#64748b">y₂ 부착 일</text>
+      <circle cx="1380" cy="186" r="90" fill="rgba(139,92,246,0.05)" stroke="#8b5cf6" stroke-width="1.5" opacity="0.35"></circle>
+      <circle cx="1380" cy="186" r="56" fill="rgba(139,92,246,0.08)" stroke="#8b5cf6" stroke-width="1.5" opacity="0.55"></circle>
+      <circle cx="1380" cy="186" r="28" fill="rgba(139,92,246,0.18)" stroke="#a78bfa" stroke-width="2"></circle>
+      <path d="M1380,170 L1380,202 M1364,186 L1396,186" stroke="#a78bfa" stroke-width="2.5"></path>
+      <text x="1380" y="80" font-family="JetBrains Mono, monospace" font-size="26" fill="#a78bfa" text-anchor="middle">y* 표적 물성</text>
+      <circle cx="1180" cy="120" r="9" fill="#60a5fa" opacity="0.55"></circle>
+      <text x="1196" y="113" font-family="JetBrains Mono, monospace" font-size="20" fill="#64748b">y⁽¹⁾</text>
+      <circle cx="1260" cy="286" r="9" fill="#60a5fa" opacity="0.55"></circle>
+      <text x="1276" y="279" font-family="JetBrains Mono, monospace" font-size="20" fill="#64748b">y⁽²⁾</text>
+      <circle cx="1596" cy="132" r="9" fill="#60a5fa" opacity="0.55"></circle>
+      <text x="1612" y="125" font-family="JetBrains Mono, monospace" font-size="20" fill="#64748b">y⁽³⁾</text>
+      <circle cx="1600" cy="252" r="9" fill="#60a5fa" opacity="0.55"></circle>
+      <text x="1616" y="245" font-family="JetBrains Mono, monospace" font-size="20" fill="#64748b">y⁽⁴⁾</text>
+      <line x1="1180" y1="120" x2="1380" y2="186" stroke="#475569" stroke-width="1.5" stroke-dasharray="5 6"></line>
+      <line x1="1260" y1="286" x2="1380" y2="186" stroke="#475569" stroke-width="1.5" stroke-dasharray="5 6"></line>
+      <circle cx="1398" cy="200" r="13" fill="#a78bfa"></circle>
+      <line x1="1411" y1="200" x2="1478" y2="200" stroke="#a78bfa" stroke-width="1.5"></line>
+      <text x="1486" y="208" font-family="JetBrains Mono, monospace" font-size="22" fill="#a78bfa">f(x*) 표적 안</text>
+    </svg>
+  </div>
+  <p style="font-size:26px;color:#64748b;margin:0;">역설계 = 오른쪽 표적 영역의 물성 먼저 지정 → 왼쪽 설계 공간에서 해당 조성 탐색</p>
+</section>
+
+<section data-label="표적 물성의 정의" data-screen-label="08" data-speaker-notes="표적은 반드시 수치와 단위, 그리고 산출 방법까지 함께 정의해야 한다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:28px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">1-1 · TARGET PROPERTIES</div>
+  <h2 style="font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;font-size:52px;">표적 물성(target property)의 정의</h2>
+  <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:0;background:#111827;border:1px solid #1f2937;border-radius:12px;overflow:hidden;">
+    <div style="padding:14px 32px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">PROPERTY</div>
+    <div style="padding:14px 32px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">UNIT</div>
+    <div style="padding:14px 32px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">산출 방법</div>
+
+    <div style="padding:16px 32px;font-size:26px;border-bottom:1px solid rgba(51,65,85,0.5);">밀도 density</div>
+    <div style="padding:16px 32px;font-size:28px;color:#60a5fa;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">g/cm³</div>
+    <div style="padding:16px 32px;font-size:26px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">NPT(등온등압) 평형 부피</div>
+
+    <div style="padding:16px 32px;font-size:26px;border-bottom:1px solid rgba(51,65,85,0.5);">응집에너지밀도 CED(cohesive energy density)</div>
+    <div style="padding:16px 32px;font-size:28px;color:#60a5fa;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">MJ/m³</div>
+    <div style="padding:16px 32px;font-size:26px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">벌크 · 기상 에너지 차</div>
+
+    <div style="padding:16px 32px;font-size:26px;border-bottom:1px solid rgba(51,65,85,0.5);">점도 viscosity</div>
+    <div style="padding:16px 32px;font-size:28px;color:#60a5fa;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">mPa·s</div>
+    <div style="padding:16px 32px;font-size:26px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">Green–Kubo 응력 상관</div>
+
+    <div style="padding:16px 32px;font-size:26px;border-bottom:1px solid rgba(51,65,85,0.5);">유리전이온도 Tg(glass transition temperature)</div>
+    <div style="padding:16px 32px;font-size:28px;color:#60a5fa;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">K</div>
+    <div style="padding:16px 32px;font-size:26px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">부피–온도 기울기 변화</div>
+
+    <div style="padding:16px 32px;font-size:26px;border-bottom:1px solid rgba(51,65,85,0.5);">계면 분리일(work of separation)</div>
+    <div style="padding:16px 32px;font-size:28px;color:#60a5fa;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">mJ/m²</div>
+    <div style="padding:16px 32px;font-size:26px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">계면 모델 에너지 차</div>
+
+    <div style="padding:16px 32px;font-size:26px;">인장강도 tensile strength</div>
+    <div style="padding:16px 32px;font-size:28px;color:#60a5fa;font-family:'JetBrains Mono',monospace;">MPa</div>
+    <div style="padding:16px 32px;font-size:26px;color:#94a3b8;">인장 변형 응력–변형 곡선</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:32px;background:#111827;border:1px solid #1f2937;border-radius:12px;padding:24px 32px;">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#facc15;letter-spacing:0.08em;">진단 지표</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f1f5f9;">RDF g(r) · MSD Å²</span>
+    <span style="font-size:26px;color:#94a3b8;line-height:1.45;flex:1;">RDF(radial distribution function) · MSD(mean squared displacement) = 구조 · 확산 해석용 중간 지표 · 방향 지정 불가 → 표적 제외 · 점도 · Tg · 상 분리 해석 근거</span>
+  </div>
+  <p style="font-size:30px;color:#64748b;margin:0;">각 표적에 min 또는 max 지정 — 방향 없는 표적은 최적화 불가</p>
+</section>
+
+<section data-label="조합 공간의 규모" data-screen-label="09" data-speaker-notes="예시 수치임을 밝히되, 실험만으로는 닿을 수 없는 규모라는 감각을 전달." style="background:linear-gradient(135deg,#111827,#0c1222);color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:52px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">1-1 · SEARCH SPACE</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">조합 공간의 규모</h2>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:72px;padding-bottom:40px;">
+    <div style="display:flex;align-items:flex-end;gap:80px;">
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:120px;font-weight:700;line-height:1;color:#8ec0ff;">10⁶</div>
+        <div style="font-size:32px;color:#94a3b8;">기본 분자 13종 · 첨가제 종류 · 함량 wt% · 온도 조건의 조합 (예시)</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:120px;font-weight:700;line-height:1;color:#f87171;">10²</div>
+        <div style="font-size:32px;color:#94a3b8;">연간 실험으로 검증 가능한 조성 수 (예시)</div>
+      </div>
+    </div>
+    <p style="font-size:40px;color:#f1f5f9;margin:0;line-height:1.45;max-width:1740px;text-wrap:balance;">탐색 공간과 검증 가능 공간의 차이 네 자리 이상 · 그 간격을 줄이는 수단 = 시뮬레이션과 대리모델(surrogate model)</p>
+  </div>
+</section>
+
+<section data-label="아스팔트 바인더 조성" data-screen-label="10" data-speaker-notes="SARA 4분류는 이 강좌의 기준 대상. 수치는 예시 조성. 표의 분율은 질량 기준(wt%) — 실측 SARA(TLC-FID 등)와 플랫폼 조성 변수(9 · 12주차)가 모두 wt%라 이 기준에 맞췄다(이전 표기 mol%는 #19 표현자 표의 SARA wt%와 불일치). DOCHN 분자식은 Li &amp; Greenfield 12분자 원안의 C30H46(분자량 406.7)으로 바로잡음. 출처: LAMMPS_Asphalt/docs/papers/paper7_spectroscopy_molecular_model/drafts/Manuscript_KR_v8.md 표(분자 13종)." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:40px 80px 28px;display:flex;flex-direction:column;gap:12px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">1-1 · CASE · SARA</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">아스팔트 바인더의 분자 구성</h2>
+  <div style="display:flex;flex:0 0 120px;height:120px;border-radius:12px;overflow:hidden;border:1px solid #1f2937;">
+    <div style="flex:15;background:rgba(52,211,153,0.25);border-right:1px solid #0c1222;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:34px;color:#34d399;">15%</div>
+    <div style="flex:45;background:rgba(96,165,250,0.25);border-right:1px solid #0c1222;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:34px;color:#60a5fa;">45%</div>
+    <div style="flex:25;background:rgba(251,191,36,0.25);border-right:1px solid #0c1222;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:34px;color:#fbbf24;">25%</div>
+    <div style="flex:15;background:rgba(248,113,113,0.25);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:34px;color:#f87171;">15%</div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:32px;">
+    <div style="display:flex;flex-direction:column;gap:10px;padding-top:16px;border-top:3px solid #34d399;">
+      <div style="font-size:32px;font-weight:600;">Saturate</div>
+      <div style="font-size:30px;color:#94a3b8;line-height:1.4;">포화 탄화수소 · 저극성</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;padding-top:16px;border-top:3px solid #60a5fa;">
+      <div style="font-size:32px;font-weight:600;">Aromatic</div>
+      <div style="font-size:30px;color:#94a3b8;line-height:1.4;">방향족 고리 · 매질 역할</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;padding-top:16px;border-top:3px solid #fbbf24;">
+      <div style="font-size:32px;font-weight:600;">Resin</div>
+      <div style="font-size:30px;color:#94a3b8;line-height:1.4;">극성 분산제 · 상 안정화</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;padding-top:16px;border-top:3px solid #f87171;">
+      <div style="font-size:32px;font-weight:600;">Asphaltene</div>
+      <div style="font-size:30px;color:#94a3b8;line-height:1.4;">고분자량 극성 · 강성 지배</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:0.85fr 1.15fr;gap:28px;align-items:stretch;">
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:18px 22px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#64748b;letter-spacing:0.08em;">비결정질(amorphous) 벌크 셀 · 모식도</div>
+      <svg viewBox="0 0 440 356" style="width:100%;height:100%;max-height:470px;" preserveAspectRatio="xMidYMid meet">
+        <rect x="4" y="4" width="432" height="232" rx="10" fill="#0c1222" stroke="#2d3748" stroke-width="2" stroke-dasharray="8 6"></rect>
+
+        <rect x="26" y="30" width="62" height="11" rx="5.5" fill="#34d399" opacity="0.75" transform="rotate(-16 57 35)"></rect>
+        <rect x="286" y="196" width="62" height="11" rx="5.5" fill="#34d399" opacity="0.7" transform="rotate(11 317 201)"></rect>
+        <rect x="300" y="38" width="58" height="11" rx="5.5" fill="#34d399" opacity="0.65" transform="rotate(26 329 43)"></rect>
+        <g fill="#34d399" opacity="0.7"><circle cx="104" cy="204" r="8"></circle><circle cx="120" cy="212" r="8"></circle><circle cx="136" cy="204" r="8"></circle></g>
+        <g fill="#34d399" opacity="0.6"><circle cx="380" cy="142" r="8"></circle><circle cx="396" cy="150" r="8"></circle><circle cx="412" cy="142" r="8"></circle></g>
+
+        <polygon points="166,60 158,74 142,74 134,60 142,46 158,46" fill="#60a5fa" opacity="0.7"></polygon>
+        <polygon points="266,112 258,126 242,126 234,112 242,98 258,98" fill="#60a5fa" opacity="0.7"></polygon>
+        <polygon points="376,96 368,110 352,110 344,96 352,82 368,82" fill="#60a5fa" opacity="0.65"></polygon>
+        <polygon points="80,96 94,110 80,124 66,110" fill="#60a5fa" opacity="0.7"></polygon>
+        <polygon points="215,176 229,190 215,204 201,190" fill="#60a5fa" opacity="0.65"></polygon>
+        <polygon points="404,196 418,210 404,224 390,210" fill="#60a5fa" opacity="0.6"></polygon>
+
+        <polygon points="110,136 123,152 97,152" fill="#fbbf24" opacity="0.75"></polygon>
+        <polygon points="280,146 293,162 267,162" fill="#fbbf24" opacity="0.7"></polygon>
+        <rect x="186" y="130" width="22" height="22" rx="3" fill="#fbbf24" opacity="0.7"></rect>
+        <rect x="322" y="112" width="22" height="22" rx="3" fill="#fbbf24" opacity="0.65"></rect>
+
+        <g opacity="0.8" transform="rotate(-14 170 100)"><polygon points="186,92 178,106 162,106 154,92 162,78 178,78" fill="#f87171"></polygon><polygon points="186,108 178,122 162,122 154,108 162,94 178,94" fill="#f87171" opacity="0.6"></polygon></g>
+        <g opacity="0.75" transform="rotate(30 300 62)"><polygon points="316,54 308,68 292,68 284,54 292,40 308,40" fill="#f87171"></polygon><polygon points="316,70 308,84 292,84 284,70 292,56 308,56" fill="#f87171" opacity="0.6"></polygon></g>
+        <g opacity="0.7" transform="rotate(8 62 186)"><polygon points="78,178 70,192 54,192 46,178 54,164 70,164" fill="#f87171"></polygon><polygon points="78,194 70,208 54,208 46,194 54,180 70,180" fill="#f87171" opacity="0.55"></polygon></g>
+
+        <text x="220" y="256" fill="#64748b" font-size="15" font-family="JetBrains Mono, monospace" text-anchor="middle">주기경계 · 장거리 규칙성 없음 · 아스팔텐 적층</text>
+
+        <text x="12" y="280" fill="#64748b" font-size="14" font-family="JetBrains Mono, monospace">색 = SARA 분류 · 모양 = 대표 분자</text>
+        <rect x="12" y="295" width="24" height="6.5" rx="3.2" fill="#34d399" opacity="0.75"></rect>
+        <text x="40" y="303" fill="#94a3b8" font-size="13" font-family="JetBrains Mono, monospace">squalane</text>
+        <g fill="#34d399" opacity="0.7"><circle cx="112" cy="296" r="4"></circle><circle cx="120" cy="300" r="4"></circle><circle cx="128" cy="296" r="4"></circle></g>
+        <text x="136" y="303" fill="#94a3b8" font-size="13" font-family="JetBrains Mono, monospace">hopane</text>
+        <polygon points="208,298 204,305 194,305 190,298 194,291 204,291" fill="#60a5fa" opacity="0.7"></polygon>
+        <text x="214" y="303" fill="#94a3b8" font-size="13" font-family="JetBrains Mono, monospace">DOCHN</text>
+        <polygon points="274,289 283,298 274,307 265,298" fill="#60a5fa" opacity="0.7"></polygon>
+        <text x="288" y="303" fill="#94a3b8" font-size="13" font-family="JetBrains Mono, monospace">PHPN</text>
+        <rect x="346" y="292" width="12" height="12" rx="2" fill="#fbbf24" opacity="0.7"></rect>
+        <text x="364" y="303" fill="#94a3b8" font-size="13" font-family="JetBrains Mono, monospace">thiophene</text>
+        <polygon points="22,318 32,331 12,331" fill="#fbbf24" opacity="0.75"></polygon>
+        <text x="38" y="330" fill="#94a3b8" font-size="13" font-family="JetBrains Mono, monospace">quinolinohopane</text>
+        <g opacity="0.8"><polygon points="180,320 176,326 166,326 162,320 166,314 176,314" fill="#f87171"></polygon><polygon points="180,328 176,334 166,334 162,328 166,322 176,322" fill="#f87171" opacity="0.6"></polygon></g>
+        <text x="188" y="330" fill="#94a3b8" font-size="13" font-family="JetBrains Mono, monospace">asphaltene 적층</text>
+      </svg>
+    </div>
+    <div style="display:grid;grid-template-columns:1.1fr 1.5fr 1fr 0.7fr;gap:0;background:#111827;border:1px solid #1f2937;border-radius:12px;overflow:hidden;align-content:stretch;">
+      <div style="padding:7px 20px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.06em;">분류</div>
+      <div style="padding:7px 20px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.06em;">대표 분자</div>
+      <div style="padding:7px 20px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.06em;">분자식</div>
+      <div style="padding:7px 20px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.06em;">wt%</div>
+
+      <div style="padding:7px 20px;font-size:24px;color:#34d399;border-bottom:1px solid rgba(51,65,85,0.5);">Saturate</div>
+      <div style="padding:7px 20px;font-size:24px;border-bottom:1px solid rgba(51,65,85,0.5);">squalane · hopane</div>
+      <div style="padding:7px 20px;font-size:24px;font-family:'JetBrains Mono',monospace;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">C₃₀H₆₂ · C₃₅H₆₂</div>
+      <div style="padding:7px 20px;font-size:24px;font-family:'JetBrains Mono',monospace;color:#34d399;border-bottom:1px solid rgba(51,65,85,0.5);">15</div>
+
+      <div style="padding:7px 20px;font-size:24px;color:#60a5fa;border-bottom:1px solid rgba(51,65,85,0.5);">Aromatic</div>
+      <div style="padding:7px 20px;font-size:24px;border-bottom:1px solid rgba(51,65,85,0.5);">DOCHN · PHPN</div>
+      <div style="padding:7px 20px;font-size:24px;font-family:'JetBrains Mono',monospace;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">C₃₀H₄₆ · C₃₅H₄₄</div>
+      <div style="padding:7px 20px;font-size:24px;font-family:'JetBrains Mono',monospace;color:#60a5fa;border-bottom:1px solid rgba(51,65,85,0.5);">45</div>
+
+      <div style="padding:7px 20px;font-size:24px;color:#fbbf24;border-bottom:1px solid rgba(51,65,85,0.5);">Resin</div>
+      <div style="padding:7px 20px;font-size:24px;border-bottom:1px solid rgba(51,65,85,0.5);">quinolinohopane · thioisorenieratane</div>
+      <div style="padding:7px 20px;font-size:24px;font-family:'JetBrains Mono',monospace;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">C₄₀H₅₉N · C₄₀H₆₀S</div>
+      <div style="padding:7px 20px;font-size:24px;font-family:'JetBrains Mono',monospace;color:#fbbf24;border-bottom:1px solid rgba(51,65,85,0.5);">25</div>
+
+      <div style="padding:7px 20px;font-size:24px;color:#f87171;">Asphaltene</div>
+      <div style="padding:7px 20px;font-size:24px;">asphaltene-phenol · -pyrrole · -thiophene</div>
+      <div style="padding:7px 20px;font-size:24px;font-family:'JetBrains Mono',monospace;color:#94a3b8;">C₄₂H₅₄O · C₆₆H₈₁N</div>
+      <div style="padding:7px 20px;font-size:24px;font-family:'JetBrains Mono',monospace;color:#f87171;">15</div>
+    </div>
+  </div>
+  <p style="font-size:24px;color:#64748b;margin:0;">대표 분자 · 조성은 문헌 모델 기반 예시 · 실측 SARA 분율 · 원소비에 맞춘 조정은 3주차</p>
+</section>
+
+<section data-label="시멘트 클링커 4대 상" data-screen-label="11" data-speaker-notes="아스팔트의 SARA 4분류에 대응하는 시멘트 쪽 기준 분류. wt%는 보통포틀랜드시멘트 대표값. C-S-H는 결정이 아니라 규칙성이 낮은 나노 구조이며, 원자 모델은 토버모라이트(tobermorite) 유사 층상 구조에서 출발한다 — 그림은 그 층상 모델의 모식도(이전 표기 「층상 결정」을 바로잡음)." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:34px 80px 22px;display:flex;flex-direction:column;gap:12px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">1-1 · CASE · CLINKER</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">시멘트 클링커의 4대 상</h2>
+  <div style="display:flex;flex:0 0 120px;height:120px;border-radius:12px;overflow:hidden;border:1px solid #1f2937;">
+    <div style="flex:55;background:rgba(96,165,250,0.25);border-right:1px solid #0c1222;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:34px;color:#60a5fa;">55%</div>
+    <div style="flex:20;background:rgba(52,211,153,0.25);border-right:1px solid #0c1222;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:34px;color:#34d399;">20%</div>
+    <div style="flex:10;background:rgba(167,139,250,0.25);border-right:1px solid #0c1222;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:34px;color:#a78bfa;">10%</div>
+    <div style="flex:8;background:rgba(251,191,36,0.25);border-right:1px solid #0c1222;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:28px;color:#fbbf24;">8%</div>
+    <div style="flex:7;background:rgba(100,116,139,0.22);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:26px;color:#94a3b8;">7%</div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:32px;">
+    <div style="display:flex;flex-direction:column;gap:10px;padding-top:16px;border-top:3px solid #60a5fa;">
+      <div style="font-size:32px;font-weight:600;">C₃S Alite</div>
+      <div style="font-size:30px;color:#94a3b8;line-height:1.4;">빠른 수화 · 조기 강도 지배</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;padding-top:16px;border-top:3px solid #34d399;">
+      <div style="font-size:32px;font-weight:600;">C₂S Belite</div>
+      <div style="font-size:30px;color:#94a3b8;line-height:1.4;">느린 수화 · 장기 강도 기여</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;padding-top:16px;border-top:3px solid #a78bfa;">
+      <div style="font-size:32px;font-weight:600;">C₃A Aluminate</div>
+      <div style="font-size:30px;color:#94a3b8;line-height:1.4;">초기 응결·발열 · 석고로 제어</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;padding-top:16px;border-top:3px solid #fbbf24;">
+      <div style="font-size:32px;font-weight:600;">C₄AF Ferrite</div>
+      <div style="font-size:30px;color:#94a3b8;line-height:1.4;">저강도 기여 · 색과 내화학성</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:0.85fr 1.15fr;gap:28px;align-items:stretch;">
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:18px 22px;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:#64748b;letter-spacing:0.08em;">수화 생성물 C-S-H(calcium silicate hydrate) 층상 구조 · 모식도</div>
+      <svg viewBox="0 0 440 356" style="width:100%;height:100%;max-height:470px;" preserveAspectRatio="xMidYMid meet">
+        <rect x="4" y="4" width="432" height="232" rx="10" fill="#0c1222" stroke="#2d3748" stroke-width="2" stroke-dasharray="8 6"></rect>
+
+        <rect x="20" y="52" width="400" height="14" rx="4" fill="rgba(251,191,36,0.16)" stroke="#fbbf24" stroke-opacity="0.45"></rect>
+        <g fill="#fbbf24" opacity="0.85"><circle cx="46" cy="59" r="5"></circle><circle cx="96" cy="59" r="5"></circle><circle cx="146" cy="59" r="5"></circle><circle cx="196" cy="59" r="5"></circle><circle cx="246" cy="59" r="5"></circle><circle cx="296" cy="59" r="5"></circle><circle cx="346" cy="59" r="5"></circle><circle cx="396" cy="59" r="5"></circle></g>
+        <rect x="20" y="124" width="400" height="14" rx="4" fill="rgba(251,191,36,0.16)" stroke="#fbbf24" stroke-opacity="0.45"></rect>
+        <g fill="#fbbf24" opacity="0.85"><circle cx="46" cy="131" r="5"></circle><circle cx="96" cy="131" r="5"></circle><circle cx="146" cy="131" r="5"></circle><circle cx="196" cy="131" r="5"></circle><circle cx="246" cy="131" r="5"></circle><circle cx="296" cy="131" r="5"></circle><circle cx="346" cy="131" r="5"></circle><circle cx="396" cy="131" r="5"></circle></g>
+        <rect x="20" y="196" width="400" height="14" rx="4" fill="rgba(251,191,36,0.16)" stroke="#fbbf24" stroke-opacity="0.45"></rect>
+        <g fill="#fbbf24" opacity="0.85"><circle cx="46" cy="203" r="5"></circle><circle cx="96" cy="203" r="5"></circle><circle cx="146" cy="203" r="5"></circle><circle cx="196" cy="203" r="5"></circle><circle cx="246" cy="203" r="5"></circle><circle cx="296" cy="203" r="5"></circle><circle cx="346" cy="203" r="5"></circle><circle cx="396" cy="203" r="5"></circle></g>
+
+        <g fill="#60a5fa" opacity="0.75"><polygon points="70,34 82,50 58,50"></polygon><polygon points="170,34 182,50 158,50"></polygon><polygon points="270,34 282,50 258,50"></polygon><polygon points="370,34 382,50 358,50"></polygon></g>
+        <g fill="#60a5fa" opacity="0.7"><polygon points="120,84 132,68 108,68"></polygon><polygon points="220,84 232,68 208,68"></polygon><polygon points="320,84 332,68 308,68"></polygon></g>
+        <g fill="#60a5fa" opacity="0.7"><polygon points="70,106 82,122 58,122"></polygon><polygon points="170,106 182,122 158,122"></polygon><polygon points="270,106 282,122 258,122"></polygon><polygon points="370,106 382,122 358,122"></polygon></g>
+        <g fill="#60a5fa" opacity="0.7"><polygon points="120,156 132,140 108,140"></polygon><polygon points="220,156 232,140 208,140"></polygon><polygon points="320,156 332,140 308,140"></polygon></g>
+        <g fill="#60a5fa" opacity="0.7"><polygon points="70,178 82,194 58,194"></polygon><polygon points="170,178 182,194 158,194"></polygon><polygon points="270,178 282,194 258,194"></polygon><polygon points="370,178 382,194 358,194"></polygon></g>
+
+        <g fill="#cbd5e1" opacity="0.6"><circle cx="96" cy="96" r="4"></circle><circle cx="146" cy="102" r="4"></circle><circle cx="196" cy="94" r="4"></circle><circle cx="296" cy="100" r="4"></circle><circle cx="346" cy="94" r="4"></circle><circle cx="96" cy="168" r="4"></circle><circle cx="196" cy="166" r="4"></circle><circle cx="246" cy="172" r="4"></circle><circle cx="346" cy="166" r="4"></circle></g>
+        <g fill="#f87171" opacity="0.8"><circle cx="246" cy="96" r="5.5"></circle><circle cx="396" cy="100" r="5.5"></circle><circle cx="146" cy="170" r="5.5"></circle><circle cx="296" cy="168" r="5.5"></circle></g>
+
+        <line x1="20" y1="66" x2="20" y2="124" stroke="#475569" stroke-width="1.5" stroke-dasharray="4 4"></line>
+        <text x="220" y="254" fill="#64748b" font-size="15" font-family="JetBrains Mono, monospace" text-anchor="middle">규칙성 낮은 나노 구조 · 토버모라이트(tobermorite) 유사 층상</text>
+        <text x="220" y="274" fill="#64748b" font-size="15" font-family="JetBrains Mono, monospace" text-anchor="middle">층간 물과 Ca 이온 · 규산 사슬 길이가 강도 지배</text>
+
+        <text x="12" y="296" fill="#64748b" font-size="14" font-family="JetBrains Mono, monospace">색 = 원소·구성 단위 · 모양 = 구조 요소</text>
+        <rect x="12" y="308" width="24" height="8" rx="3" fill="rgba(251,191,36,0.16)" stroke="#fbbf24" stroke-opacity="0.45"></rect>
+        <text x="42" y="317" fill="#94a3b8" font-size="13" font-family="JetBrains Mono, monospace">Ca-O layer</text>
+        <polygon points="136,306 146,320 126,320" fill="#60a5fa" opacity="0.75"></polygon>
+        <text x="154" y="317" fill="#94a3b8" font-size="13" font-family="JetBrains Mono, monospace">silicate SiO4</text>
+        <circle cx="284" cy="313" r="4" fill="#cbd5e1" opacity="0.6"></circle>
+        <text x="294" y="317" fill="#94a3b8" font-size="13" font-family="JetBrains Mono, monospace">interlayer H2O</text>
+        <circle cx="20" cy="338" r="5.5" fill="#f87171" opacity="0.8"></circle>
+        <text x="32" y="342" fill="#94a3b8" font-size="13" font-family="JetBrains Mono, monospace">interlayer Ca2+</text>
+        <line x1="150" y1="330" x2="150" y2="346" stroke="#475569" stroke-width="1.5" stroke-dasharray="4 4"></line>
+        <text x="160" y="342" fill="#94a3b8" font-size="13" font-family="JetBrains Mono, monospace">basal spacing</text>
+      </svg>
+    </div>
+    <div style="display:grid;grid-template-columns:1.1fr 1.5fr 1fr 0.7fr;gap:0;background:#111827;border:1px solid #1f2937;border-radius:12px;overflow:hidden;align-content:stretch;">
+      <div style="padding:7px 20px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.06em;">상</div>
+      <div style="padding:7px 20px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.06em;">광물명 · 역할</div>
+      <div style="padding:7px 20px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.06em;">조성</div>
+      <div style="padding:7px 20px;font-size:24px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.06em;">wt%</div>
+
+      <div style="padding:7px 20px;font-size:24px;color:#60a5fa;border-bottom:1px solid rgba(51,65,85,0.5);">C₃S</div>
+      <div style="padding:7px 20px;font-size:24px;border-bottom:1px solid rgba(51,65,85,0.5);">alite · 1일–7일 강도</div>
+      <div style="padding:7px 20px;font-size:24px;font-family:'JetBrains Mono',monospace;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">3CaO·SiO₂</div>
+      <div style="padding:7px 20px;font-size:24px;font-family:'JetBrains Mono',monospace;color:#60a5fa;border-bottom:1px solid rgba(51,65,85,0.5);">55</div>
+
+      <div style="padding:7px 20px;font-size:24px;color:#34d399;border-bottom:1px solid rgba(51,65,85,0.5);">C₂S</div>
+      <div style="padding:7px 20px;font-size:24px;border-bottom:1px solid rgba(51,65,85,0.5);">belite · 28일 이후 강도</div>
+      <div style="padding:7px 20px;font-size:24px;font-family:'JetBrains Mono',monospace;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">2CaO·SiO₂</div>
+      <div style="padding:7px 20px;font-size:24px;font-family:'JetBrains Mono',monospace;color:#34d399;border-bottom:1px solid rgba(51,65,85,0.5);">20</div>
+
+      <div style="padding:7px 20px;font-size:24px;color:#a78bfa;border-bottom:1px solid rgba(51,65,85,0.5);">C₃A</div>
+      <div style="padding:7px 20px;font-size:24px;border-bottom:1px solid rgba(51,65,85,0.5);">aluminate · 응결·수화열</div>
+      <div style="padding:7px 20px;font-size:24px;font-family:'JetBrains Mono',monospace;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">3CaO·Al₂O₃</div>
+      <div style="padding:7px 20px;font-size:24px;font-family:'JetBrains Mono',monospace;color:#a78bfa;border-bottom:1px solid rgba(51,65,85,0.5);">10</div>
+
+      <div style="padding:7px 20px;font-size:24px;color:#fbbf24;border-bottom:1px solid rgba(51,65,85,0.5);">C₄AF</div>
+      <div style="padding:7px 20px;font-size:24px;border-bottom:1px solid rgba(51,65,85,0.5);">ferrite · 색 · 내화학</div>
+      <div style="padding:7px 20px;font-size:24px;font-family:'JetBrains Mono',monospace;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">4CaO·Al₂O₃·Fe₂O₃</div>
+      <div style="padding:7px 20px;font-size:24px;font-family:'JetBrains Mono',monospace;color:#fbbf24;border-bottom:1px solid rgba(51,65,85,0.5);">8</div>
+
+      <div style="padding:7px 20px;font-size:24px;color:#94a3b8;">기타</div>
+      <div style="padding:7px 20px;font-size:24px;color:#94a3b8;">석고 · 알칼리 · 유리상</div>
+      <div style="padding:7px 20px;font-size:24px;font-family:'JetBrains Mono',monospace;color:#94a3b8;">CaSO₄·2H₂O 등</div>
+      <div style="padding:7px 20px;font-size:24px;font-family:'JetBrains Mono',monospace;color:#94a3b8;">7</div>
+    </div>
+  </div>
+  <p style="font-size:24px;color:#64748b;margin:0;">아스팔트 = 비결정질 분자 혼합 · 시멘트 = 결정상 혼합 · 수화 반응과 C-S-H 모델링은 8주차</p>
+</section>
+
+<section data-label="[1-2] 섹션" data-screen-label="12" data-speaker-notes="두 번째 차시. 스케일 이야기." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:100px;display:flex;flex-direction:column;justify-content:center;gap:40px;">
+  <div style="width:200px;height:6px;background:linear-gradient(135deg,#3377ff,#8b5cf6);border-radius:999px;"></div>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:120px;color:#1f2937;font-weight:700;line-height:1;">1-2</div>
+  <h2 style="font-size:68px;font-weight:700;letter-spacing:-0.02em;margin:0;line-height:1.1;">멀티스케일 모델링 개념</h2>
+  <p style="font-size:32px;color:#94a3b8;margin:0;">양자 · 원자 · 메조 · 연속체 스케일과 MD · ML의 위치</p>
+</section>
+
+<section data-label="스케일 계층" data-screen-label="13" data-speaker-notes="길이·시간 스케일이 함께 커진다는 점, 그리고 정보가 위로 전달되는 방향을 강조." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:52px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">1-2 · SCALES</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">4개 스케일의 계층 구조</h2>
+  <div style="display:flex;flex-direction:column;gap:20px;">
+    <div style="display:flex;align-items:center;gap:36px;background:#111827;border:1px solid #1f2937;border-left:2px solid #a78bfa;border-radius:12px;padding:30px 40px;">
+      <div style="font-size:36px;font-weight:600;width:280px;">연속체 Continuum</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#a78bfa;width:220px;">mm ~ m</div>
+      <div style="font-size:30px;color:#94a3b8;flex:1;">FEM(finite element method) · 포장 구조 거동, 공용성 예측</div>
+      <svg width="112" height="64" viewBox="0 0 150 86" fill="none" style="flex:none;border-radius:8px;background:#0c1222;">
+        <rect x="8" y="34" width="134" height="14" fill="#2b2f3d"></rect>
+        <rect x="8" y="48" width="134" height="12" fill="#232838"></rect>
+        <rect x="8" y="60" width="134" height="16" fill="#1a1f2e"></rect>
+        <path d="M8 34h134" stroke="#a78bfa" stroke-width="2"></path>
+        <circle cx="96" cy="24" r="10" fill="none" stroke="#a78bfa" stroke-width="2"></circle>
+        <circle cx="96" cy="24" r="3" fill="#a78bfa"></circle>
+        <path d="M96 34v3" stroke="#a78bfa" stroke-width="2"></path>
+        <path d="M24 30c4 4 8 4 12 0" stroke="#7c6bbf" stroke-width="2" stroke-linecap="round"></path>
+        <path d="M14 76v6M75 76v6M136 76v6" stroke="#475569" stroke-width="2" stroke-linecap="round"></path>
+      </svg>
+    </div>
+    <div style="display:flex;align-items:center;gap:36px;background:#111827;border:1px solid #1f2937;border-left:2px solid #6366f1;border-radius:12px;padding:30px 40px;">
+      <div style="font-size:36px;font-weight:600;width:280px;">메조 Meso</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#a5b4fc;width:220px;">nm ~ μm</div>
+      <div style="font-size:30px;color:#94a3b8;flex:1;">조대입자 모델(coarse-grained model) · 상 분리, 미세구조</div>
+      <svg width="112" height="64" viewBox="0 0 150 86" fill="none" style="flex:none;border-radius:8px;background:#0c1222;">
+        <path d="M18 60c6-22 26-30 44-22s24-2 40-6 28 8 30 24" stroke="#6366f1" stroke-width="2" fill="none" opacity="0.5"></path>
+        <circle cx="30" cy="30" r="9" fill="#a5b4fc" opacity="0.35"></circle>
+        <circle cx="48" cy="24" r="7" fill="#a5b4fc" opacity="0.35"></circle>
+        <circle cx="42" cy="42" r="8" fill="#a5b4fc" opacity="0.35"></circle>
+        <circle cx="96" cy="56" r="10" fill="#6366f1" opacity="0.45"></circle>
+        <circle cx="114" cy="46" r="7" fill="#6366f1" opacity="0.45"></circle>
+        <circle cx="112" cy="64" r="8" fill="#6366f1" opacity="0.45"></circle>
+        <circle cx="72" cy="38" r="4" fill="#475569"></circle>
+        <circle cx="126" cy="26" r="4" fill="#475569"></circle>
+        <circle cx="26" cy="62" r="4" fill="#475569"></circle>
+      </svg>
+    </div>
+    <div style="display:flex;align-items:center;gap:36px;background:#111827;border:1px solid #2d3748;border-left:2px solid #3377ff;border-radius:12px;padding:30px 40px;box-shadow:0 0 20px rgba(59,130,246,0.15);">
+      <div style="font-size:36px;font-weight:600;width:280px;">원자 Atomistic</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#60a5fa;width:220px;">Å ~ nm</div>
+      <div style="font-size:30px;color:#f1f5f9;flex:1;">MD · 밀도, CED, 점도, Tg, 계면 분리일 ← 이 강좌의 주 대상</div>
+      <svg width="112" height="64" viewBox="0 0 150 86" fill="none" style="flex:none;border-radius:8px;background:#0c1222;">
+        <rect x="8" y="8" width="134" height="70" rx="6" stroke="#2d3748" stroke-width="1.5" stroke-dasharray="5 5"></rect>
+        <g stroke="#60a5fa" stroke-width="2">
+          <path d="M34 30 52 22 70 32 88 24 108 34"></path>
+          <path d="M52 22v-9M88 24v-9M70 32v10"></path>
+          <path d="M34 30 26 46M108 34l10 14"></path>
+          <path d="M40 58h24"></path>
+        </g>
+        <g fill="#60a5fa">
+          <circle cx="34" cy="30" r="5"></circle><circle cx="52" cy="22" r="5"></circle>
+          <circle cx="70" cy="32" r="5"></circle><circle cx="88" cy="24" r="5"></circle>
+          <circle cx="108" cy="34" r="5"></circle>
+        </g>
+        <g fill="#cbd5e1">
+          <circle cx="52" cy="13" r="3.2"></circle><circle cx="88" cy="15" r="3.2"></circle>
+          <circle cx="70" cy="42" r="3.2"></circle><circle cx="26" cy="46" r="3.2"></circle>
+          <circle cx="40" cy="58" r="3.2"></circle><circle cx="64" cy="58" r="3.2"></circle>
+          <circle cx="118" cy="48" r="3.2"></circle>
+        </g>
+      </svg>
+    </div>
+    <div style="display:flex;align-items:center;gap:36px;background:#111827;border:1px solid #1f2937;border-left:2px solid #64748b;border-radius:12px;padding:30px 40px;">
+      <div style="font-size:36px;font-weight:600;width:280px;">양자 Quantum</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#94a3b8;width:220px;">&lt; Å</div>
+      <div style="font-size:30px;color:#94a3b8;flex:1;">DFT(density functional theory) · 결합 해리, 전하 분포, 힘장(force field) 파라미터화</div>
+      <svg width="112" height="64" viewBox="0 0 150 86" fill="none" style="flex:none;border-radius:8px;background:#0c1222;">
+        <defs>
+          <radialGradient id="qcloudA" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#94a3b8" stop-opacity="0.55"></stop>
+            <stop offset="100%" stop-color="#94a3b8" stop-opacity="0"></stop>
+          </radialGradient>
+        </defs>
+        <ellipse cx="58" cy="43" rx="34" ry="28" fill="url(#qcloudA)"></ellipse>
+        <ellipse cx="98" cy="43" rx="30" ry="25" fill="url(#qcloudA)"></ellipse>
+        <ellipse cx="58" cy="43" rx="26" ry="21" stroke="#64748b" stroke-width="1.2" stroke-dasharray="4 4"></ellipse>
+        <ellipse cx="98" cy="43" rx="22" ry="18" stroke="#64748b" stroke-width="1.2" stroke-dasharray="4 4"></ellipse>
+        <path d="M58 43h40" stroke="#cbd5e1" stroke-width="2"></path>
+        <circle cx="58" cy="43" r="6" fill="#e2e8f0"></circle>
+        <circle cx="98" cy="43" r="5" fill="#e2e8f0"></circle>
+        <circle cx="42" cy="28" r="2.6" fill="#94a3b8"></circle>
+        <circle cx="112" cy="58" r="2.6" fill="#94a3b8"></circle>
+      </svg>
+    </div>
+  </div>
+  <p style="font-size:30px;color:#64748b;margin:0;">아래 스케일 결과 = 위 스케일의 입력 · 역설계 = 스케일 간 상향 · 하향 정보 전달로 성립</p>
+</section>
+
+<section data-label="스케일별 한계" data-screen-label="14" data-speaker-notes="각 방법의 한계를 알고 조합하는 것이 멀티스케일의 본질." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:52px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">1-2 · TRADE-OFF</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">스케일별 방법과 한계</h2>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:64px;padding-bottom:40px;">
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px;">
+      <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:44px;display:flex;flex-direction:column;gap:24px;">
+        <div style="font-size:40px;font-weight:600;color:#60a5fa;">정확한 쪽</div>
+        <div style="font-size:36px;color:#94a3b8;line-height:1.5;">양자 · 원자 스케일 = 가정 최소화한 물리 계산 · 단 계 크기와 시간 제한 — 수만–수십만 원자 · 수십 나노초</div>
+      </div>
+      <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:44px;display:flex;flex-direction:column;gap:24px;">
+        <div style="font-size:40px;font-weight:600;color:#a78bfa;">큰 쪽</div>
+        <div style="font-size:36px;color:#94a3b8;line-height:1.5;">메조 · 연속체 스케일 = 실제 구조물 크기 · 단 재료 상수는 외부 입력으로 제공</div>
+      </div>
+    </div>
+    <p style="font-size:40px;color:#f1f5f9;margin:0;line-height:1.45;max-width:1740px;text-wrap:balance;">멀티스케일 모델링(multiscale modeling) = 두 스케일 군의 연결 작업 · MD 물성 → 상위 모델 입력 · 상위 모델 요구 물성 → MD의 표적</p>
+  </div>
+</section>
+
+<section data-label="분자동역학의 위치 (1/2)" data-screen-label="15" data-speaker-notes="힘장 항을 하나씩 짚되 깊이 들어가지 않는다. 2~4주차 예고." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:14px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">1-2 · MOLECULAR DYNAMICS · 1 / 2</div>
+  <h2 style="font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;font-size:52px;">분자동역학의 위치</h2>
+  <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:18px 36px;display:flex;flex-direction:column;gap:10px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#f1f5f9;line-height:1.5;">U = Σ k<sub>b</sub>(r−r₀)² + Σ k<sub>θ</sub>(θ−θ₀)² + Σ V<sub>n</sub>[1+cos(nφ−δ)] + Σ 4ε[(σ/r)¹² − (σ/r)⁶] + Σ q<sub>i</sub>q<sub>j</sub>/4πε₀r</div>
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px 28px;font-size:24px;color:#64748b;line-height:1.3;border-top:1px solid #1f2937;padding-top:10px;">
+      <div><span style="font-family:'JetBrains Mono',monospace;color:#94a3b8;">U</span> 총 포텐셜 에너지</div>
+      <div><span style="font-family:'JetBrains Mono',monospace;color:#94a3b8;">F</span> 원자에 작용하는 힘</div>
+      <div><span style="font-family:'JetBrains Mono',monospace;color:#94a3b8;">r · r₀</span> 원자 거리 · 평형값</div>
+      <div><span style="font-family:'JetBrains Mono',monospace;color:#94a3b8;">θ · θ₀</span> 결합각 · 평형값</div>
+      <div><span style="font-family:'JetBrains Mono',monospace;color:#94a3b8;">φ · δ · n</span> 이면각 · 위상 · 주기</div>
+      <div><span style="font-family:'JetBrains Mono',monospace;color:#94a3b8;">k_b · k_θ</span> 강성 계수</div>
+      <div><span style="font-family:'JetBrains Mono',monospace;color:#94a3b8;">V_n</span> 회전 장벽 크기</div>
+      <div><span style="font-family:'JetBrains Mono',monospace;color:#94a3b8;">ε · σ</span> LJ 깊이 · 접촉 거리</div>
+      <div><span style="font-family:'JetBrains Mono',monospace;color:#94a3b8;">q_i · q_j</span> 원자 부분전하</div>
+      <div><span style="font-family:'JetBrains Mono',monospace;color:#94a3b8;">ε₀</span> 진공 유전율</div>
+      <div><span style="font-family:'JetBrains Mono',monospace;color:#94a3b8;">Σ</span> 해당 항 전체에 대한 합</div>
+      <div><span style="font-family:'JetBrains Mono',monospace;color:#94a3b8;">−∇U</span> U의 공간 기울기</div>
+    </div>
+    <div style="font-size:24px;color:#64748b;">GAFF2(General AMBER Force Field 2) 포텐셜 · LJ = Lennard-Jones · 힘 F = −∇U 로 뉴턴 방정식 적분</div>
+  </div>
+  <div data-om-raster="true" style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:14px 28px 8px;">
+    <svg viewBox="0 0 1700 186" style="width:100%;height:auto;display:block;max-height:200px;" xmlns="http://www.w3.org/2000/svg">
+      <g transform="translate(0,0)">
+        <rect x="0" y="0" width="320" height="124" rx="8" fill="#0c1222" stroke="#1f2937"></rect>
+        <path d="M108,56 L124,42 L140,70 L156,42 L172,70 L188,42 L204,56" fill="none" stroke="#60a5fa" stroke-width="3"></path>
+        <circle cx="92" cy="56" r="17" fill="#1f2937" stroke="#60a5fa" stroke-width="2.5"></circle>
+        <circle cx="220" cy="56" r="17" fill="#1f2937" stroke="#60a5fa" stroke-width="2.5"></circle>
+        <path d="M92,94 L220,94" stroke="#475569" stroke-width="2"></path>
+        <path d="M92,94 L104,88 L104,100 Z M220,94 L208,88 L208,100 Z" fill="#475569"></path>
+        <text x="156" y="116" fill="#94a3b8" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="middle">r</text>
+        <text x="160" y="156" fill="#60a5fa" font-size="22" text-anchor="middle">결합 신축</text>
+        <text x="160" y="180" fill="#64748b" font-size="19" font-family="JetBrains Mono, monospace" text-anchor="middle">bond stretch</text>
+      </g>
+      <g transform="translate(345,0)">
+        <rect x="0" y="0" width="320" height="124" rx="8" fill="#0c1222" stroke="#1f2937"></rect>
+        <path d="M78,94 L160,42 L242,94" fill="none" stroke="#60a5fa" stroke-width="3"></path>
+        <path d="M135,58 A 30 30 0 0 0 185,58" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 5"></path>
+        <circle cx="78" cy="94" r="15" fill="#1f2937" stroke="#60a5fa" stroke-width="2.5"></circle>
+        <circle cx="160" cy="42" r="17" fill="#1f2937" stroke="#60a5fa" stroke-width="2.5"></circle>
+        <circle cx="242" cy="94" r="15" fill="#1f2937" stroke="#60a5fa" stroke-width="2.5"></circle>
+        <text x="160" y="98" fill="#94a3b8" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="middle">θ</text>
+        <text x="160" y="156" fill="#60a5fa" font-size="22" text-anchor="middle">결합각</text>
+        <text x="160" y="180" fill="#64748b" font-size="19" font-family="JetBrains Mono, monospace" text-anchor="middle">angle bend</text>
+      </g>
+      <g transform="translate(690,0)">
+        <rect x="0" y="0" width="320" height="124" rx="8" fill="#0c1222" stroke="#1f2937"></rect>
+        <path d="M70,38 L120,70 L200,70 L250,32" fill="none" stroke="#a5b4fc" stroke-width="3"></path>
+        <path d="M234,84 A 40 30 0 1 1 250,52" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 5"></path>
+        <path d="M250,52 L241,60 L253,64 Z" fill="#94a3b8"></path>
+        <circle cx="70" cy="38" r="14" fill="#1f2937" stroke="#a5b4fc" stroke-width="2.5"></circle>
+        <circle cx="120" cy="70" r="16" fill="#1f2937" stroke="#a5b4fc" stroke-width="2.5"></circle>
+        <circle cx="200" cy="70" r="16" fill="#1f2937" stroke="#a5b4fc" stroke-width="2.5"></circle>
+        <circle cx="250" cy="32" r="14" fill="#1f2937" stroke="#a5b4fc" stroke-width="2.5"></circle>
+        <text x="196" y="110" fill="#94a3b8" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="middle">φ</text>
+        <text x="160" y="156" fill="#a5b4fc" font-size="22" text-anchor="middle">이면각</text>
+        <text x="160" y="180" fill="#64748b" font-size="19" font-family="JetBrains Mono, monospace" text-anchor="middle">dihedral</text>
+      </g>
+      <g transform="translate(1035,0)">
+        <rect x="0" y="0" width="320" height="124" rx="8" fill="#0c1222" stroke="#1f2937"></rect>
+        <circle cx="104" cy="60" r="34" fill="none" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="4 5" opacity="0.6"></circle>
+        <circle cx="216" cy="60" r="34" fill="none" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="4 5" opacity="0.6"></circle>
+        <circle cx="104" cy="60" r="18" fill="rgba(167,139,250,0.2)" stroke="#a78bfa" stroke-width="2.5"></circle>
+        <circle cx="216" cy="60" r="18" fill="rgba(167,139,250,0.2)" stroke="#a78bfa" stroke-width="2.5"></circle>
+        <path d="M134,60 L150,60" stroke="#a78bfa" stroke-width="2.5"></path>
+        <path d="M158,60 L146,54 L146,66 Z" fill="#a78bfa"></path>
+        <path d="M186,60 L170,60" stroke="#a78bfa" stroke-width="2.5"></path>
+        <path d="M162,60 L174,54 L174,66 Z" fill="#a78bfa"></path>
+        <text x="160" y="110" fill="#94a3b8" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="middle">ε · σ</text>
+        <text x="160" y="156" fill="#a78bfa" font-size="22" text-anchor="middle">반데르발스</text>
+        <text x="160" y="180" fill="#64748b" font-size="19" font-family="JetBrains Mono, monospace" text-anchor="middle">van der Waals</text>
+      </g>
+      <g transform="translate(1380,0)">
+        <rect x="0" y="0" width="320" height="124" rx="8" fill="#0c1222" stroke="#1f2937"></rect>
+        <path d="M104,60 C 130,18 190,18 216,60" fill="none" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.7"></path>
+        <path d="M104,60 C 130,102 190,102 216,60" fill="none" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.7"></path>
+        <circle cx="104" cy="60" r="20" fill="rgba(96,165,250,0.2)" stroke="#60a5fa" stroke-width="2.5"></circle>
+        <circle cx="216" cy="60" r="20" fill="rgba(248,113,113,0.2)" stroke="#f87171" stroke-width="2.5"></circle>
+        <path d="M96,60 L112,60 M104,52 L104,68" stroke="#60a5fa" stroke-width="2.5"></path>
+        <path d="M208,60 L224,60" stroke="#f87171" stroke-width="2.5"></path>
+        <text x="160" y="110" fill="#94a3b8" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="middle">q_i · q_j</text>
+        <text x="160" y="156" fill="#a78bfa" font-size="22" text-anchor="middle">정전기</text>
+        <text x="160" y="180" fill="#64748b" font-size="19" font-family="JetBrains Mono, monospace" text-anchor="middle">Coulomb</text>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<section data-label="분자동역학의 위치 (2/2)" data-screen-label="16" data-speaker-notes="[분할] 앞 장에서 이어짐. 힘장 항을 하나씩 짚되 깊이 들어가지 않는다. 2~4주차 예고." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:14px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">1-2 · MOLECULAR DYNAMICS · 2 / 2</div>
+  <h2 style="font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;font-size:52px;">분자동역학의 위치 — 항별 함수 형태와 역할</h2>
+  <div style="display:grid;flex:none;grid-template-columns:270px 1fr 1.1fr;gap:0;background:#111827;border:1px solid #1f2937;border-radius:12px;overflow:hidden;">
+    <div style="padding:16px 32px;font-size:28px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">TERM</div>
+    <div style="padding:16px 32px;font-size:28px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">함수 형태</div>
+    <div style="padding:16px 32px;font-size:28px;color:#64748b;border-bottom:1px solid #2d3748;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;">담당하는 물리</div>
+
+    <div style="padding:17px 32px;font-size:28px;color:#60a5fa;border-bottom:1px solid rgba(51,65,85,0.5);">결합 신축 bond stretch</div>
+    <div style="padding:17px 32px;font-size:28px;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">k_b (r − r₀)²</div>
+    <div style="padding:17px 32px;font-size:28px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">결합 길이 구속 · 계의 가장 빠른 진동 → Δt 상한 결정</div>
+
+    <div style="padding:17px 32px;font-size:28px;color:#60a5fa;border-bottom:1px solid rgba(51,65,85,0.5);">결합각 angle bend</div>
+    <div style="padding:17px 32px;font-size:28px;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">k_θ (θ − θ₀)²</div>
+    <div style="padding:17px 32px;font-size:28px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">sp² · sp³ 국소 기하 유지 · 방향족 고리의 평면성</div>
+
+    <div style="padding:17px 32px;font-size:28px;color:#a5b4fc;border-bottom:1px solid rgba(51,65,85,0.5);">이면각 dihedral</div>
+    <div style="padding:17px 32px;font-size:28px;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">V_n [1 + cos(nφ − δ)]</div>
+    <div style="padding:17px 32px;font-size:28px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">회전 장벽 · 알킬 사슬의 유연성과 형태 분포</div>
+
+    <div style="padding:17px 32px;font-size:28px;color:#a78bfa;border-bottom:1px solid rgba(51,65,85,0.5);">반데르발스 van der Waals</div>
+    <div style="padding:17px 32px;font-size:28px;font-family:'JetBrains Mono',monospace;border-bottom:1px solid rgba(51,65,85,0.5);">4ε[(σ/r)¹² − (σ/r)⁶]</div>
+    <div style="padding:17px 32px;font-size:28px;color:#94a3b8;border-bottom:1px solid rgba(51,65,85,0.5);">분자 간 응집 · 밀도와 CED를 지배 · 12 Å에서 절단(cutoff)</div>
+
+    <div style="padding:17px 32px;font-size:28px;color:#a78bfa;">정전기 Coulomb</div>
+    <div style="padding:17px 32px;font-size:28px;font-family:'JetBrains Mono',monospace;">q_i q_j / 4πε₀ r</div>
+    <div style="padding:17px 32px;font-size:28px;color:#94a3b8;">극성기 · 아스팔텐 적층과 계면 부착 · PPPM(particle–particle particle–mesh)으로 장거리 합산</div>
+  </div>
+  <p style="font-size:28px;color:#64748b;margin:0;">힘장 종류 · 파라미터 결정 방법 · 혼용 조건은 3주차</p>
+</section>
+
+<section data-label="앙상블과 물성 산출" data-screen-label="17" data-speaker-notes="LAMMPS 입력은 4주차 실습에서 직접 작성한다. 여기서는 형태만 보여준다." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:40px 80px 28px;display:flex;flex-direction:column;gap:18px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">1-2 · ENSEMBLE</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;" data-ens-title="1">앙상블(ensemble)과 물성 산출</h2>
+  <div data-om-raster="true" style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:14px 28px 8px;">
+    <svg viewBox="0 0 1700 238" style="width:100%;height:auto;display:block;max-height:238px;" xmlns="http://www.w3.org/2000/svg">
+      <g transform="translate(0,0)">
+        <rect x="30" y="46" width="210" height="130" rx="6" fill="#0c1222" stroke="#60a5fa" stroke-width="2"></rect>
+        <rect x="30" y="30" width="210" height="14" rx="4" fill="rgba(96,165,250,0.35)" stroke="#60a5fa" stroke-width="1.5"></rect>
+        <path d="M135,26 L135,8" stroke="#60a5fa" stroke-width="2"></path>
+        <path d="M135,4 L128,16 L142,16 Z" fill="#60a5fa"></path>
+        <path d="M135,182 L135,196" stroke="#60a5fa" stroke-width="2"></path>
+        <path d="M135,204 L128,192 L142,192 Z" fill="#60a5fa"></path>
+        <g fill="#94a3b8" opacity="0.75"><circle cx="66" cy="76" r="7"></circle><circle cx="118" cy="66" r="7"></circle><circle cx="176" cy="84" r="7"></circle><circle cx="212" cy="64" r="7"></circle><circle cx="88" cy="124" r="7"></circle><circle cx="148" cy="114" r="7"></circle><circle cx="198" cy="134" r="7"></circle><circle cx="62" cy="156" r="7"></circle><circle cx="122" cy="160" r="7"></circle><circle cx="182" cy="162" r="7"></circle></g>
+        <text x="268" y="70" fill="#94a3b8" font-size="21" font-family="JetBrains Mono, monospace">N fixed</text>
+        <text x="268" y="100" fill="#94a3b8" font-size="21" font-family="JetBrains Mono, monospace">P fixed</text>
+        <text x="268" y="130" fill="#94a3b8" font-size="21" font-family="JetBrains Mono, monospace">T fixed</text>
+        <text x="268" y="160" fill="#60a5fa" font-size="21" font-family="JetBrains Mono, monospace">V changes</text>
+        <text x="30" y="224" fill="#60a5fa" font-size="24" font-family="JetBrains Mono, monospace">NPT</text>
+        <text x="110" y="224" fill="#94a3b8" font-size="22">등온등압 · 평형 부피에서 밀도</text>
+      </g>
+      <g transform="translate(580,0)">
+        <rect x="30" y="30" width="210" height="146" rx="6" fill="#0c1222" stroke="#a78bfa" stroke-width="3"></rect>
+        <path d="M4,70 q 10,-10 20,0 M4,106 q 10,-10 20,0 M4,142 q 10,-10 20,0" fill="none" stroke="#a78bfa" stroke-width="2"></path>
+        <path d="M246,70 q 10,-10 20,0 M246,106 q 10,-10 20,0 M246,142 q 10,-10 20,0" fill="none" stroke="#a78bfa" stroke-width="2"></path>
+        <g fill="#94a3b8" opacity="0.75"><circle cx="66" cy="62" r="7"></circle><circle cx="118" cy="52" r="7"></circle><circle cx="176" cy="70" r="7"></circle><circle cx="212" cy="54" r="7"></circle><circle cx="88" cy="110" r="7"></circle><circle cx="148" cy="100" r="7"></circle><circle cx="198" cy="120" r="7"></circle><circle cx="62" cy="150" r="7"></circle><circle cx="122" cy="156" r="7"></circle><circle cx="182" cy="158" r="7"></circle></g>
+        <text x="282" y="70" fill="#94a3b8" font-size="21" font-family="JetBrains Mono, monospace">N fixed</text>
+        <text x="282" y="100" fill="#94a3b8" font-size="21" font-family="JetBrains Mono, monospace">V fixed</text>
+        <text x="282" y="130" fill="#94a3b8" font-size="21" font-family="JetBrains Mono, monospace">T fixed</text>
+        <text x="282" y="160" fill="#a78bfa" font-size="21" font-family="JetBrains Mono, monospace">heat in/out</text>
+        <text x="30" y="224" fill="#a78bfa" font-size="24" font-family="JetBrains Mono, monospace">NVT</text>
+        <text x="110" y="224" fill="#94a3b8" font-size="22">부피 고정 · 응력과 확산</text>
+      </g>
+      <g transform="translate(1160,0)">
+        <rect x="30" y="30" width="210" height="146" rx="6" fill="#0c1222" stroke="#4ade80" stroke-width="3"></rect>
+        <rect x="20" y="20" width="230" height="166" rx="9" fill="none" stroke="#4ade80" stroke-width="1.5" opacity="0.45"></rect>
+        <g fill="#94a3b8" opacity="0.75"><circle cx="66" cy="62" r="7"></circle><circle cx="118" cy="52" r="7"></circle><circle cx="176" cy="70" r="7"></circle><circle cx="212" cy="54" r="7"></circle><circle cx="88" cy="110" r="7"></circle><circle cx="148" cy="100" r="7"></circle><circle cx="198" cy="120" r="7"></circle><circle cx="62" cy="150" r="7"></circle><circle cx="122" cy="156" r="7"></circle><circle cx="182" cy="158" r="7"></circle></g>
+        <text x="282" y="70" fill="#94a3b8" font-size="21" font-family="JetBrains Mono, monospace">N fixed</text>
+        <text x="282" y="100" fill="#94a3b8" font-size="21" font-family="JetBrains Mono, monospace">V fixed</text>
+        <text x="282" y="130" fill="#94a3b8" font-size="21" font-family="JetBrains Mono, monospace">E fixed</text>
+        <text x="282" y="160" fill="#4ade80" font-size="21" font-family="JetBrains Mono, monospace">no heat flow</text>
+        <text x="30" y="224" fill="#4ade80" font-size="24" font-family="JetBrains Mono, monospace">NVE</text>
+        <text x="110" y="224" fill="#94a3b8" font-size="22">고립계 · 적분 정밀도 점검</text>
+      </g>
+    </svg>
+  </div>
+  <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:22px 36px;display:flex;flex-direction:column;gap:14px;">
+    <div style="font-size:28px;color:#f1f5f9;line-height:1.4;">앙상블 = 같은 거시 조건을 만족하는 미시 상태의 모음 · 고정 물리량 → 앙상블 결정 · MD: 온도 · 압력 조절기(thermostat · barostat)로 조건 유지 + 표집(sampling)</div>
+    <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px 32px;border-top:1px solid #1f2937;padding-top:12px;">
+      <div style="font-size:24px;color:#64748b;"><span style="font-family:'JetBrains Mono',monospace;color:#f1f5f9;">N</span> 입자 수</div>
+      <div style="font-size:24px;color:#64748b;"><span style="font-family:'JetBrains Mono',monospace;color:#f1f5f9;">P</span> 압력 · 1 atm</div>
+      <div style="font-size:24px;color:#64748b;"><span style="font-family:'JetBrains Mono',monospace;color:#f1f5f9;">T</span> 온도 · 298 K</div>
+      <div style="font-size:24px;color:#64748b;"><span style="font-family:'JetBrains Mono',monospace;color:#f1f5f9;">V</span> 셀 부피</div>
+      <div style="font-size:24px;color:#64748b;"><span style="font-family:'JetBrains Mono',monospace;color:#f1f5f9;">E</span> 총 에너지</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;">
+    <div data-om-raster="true" style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:18px 24px 12px;display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;gap:16px;align-items:baseline;"><span style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#60a5fa;">NPT</span><span style="font-size:24px;color:#94a3b8;">N·P·T 고정</span></div>
+      <svg viewBox="0 0 440 176" style="width:100%;height:auto;display:block;" xmlns="http://www.w3.org/2000/svg">
+        <line x1="44" y1="146" x2="424" y2="146" stroke="#374151" stroke-width="2"></line>
+        <line x1="44" y1="146" x2="44" y2="14" stroke="#374151" stroke-width="2"></line>
+        <polyline points="44,32 74,52 104,72 134,86 164,94 194,100 224,97 254,101 284,98 314,102 344,99 374,101 404,100" fill="none" stroke="#60a5fa" stroke-width="2.5"></polyline>
+        <polyline points="44,128 64,116 84,136 104,120 124,132 144,118 164,134 184,122 204,130 224,116 244,136 264,122 284,128 304,118 324,134 344,120 364,130 384,124 404,132" fill="none" stroke="#64748b" stroke-width="2"></polyline>
+        <text x="120" y="28" fill="#60a5fa" font-size="19" font-family="JetBrains Mono, monospace">V (→ 밀도)</text>
+        <text x="250" y="170" fill="#64748b" font-size="19" font-family="JetBrains Mono, monospace">P ~ 1 atm</text>
+        <text x="418" y="168" fill="#64748b" font-size="18" font-family="JetBrains Mono, monospace" text-anchor="end">time</text>
+      </svg>
+      <div style="font-size:24px;color:#64748b;line-height:1.35;">부피 감소 후 평형 도달 → 평형 부피로 밀도 산출</div>
+    </div>
+    <div data-om-raster="true" style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:18px 24px 12px;display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;gap:16px;align-items:baseline;"><span style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#a78bfa;">NVT</span><span style="font-size:24px;color:#94a3b8;">N·V·T 고정</span></div>
+      <svg viewBox="0 0 440 176" style="width:100%;height:auto;display:block;" xmlns="http://www.w3.org/2000/svg">
+        <line x1="44" y1="146" x2="424" y2="146" stroke="#374151" stroke-width="2"></line>
+        <line x1="44" y1="146" x2="44" y2="14" stroke="#374151" stroke-width="2"></line>
+        <line x1="44" y1="56" x2="424" y2="56" stroke="#a78bfa" stroke-width="1" stroke-dasharray="5 6" opacity="0.5"></line>
+        <polyline points="44,58 74,52 104,60 134,54 164,59 194,53 224,58 254,55 284,60 314,54 344,57 374,55 404,58" fill="none" stroke="#a78bfa" stroke-width="2.5"></polyline>
+        <polyline points="44,124 64,104 84,138 104,110 124,134 144,102 164,140 184,116 204,128 224,100 244,142 264,112 284,130 304,106 324,136 344,114 364,126 384,108 404,134" fill="none" stroke="#64748b" stroke-width="2"></polyline>
+        <text x="120" y="40" fill="#a78bfa" font-size="19" font-family="JetBrains Mono, monospace">T = 298 K</text>
+        <text x="250" y="166" fill="#64748b" font-size="19" font-family="JetBrains Mono, monospace">P 요동</text>
+        <text x="418" y="168" fill="#64748b" font-size="18" font-family="JetBrains Mono, monospace" text-anchor="end">time</text>
+      </svg>
+      <div style="font-size:24px;color:#64748b;line-height:1.35;">온도 일정 · 압력은 크게 요동</div>
+    </div>
+    <div data-om-raster="true" style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:18px 24px 12px;display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;gap:16px;align-items:baseline;"><span style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#4ade80;">NVE</span><span style="font-size:24px;color:#94a3b8;">N·V·E 고정</span></div>
+      <svg viewBox="0 0 440 176" style="width:100%;height:auto;display:block;" xmlns="http://www.w3.org/2000/svg">
+        <line x1="44" y1="146" x2="424" y2="146" stroke="#374151" stroke-width="2"></line>
+        <line x1="44" y1="146" x2="44" y2="14" stroke="#374151" stroke-width="2"></line>
+        <polyline points="44,46 104,45 164,46 224,45 284,46 344,45 404,46" fill="none" stroke="#4ade80" stroke-width="2.5"></polyline>
+        <polyline points="44,112 64,96 84,126 104,100 124,122 144,94 164,128 184,104 204,118 224,92 244,130 264,102 284,120 304,98 324,124 344,106 364,116 384,100 404,122" fill="none" stroke="#64748b" stroke-width="2"></polyline>
+        <text x="120" y="34" fill="#4ade80" font-size="19" font-family="JetBrains Mono, monospace">E 총합 일정</text>
+        <text x="250" y="166" fill="#64748b" font-size="19" font-family="JetBrains Mono, monospace">T 요동</text>
+        <text x="418" y="168" fill="#64748b" font-size="18" font-family="JetBrains Mono, monospace" text-anchor="end">time</text>
+      </svg>
+      <div style="font-size:24px;color:#64748b;line-height:1.35;">E 변화 발생 = 적분 · 힘장 설정 오류</div>
+    </div>
+  </div>
+  <div style="font-size:26px;color:#64748b;line-height:1.45;">한 조성의 물성 한 벌 = GPU 시간 단위 계산 · 이 비용이 다음 차시 기계학습의 근거</div>
+</section>
+
+<section data-label="기계학습의 위치" data-screen-label="18" data-speaker-notes="GNN은 분자 그래프를 입력으로 받는다. 10주차 내용 예고(표현자 기반 트리 모델은 9주차)." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:24px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">1-2 · MACHINE LEARNING</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">기계학습의 위치</h2>
+  <div style="display:flex;align-items:center;gap:32px;">
+    <div style="flex:1;background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:36px;display:flex;flex-direction:column;gap:14px;">
+      <div style="font-size:32px;font-weight:600;">분자 그래프</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">원자=노드, 결합=엣지</div>
+    </div>
+    <div style="font-size:40px;color:#3377ff;">→</div>
+    <div style="flex:1;background:#0c1222;border:1px solid #2d3748;border-radius:12px;padding:36px;display:flex;flex-direction:column;gap:14px;box-shadow:0 0 20px rgba(139,92,246,0.18);">
+      <div style="font-size:32px;font-weight:600;color:#a78bfa;">GNN 대리모델</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">MD 결과로 학습</div>
+    </div>
+    <div style="font-size:40px;color:#8b5cf6;">→</div>
+    <div style="flex:1;background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:36px;display:flex;flex-direction:column;gap:14px;">
+      <div style="font-size:32px;font-weight:600;">예측 물성</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.4;">밀도 · CED · 점도 · Tg</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px;">
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:44px;color:#4ade80;">10³ ~ 10⁶ ×</div>
+      <div style="font-size:32px;color:#94a3b8;line-height:1.45;">MD 대비 평가 속도 — 최적화 루프 내 반복 호출 가능</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:44px;color:#facc15;">불확실성</div>
+      <div style="font-size:32px;color:#94a3b8;line-height:1.45;">대리모델 예측 오차 존재 → 예측값 · 신뢰구간 함께 취급</div>
+    </div>
+  </div>
+  <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:20px 28px;">
+    <svg viewBox="0 0 1560 220" style="width:100%;height:auto;">
+      <circle cx="90" cy="70" r="16" fill="#1f2937" stroke="#60a5fa" stroke-width="2"></circle>
+      <circle cx="170" cy="45" r="16" fill="#1f2937" stroke="#60a5fa" stroke-width="2"></circle>
+      <circle cx="160" cy="125" r="16" fill="#1f2937" stroke="#f2c94c" stroke-width="2"></circle>
+      <circle cx="240" cy="95" r="16" fill="#1f2937" stroke="#60a5fa" stroke-width="2"></circle>
+      <circle cx="105" cy="150" r="16" fill="#1f2937" stroke="#e03131" stroke-width="2"></circle>
+      <line x1="90" y1="70" x2="170" y2="45" stroke="#475569" stroke-width="3"></line>
+      <line x1="90" y1="70" x2="160" y2="125" stroke="#475569" stroke-width="3"></line>
+      <line x1="160" y1="125" x2="240" y2="95" stroke="#475569" stroke-width="3"></line>
+      <line x1="90" y1="70" x2="105" y2="150" stroke="#475569" stroke-width="3"></line>
+      <text x="16" y="196" fill="#94a3b8" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="start">분자 그래프 · 노드=원자</text>
+
+      <line x1="285" y1="100" x2="375" y2="100" stroke="#3377ff" stroke-width="3"></line>
+      <polygon points="385,100 371,93 371,107" fill="#3377ff"></polygon>
+
+      <rect x="405" y="30" width="230" height="40" rx="8" fill="#111827" stroke="#3377ff" stroke-width="2"></rect>
+      <rect x="405" y="80" width="230" height="40" rx="8" fill="#111827" stroke="#6366f1" stroke-width="2"></rect>
+      <rect x="405" y="130" width="230" height="40" rx="8" fill="#111827" stroke="#8b5cf6" stroke-width="2"></rect>
+      <text x="520" y="56" fill="#8ec0ff" font-size="19" font-family="JetBrains Mono, monospace" text-anchor="middle">message passing 1</text>
+      <text x="520" y="106" fill="#a5b4fc" font-size="19" font-family="JetBrains Mono, monospace" text-anchor="middle">message passing 2</text>
+      <text x="520" y="156" fill="#a78bfa" font-size="19" font-family="JetBrains Mono, monospace" text-anchor="middle">message passing L</text>
+      <text x="520" y="196" fill="#94a3b8" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="middle">이웃 정보 L회 집계 → 원자 벡터 갱신</text>
+
+      <line x1="665" y1="100" x2="755" y2="100" stroke="#6366f1" stroke-width="3"></line>
+      <polygon points="765,100 751,93 751,107" fill="#6366f1"></polygon>
+
+      <rect x="785" y="60" width="200" height="80" rx="12" fill="#111827" stroke="#a78bfa" stroke-width="2"></rect>
+      <text x="885" y="95" fill="#a78bfa" font-size="19" font-family="JetBrains Mono, monospace" text-anchor="middle">pooling</text>
+      <text x="885" y="122" fill="#94a3b8" font-size="18" font-family="JetBrains Mono, monospace" text-anchor="middle">Σ 조성 가중</text>
+      <text x="885" y="196" fill="#94a3b8" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="middle">분자 벡터 → 혼합물 벡터</text>
+
+      <line x1="1015" y1="100" x2="1105" y2="100" stroke="#8b5cf6" stroke-width="3"></line>
+      <polygon points="1115,100 1101,93 1101,107" fill="#8b5cf6"></polygon>
+
+      <rect x="1140" y="34" width="150" height="26" rx="6" fill="rgba(52,211,153,0.25)"></rect>
+      <rect x="1140" y="72" width="200" height="26" rx="6" fill="rgba(96,165,250,0.25)"></rect>
+      <rect x="1140" y="110" width="120" height="26" rx="6" fill="rgba(251,191,36,0.25)"></rect>
+      <rect x="1140" y="148" width="175" height="26" rx="6" fill="rgba(167,139,250,0.25)"></rect>
+      <text x="1360" y="54" fill="#34d399" font-size="19" font-family="JetBrains Mono, monospace">밀도 g/cm³</text>
+      <text x="1360" y="92" fill="#60a5fa" font-size="19" font-family="JetBrains Mono, monospace">CED MJ/m³</text>
+      <text x="1360" y="130" fill="#fbbf24" font-size="19" font-family="JetBrains Mono, monospace">점도 mPa·s</text>
+      <text x="1360" y="168" fill="#a78bfa" font-size="19" font-family="JetBrains Mono, monospace">Tg K</text>
+      <text x="1240" y="212" fill="#94a3b8" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="middle">예측 물성 + 불확실성</text>
+    </svg>
+  </div>
+</section>
+
+<section data-label="표현자 기반 트리 모델" data-screen-label="19" data-speaker-notes="GNN 앞에 놓이는 현실적인 1차 선택. RDKit 표현자 + 트리 앙상블. 9주차에서 직접 학습한다." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:34px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">1-2 · TABULAR ML</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">표현자(descriptor) 기반 트리 모델(tree model)</h2>
+  <div style="display:flex;align-items:center;gap:28px;">
+    <div style="flex:1;background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:28px;display:flex;flex-direction:column;gap:12px;">
+      <div style="font-size:32px;font-weight:600;">RDKit 표현자</div>
+      <div style="font-size:26px;color:#94a3b8;line-height:1.4;">그래프를 수치 열로 요약</div>
+    </div>
+    <div style="font-size:40px;color:#3377ff;">→</div>
+    <div style="flex:1;background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:28px;display:flex;flex-direction:column;gap:12px;">
+      <div style="font-size:32px;font-weight:600;">표 형태 데이터</div>
+      <div style="font-size:26px;color:#94a3b8;line-height:1.4;">행=조성, 열=표현자</div>
+    </div>
+    <div style="font-size:40px;color:#6366f1;">→</div>
+    <div style="flex:1;background:#0c1222;border:1px solid #2d3748;border-radius:12px;padding:28px;display:flex;flex-direction:column;gap:12px;box-shadow:0 0 20px rgba(139,92,246,0.18);">
+      <div style="font-size:32px;font-weight:600;color:#a78bfa;">XGBoost · RandomForest</div>
+      <div style="font-size:26px;color:#94a3b8;line-height:1.4;">트리 앙상블 회귀</div>
+    </div>
+    <div style="font-size:40px;color:#8b5cf6;">→</div>
+    <div style="flex:1;background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:28px;display:flex;flex-direction:column;gap:12px;">
+      <div style="font-size:32px;font-weight:600;">예측 물성</div>
+      <div style="font-size:26px;color:#94a3b8;line-height:1.4;">밀도 · CED · Tg</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:36px;">
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:44px;color:#4ade80;">10² 행</div>
+      <div style="font-size:26px;color:#94a3b8;line-height:1.4;">MD 데이터 수백 건 규모 → GNN보다 먼저 적용</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:44px;color:#60a5fa;">SHAP</div>
+      <div style="font-size:26px;color:#94a3b8;line-height:1.4;">SHAP(SHapley Additive exPlanations) = 표현자별 물성 기여도 확인</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:44px;color:#facc15;">한계</div>
+      <div style="font-size:26px;color:#94a3b8;line-height:1.4;">표현자에 없는 구조 정보 → 모델 반영 불가</div>
+    </div>
+  </div>
+  <div data-om-raster="true" style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:18px 28px 10px;">
+    <svg viewBox="0 0 1560 250" style="width:100%;height:auto;display:block;max-height:268px;" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="90" cy="60" r="15" fill="#1f2937" stroke="#60a5fa" stroke-width="2"></circle>
+      <circle cx="170" cy="38" r="15" fill="#1f2937" stroke="#60a5fa" stroke-width="2"></circle>
+      <circle cx="160" cy="112" r="15" fill="#1f2937" stroke="#f2c94c" stroke-width="2"></circle>
+      <circle cx="240" cy="84" r="15" fill="#1f2937" stroke="#60a5fa" stroke-width="2"></circle>
+      <circle cx="105" cy="136" r="15" fill="#1f2937" stroke="#e03131" stroke-width="2"></circle>
+      <line x1="90" y1="60" x2="170" y2="38" stroke="#475569" stroke-width="3"></line>
+      <line x1="90" y1="60" x2="160" y2="112" stroke="#475569" stroke-width="3"></line>
+      <line x1="160" y1="112" x2="240" y2="84" stroke="#475569" stroke-width="3"></line>
+      <line x1="90" y1="60" x2="105" y2="136" stroke="#475569" stroke-width="3"></line>
+      <text x="16" y="180" fill="#60a5fa" font-size="19" font-family="JetBrains Mono, monospace">node: C sp2 · aromatic 1 · q -0.12</text>
+      <text x="16" y="206" fill="#f2c94c" font-size="19" font-family="JetBrains Mono, monospace">node: S · ring 1 · q -0.05</text>
+      <text x="16" y="232" fill="#94a3b8" font-size="19" font-family="JetBrains Mono, monospace">edge: C-S single · in ring</text>
+
+      <line x1="320" y1="90" x2="390" y2="90" stroke="#3377ff" stroke-width="3"></line>
+      <polygon points="400,90 386,83 386,97" fill="#3377ff"></polygon>
+      <text x="360" y="72" fill="#64748b" font-size="18" font-family="JetBrains Mono, monospace" text-anchor="middle">RDKit</text>
+
+      <rect x="420" y="20" width="480" height="196" rx="8" fill="#111827" stroke="#2d3748"></rect>
+      <text x="440" y="46" fill="#64748b" font-size="18" font-family="JetBrains Mono, monospace">descriptor</text>
+      <text x="700" y="46" fill="#64748b" font-size="18" font-family="JetBrains Mono, monospace">value</text>
+      <line x1="432" y1="56" x2="888" y2="56" stroke="#2d3748"></line>
+      <text x="440" y="82" fill="#f1f5f9" font-size="19" font-family="JetBrains Mono, monospace">MolWt</text>
+      <text x="700" y="82" fill="#8ec0ff" font-size="19" font-family="JetBrains Mono, monospace">412.7</text>
+      <text x="440" y="110" fill="#f1f5f9" font-size="19" font-family="JetBrains Mono, monospace">NumAromaticRings</text>
+      <text x="700" y="110" fill="#8ec0ff" font-size="19" font-family="JetBrains Mono, monospace">3</text>
+      <text x="440" y="138" fill="#f1f5f9" font-size="19" font-family="JetBrains Mono, monospace">FractionCSP3</text>
+      <text x="700" y="138" fill="#8ec0ff" font-size="19" font-family="JetBrains Mono, monospace">0.42</text>
+      <text x="440" y="166" fill="#f1f5f9" font-size="19" font-family="JetBrains Mono, monospace">TPSA</text>
+      <text x="700" y="166" fill="#8ec0ff" font-size="19" font-family="JetBrains Mono, monospace">28.2</text>
+      <text x="440" y="194" fill="#f1f5f9" font-size="19" font-family="JetBrains Mono, monospace">S count · SARA wt%</text>
+      <text x="700" y="194" fill="#8ec0ff" font-size="19" font-family="JetBrains Mono, monospace">1 · 15/45/25/15</text>
+      <text x="660" y="240" fill="#94a3b8" font-size="19" font-family="JetBrains Mono, monospace" text-anchor="middle">한 조성 = 표의 한 행</text>
+
+      <line x1="920" y1="90" x2="990" y2="90" stroke="#6366f1" stroke-width="3"></line>
+      <polygon points="1000,90 986,83 986,97" fill="#6366f1"></polygon>
+
+      <g stroke="#a78bfa" stroke-width="2" fill="none">
+        <path d="M1060,34 L1030,74 M1060,34 L1090,74 M1030,74 L1014,112 M1030,74 L1046,112 M1090,74 L1074,112 M1090,74 L1106,112"></path>
+        <path d="M1190,34 L1160,74 M1190,34 L1220,74 M1160,74 L1144,112 M1160,74 L1176,112 M1220,74 L1204,112 M1220,74 L1236,112"></path>
+        <path d="M1320,34 L1290,74 M1320,34 L1350,74 M1290,74 L1274,112 M1290,74 L1306,112 M1350,74 L1334,112 M1350,74 L1366,112"></path>
+      </g>
+      <g fill="#1f2937" stroke="#a78bfa" stroke-width="2">
+        <circle cx="1060" cy="30" r="9"></circle><circle cx="1030" cy="74" r="8"></circle><circle cx="1090" cy="74" r="8"></circle>
+        <circle cx="1190" cy="30" r="9"></circle><circle cx="1160" cy="74" r="8"></circle><circle cx="1220" cy="74" r="8"></circle>
+        <circle cx="1320" cy="30" r="9"></circle><circle cx="1290" cy="74" r="8"></circle><circle cx="1350" cy="74" r="8"></circle>
+      </g>
+      <g fill="rgba(167,139,250,0.35)" stroke="#a78bfa" stroke-width="1.5">
+        <rect x="1006" y="112" width="16" height="16" rx="3"></rect><rect x="1038" y="112" width="16" height="16" rx="3"></rect>
+        <rect x="1066" y="112" width="16" height="16" rx="3"></rect><rect x="1098" y="112" width="16" height="16" rx="3"></rect>
+        <rect x="1136" y="112" width="16" height="16" rx="3"></rect><rect x="1168" y="112" width="16" height="16" rx="3"></rect>
+        <rect x="1196" y="112" width="16" height="16" rx="3"></rect><rect x="1228" y="112" width="16" height="16" rx="3"></rect>
+        <rect x="1266" y="112" width="16" height="16" rx="3"></rect><rect x="1298" y="112" width="16" height="16" rx="3"></rect>
+        <rect x="1326" y="112" width="16" height="16" rx="3"></rect><rect x="1358" y="112" width="16" height="16" rx="3"></rect>
+      </g>
+      <text x="1060" y="156" fill="#64748b" font-size="18" font-family="JetBrains Mono, monospace" text-anchor="middle">tree 1</text>
+      <text x="1190" y="156" fill="#64748b" font-size="18" font-family="JetBrains Mono, monospace" text-anchor="middle">tree 2</text>
+      <text x="1320" y="156" fill="#64748b" font-size="18" font-family="JetBrains Mono, monospace" text-anchor="middle">tree M</text>
+      <text x="1190" y="196" fill="#a78bfa" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="middle">Σ 트리 출력 합 · 평균</text>
+      <text x="1190" y="240" fill="#94a3b8" font-size="19" font-family="JetBrains Mono, monospace" text-anchor="middle">밀도 g/cm³ · CED MJ/m³ · Tg K</text>
+    </svg>
+  </div>
+  <p style="font-size:24px;color:#64748b;margin:0;">표현자 + 트리 앙상블 9주차 · 같은 데이터의 그래프 학습 GNN 10주차</p>
+</section>
+
+<section data-label="[1-3] 섹션" data-screen-label="20" data-speaker-notes="세 번째 차시. 디지털 트윈." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:100px;display:flex;flex-direction:column;justify-content:center;gap:40px;">
+  <div style="width:200px;height:6px;background:linear-gradient(135deg,#3377ff,#8b5cf6);border-radius:999px;"></div>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:120px;color:#1f2937;font-weight:700;line-height:1;">1-3</div>
+  <h2 style="font-size:68px;font-weight:700;letter-spacing:-0.02em;margin:0;line-height:1.1;">디지털 트윈 개념</h2>
+  <p style="font-size:32px;color:#94a3b8;margin:0;">소재 연구에서의 정의와 시뮬레이션 · 실험 간 피드백</p>
+</section>
+
+<section data-label="디지털 트윈의 정의" data-screen-label="21" data-speaker-notes="모델이 아니라 '갱신되는 모델'이 디지털 트윈의 요건." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:26px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">1-3 · DEFINITION</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">디지털 트윈(digital twin)의 정의</h2>
+  <p style="font-size:40px;color:#f1f5f9;margin:0;line-height:1.5;max-width:1560px;text-wrap:pretty;">실제 소재의 상태를 데이터로 추적 · 관측값 입력마다 파라미터가 갱신되는 계산 모델 · 일회성 시뮬레이션과의 구분 기준 = <span style="color:#a78bfa;">갱신 여부</span></p>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:26px 32px;display:flex;flex-direction:column;gap:12px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">01 표현</div>
+      <div style="font-size:32px;line-height:1.4;">조성 · 구조 · 이력을 모델 상태로 보유</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:26px 32px;display:flex;flex-direction:column;gap:12px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">02 동기화</div>
+      <div style="font-size:32px;line-height:1.4;">시험 결과 입력 시 파라미터 보정</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:26px 32px;display:flex;flex-direction:column;gap:12px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;">03 예측</div>
+      <div style="font-size:32px;line-height:1.35;">아직 만들지 않은 조성의 성능 예측</div>
+    </div>
+  </div>
+  <div data-om-raster="true" style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:16px 28px 10px;">
+    <svg viewBox="0 0 1700 262" style="width:100%;height:auto;display:block;max-height:282px;" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="30" width="520" height="176" rx="10" fill="#0c1222" stroke="#2d3748" stroke-width="2"></rect>
+      <text x="48" y="70" fill="#f1f5f9" font-size="26">실제 소재</text>
+      <text x="190" y="70" fill="#64748b" font-size="21" font-family="JetBrains Mono, monospace">physical</text>
+      <text x="48" y="112" fill="#94a3b8" font-size="22">배합 · 시험체 · 현장 포장</text>
+      <text x="48" y="148" fill="#94a3b8" font-size="22">측정: SARA · DSR(동적전단 레오미터) · 인장</text>
+      <text x="48" y="184" fill="#94a3b8" font-size="22">공용 · 노화 이력</text>
+      <rect x="1160" y="30" width="520" height="176" rx="10" fill="#0c1222" stroke="#a78bfa" stroke-width="2"></rect>
+      <text x="1188" y="70" fill="#a78bfa" font-size="26">디지털 트윈</text>
+      <text x="1364" y="70" fill="#64748b" font-size="21" font-family="JetBrains Mono, monospace">digital</text>
+      <text x="1188" y="112" fill="#94a3b8" font-size="22">분자 모델 + 힘장</text>
+      <text x="1188" y="148" fill="#94a3b8" font-size="22">대리모델 파라미터</text>
+      <text x="1188" y="184" fill="#94a3b8" font-size="22">상태: 조성 · 이력 · 온도</text>
+      <path d="M560,76 L1130,76" stroke="#60a5fa" stroke-width="3"></path>
+      <path d="M1146,76 L1128,67 L1128,85 Z" fill="#60a5fa"></path>
+      <text x="850" y="54" fill="#60a5fa" font-size="23" font-family="JetBrains Mono, monospace" text-anchor="middle">02 동기화</text>
+      <text x="850" y="108" fill="#94a3b8" font-size="21" text-anchor="middle">시험값 입력 시</text>
+      <text x="850" y="140" fill="#94a3b8" font-size="21" text-anchor="middle">모델 파라미터 보정</text>
+      <path d="M1140,170 L570,170" stroke="#a78bfa" stroke-width="3" stroke-dasharray="10 8"></path>
+      <path d="M554,170 L572,161 L572,179 Z" fill="#a78bfa"></path>
+      <text x="850" y="206" fill="#a78bfa" font-size="23" font-family="JetBrains Mono, monospace" text-anchor="middle">03 예측</text>
+      <text x="850" y="238" fill="#94a3b8" font-size="21" text-anchor="middle">제작 전 성능 예측 · 다음 배합 제안</text>
+      <text x="48" y="244" fill="#64748b" font-size="21">01 표현 · 모델이 보유하는 상태</text>
+      <text x="1680" y="244" fill="#64748b" font-size="21" text-anchor="end">갱신 없는 시뮬레이션 ≠ 디지털 트윈</text>
+    </svg>
+  </div>
+</section>
+
+<section data-label="피드백 루프" data-screen-label="22" data-speaker-notes="루프를 단계별로 짚으며 설명. 어느 쪽이 기준인지(실험)를 분명히." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:52px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">1-3 · FEEDBACK</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">시뮬레이션 · 실험 피드백 루프</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;">
+    <div style="background:#111827;border:1px solid #2d3748;border-radius:12px;padding:44px;display:flex;flex-direction:column;gap:26px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#60a5fa;letter-spacing:0.1em;">SIMULATION</div>
+      <div style="font-size:32px;line-height:1.45;">조성을 바꿔 물성 계산 · 실험 후보 축소</div>
+      <div style="font-size:30px;color:#94a3b8;line-height:1.45;">산출 → 예측 물성 · 불확실성 · 분자 수준 해석</div>
+    </div>
+    <div style="background:#111827;border:1px solid #2d3748;border-radius:12px;padding:44px;display:flex;flex-direction:column;gap:26px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#4ade80;letter-spacing:0.1em;">EXPERIMENT</div>
+      <div style="font-size:32px;line-height:1.45;">좁혀진 후보를 제작 · 측정 → 모델 오차 노출</div>
+      <div style="font-size:30px;color:#94a3b8;line-height:1.45;">산출 → 실측 물성 · 힘장 보정 근거 · 반증 사례</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:32px;background:#111827;border:1px solid #1f2937;border-radius:12px;padding:36px 44px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#a78bfa;">LOOP</div>
+    <div style="font-size:32px;color:#94a3b8;line-height:1.45;flex:1;">예측 → 선정 → 실측 → 재학습 · 기준 = 실험 · 모델 = 실험 횟수 감소 수단</div>
+  </div>
+</section>
+
+<section data-label="대리모델 예측 정확도" data-screen-label="23" data-speaker-notes="개념 예시 그림. 대각선에 가까울수록 좋고, 재학습이 어떻게 움직이는지 설명." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:52px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">1-3 · PARITY</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">대리모델의 예측 정확도</h2>
+  <div style="display:grid;grid-template-columns:640px 1fr;gap:72px;align-items:center;">
+    <svg viewBox="0 0 460 400" style="width:100%;height:auto;">
+      <line x1="70" y1="340" x2="440" y2="340" stroke="#374151" stroke-width="2"></line>
+      <line x1="70" y1="340" x2="70" y2="20" stroke="#374151" stroke-width="2"></line>
+      <polygon points="440,340 430,335 430,345" fill="#374151"></polygon>
+      <polygon points="70,20 65,30 75,30" fill="#374151"></polygon>
+      <line x1="70" y1="340" x2="400" y2="30" stroke="#64748b" stroke-width="2" stroke-dasharray="8 8"></line>
+      <circle cx="130" cy="290" r="8" fill="#60a5fa" opacity="0.85"></circle>
+      <circle cx="175" cy="230" r="8" fill="#60a5fa" opacity="0.85"></circle>
+      <circle cx="215" cy="205" r="8" fill="#60a5fa" opacity="0.85"></circle>
+      <circle cx="258" cy="150" r="8" fill="#60a5fa" opacity="0.85"></circle>
+      <circle cx="300" cy="120" r="8" fill="#60a5fa" opacity="0.85"></circle>
+      <circle cx="345" cy="78" r="8" fill="#60a5fa" opacity="0.85"></circle>
+      <circle cx="160" cy="196" r="8" fill="#f87171" opacity="0.9"></circle>
+      <circle cx="290" cy="205" r="8" fill="#f87171" opacity="0.9"></circle>
+      <text x="255" y="384" fill="#94a3b8" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="middle">MD 계산값</text>
+      <text x="26" y="180" fill="#94a3b8" font-size="20" font-family="JetBrains Mono, monospace" text-anchor="middle" transform="rotate(-90 26 180)">GNN 예측값</text>
+    </svg>
+    <div style="display:flex;flex-direction:column;gap:32px;">
+      <div style="display:flex;gap:20px;align-items:center;">
+        <span style="width:22px;height:22px;border-radius:999px;background:#60a5fa;"></span>
+        <span style="font-size:32px;color:#94a3b8;">학습 범위 안의 조성 — 대각선 근처</span>
+      </div>
+      <div style="display:flex;gap:20px;align-items:center;">
+        <span style="width:22px;height:22px;border-radius:999px;background:#f87171;"></span>
+        <span style="font-size:32px;color:#94a3b8;">학습 범위를 벗어난 조성 — 크게 이탈</span>
+      </div>
+      <div style="border-top:1px solid #1f2937;padding-top:32px;font-size:32px;color:#f1f5f9;line-height:1.5;">이탈 점 MD 재계산 → 학습 데이터 추가 = 다음 차시의 능동학습(active learning)</div>
+      <div style="font-size:28px;color:#64748b;">개념 설명용 예시 도식 · 실제 검증 결과는 9주차</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="[1-4] 섹션" data-screen-label="24" data-speaker-notes="마지막 차시. 앞의 세 차시 내용을 하나의 루프로 연결한다." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:100px;display:flex;flex-direction:column;justify-content:center;gap:40px;">
+  <div style="width:200px;height:6px;background:linear-gradient(135deg,#3377ff,#8b5cf6);border-radius:999px;"></div>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:120px;color:#1f2937;font-weight:700;line-height:1;">1-4</div>
+  <h2 style="font-size:68px;font-weight:700;letter-spacing:-0.02em;margin:0;line-height:1.1;">자율 탐색 파이프라인 흐름</h2>
+  <p style="font-size:32px;color:#94a3b8;margin:0;">문헌 고찰부터 최적화 · 특징 재정련까지</p>
+</section>
+
+<section data-label="파이프라인 6단계" data-screen-label="25" data-speaker-notes="각 단계가 몇 주차에 대응하는지 함께 안내." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:52px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">1-4 · PIPELINE</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">파이프라인 6단계</h2>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-top:3px solid #3377ff;border-radius:12px;padding:36px;display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#599eff;">01 문헌 고찰</div>
+      <div style="font-size:32px;font-weight:600;line-height:1.3;">후보 분자 · 표적 범위 수집</div>
+      <div style="font-size:28px;color:#64748b;">설계 변수 결정</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-top:3px solid #4b7eb8;border-radius:12px;padding:36px;display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#599eff;">02 구조 생성</div>
+      <div style="font-size:32px;font-weight:600;line-height:1.3;">분자 조립 · 벌크 셀 구축</div>
+      <div style="font-size:28px;color:#64748b;">조성을 계산 가능한 계로 구성</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-top:3px solid #6366f1;border-radius:12px;padding:36px;display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#a5b4fc;">03 MD 계산</div>
+      <div style="font-size:32px;font-weight:600;line-height:1.3;">물성 산출 · 결과 적재</div>
+      <div style="font-size:28px;color:#64748b;">데이터베이스 축적 시작</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-top:3px solid #8b5cf6;border-radius:12px;padding:36px;display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#a78bfa;">04 대리모델 학습</div>
+      <div style="font-size:32px;font-weight:600;line-height:1.3;">GNN 학습 · 불확실성 추정</div>
+      <div style="font-size:28px;color:#64748b;">빠른 평가 함수 확보</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-top:3px solid #f59e0b;border-radius:12px;padding:36px;display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#facc15;">05 능동학습</div>
+      <div style="font-size:32px;font-weight:600;line-height:1.3;">다음 계산 대상 선정</div>
+      <div style="font-size:28px;color:#64748b;">계산 예산 배분 결정</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-top:3px solid #ef4444;border-radius:12px;padding:36px;display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#f87171;">06 최적화 · 재정련</div>
+      <div style="font-size:32px;font-weight:600;line-height:1.3;">다목적 최적화 · 특징 재정련</div>
+      <div style="font-size:28px;color:#64748b;">추천 조성 · 개선된 표현 산출</div>
+    </div>
+  </div>
+  <p style="font-size:30px;color:#64748b;margin:0;">06 출력 → 01 입력으로 환류 · 파이프라인 = 직선 아닌 순환 구조(loop)</p>
+</section>
+
+<section data-label="능동학습 루프" data-screen-label="26" data-speaker-notes="'어디를 더 계산할까'를 모델의 예측값과 불확실성으로 결정한다는 점이 핵심." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:52px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">1-4 · ACTIVE LEARNING</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">능동학습 루프</h2>
+  <div style="display:flex;flex-direction:column;gap:24px;">
+    <div style="display:flex;align-items:center;gap:32px;background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:32px 40px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#599eff;width:80px;">01</div>
+      <div style="font-size:32px;flex:1;">대리모델로 미계산 조성 전체 예측</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:32px;background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:32px 40px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#599eff;width:80px;">02</div>
+      <div style="font-size:32px;flex:1;">예측값이 좋거나 불확실성이 큰 조성 선정</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:32px;background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:32px 40px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#599eff;width:80px;">03</div>
+      <div style="font-size:32px;flex:1;">선정 조성만 MD로 실제 계산</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:32px;background:#0c1222;border:1px solid #2d3748;border-radius:12px;padding:32px 40px;box-shadow:0 0 20px rgba(59,130,246,0.12);">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#a78bfa;width:80px;">04</div>
+      <div style="font-size:32px;flex:1;">결과를 데이터에 추가 · 모델 재학습 → 01로 복귀</div>
+    </div>
+  </div>
+  <p style="font-size:32px;color:#94a3b8;margin:0;line-height:1.45;max-width:1560px;">무작위 계산 대신 모델 개선 효과가 가장 큰 조성 선정 · 같은 GPU 예산으로 더 넓은 공간 탐색</p>
+</section>
+
+<section data-label="다목적 최적화와 EHVI" data-screen-label="27" data-speaker-notes="상충하는 물성이 있다는 점 → 파레토 · EHVI. 13주차(다목적 최적화) 예고." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:40px 80px 28px;display:flex;flex-direction:column;gap:20px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">1-4 · MULTI-OBJECTIVE</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">다목적 최적화(multi-objective optimization)와 EHVI</h2>
+  <div style="display:grid;grid-template-columns:940px 1fr;gap:56px;align-items:center;">
+    <svg viewBox="0 0 780 600" style="width:100%;height:auto;">
+      <circle cx="120" cy="34" r="9" fill="#a78bfa"></circle>
+      <text x="138" y="42" fill="#94a3b8" font-size="22">파레토 점 P</text>
+      <circle cx="310" cy="34" r="10" fill="#60a5fa"></circle>
+      <text x="328" y="42" fill="#94a3b8" font-size="22">후보 f(x)</text>
+      <rect x="468" y="25" width="24" height="18" fill="rgba(139,92,246,0.3)"></rect>
+      <text x="500" y="42" fill="#94a3b8" font-size="22" font-family="JetBrains Mono, monospace">HV(P)</text>
+      <rect x="620" y="25" width="24" height="18" fill="rgba(96,165,250,0.26)" stroke="#60a5fa" stroke-dasharray="4 4"></rect>
+      <text x="652" y="42" fill="#94a3b8" font-size="22" font-family="JetBrains Mono, monospace">ΔHV</text>
+
+      <rect x="110" y="150" width="80" height="340" fill="rgba(139,92,246,0.13)"></rect>
+      <rect x="110" y="215" width="170" height="275" fill="rgba(139,92,246,0.13)"></rect>
+      <rect x="110" y="285" width="260" height="205" fill="rgba(139,92,246,0.13)"></rect>
+      <rect x="110" y="355" width="360" height="135" fill="rgba(139,92,246,0.13)"></rect>
+      <rect x="110" y="420" width="470" height="70" fill="rgba(139,92,246,0.13)"></rect>
+
+      <rect x="470" y="390" width="110" height="30" fill="rgba(96,165,250,0.24)" stroke="#60a5fa" stroke-width="1.5" stroke-dasharray="6 6"></rect>
+      <rect x="580" y="390" width="60" height="100" fill="rgba(96,165,250,0.24)" stroke="#60a5fa" stroke-width="1.5" stroke-dasharray="6 6"></rect>
+      <text x="588" y="470" fill="#60a5fa" font-size="22" font-family="JetBrains Mono, monospace">ΔHV</text>
+
+      <line x1="110" y1="490" x2="744" y2="490" stroke="#374151" stroke-width="2"></line>
+      <line x1="110" y1="490" x2="110" y2="76" stroke="#374151" stroke-width="2"></line>
+      <polygon points="752,490 740,485 740,495" fill="#374151"></polygon>
+      <polygon points="110,68 105,80 115,80" fill="#374151"></polygon>
+      <text x="744" y="524" fill="#94a3b8" font-size="23" text-anchor="end">저온 균열 저항</text>
+      <text x="64" y="300" fill="#94a3b8" font-size="23" text-anchor="middle" transform="rotate(-90 64 300)">고온 강성</text>
+      <circle cx="110" cy="490" r="8" fill="#64748b"></circle>
+      <text x="126" y="524" fill="#64748b" font-size="20" font-family="JetBrains Mono, monospace">기준점 ref</text>
+      <text x="118" y="474" fill="#a78bfa" font-size="22" font-family="JetBrains Mono, monospace">HV(P)</text>
+
+      <path d="M190,150 C250,165 310,235 370,285 C410,315 440,335 470,355" stroke="#8b5cf6" stroke-width="3" fill="none" stroke-dasharray="6 6"></path>
+      <path d="M470,355 L640,390" stroke="#60a5fa" stroke-width="3" fill="none" stroke-dasharray="6 6"></path>
+      <text x="556" y="336" fill="#60a5fa" font-size="21" text-anchor="middle">새 전선</text>
+      <circle cx="190" cy="150" r="10" fill="#a78bfa"></circle>
+      <circle cx="280" cy="215" r="10" fill="#a78bfa"></circle>
+      <circle cx="370" cy="285" r="10" fill="#a78bfa"></circle>
+      <circle cx="470" cy="355" r="10" fill="#a78bfa"></circle>
+      <circle cx="580" cy="420" r="9" fill="#0c1222" stroke="#64748b" stroke-width="2"></circle>
+      <text x="516" y="458" fill="#64748b" font-size="20" text-anchor="middle">지배된 점</text>
+      <text x="210" y="128" fill="#a78bfa" font-size="24" font-family="JetBrains Mono, monospace">P</text>
+
+      <ellipse cx="640" cy="390" rx="44" ry="30" fill="rgba(96,165,250,0.12)" stroke="#60a5fa" stroke-width="1.5" stroke-dasharray="5 5"></ellipse>
+      <circle cx="640" cy="390" r="11" fill="#60a5fa"></circle>
+      <text x="660" y="300" fill="#60a5fa" font-size="24" font-family="JetBrains Mono, monospace" text-anchor="middle">f(x)</text>
+      <text x="660" y="264" fill="#64748b" font-size="20" text-anchor="middle">점선 = 불확실성</text>
+      <path d="M656,312 L646,354" stroke="#60a5fa" stroke-width="1.5"></path>
+
+      <text x="110" y="570" fill="#64748b" font-size="21">후보 추가 → 전선 재계산 · 덮는 면적이 ΔHV 만큼 확대</text>
+    </svg>
+    <div style="display:flex;flex-direction:column;gap:32px;">
+      <div style="font-size:36px;line-height:1.45;">표적 2개 이상 → 단일 최적해 대신 <span style="color:#a78bfa;">파레토 전선(Pareto front)</span>이 해</div>
+      <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:30px 36px;display:flex;flex-direction:column;gap:14px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#8ec0ff;">EHVI(<span style="color:#60a5fa;">x</span>) = E[ HV(<span style="color:#a78bfa;">P</span> ∪ <span style="color:#60a5fa;">f(x)</span>) − HV(<span style="color:#a78bfa;">P</span>) ]</div>
+        <div style="font-size:26px;color:#64748b;line-height:1.4;">EHVI(expected hypervolume improvement) = 다음 계산에 따른 파레토 초부피 증가량의 기대값 · 후보 선정 기준</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 28px;border-top:1px solid #1f2937;padding-top:14px;">
+          <div style="font-size:24px;color:#64748b;"><span style="font-family:'JetBrains Mono',monospace;color:#60a5fa;">x</span> 후보 조성</div>
+          <div style="font-size:24px;color:#64748b;"><span style="font-family:'JetBrains Mono',monospace;color:#60a5fa;">f(x)</span> 예측 물성 벡터</div>
+          <div style="font-size:24px;color:#64748b;"><span style="font-family:'JetBrains Mono',monospace;color:#a78bfa;">P</span> 현재 파레토 집합</div>
+          <div style="font-size:24px;color:#64748b;"><span style="font-family:'JetBrains Mono',monospace;color:#a78bfa;">HV</span> 초부피(hypervolume) — 전선이 덮는 면적</div>
+          <div style="font-size:24px;color:#64748b;"><span style="font-family:'JetBrains Mono',monospace;color:#f1f5f9;">∪</span> 후보를 집합에 더한 경우</div>
+          <div style="font-size:24px;color:#64748b;"><span style="font-family:'JetBrains Mono',monospace;color:#60a5fa;">ΔHV</span> 후보가 늘리는 면적</div>
+          <div style="font-size:24px;color:#64748b;"><span style="font-family:'JetBrains Mono',monospace;color:#f1f5f9;">E[·]</span> 불확실성에 대한 기대값</div>
+        </div>
+      </div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.45;">면적 확대 = 달성 가능한 물성 조합 범위의 확대 · 전선 위 어느 점을 택할지는 공학적 판단</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="COMID 플랫폼" data-screen-label="28" data-speaker-notes="강좌의 최종 산출물 형태. 실습은 이 구조를 직접 만들어 보는 과정." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:52px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">1-4 · PLATFORM</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">COMID 플랫폼</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;">
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;overflow:hidden;box-shadow:0 25px 50px rgba(0,0,0,0.45);">
+      <div style="display:flex;align-items:center;gap:20px;padding:24px 32px;border-bottom:1px solid #1f2937;">
+        <div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#3377ff,#8b5cf6);"></div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.12em;color:#94a3b8;">COMID</div>
+        <div style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:24px;color:#475569;">v01.05.60</div>
+      </div>
+      <div style="padding:32px;display:flex;flex-direction:column;gap:20px;">
+        <div style="display:flex;align-items:center;gap:24px;padding:20px 24px;border-radius:8px;background:#1f2937;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#94a3b8;flex:1;">binderA_bulk_screening_T298K</span>
+          <span style="font-size:24px;padding:8px 20px;border-radius:999px;background:rgba(34,197,94,0.20);color:#4ade80;border:1px solid rgba(34,197,94,0.30);font-family:'JetBrains Mono',monospace;">running</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:24px;padding:20px 24px;border-radius:8px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#94a3b8;flex:1;">binderB_interface_confirm</span>
+          <span style="font-size:24px;padding:8px 20px;border-radius:999px;background:rgba(234,179,8,0.20);color:#facc15;border:1px solid rgba(234,179,8,0.30);font-family:'JetBrains Mono',monospace;">queued</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:24px;padding:20px 24px;border-radius:8px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#94a3b8;flex:1;">binderA_viscosity_GK_T333K</span>
+          <span style="font-size:24px;padding:8px 20px;border-radius:999px;background:rgba(107,114,128,0.20);color:#9ca3af;border:1px solid rgba(107,114,128,0.30);font-family:'JetBrains Mono',monospace;">completed</span>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:28px;">
+      <div style="display:flex;gap:24px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#599eff;width:60px;">01</div>
+        <div style="font-size:32px;color:#94a3b8;line-height:1.45;flex:1;">작업 제출 · GPU 큐 모니터링 — 계산 상시 수동 감시 없는 구조</div>
+      </div>
+      <div style="display:flex;gap:24px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#599eff;width:60px;">02</div>
+        <div style="font-size:32px;color:#94a3b8;line-height:1.45;flex:1;">분자 · 결정 · 계면 라이브러리 — 구조 생성 단계의 재사용 자료</div>
+      </div>
+      <div style="display:flex;gap:24px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#599eff;width:60px;">03</div>
+        <div style="font-size:32px;color:#94a3b8;line-height:1.45;flex:1;">결과 분석 · 역설계 위저드 — 표적 입력 → 조성 추천</div>
+      </div>
+      <div style="border-top:1px solid #1f2937;padding-top:28px;font-size:30px;color:#64748b;line-height:1.45;">파이프라인 6단계 = 화면 구조 · 13주차에 각자의 버전 완성</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="실습 환경" data-screen-label="29" data-speaker-notes="2주차 전까지 환경 준비. 저장소 주소는 공지에서." style="background:#111827;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:52px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">1-4 · SETUP</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">실습 환경과 코드</h2>
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px;">
+    <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:44px;display:flex;flex-direction:column;gap:24px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;letter-spacing:0.1em;">TOOLCHAIN</div>
+      <div style="font-size:32px;line-height:1.6;color:#94a3b8;">LAMMPS · Python 3.11 · PyTorch · PyTorch Geometric · RDKit · Optuna</div>
+      <div style="font-size:30px;color:#64748b;line-height:1.45;">GPU는 강좌 제공 환경 또는 개인 워크스테이션 모두 가능</div>
+    </div>
+    <div style="background:#0c1222;border:1px solid #1f2937;border-radius:12px;padding:44px;display:flex;flex-direction:column;gap:24px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:26px;color:#64748b;letter-spacing:0.1em;">MATERIALS</div>
+      <div style="font-size:32px;line-height:1.6;color:#94a3b8;">강의자료 PDF · 실습 코드 GitHub 저장소 · 주차별 퀴즈</div>
+      <div style="font-size:30px;color:#64748b;line-height:1.45;">2주차 전까지 환경 설치 완료 권장</div>
+    </div>
+  </div>
+  <p style="font-size:32px;color:#94a3b8;margin:0;line-height:1.45;max-width:1560px;">코드는 매 주차 실행 가능 상태로 갱신 · 이론 영상과 같은 번호의 노트북을 함께 열고 진행</p>
+</section>
+
+<section data-label="13주 로드맵" data-screen-label="30" data-speaker-notes="블록 단위로만 안내. 세부 주차명은 주차별 영상에서." style="background:#0c1222;color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:52px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">ROADMAP</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">13주 로드맵</h2>
+  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:32px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:40px;display:flex;flex-direction:column;gap:20px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#599eff;">WEEK 01</div>
+      <div style="font-size:36px;font-weight:600;line-height:1.3;">역설계 패러다임</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.45;">멀티스케일 · 디지털 트윈 · 파이프라인 전체 구성</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:40px;display:flex;flex-direction:column;gap:20px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#a5b4fc;">MD 블록</div>
+      <div style="font-size:36px;font-weight:600;line-height:1.3;">분자동역학 기초와 LAMMPS</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.45;">힘장 · 앙상블 · 물성 계산 실습</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:40px;display:flex;flex-direction:column;gap:20px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#a78bfa;">ML 블록</div>
+      <div style="font-size:36px;font-weight:600;line-height:1.3;">그래프 신경망 대리모델</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.45;">분자 표현 · 학습 · 불확실성</div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:40px;display:flex;flex-direction:column;gap:20px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:#facc15;">통합 블록</div>
+      <div style="font-size:36px;font-weight:600;line-height:1.3;">자율 탐색과 역설계 도구</div>
+      <div style="font-size:28px;color:#94a3b8;line-height:1.45;">능동학습 · 다목적 최적화 · 도구 구현</div>
+    </div>
+  </div>
+  <p style="font-size:30px;color:#64748b;margin:0;">시험 주차 없음 · 퀴즈와 실습 결과물이 평가 대상</p>
+</section>
+
+<section data-label="1주차 정리" data-screen-label="31" data-speaker-notes="세 문장으로 정리하고 퀴즈 안내. 2주차는 MD 기초이론." style="background:linear-gradient(135deg,#111827,#0c1222);color:#f1f5f9;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;padding:56px 90px 44px;display:flex;flex-direction:column;gap:52px;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:26px;letter-spacing:0.14em;color:#599eff;">SUMMARY</div>
+  <h2 style="font-size:52px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;">1주차 정리</h2>
+  <div style="display:flex;flex-direction:column;gap:36px;max-width:1600px;">
+    <div style="display:flex;gap:36px;align-items:baseline;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#599eff;width:80px;">01</div>
+      <div style="font-size:38px;line-height:1.45;flex:1;">역설계 = 표적 물성 → 조성 역추정 문제 · 저비용 물성 평가 수단 전제</div>
+    </div>
+    <div style="display:flex;gap:36px;align-items:baseline;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#a5b4fc;width:80px;">02</div>
+      <div style="font-size:38px;line-height:1.45;flex:1;">MD = 원자 스케일에서 물성 생성 · GNN 대리모델 = 그 물성의 빠른 대체 예측</div>
+    </div>
+    <div style="display:flex;gap:36px;align-items:baseline;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:34px;color:#a78bfa;width:80px;">03</div>
+      <div style="font-size:38px;line-height:1.45;flex:1;">문헌 고찰 · 구조 생성 · MD · 학습 · 능동학습 · 최적화의 순환 연결 = 자율 탐색</div>
+    </div>
+  </div>
+  <div style="margin-top:auto;display:flex;gap:40px;align-items:center;border-top:1px solid #1f2937;padding-top:36px;">
+    <span style="font-size:28px;padding:14px 28px;border-radius:999px;background:rgba(59,130,246,0.20);color:#60a5fa;border:1px solid rgba(59,130,246,0.30);font-family:'JetBrains Mono',monospace;">퀴즈 1주차</span>
+    <span style="font-size:32px;color:#94a3b8;">다음 주차 — 분자동역학 기초이론 (1): 원리와 수치적분</span>
+  </div>
+</section>
+
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1920,&quot;height&quot;:1080}}"></script>
+</body>
+</html>

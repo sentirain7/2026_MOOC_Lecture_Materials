@@ -1,0 +1,149 @@
+/* ============================================================================
+   NACMID — Base layer
+   Global element defaults + the brand utility classes the app ships
+   (.card, .btn, .badge, .input, status helpers). Written against tokens.
+   ============================================================================ */
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-feature-settings: var(--font-feature-ui);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: var(--tracking-tight);
+  font-weight: var(--weight-bold);
+  color: var(--text);
+  margin: 0;
+}
+
+code, pre, .mono { font-family: var(--font-mono); }
+
+/* ---- Brand wordmark gradient ("arcane-title") ---- */
+.nacmid-title {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ---- Cards ---- */
+.card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  backdrop-filter: var(--blur-card);
+}
+.card-elevated {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card-elevated);
+}
+.card-header {
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border);
+  font-weight: var(--weight-semibold);
+  color: #fff;
+}
+.card-body { padding: var(--space-5); }
+
+/* ---- Buttons ---- */
+.btn {
+  padding: 0.625rem 1rem;
+  border-radius: var(--radius-md);
+  font-weight: var(--weight-medium);
+  font-size: var(--text-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all var(--duration-base) var(--ease-standard);
+  box-shadow: var(--shadow-sm);
+}
+.btn-primary {
+  background: var(--gradient-button);
+  color: #fff;
+}
+.btn-primary:hover {
+  box-shadow: var(--glow-btn-primary);
+  transform: translateY(-2px);
+}
+.btn-secondary {
+  background: var(--bg-tertiary);
+  color: #fff;
+  border-color: var(--border-light);
+}
+.btn-secondary:hover { background: var(--border-light); }
+.btn-outline {
+  background: transparent;
+  border-color: var(--primary-500);
+  color: var(--primary-400);
+}
+.btn-outline:hover { background: rgba(51, 119, 255, 0.10); }
+.btn-sm { padding: 0.375rem 0.75rem; font-size: var(--text-sm); border-radius: var(--radius-sm); }
+.btn-lg { padding: 0.75rem 1.5rem; font-size: var(--text-base); border-radius: var(--radius-xl); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+/* ---- Inputs ---- */
+.input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background: var(--surface-input);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  color: #fff;
+  font-family: inherit;
+  font-size: var(--text-sm);
+}
+.input::placeholder { color: var(--text-secondary); }
+.input:focus { outline: none; box-shadow: var(--ring-focus); border-color: transparent; }
+.label {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: #cbd5e1;
+  margin-bottom: var(--space-1);
+}
+
+/* ---- Badges ---- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.625rem;
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  border: 1px solid transparent;
+}
+
+/* status helpers (translucent fill / colored text / colored border) */
+.status-pending   { background: var(--status-pending-bg);   color: var(--status-pending-fg);   border-color: rgba(234,179,8,0.30); }
+.status-queued    { background: var(--status-queued-bg);    color: var(--status-queued-fg);    border-color: rgba(59,130,246,0.30); }
+.status-building  { background: var(--status-building-bg);  color: var(--status-building-fg);  border-color: rgba(99,102,241,0.30); }
+.status-running   { background: var(--status-running-bg);   color: var(--status-running-fg);   border-color: rgba(34,197,94,0.30); }
+.status-completed { background: var(--status-completed-bg); color: var(--status-completed-fg); border-color: rgba(107,114,128,0.30); }
+.status-failed    { background: var(--status-failed-bg);    color: var(--status-failed-fg);    border-color: rgba(239,68,68,0.30); }
+
+/* ---- Scrollbar ---- */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #1e293b; }
+::-webkit-scrollbar-thumb { background: #475569; border-radius: var(--radius-full); }
+::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+/* ---- Pulse (running indicators) ---- */
+@keyframes nacmid-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+.animate-pulse-slow { animation: nacmid-pulse 2s var(--ease-standard) infinite; }

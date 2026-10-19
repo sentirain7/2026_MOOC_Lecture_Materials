@@ -1,0 +1,43 @@
+/* ============================================================================
+   NACMID — Typography Tokens
+   Pretendard Variable for all UI/Korean text; JetBrains Mono for numerics,
+   experiment IDs, and code. Tight tracking on headings; tabular mono figures.
+   ============================================================================ */
+
+:root {
+  /* ---- Families ---- */
+  --font-sans: 'Pretendard Variable', 'Pretendard', 'Inter', system-ui, -apple-system, 'Noto Sans KR', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, 'SFMono-Regular', monospace;
+
+  /* ---- Type scale (rem) ---- */
+  --text-2xs: 0.625rem;   /* 10px — micro badges, fullname strapline */
+  --text-xs:  0.75rem;    /* 12px — meta, table cells, badges */
+  --text-sm:  0.875rem;   /* 14px — body, inputs, nav */
+  --text-base:1rem;       /* 16px — default */
+  --text-lg:  1.125rem;   /* 18px — stat values, card titles */
+  --text-xl:  1.25rem;    /* 20px — logotype, section heads */
+  --text-2xl: 1.5rem;     /* 24px — page titles (h1) */
+  --text-3xl: 1.875rem;   /* 30px — hero numbers */
+  --text-4xl: 2.25rem;    /* 36px — large hero */
+
+  /* ---- Weights (Pretendard variable axis) ---- */
+  --weight-normal:   400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+
+  /* ---- Line heights ---- */
+  --leading-tight:   1.2;
+  --leading-snug:    1.35;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.65;
+
+  /* ---- Letter spacing ---- */
+  --tracking-tight:  -0.02em;   /* headings */
+  --tracking-normal: 0;
+  --tracking-wide:   0.05em;    /* uppercase nav group labels */
+  --tracking-wider:  0.08em;    /* logotype */
+
+  /* ---- OpenType / numeric ---- */
+  --font-feature-ui: 'cv11', 'ss01';  /* Pretendard stylistic sets used in-app */
+}
