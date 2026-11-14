@@ -1,0 +1,146 @@
+{
+ "density": {
+  "unit": "g/cm³",
+  "n": 670,
+  "sets": {
+   "T": {
+    "R2": 0.583,
+    "RMSE": 0.03193,
+    "R2_fold_mean": 0.5674,
+    "R2_fold_sd": 0.0688,
+    "n": 670
+   },
+   "T+binder": {
+    "R2": 0.8762,
+    "RMSE": 0.0174,
+    "R2_fold_mean": 0.8677,
+    "R2_fold_sd": 0.0356,
+    "n": 670
+   },
+   "T+binder+additive": {
+    "R2": 0.9752,
+    "RMSE": 0.00779,
+    "R2_fold_mean": 0.9736,
+    "R2_fold_sd": 0.0093,
+    "n": 670
+   }
+  },
+  "ridge_full": 0.9672
+ },
+ "CED": {
+  "unit": "MJ/m³",
+  "n": 613,
+  "sets": {
+   "T": {
+    "R2": 0.603,
+    "RMSE": 25.85805,
+    "R2_fold_mean": 0.6038,
+    "R2_fold_sd": 0.0488,
+    "n": 613
+   },
+   "T+binder": {
+    "R2": 0.7882,
+    "RMSE": 18.88605,
+    "R2_fold_mean": 0.7842,
+    "R2_fold_sd": 0.0626,
+    "n": 613
+   },
+   "T+binder+additive": {
+    "R2": 0.9792,
+    "RMSE": 5.91949,
+    "R2_fold_mean": 0.9791,
+    "R2_fold_sd": 0.0053,
+    "n": 613
+   }
+  },
+  "ridge_full": 0.9396
+ },
+ "bulk": {
+  "unit": "GPa",
+  "n": 576,
+  "sets": {
+   "T": {
+    "R2": 0.8004,
+    "RMSE": 0.44547,
+    "R2_fold_mean": 0.7993,
+    "R2_fold_sd": 0.0304,
+    "n": 576
+   },
+   "T+binder": {
+    "R2": 0.769,
+    "RMSE": 0.47919,
+    "R2_fold_mean": 0.7683,
+    "R2_fold_sd": 0.0275,
+    "n": 576
+   },
+   "T+binder+additive": {
+    "R2": 0.7272,
+    "RMSE": 0.52072,
+    "R2_fold_mean": 0.7254,
+    "R2_fold_sd": 0.0236,
+    "n": 576
+   }
+  },
+  "ridge_full": 0.8216
+ },
+ "E_inter": {
+  "unit": "kcal/mol",
+  "n": 576,
+  "sets": {
+   "T": {
+    "R2": 0.4201,
+    "RMSE": 186.26927,
+    "R2_fold_mean": 0.422,
+    "R2_fold_sd": 0.0596,
+    "n": 576
+   },
+   "T+binder": {
+    "R2": 0.7373,
+    "RMSE": 125.37206,
+    "R2_fold_mean": 0.7329,
+    "R2_fold_sd": 0.0562,
+    "n": 576
+   },
+   "T+binder+additive": {
+    "R2": 0.8493,
+    "RMSE": 94.93767,
+    "R2_fold_mean": 0.8457,
+    "R2_fold_sd": 0.031,
+    "n": 576
+   }
+  },
+  "ridge_full": 0.8789
+ },
+ "split_compare": {
+  "random_R2_seeds": [
+   0.9892,
+   0.9878,
+   0.9892
+  ],
+  "group_R2": 0.9752,
+  "groups": 54,
+  "dup_rows": 47
+ },
+ "boosting_demo": {
+  "n": 94,
+  "rmse_r0": 0.04656,
+  "rmse_r10": 0.01504,
+  "rmse_r100": 0.00554
+ },
+ "hparam": {
+  "runs": 60,
+  "best": {
+   "n_estimators": 800,
+   "max_depth": 2,
+   "learning_rate": 0.03,
+   "R2": 0.9858
+  },
+  "worst": {
+   "n_estimators": 50,
+   "max_depth": 2,
+   "learning_rate": 0.03,
+   "R2": 0.729
+  }
+ },
+ "wall_s": 118.9
+}

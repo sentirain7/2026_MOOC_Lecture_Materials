@@ -1,0 +1,34 @@
+{
+ "id": "r0_3",
+ "comp": {
+  "phenanthrene-1x1": 56
+ },
+ "sara": null,
+ "mass_gmol": 10766.62,
+ "rho0": 0.5,
+ "L_A": 32.945,
+ "tolerance": 2.0,
+ "gate": {
+  "attempt": 1,
+  "seed": 1,
+  "packmol_success": true,
+  "atom_count_ok": true,
+  "min_intermolecular_A": 2.167,
+  "threshold_A": 1.8,
+  "pass": true
+ },
+ "data": {
+  "atoms": 1512,
+  "molecules": 56,
+  "atom_types": 4,
+  "bond_types": 4,
+  "angle_types": 5,
+  "dihedral_types": 6,
+  "improper_types": 3,
+  "charge_sum": -0.0
+ },
+ "ff_files": {
+  "phenanthrene-1x1": "ff/phenanthrene-1x1_gaff2.json"
+ },
+ "charge_ok": true
+}

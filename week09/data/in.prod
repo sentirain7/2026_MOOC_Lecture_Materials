@@ -1,0 +1,36 @@
+# in.prod — week09 · 톨루엔 50분자(W06 final.data) → NPT 298 K 이어 달리기 → NVT 생산(응력 성분 기록)
+# 짧은 실행(교육용 · 수십 ps) — 수렴 전 「형태」를 보는 입력. 실제 물성은 ns 단위(덱 24장 예산).
+units          real
+atom_style     full
+boundary       p p p
+pair_style     lj/cut/coul/long 12.0
+bond_style     harmonic
+angle_style    harmonic
+dihedral_style fourier
+special_bonds  amber
+read_data      ${data}
+pair_modify    mix arithmetic tail yes
+kspace_style   pppm 1.0e-4
+neighbor       2.0 bin
+neigh_modify   every 1 delay 0 check yes
+timestep       1.0
+velocity       all create 298.0 ${seed} mom yes rot yes dist gaussian
+
+# ① NPT 이어 달리기 — 밀도 계량기용 (thermo 100 스텝 = 0.1 ps)
+thermo_style   custom step temp press density pe vol
+thermo         100
+fix            npt all npt temp 298.0 298.0 100.0 iso 1.0 1.0 1000.0
+run            ${npt_steps}
+unfix          npt
+write_data     ${out}/npt_final.data
+
+# ② NVT 생산 — Green–Kubo 용 비대각 응력 성분 5 fs 마다 기록
+variable       pxy equal pxy
+variable       pxz equal pxz
+variable       pyz equal pyz
+variable       vol equal vol
+fix            nvt all nvt temp 298.0 298.0 100.0
+fix            ss all ave/time 1 1 5 v_pxy v_pxz v_pyz v_vol file ${out}/stress.txt
+thermo         200
+run            ${nvt_steps}
+write_data     ${out}/nvt_final.data

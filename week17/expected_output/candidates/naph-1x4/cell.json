@@ -1,0 +1,34 @@
+{
+ "id": "naph-1x4",
+ "comp": {
+  "naph-1x4": 50
+ },
+ "sara": null,
+ "mass_gmol": 9214.1,
+ "rho0": 0.5,
+ "L_A": 31.278,
+ "tolerance": 2.0,
+ "gate": {
+  "attempt": 1,
+  "seed": 1,
+  "packmol_success": true,
+  "atom_count_ok": true,
+  "min_intermolecular_A": 1.998,
+  "threshold_A": 1.8,
+  "pass": true
+ },
+ "data": {
+  "atoms": 1500,
+  "molecules": 50,
+  "atom_types": 4,
+  "bond_types": 5,
+  "angle_types": 8,
+  "dihedral_types": 12,
+  "improper_types": 3,
+  "charge_sum": 0.0005
+ },
+ "ff_files": {
+  "naph-1x4": "ff/naph-1x4_gaff2.json"
+ },
+ "charge_ok": true
+}

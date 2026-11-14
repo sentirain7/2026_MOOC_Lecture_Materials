@@ -1,0 +1,841 @@
+<!doctype html>
+<html lang="ko" data-v="3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>W01 과정 개요 · 배합 설계의 한계 · 역설계 · 멀티스케일 · 18주 지도</title>
+<link rel="stylesheet" href="../common/deck.css">
+</head>
+<body>
+
+<!-- 1 표지 -->
+<section class="slide v3 cover">
+<div class="stop">
+<div class="ribbon"></div>
+<div class="cover-txt">
+<p class="eb a" style="--d:0"><span class="ko" data-i>건설소재 역설계 도구 개발을 위한 AI와 분자동역학 활용 · WEEK 01 · 모듈 M0 준비 · 차시 1-1 ~ 1-4 · 50분</span><span class="en" data-i>AI and Molecular Dynamics for Inverse Design of Construction Materials · WEEK 01 · Module M0 Setup · Sessions 1-1 ~ 1-4 · 50 min</span></p>
+<h1 class="cover-h a" style="--d:1"><span class="ko" data-i>과정 개요: 배합 설계의 한계 · 역설계 · 멀티스케일 · 18주 지도</span><span class="en" data-i>Course overview: limits of mix design · inverse design · multiscale · 18-week map</span></h1>
+<p class="cover-sub a" style="--d:2"><span class="ko" data-i>표적 물성 입력 → 조성 추천 도구 · 18주 동안 순환의 한 칸씩 제작</span><span class="en" data-i>Target property in → composition recommendation tool · build one step of the loop each week for 18 weeks</span></p>
+<p class="who a" style="--d:3"><span class="ko" data-i><b>윤태영</b> 연구위원 · 한국건설기술연구원 도로교통연구본부 · 과학기술연합대학원대학교(UST) 교수</span><span class="en" data-i><b>Taeyoung Yun</b> Senior Research Fellow · Department of Highway & Transportation Research, Korea Institute of Civil Engineering and Building Technology (KICT) · Professor, University of Science and Technology (UST)</span></p>
+<div class="rel a" style="--d:4;justify-content:flex-start"><span><span class="ko" data-i>준비물 · Claude Code (Pro 이상 · Console API)</span><span class="en" data-i>Prerequisites · Claude Code (Pro or higher · Console API)</span></span><span><span class="ko" data-i>conda mdai = 설치 지시 I-1 · I-2</span><span class="en" data-i>conda mdai = install prompts I-1 · I-2</span></span><span><span class="ko" data-i>Windows = WSL2 권장</span><span class="en" data-i>Windows = WSL2 recommended</span></span></div>
+</div>
+<div class="cover-fig"><div class="emb" data-emb="loop6" data-dur="12"></div></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 2 오늘 만들 것 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>오늘 만들 것 · 4차시 · 50분</span><span class="en" data-i>What we build today · 4 sessions · 50 min</span></p>
+<div class="hrow"><span class="hico" data-ico="package-check"></span><h2 class="h"><span class="ko" data-i>오늘의 완성물 2개: 내 재료의 후보 조합 수 · 환경 점검 보고서</span><span class="en" data-i>2 deliverables today: candidate-combination count for my material · environment check report</span></h2></div>
+<p class="sub"><span class="ko" data-i>첫 주 · 50분 뒤 손에 남는 것 두 가지 · 차시 4개</span><span class="en" data-i>First week · two things in hand after 50 min · 4 sessions</span></p>
+<div class="bd today">
+<div class="goal">
+<div class="it white a" style="--d:1">
+<div class="ih"><span class="icb" data-ico="calculator"></span><div><p class="k"><span class="ko" data-i>완성물 ①</span><span class="en" data-i>Deliverable ①</span></p><h4><span class="ko" data-i>내 재료의 후보 조합 수</span><span class="en" data-i>Candidate-combination count for my material</span></h4></div></div>
+<div class="cb"><span class="fc"><span class="ko" data-i>분자 <em>13</em>종</span><span class="en" data-i><em>13</em> molecules</span></span><span class="x">×</span><span class="fc"><span class="ko" data-i>함량 <em>5</em>단계</span><span class="en" data-i><em>5</em> content levels</span></span><span class="x">×</span><span class="fc"><span class="ko" data-i>온도 <em>4</em></span><span class="en" data-i><em>4</em> temperatures</span></span><span class="x">=</span><span class="tot nosum"><span class="ko" data-i>4.9 × 10⁹<small>후보</small></span><span class="en" data-i>4.9 × 10⁹<small>candidates</small></span></span></div>
+<div class="bars">
+<div class="bar"><div class="l"><span class="ko" data-i>실험<small>연간 · 예시</small></span><span class="en" data-i>Experiments<small>per year · example</small></span></div><div class="b gr" style="width:60px"></div><div class="v nosum"><span class="ko" data-i>10²<small>/년</small></span><span class="en" data-i>10²<small>/yr</small></span></div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>후보 조합<small>5¹³ × 4</small></span><span class="en" data-i>Candidate combinations<small>5¹³ × 4</small></span></div><div class="b" style="width:270px"></div><div class="v nosum"><span class="ko" data-i>10⁹<small>자릿수 차 7.7</small></span><span class="en" data-i>10⁹<small>gap of 7.7 orders</small></span></div></div>
+</div>
+<p><span class="ko" data-i>로그 눈금 · 실험만으로 전수 불가 · 6장 계산기 · 13장 P1-1</span><span class="en" data-i>Log scale · exhaustive experiments impossible · slide 6 calculator · slide 13 P1-1</span></p>
+</div>
+<div class="it dark a" style="--d:2">
+<div class="ih"><span class="icb" data-ico="file-json"></span><div><p class="k"><span class="ko" data-i>완성물 ②</span><span class="en" data-i>Deliverable ②</span></p><h4><span class="ko" data-i>환경 점검 보고서</span><span class="en" data-i>Environment check report</span></h4></div></div>
+<p class="mono-line">{ "python": "3.11", "numpy": "ok", "data_rows": 101, <b>"ok": true</b> }</p>
+<p><span class="ko" data-i>Claude Code 실행 1회 · 10분 · W02 입력 (25장)</span><span class="en" data-i>Claude Code run ×1 · 10 min · input for W02 (slide 25)</span></p>
+</div>
+</div>
+<div class="plan">
+<div class="lines">
+<div class="ln a" style="--d:1"><span class="nn">1-1</span><div><h4><span class="ko" data-i>배합 설계의 한계</span><span class="en" data-i>Limits of mix design</span></h4><p><span class="ko" data-i>시행착오 루프 · 조합 공간 계산기</span><span class="en" data-i>Trial-and-error loop · combination-space calculator</span></p></div><span class="min"><span class="ko" data-i>12분</span><span class="en" data-i>12 min</span></span></div>
+<div class="ln a" style="--d:2"><span class="nn">1-2</span><div><h4><span class="ko" data-i>역설계</span><span class="en" data-i>Inverse design</span></h4><p><span class="ko" data-i>순방향 ↔ 역방향 · 표적 물성 · P1-1</span><span class="en" data-i>Forward ↔ inverse · target property · P1-1</span></p></div><span class="min"><span class="ko" data-i>12분</span><span class="en" data-i>12 min</span></span></div>
+<div class="ln a" style="--d:3"><span class="nn">1-3</span><div><h4><span class="ko" data-i>멀티스케일</span><span class="en" data-i>Multiscale</span></h4><p><span class="ko" data-i>사다리 · MD 순환 · 대리모델</span><span class="en" data-i>Ladder · MD loop · surrogate model</span></p></div><span class="min"><span class="ko" data-i>13분</span><span class="en" data-i>13 min</span></span></div>
+<div class="ln a" style="--d:4"><span class="nn">1-4</span><div><h4><span class="ko" data-i>디지털 트윈 · 18주 지도</span><span class="en" data-i>Digital twin · 18-week map</span></h4><p><span class="ko" data-i>6단계 순환 · 환경 점검 P1-2</span><span class="en" data-i>6-step loop · environment check P1-2</span></p></div><span class="min"><span class="ko" data-i>13분</span><span class="en" data-i>13 min</span></span></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>준비물: <b>Claude Code</b>(Pro 이상 · Console API · 직접 설치) · <b>conda mdai</b>(지시 I-1 · I-2) · Windows = WSL2</span><span class="en" data-i>Prerequisites: <b>Claude Code</b> (Pro or higher · Console API · install by hand) · <b>conda mdai</b> (prompts I-1 · I-2) · Windows = WSL2</span></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>계획서 50분 · 가이드 §2 차시 = 영상 1편 12~18분</span><span class="en" data-i>Plan 50 min · Guide §2 session = 1 video of 12~18 min</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 3 1차시 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 1-1 · 12분 · 영상 1편</span><span class="en" data-i>Session 1-1 · 12 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="flask-conical"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">1</p><p class="hubt"><span class="ko" data-i>배합 설계의 한계</span><span class="en" data-i>Limits of mix design</span></p><p class="hubs"><span class="ko" data-i>탐색 폭을 실험만으로 감당할 수 없다는 숫자</span><span class="en" data-i>The number showing that experiments alone cannot cover the search space</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>내 재료의 후보 조합 수</span><span class="en" data-i>Candidate-combination count for my material</span></h4></div></div><p><span class="ko" data-i>조합 공간 계산기(6장)에 내 재료의 종류 · 단계 · 온도 입력 → 후보 수 1개</span><span class="en" data-i>Enter my material's number of components · levels · temperatures into the combination-space calculator (slide 6) → 1 candidate count</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>문제 설정: 실험만으로 불가한 이유</span><span class="en" data-i>Problem setting: why experiments alone fail</span></h4></div></div><p><span class="ko" data-i>역설계 탐색 폭 ≫ 실험 횟수(자릿수 차)</span><span class="en" data-i>Inverse-design search space ≫ number of experiments (orders of magnitude)</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 4 ANIM 배합 설계 루프 -->
+<section class="slide v3" data-src="01주차#6">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>1-1 · 왜</span><span class="en" data-i>1-1 · Why</span></p>
+<div class="hrow"><span class="hico" data-ico="repeat"></span><h2 class="h"><span class="ko" data-i>배합 설계 = 시행착오 루프: 한 바퀴 수 주 · 조성 1개당 결과 1개</span><span class="en" data-i>Mix design = trial-and-error loop: several weeks per turn · 1 result per 1 composition</span></h2></div>
+<p class="sub"><span class="ko" data-i>고리 1회전 = <b>조성 1개 → 결과 1개</b> · 후보는 10⁹ 개 · 덧셈으로 느는 실험 대 곱으로 느는 후보</span><span class="en" data-i>1 turn of loop = <b>1 composition → 1 result</b> · 10⁹ candidates · experiments grow by addition, candidates by multiplication</span></p>
+<div class="bd loopw">
+<div class="emb loop" data-emb="trial" data-dur="12" data-steps="4" data-labels="① 배합|② 제작 · 양생|③ 시험|④ 평가 → 다시" data-labels-en="① Mix|② Make · cure|③ Test|④ Evaluate → again"></div>
+<div class="side" id="trial-side">
+<div><span class="ko" data-i><b>경과 시간</b></span><span class="en" data-i><b>Elapsed time</b></span><span data-k="weeks"><span class="ko" data-i>약 0 주 (한 바퀴 = 6주 가정)</span><span class="en" data-i>About 0 wk (one turn = 6 wk assumed)</span></span></div>
+<div><span class="ko" data-i><b>시험한 조성</b></span><span class="en" data-i><b>Compositions tested</b></span><span data-k="n"><span class="ko" data-i>0 개 · 결과 0 개</span><span class="en" data-i>0 · 0 results</span></span></div>
+<div><span class="ko" data-i><b>후보 조합</b></span><span class="en" data-i><b>Candidate combinations</b></span><span><span class="ko" data-i>10⁹ 개 (13종 × 5단계 × 4 · 6장)</span><span class="en" data-i>10⁹ (13 types × 5 levels × 4 · slide 6)</span></span></div>
+<div><span class="ko" data-i><b>기준</b></span><span class="en" data-i><b>Standard</b></span><span><span class="ko" data-i>끝까지 실험 · 모델은 실험 횟수를 줄이는 수단</span><span class="en" data-i>Experiment to the end · model = a way to cut the number of experiments</span></span></div>
+</div>
+</div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 01주차 덱 #6</span><span class="en" data-i>Original week-01 deck #6</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 5 FIG 한계 3 -->
+<section class="slide v3" data-src="01주차#6">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>1-1 · 무엇</span><span class="en" data-i>1-1 · What</span></p>
+<div class="hrow"><span class="hico" data-ico="triangle-alert"></span><h2 class="h"><span class="ko" data-i>한계 3가지: 경험 의존 · 긴 검증 주기 · 관측 불가</span><span class="en" data-i>3 limits: reliance on experience · long validation cycle · unobservable</span></h2></div>
+<p class="sub"><span class="ko" data-i>왼쪽 둘은 시간과 돈의 문제 · 오른쪽은 원리상 관측 불가 · 이 강좌의 주제</span><span class="en" data-i>Left two = time and money problems · right = unobservable in principle · the theme of this course</span></p>
+<div class="bd">
+<div class="grid c3">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="book-open"></span><div><p class="k">01</p><h4><span class="ko" data-i>경험 의존</span><span class="en" data-i>Reliance on experience</span></h4></div></div>
+<div class="figw white"><svg viewBox="0 0 420 200"><g class="cfs" text-anchor="middle"><rect x="60" y="14" width="300" height="36" rx="8" fill="#F6F0E7"/><text x="210" y="38"><tspan class="ko" data-i>선례 A · 2019</tspan><tspan class="en" data-i>Precedent A · 2019</tspan></text><rect x="60" y="60" width="300" height="36" rx="8" fill="#F6F0E7"/><text x="210" y="84"><tspan class="ko" data-i>선례 B · 2021</tspan><tspan class="en" data-i>Precedent B · 2021</tspan></text><rect x="60" y="106" width="300" height="36" rx="8" fill="#F6F0E7"/><text x="210" y="130"><tspan class="ko" data-i>선례 C · 2023</tspan><tspan class="en" data-i>Precedent C · 2023</tspan></text><rect x="60" y="152" width="300" height="36" rx="8" fill="none" stroke="#D9534F" stroke-width="3" stroke-dasharray="8 6"/><text x="210" y="177" fill="#D9534F" font-weight="700"><tspan class="ko" data-i>새 첨가제 · 선례 없음</tspan><tspan class="en" data-i>New additive · no precedent</tspan></text></g></svg></div>
+<p><span class="ko" data-i>배합비 = 선례 + 숙련도 · 새 재료 = <b>선례 없음</b></span><span class="en" data-i>Mix ratio = precedent + skill · new material = <b>no precedent</b></span></p></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="hourglass"></span><div><p class="k">02</p><h4><span class="ko" data-i>긴 검증 주기</span><span class="en" data-i>Long validation cycle</span></h4></div></div>
+<div class="figw white"><svg viewBox="0 0 420 200"><rect x="30" y="60" width="70" height="56" rx="8" fill="#4F7FB0"/><text x="65" y="95" class="cfw" text-anchor="middle"><tspan class="ko" data-i>배합</tspan><tspan class="en" data-i>Mix</tspan></text><rect x="110" y="60" width="180" height="56" rx="8" fill="#6E655C"/><text x="200" y="95" class="cfw" text-anchor="middle"><tspan class="ko" data-i>제작 · 양생</tspan><tspan class="en" data-i>Make · cure</tspan></text><rect x="300" y="60" width="90" height="56" rx="8" fill="#E37F1A"/><text x="345" y="95" class="cfw" text-anchor="middle"><tspan class="ko" data-i>시험</tspan><tspan class="en" data-i>Test</tspan></text><line x1="30" y1="150" x2="390" y2="150" stroke="#6E655C" stroke-width="3"/><line x1="30" y1="140" x2="30" y2="160" stroke="#6E655C" stroke-width="3"/><line x1="390" y1="140" x2="390" y2="160" stroke="#6E655C" stroke-width="3"/><text x="210" y="186" class="cfs" text-anchor="middle"><tspan class="ko" data-i>← 수 주 · 조성 1개 → 결과 1개 →</tspan><tspan class="en" data-i>← several weeks · 1 composition → 1 result →</tspan></text></svg></div>
+<p><span class="ko" data-i>1년에 돌릴 수 있는 바퀴 = <b>10² 수준</b></span><span class="en" data-i>Turns possible per 1 year = <b>about 10²</b></span></p></div>
+<div class="it hot a" style="--d:3"><div class="ih"><span class="icb" data-ico="eye-off"></span><div><p class="k"><span class="ko" data-i>03 · 이 강좌의 주제</span><span class="en" data-i>03 · Theme of this course</span></p><h4><span class="ko" data-i>관측 불가</span><span class="en" data-i>Unobservable</span></h4></div></div>
+<div class="figw white"><svg viewBox="0 0 420 200"><rect x="40" y="40" width="110" height="110" rx="10" fill="#6E655C"/><text x="95" y="180" class="cfs" text-anchor="middle"><tspan class="ko" data-i>시험체 · mm</tspan><tspan class="en" data-i>Specimen · mm</tspan></text><text x="210" y="112" class="cfx" text-anchor="middle" fill="#D9534F">?</text><g transform="translate(270,45)"><circle cx="20" cy="25" r="11" fill="#4F7FB0"/><circle cx="70" cy="45" r="11" fill="#2E8B57"/><circle cx="40" cy="85" r="11" fill="#E37F1A"/><circle cx="92" cy="92" r="11" fill="#4F7FB0"/><line x1="20" y1="25" x2="70" y2="45" stroke="#6E655C" stroke-width="3"/><line x1="40" y1="85" x2="92" y2="92" stroke="#6E655C" stroke-width="3"/></g><text x="325" y="180" class="cfs" text-anchor="middle"><tspan class="ko" data-i>원자 · 분자 · nm</tspan><tspan class="en" data-i>Atom · molecule · nm</tspan></text></svg></div>
+<p><span class="ko" data-i>거동의 원인 = 분자 수준 구조 · 시험체로 관측 불가 → <b>계산으로 관측</b></span><span class="en" data-i>Cause of behavior = molecular-scale structure · not observable in specimens → <b>observe by computation</b></span></p></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>계산(MD)은 <b>③ 을 보는 유일한 창</b> · ② 의 바퀴 수를 줄이는 수단 · 기준은 끝까지 실험</span><span class="en" data-i>Computation (MD) is <b>the only window onto ③</b> · a way to cut the turns in ② · the standard remains experiment</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 01주차 덱 #6</span><span class="en" data-i>Original week-01 deck #6</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 6 SIM 조합 공간 -->
+<section class="slide v3" data-src="01주차#9">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>1-1 · 확인 · 조작형</span><span class="en" data-i>1-1 · Check · interactive</span></p>
+<div class="hrow"><span class="hico" data-ico="sliders-horizontal"></span><h2 class="h"><span class="ko" data-i>조합 공간 계산기: 후보 수 ≫ 연간 실험 수 (10⁹ 대 10²)</span><span class="en" data-i>Combination-space calculator: candidates ≫ experiments per year (10⁹ vs 10²)</span></h2></div>
+<p class="sub"><span class="ko" data-i>슬라이더 조작 → 식 · 칩 · 로그 눈금 위 점 동시 변화 · 내 재료의 숫자 입력</span><span class="en" data-i>Move sliders → formula · chips · dot on log scale change together · enter your own material's numbers</span></p>
+<div class="bd">
+<div class="sim" id="sim-space">
+<div class="ctl">
+<label><span class="ko" data-i><b>분자 종류 수 <output data-o="mol">13</output></b></span><span class="en" data-i><b>Number of molecule types <output data-o="mol">13</output></b></span><input type="range" min="2" max="13" value="13" step="1" data-k="mol"></label>
+<label><span class="ko" data-i><b>종류당 함량 단계 <output data-o="lev">5</output></b></span><span class="en" data-i><b>Content levels per type <output data-o="lev">5</output></b></span><input type="range" min="2" max="10" value="5" step="1" data-k="lev"></label>
+<label><span class="ko" data-i><b>온도 조건 수 <output data-o="tmp">4</output></b></span><span class="en" data-i><b>Number of temperature conditions <output data-o="tmp">4</output></b></span><input type="range" min="1" max="6" value="4" step="1" data-k="tmp"></label>
+<button type="button" data-act="fail"><span class="ko" data-i>실험 전수 가능 공간 (종류 3 · 단계 2)</span><span class="en" data-i>Space that experiments can cover exhaustively (3 types · 2 levels)</span></button>
+<button type="button" class="alt" data-act="reset"><span class="ko" data-i>초기값 (13 · 5 · 4)</span><span class="en" data-i>Initial values (13 · 5 · 4)</span></button>
+</div>
+<div class="view">
+<div class="cb" id="sim-cb"><span class="fc"><span class="ko" data-i>함량 <em data-o="lev2">5</em>단계</span><span class="en" data-i><em data-o="lev2">5</em> content levels</span></span><span class="x">^</span><span class="fc"><span class="ko" data-i>분자 <em data-o="mol2">13</em>종</span><span class="en" data-i><em data-o="mol2">13</em> molecules</span></span><span class="x">×</span><span class="fc"><span class="ko" data-i>온도 <em data-o="tmp2">4</em></span><span class="en" data-i><em data-o="tmp2">4</em> temperatures</span></span><span class="x">=</span><span class="tot" data-o="n"> · </span></div>
+<svg viewBox="0 0 1160 300" aria-label="후보 조합 수와 실험 가능 수"></svg>
+<div class="kpi"><div><span class="ko" data-i>연간 실험 가능 수 (예시) <b>100</b></span><span class="en" data-i>Feasible experiments per year (example) <b>100</b></span></div><div><span class="ko" data-i>자릿수 차 <b data-o="gap"> · </b></span><span class="en" data-i>Gap in orders <b data-o="gap"> · </b></span></div></div>
+</div>
+</div>
+<div class="foot a" style="--d:1"><span class="ko" data-i>조합 = <b>곱</b>으로 증가 · 실험 = <b>덧셈</b>으로 증가 · 간격을 메우는 수단 = 시뮬레이션 + 대리모델</span><span class="en" data-i>Combinations grow by <b>multiplication</b> · experiments grow by <b>addition</b> · what closes the gap = simulation + surrogate model</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 01주차 덱 #9 · 같은 계산: week01/live/combination_space.ipynb</span><span class="en" data-i>Original week-01 deck #9 · same calculation: week01/live/combination_space.ipynb</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 7 TWEAK 단계 3 → 5 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>1-1 · 바꿔 보기</span><span class="en" data-i>1-1 · Try changing</span></p>
+<div class="hrow"><span class="hico" data-ico="git-compare"></span><h2 class="h"><span class="ko" data-i>함량 단계 3 → 5: 후보 10⁶ → 10⁹ · 실험은 그대로 10²</span><span class="en" data-i>Levels 3 → 5: candidates 10⁶ → 10⁹ · experiments stay at 10²</span></h2></div>
+<p class="sub"><span class="ko" data-i>막대 길이 = 로그 눈금 (한 칸 = 10배) · 왼쪽과 오른쪽에서 바뀐 것은 단계 수 하나</span><span class="en" data-i>Bar length = log scale (one step = 10×) · only the number of levels differs between left and right</span></p>
+<div class="bd">
+<div class="tweak">
+<div class="pane before a" style="--d:1"><h3><span class="tic" data-ico="minus"></span><span class="ko" data-i>전 · 분자 13종 × 단계 3 × 온도 4</span><span class="en" data-i>Before · 13 molecules × 3 levels × 4 temperatures</span></h3>
+<div class="bars">
+<div class="bar"><div class="l"><span class="ko" data-i>실험<small>연간</small></span><span class="en" data-i>Experiments<small>per year</small></span></div><div class="b gr" style="width:50px"></div><div class="v nosum">10²</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>후보<small>3¹³ × 4</small></span><span class="en" data-i>Candidates<small>3¹³ × 4</small></span></div><div class="b mt" style="width:170px"></div><div class="v nosum">6.4 × 10⁶</div></div>
+</div>
+<div class="n md nosum"><span class="ko" data-i>자릿수 차 4.8</span><span class="en" data-i>Gap of 4.8 orders</span></div>
+<div class="figw white"><svg viewBox="0 0 700 180"><line x1="60" y1="110" x2="660" y2="110" stroke="#6E655C" stroke-width="3"/><g class="cfm" text-anchor="middle" fill="#4A4540"><text x="60" y="150">10⁰</text><text x="210" y="150">10⁴</text><text x="360" y="150">10⁸</text><text x="510" y="150">10¹²</text><text x="660" y="150">10¹⁶</text></g><rect x="135" y="90" width="120" height="40" rx="8" fill="#FDE3BF"/><circle cx="135" cy="110" r="13" fill="#2E8B57"/><text x="135" y="66" text-anchor="middle" class="cfh" fill="#2E8B57" font-size="20"><tspan class="ko" data-i>실험 10²</tspan><tspan class="en" data-i>Experiments 10²</tspan></text><circle cx="255" cy="110" r="13" fill="#9AA5B1"/><text x="300" y="66" text-anchor="middle" class="cfh" fill="#6E655C" font-size="20"><tspan class="ko" data-i>후보 6.4 × 10⁶</tspan><tspan class="en" data-i>Candidates 6.4 × 10⁶</tspan></text></svg></div>
+<p class="cap"><span class="ko" data-i>함량을 「적게 · 보통 · 많이」 3단계로만 나눠도 백만 개</span><span class="en" data-i>Even splitting content into just 3 levels (low · medium · high) gives a million</span></p></div>
+<div class="pane after a" style="--d:2"><h3><span class="tic" data-ico="plus"></span><span class="ko" data-i>후 · 단계 5 (10 wt% 간격)</span><span class="en" data-i>After · 5 levels (10 wt% steps)</span></h3>
+<div class="bars">
+<div class="bar"><div class="l"><span class="ko" data-i>실험<small>연간</small></span><span class="en" data-i>Experiments<small>per year</small></span></div><div class="b gr" style="width:50px"></div><div class="v nosum">10²</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>후보<small>5¹³ × 4</small></span><span class="en" data-i>Candidates<small>5¹³ × 4</small></span></div><div class="b" style="width:243px"></div><div class="v nosum">4.9 × 10⁹</div></div>
+</div>
+<div class="n md nosum"><span class="ko" data-i>자릿수 차 7.7 · 1,000배</span><span class="en" data-i>Gap of 7.7 orders · 1,000×</span></div>
+<div class="figw white"><svg viewBox="0 0 700 180"><line x1="60" y1="110" x2="660" y2="110" stroke="#6E655C" stroke-width="3"/><g class="cfm" text-anchor="middle" fill="#4A4540"><text x="60" y="150">10⁰</text><text x="210" y="150">10⁴</text><text x="360" y="150">10⁸</text><text x="510" y="150">10¹²</text><text x="660" y="150">10¹⁶</text></g><rect x="135" y="90" width="229" height="40" rx="8" fill="#FDE3BF"/><circle cx="135" cy="110" r="13" fill="#2E8B57"/><text x="135" y="66" text-anchor="middle" class="cfh" fill="#2E8B57" font-size="20"><tspan class="ko" data-i>실험 10²</tspan><tspan class="en" data-i>Experiments 10²</tspan></text><circle cx="364" cy="110" r="13" fill="#E37F1A"/><circle class="pulse" cx="364" cy="110" r="13" fill="#E37F1A" opacity=".4"/><text x="400" y="66" text-anchor="middle" class="cfh" fill="#C8610C" font-size="20"><tspan class="ko" data-i>후보 4.9 × 10⁹</tspan><tspan class="en" data-i>Candidates 4.9 × 10⁹</tspan></text></svg></div>
+<p class="cap"><span class="ko" data-i>해상도를 조금 올려도 후보는 거듭제곱으로 · 계산 없이는 탐색 불가</span><span class="en" data-i>A slightly finer resolution makes candidates grow by powers · no search without computation</span></p></div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>계산기(6장)에서 단계를 3 ↔ 5 로 직접 바꿔 자릿수 차를 확인</span><span class="en" data-i>Switch levels 3 ↔ 5 in the calculator (slide 6) and check the gap</span></p><p><span class="ko" data-i>내 재료의 변수 · 수준을 넣으면? → 다음 차시 지시 P1-1</span><span class="en" data-i>What if you enter your material's variables · levels? → next session prompt P1-1</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>수치 = 조합 공간 계산기와 같은 식 (단계^종류 × 온도)</span><span class="en" data-i>Numbers = same formula as the combination-space calculator (levels^types × temperatures)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 8 2차시 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 1-2 · 12분 · 영상 1편</span><span class="en" data-i>Session 1-2 · 12 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="target"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">2</p><p class="hubt"><span class="ko" data-i>역설계</span><span class="en" data-i>Inverse design</span></p><p class="hubs"><span class="ko" data-i>표적 선지정 → 조성 탐색</span><span class="en" data-i>Set target first → search composition</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>내 재료의 조성 변수 · 표적 물성 표</span><span class="en" data-i>Composition variables · target-property table of my material</span></h4></div></div><p><span class="ko" data-i>Claude Code 지시 P1-1 → 표 2개 · 조합 수를 계산기와 대조</span><span class="en" data-i>Claude Code prompt P1-1 → 2 tables · check combination count against the calculator</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>문제의 정의와 두 예제 재료</span><span class="en" data-i>Problem definition and two example materials</span></h4></div></div><p><span class="ko" data-i>순방향(조성 → 물성)의 역문제 · 아스팔트(주) · 시멘트(부)</span><span class="en" data-i>Inverse of the forward problem (composition → property) · asphalt (main) · cement (sub)</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 9 ANIM 순방향 ↔ 역방향 -->
+<section class="slide v3" data-src="01주차#7">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>1-2 · 무엇</span><span class="en" data-i>1-2 · What</span></p>
+<div class="hrow"><span class="hico" data-ico="crosshair"></span><h2 class="h"><span class="ko" data-i>역설계 = 표적 y* 선지정 → 최근접 조성 x* 탐색 · 순방향의 역문제</span><span class="en" data-i>Inverse design = set target y* first → search nearest composition x* · inverse of the forward problem</span></h2></div>
+<p class="sub"><span class="ko" data-i>조성 공간 x → 물성 공간 y (순방향) · 역설계 = 과녁 y* 에서 역방향 추적</span><span class="en" data-i>Composition space x → property space y (forward) · inverse design = trace backward from target y*</span></p>
+<div class="bd px">
+<ul class="pxl">
+<li><span class="pxn">1</span><div><h4><span class="ko" data-i>순방향 x → y</span><span class="en" data-i>Forward x → y</span></h4><p><span class="ko" data-i>조성 1개 → 물성 1개 · 해 1개 · 비용 ∝ 조성 수</span><span class="en" data-i>1 composition → 1 property · 1 solution · cost ∝ number of compositions</span></p></div></li>
+<li><span class="pxn">2</span><div><h4><span class="ko" data-i>표적 y* 에 가장 가까운 물성점</span><span class="en" data-i>Property point nearest target y*</span></h4><p><span class="ko" data-i>거리 ‖f(x) − y*‖ 최소인 점 선택</span><span class="en" data-i>Pick the point minimizing distance ‖f(x) − y*‖</span></p></div></li>
+<li><span class="pxn">3</span><div><h4><span class="ko" data-i>그 점의 조성 x* = 해</span><span class="en" data-i>Composition x* of that point = solution</span></h4><p><span class="ko" data-i>해: 복수 또는 없음 · 구현 = 순방향 반복 (W14 · W16)</span><span class="en" data-i>Solutions: several or none · implementation = repeated forward runs (W14 · W16)</span></p></div></li>
+</ul>
+<div class="pxr"><div class="emb" data-emb="fwdinv" data-dur="10" data-steps="3" data-labels="① 순방향 x → y|② 표적 y* 최근접|③ 해 x* 역추적" data-labels-en="① Forward x → y|② Nearest to target y*|③ Trace back to x*"></div></div>
+</div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 01주차 덱 #7</span><span class="en" data-i>Original week-01 deck #7</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 10 FIG 표적 물성 5종 -->
+<section class="slide v3" data-src="01주차#8">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>1-2 · 어떻게</span><span class="en" data-i>1-2 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="list-checks"></span><h2 class="h"><span class="ko" data-i>표적 물성 5종: 수치 · 단위 · 산출 방법 · 방향 4요소 필수</span><span class="en" data-i>5 target properties: 4 required elements: value · unit · derivation method · direction</span></h2></div>
+<p class="sub"><span class="ko" data-i>카드 한 장 = 표적 하나: 이름 · 단위 · MD 산출 방법 · 방향 · 산출 주차 · 방향 지정 불가 → 표적 제외</span><span class="en" data-i>One card = one target: name · unit · MD derivation method · direction · derivation week · no direction → target dropped</span></p>
+<div class="bd">
+<div class="grid c5">
+<div class="it a" style="--d:1"><span class="icb" data-ico="box"></span><p class="k">g/cm³</p><h4><span class="ko" data-i>밀도</span><span class="en" data-i>Density</span></h4><p><span class="ko" data-i>NPT 평형 부피</span><span class="en" data-i>Equilibrium volume at NPT</span></p><div class="rel" style="justify-content:flex-start"><span><span class="ko" data-i>↑ 최대</span><span class="en" data-i>↑ maximize</span></span><span>W09</span></div></div>
+<div class="it a" style="--d:2"><span class="icb" data-ico="magnet"></span><p class="k">MJ/m³</p><h4><span class="ko" data-i>응집에너지밀도 CED</span><span class="en" data-i>Cohesive energy density (CED)</span></h4><p><span class="ko" data-i>벌크 − 낱개 분자 에너지</span><span class="en" data-i>Bulk − isolated-molecule energy</span></p><div class="rel" style="justify-content:flex-start"><span><span class="ko" data-i>↑ 최대</span><span class="en" data-i>↑ maximize</span></span><span>W09</span></div></div>
+<div class="it a" style="--d:3"><span class="icb" data-ico="droplet"></span><p class="k">mPa·s</p><h4><span class="ko" data-i>점도</span><span class="en" data-i>Viscosity</span></h4><p><span class="ko" data-i>응력 요동의 시간 상관</span><span class="en" data-i>Time correlation of stress fluctuations</span></p><div class="rel" style="justify-content:flex-start"><span><span class="ko" data-i>↕ 용도별</span><span class="en" data-i>↕ depends on use</span></span><span>W09</span></div></div>
+<div class="it a" style="--d:4"><span class="icb" data-ico="thermometer"></span><p class="k">K</p><h4><span class="ko" data-i>유리전이온도 Tg</span><span class="en" data-i>Glass transition temperature Tg</span></h4><p><span class="ko" data-i>부피–온도 기울기 변화점</span><span class="en" data-i>Slope-change point of volume–temperature curve</span></p><div class="rel" style="justify-content:flex-start"><span><span class="ko" data-i>↓ 최소</span><span class="en" data-i>↓ minimize</span></span><span>W09</span></div></div>
+<div class="it a" style="--d:4"><span class="icb" data-ico="unlink"></span><p class="k">mJ/m²</p><h4><span class="ko" data-i>계면 분리일</span><span class="en" data-i>Interfacial work of separation</span></h4><p><span class="ko" data-i>계면 두 층을 떼는 일</span><span class="en" data-i>Work to separate two interface layers</span></p><div class="rel" style="justify-content:flex-start"><span><span class="ko" data-i>↑ 최대</span><span class="en" data-i>↑ maximize</span></span><span>W10</span></div></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>표적 제외: <b>RDF · MSD</b> · 구조 · 확산의 진단 지표 · 방향(최대/최소) 지정 불가 · 해석 전용</span><span class="en" data-i>Excluded as targets: <b>RDF · MSD</b> · diagnostics of structure · diffusion · no direction (max/min) · interpretation only</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 01주차 덱 #8 · 산출 방법은 W09 · W10</span><span class="en" data-i>Original week-01 deck #8 · derivation methods in W09 · W10</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 11 DEF 5 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>용어 정의</span><span class="en" data-i>Key terms</span></p>
+<div class="hrow"><span class="hico" data-ico="book-marked"></span><h2 class="h"><span class="ko" data-i>새 용어 5: 역설계 · 표적 물성 · 분자동역학 · 힘장 · 대리모델</span><span class="en" data-i>5 new terms: inverse design · target property · molecular dynamics · force field · surrogate model</span></h2></div>
+<p class="sub"><span class="ko" data-i>영어 병기 · 한 줄 정의 · 다시 나오는 곳: W03 · W04 · W09 · W14 · W16</span><span class="en" data-i>English given · one-line definition · reappears in: W03 · W04 · W09 · W14 · W16</span></p>
+<div class="bd">
+<div class="defs icon">
+<div class="defcard icon a" style="--d:1"><span class="lic" data-ico="crosshair"></span><p class="term"><span class="ko" data-i>역설계<em>inverse design</em></span><span class="en" data-i>Inverse design<em>inverse design</em></span></p><p class="def"><span class="ko" data-i>표적 y* 를 먼저 정하고 가장 가까운 조성 x* 를 순방향 반복으로 찾는 일</span><span class="en" data-i>Set target y* first, then find nearest composition x* by repeated forward runs</span></p><p class="again">W14 · W16</p></div>
+<div class="defcard icon a" style="--d:2"><span class="lic" data-ico="target"></span><p class="term"><span class="ko" data-i>표적 물성<em>target property</em></span><span class="en" data-i>Target property<em>target property</em></span></p><p class="def"><span class="ko" data-i>수치 · 단위 · 산출 방법 · 방향이 정해진 물성 · 역설계의 과녁</span><span class="en" data-i>Property with fixed value · unit · derivation method · direction · the bull's-eye of inverse design</span></p><p class="again">W09 · W10</p></div>
+<div class="defcard icon a" style="--d:3"><span class="lic" data-ico="atom"></span><p class="term"><span class="ko" data-i>분자동역학<em>molecular dynamics · MD</em></span><span class="en" data-i>Molecular dynamics<em>molecular dynamics · MD</em></span></p><p class="def"><span class="ko" data-i>원자마다 힘을 구해 F = ma 를 짧은 Δt 로 반복 적분 → 위치 · 속도의 기록(궤적)</span><span class="en" data-i>Get force on each atom, integrate F = ma repeatedly with short Δt → record of positions · velocities (trajectory)</span></p><p class="again">W03</p></div>
+<div class="defcard icon a" style="--d:4"><span class="lic" data-ico="spline"></span><p class="term"><span class="ko" data-i>힘장<em>force field</em></span><span class="en" data-i>Force field<em>force field</em></span></p><p class="def"><span class="ko" data-i>원자 사이 에너지를 거리 · 각도의 함수로 적은 식 + 상수 · 미분하면 힘</span><span class="en" data-i>Energy between atoms as a function of distance · angle + constants · derivative gives force</span></p><p class="again">W04</p></div>
+<div class="defcard icon a" style="--d:4"><span class="lic" data-ico="brain-circuit"></span><p class="term"><span class="ko" data-i>대리모델<em>surrogate model</em></span><span class="en" data-i>Surrogate model<em>surrogate model</em></span></p><p class="def"><span class="ko" data-i>MD 입력–출력 쌍을 학습해 밀리초에 예측하는 기계학습 모델</span><span class="en" data-i>ML model trained on MD input–output pairs that predicts in milliseconds</span></p><p class="again">W14 · W15</p></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>정의 문구 = 저장소 GLOSSARY.md</span><span class="en" data-i>Definition wording = repository GLOSSARY.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 12 프롬프트 사용 환경 -->
+<section class="slide v3" data-min="2">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>1-2 · 어떻게 · 만들어 보기 환경</span><span class="en" data-i>1-2 · How · Try-it environment</span></p>
+<div class="hrow"><span class="hico" data-ico="terminal"></span><h2 class="h"><span class="ko" data-i>실습 환경: Claude Code · 폴더 열기 → 지시 → 승인 → out/ 확인</span><span class="en" data-i>Practice environment: Claude Code · open folder → prompt → approve → check out/</span></h2></div>
+<p class="sub"><span class="ko" data-i>코드 · 입력 파일은 저장소가 주고, 지시 = <b>Claude Code 가 그 파일로 할 일</b> · 번호 P주차-순번</span><span class="en" data-i>The repository provides code · input files; a prompt = <b>what Claude Code does with those files</b> · numbering P week-sequence</span></p>
+<div class="bd">
+<div class="exf a" style="--d:1">
+<div class="exs"><span class="exi" data-ico="terminal"></span><div><h4><span class="ko" data-i>① 폴더 열기</span><span class="en" data-i>① Open folder</span></h4><p>mdai · cd week01 · claude</p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="copy"></span><div><h4><span class="ko" data-i>② 「복사」</span><span class="en" data-i>② "Copy"</span></h4><p><span class="ko" data-i>슬라이드 버튼 · prompts.md</span><span class="en" data-i>Slide button · prompts.md</span></p></div></div><span class="exa"></span>
+<div class="exs hot"><span class="exi" data-ico="pencil-ruler"></span><div><h4><span class="ko" data-i>③ [ ] 안만 수정</span><span class="en" data-i>③ Edit only inside [ ]</span></h4><p><span class="ko" data-i>재료명 · 파일 = @경로</span><span class="en" data-i>Material name · file = @path</span></p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="shield-check"></span><div><h4><span class="ko" data-i>④ 검토 · 승인</span><span class="en" data-i>④ Review · approve</span></h4><p><span class="ko" data-i>명령 · 수정마다 승인 창</span><span class="en" data-i>Approval dialog for each command · edit</span></p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="save"></span><div><h4><span class="ko" data-i>⑤ out/ 확인</span><span class="en" data-i>⑤ Check out/</span></h4><p>week01/out/P1-1_result.md</p></div></div>
+</div>
+<div class="grid c3">
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="user-check"></span><div><p class="k"><span class="ko" data-i>준비 · 계정</span><span class="en" data-i>Setup · account</span></p><h4><span class="ko" data-i>Pro 이상 · Console API</span><span class="en" data-i>Pro or higher · Console API</span></h4></div></div><p><span class="ko" data-i>유료 요금제 · 무료 요금제 불가 · 직접 설치 = Claude Code 1개(docs/claude_code_quickstart.md) · conda mdai = 지시 I-1 · I-2 (24장) · Windows = WSL2 권장</span><span class="en" data-i>Paid plan · free plan not supported · install by hand = Claude Code only (docs/claude_code_quickstart.md) · conda mdai = prompts I-1 · I-2 (slide 24) · Windows = WSL2 recommended</span></p></div>
+<div class="it a" style="--d:3"><div class="ih"><span class="icb" data-ico="file-text"></span><div><p class="k"><span class="ko" data-i>파일 지정 (P1-2)</span><span class="en" data-i>Specify files (P1-2)</span></p><h4><span class="ko" data-i>파일 = @경로 · 본문 복사 불필요</span><span class="en" data-i>File = @path · no need to paste contents</span></h4></div></div><p><span class="ko" data-i>결과 파일 이름 = 지시 번호 · 다음 주 입력 · W16 기록</span><span class="en" data-i>Result file name = prompt number · next week's input · W16 record</span></p></div>
+<div class="it dark a" style="--d:4"><div class="ih"><span class="icb" data-ico="badge-check"></span><div><p class="k"><span class="ko" data-i>규칙 3</span><span class="en" data-i>3 rules</span></p><h4><span class="ko" data-i>Claude Code 의 답은 초안</span><span class="en" data-i>Claude Code's answer is a draft</span></h4></div></div><p><span class="ko" data-i>「확인 필요」 표시 유지 · scripts/ 수정 금지 · 변형 = out/ 새 파일 · <b>번호 없는 지시 금지</b></span><span class="en" data-i>Keep "needs check" marks · do not edit scripts/ · variants = new file in out/ · <b>no prompt without a number</b></span></p></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>설치 · 조작: repo/docs/claude_code_quickstart.md · 지시 사용법: repo/docs/prompt_setup.md · 강좌 규칙: repo/CLAUDE.md · 원문: weekNN/prompts.md</span><span class="en" data-i>Install · usage: repo/docs/claude_code_quickstart.md · prompt usage: repo/docs/prompt_setup.md · course rules: repo/CLAUDE.md · source: weekNN/prompts.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 13 MAKE P1-1 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>1-2 · 만들어 보기</span><span class="en" data-i>1-2 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="pencil-ruler"></span><h2 class="h"><span class="ko" data-i>만들어 보기 P1-1: 내 재료의 조성 변수 4개 · 표적 물성 2개 표 → 조합 수</span><span class="en" data-i>Try it P1-1: table of 4 composition variables · 2 target properties for my material → combination count</span></h2></div>
+<div class="bd">
+<div class="make">
+<div class="left a" style="--d:1">
+<pre class="code"><span class="c"><span class="ko" data-i># 환경: 12장 · week01 폴더의 Claude Code</span><span class="en" data-i># Setup: slide 12 · Claude Code in the week01 folder</span></span>
+<span class="c"><span class="ko" data-i># 1. 「복사」 → 붙여 넣기 → [재료명] 수정 → Enter</span><span class="en" data-i># 1. "Copy" → paste → edit [material name] → Enter</span></span>
+<span class="c"><span class="ko" data-i># 2. 결과 → week01/out/P1-1_result.md (자동 저장)</span><span class="en" data-i># 2. Result → week01/out/P1-1_result.md (saved automatically)</span></span>
+<span class="c"><span class="ko" data-i># 3. 수준 수 4개의 곱 → 6장 계산기와 비교</span><span class="en" data-i># 3. Product of the 4 level counts → compare with slide 6 calculator</span></span></pre>
+<div class="prompt" data-id="P1-1"><span class="pid">P1-1</span><span class="ko" data-i>나는 [SBS 개질 아스팔트 바인더]를 연구한다. 역설계 대상 조성 변수 4개를 표로 만들어라 · 열: 변수 이름 · 범위 · 단위 · 수준 수(3~6). 이어서 표적 물성 2개를 표로 만들어라 · 열: 이름 · 단위 · 수치 범위 · 산출 방법(시험 또는 계산) · 방향(최대/최소). 마지막 줄에 수준 수의 곱 = 후보 조합 수를 python 으로 계산해 적어라. 근거 없는 수치는 「확인 필요」로 표시하고, 결과를 out/P1-1_result.md 로 저장해라.</span><span class="en" data-i>I study [SBS-modified asphalt binder]. Make a table of 4 composition variables for inverse design · columns: variable name · range · unit · number of levels (3~6). Then make a table of 2 target properties · columns: name · unit · value range · derivation method (test or calculation) · direction (max/min). On the last line, compute the product of the level counts = number of candidate combinations with python and write it. Mark unsupported numbers as "needs check", and save the result to out/P1-1_result.md.</span></div>
+</div>
+<div class="expect a" style="--d:2">
+<h4><span class="tic" data-ico="table"></span><span class="ko" data-i>기대 결과 · 표 2개 + 조합 수 (값은 예시)</span><span class="en" data-i>Expected output · 2 tables + combination count (values are examples)</span></h4>
+<table class="t"><thead><tr><th><span class="ko" data-i>변수</span><span class="en" data-i>Variable</span></th><th><span class="ko" data-i>범위</span><span class="en" data-i>Range</span></th><th><span class="ko" data-i>단위</span><span class="en" data-i>Unit</span></th><th><span class="ko" data-i>수준 수</span><span class="en" data-i>Levels</span></th></tr></thead><tbody>
+<tr><td><span class="ko" data-i>SBS 함량</span><span class="en" data-i>SBS content</span></td><td>3 ~ 7</td><td>wt%</td><td class="mono">5</td></tr>
+<tr><td><span class="ko" data-i>아스팔텐 분율</span><span class="en" data-i>Asphaltene fraction</span></td><td>10 ~ 20</td><td>wt%</td><td class="mono">3</td></tr>
+<tr><td><span class="ko" data-i>첨가제 함량</span><span class="en" data-i>Additive content</span></td><td>0 ~ 2</td><td>wt%</td><td class="mono">5</td></tr>
+<tr><td><span class="ko" data-i>혼합 온도</span><span class="en" data-i>Mixing temperature</span></td><td>150 ~ 180</td><td>°C</td><td class="mono">4</td></tr></tbody></table>
+<table class="t"><thead><tr><th><span class="ko" data-i>표적</span><span class="en" data-i>Target</span></th><th><span class="ko" data-i>단위</span><span class="en" data-i>Unit</span></th><th><span class="ko" data-i>산출</span><span class="en" data-i>Derivation</span></th><th><span class="ko" data-i>방향</span><span class="en" data-i>Direction</span></th></tr></thead><tbody>
+<tr><td><span class="ko" data-i>점도 135 °C</span><span class="en" data-i>Viscosity 135 °C</span></td><td>mPa·s</td><td><span class="ko" data-i>회전점도계 · MD W09</span><span class="en" data-i>Rotational viscometer · MD W09</span></td><td><span class="ko" data-i>≤ 3,000 (최소)</span><span class="en" data-i>≤ 3,000 (minimize)</span></td></tr>
+<tr><td><span class="ko" data-i>계면 분리일</span><span class="en" data-i>Interfacial work of separation</span></td><td>mJ/m²</td><td><span class="ko" data-i>인장 시험 · MD W10</span><span class="en" data-i>Tensile test · MD W10</span></td><td><span class="ko" data-i>최대</span><span class="en" data-i>Maximize</span></td></tr></tbody></table>
+<div class="cb"><span class="fc"><em>5</em></span><span class="x">×</span><span class="fc"><em>3</em></span><span class="x">×</span><span class="fc"><em>5</em></span><span class="x">×</span><span class="fc"><em>4</em></span><span class="x">=</span><span class="tot"><span class="ko" data-i>300<small>후보 · 실험 100/년 → 3년</small></span><span class="en" data-i>300<small>candidates · 100 experiments/yr → 3 years</small></span></span></div>
+<p class="cap"><span class="ko" data-i>출력 형식만 일치하면 통과 · 수치 근거는 W09 · W10 계산으로 확인 · 「확인 필요」 표시 유지</span><span class="en" data-i>Pass if the output format matches · check numeric basis with W09 · W10 calculations · keep "needs check" marks</span></p>
+</div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>표적 2개에 수치 · 단위 · 산출 방법 · 방향이 모두 있는가</span><span class="en" data-i>Do both of the 2 targets have value · unit · derivation method · direction?</span></p><p><span class="ko" data-i>조합 수가 연간 실험 수를 넘는가 · 넘으면 이 강좌의 도구가 필요한 재료</span><span class="en" data-i>Does the combination count exceed experiments per year? · if so, the material needs this course's tool</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>지시 원문: week01/prompts.md · P1-1 · 사용법: repo/docs/prompt_setup.md</span><span class="en" data-i>Prompt source: week01/prompts.md · P1-1 · usage: repo/docs/prompt_setup.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 14 FIG 두 재료 -->
+<section class="slide v3" data-src="01주차#10,01주차#11">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>1-2 · 두 재료</span><span class="en" data-i>1-2 · Two materials</span></p>
+<div class="hrow"><span class="hico" data-ico="layers"></span><h2 class="h"><span class="ko" data-i>두 재료: 아스팔트 SARA 4분획 · 13분자 (주) · 시멘트 클링커 4상 (부)</span><span class="en" data-i>Two materials: asphalt SARA 4 fractions · 13 molecules (main) · cement clinker 4 phases (sub)</span></h2></div>
+<p class="sub"><span class="ko" data-i>주 예제 = 아스팔트: 분획 wt% 가 곧 조성 변수 · 대조 예제 = 시멘트: 결정 4상 + 비결정 C-S-H</span><span class="en" data-i>Main example = asphalt: fraction wt% is the composition variable · contrast example = cement: 4 crystalline phases + amorphous C-S-H</span></p>
+<div class="bd">
+<div class="row">
+<div class="it a fill" style="--d:1"><div class="ih"><span class="icb" data-ico="droplet"></span><div><p class="k"><span class="ko" data-i>주 예제</span><span class="en" data-i>Main example</span></p><h4><span class="ko" data-i>아스팔트 바인더 · 용해도로 나눈 4분획 (wt% 예시)</span><span class="en" data-i>Asphalt binder · 4 fractions by solubility (wt% example)</span></h4></div></div>
+<div class="figw white"><svg viewBox="0 0 760 210">
+<rect x="20" y="20" width="108" height="64" fill="#2E8B57"/><rect x="128" y="20" width="324" height="64" fill="#4F7FB0"/><rect x="452" y="20" width="180" height="64" fill="#E37F1A"/><rect x="632" y="20" width="108" height="64" fill="#231F20"/>
+<g class="cfw" text-anchor="middle" font-size="26"><text x="74" y="61">15</text><text x="290" y="61">45</text><text x="542" y="61">25</text><text x="686" y="61">15</text></g>
+<g class="cfs" text-anchor="middle"><text x="74" y="118"><tspan class="ko" data-i>포화분</tspan><tspan class="en" data-i>Saturates</tspan></text><text x="74" y="144" fill="#6E655C"><tspan class="ko" data-i>2종</tspan><tspan class="en" data-i>2 types</tspan></text><text x="290" y="118"><tspan class="ko" data-i>방향족</tspan><tspan class="en" data-i>Aromatics</tspan></text><text x="290" y="144" fill="#6E655C"><tspan class="ko" data-i>2종</tspan><tspan class="en" data-i>2 types</tspan></text><text x="542" y="118"><tspan class="ko" data-i>수지</tspan><tspan class="en" data-i>Resins</tspan></text><text x="542" y="144" fill="#6E655C"><tspan class="ko" data-i>5종</tspan><tspan class="en" data-i>5 types</tspan></text><text x="686" y="118"><tspan class="ko" data-i>아스팔텐</tspan><tspan class="en" data-i>Asphaltenes</tspan></text><text x="686" y="144" fill="#6E655C"><tspan class="ko" data-i>4종</tspan><tspan class="en" data-i>4 types</tspan></text></g>
+<text x="20" y="192" class="cfmu"><tspan class="ko" data-i>저극성 · 소분자 ←</tspan><tspan class="en" data-i>Low polarity · small molecules ←</tspan></text><text x="740" y="192" class="cfmu" text-anchor="end"><tspan class="ko" data-i>→ 고극성 · 대분자</tspan><tspan class="en" data-i>→ High polarity · large molecules</tspan></text>
+</svg></div>
+<div class="cb"><span class="fc"><span class="ko" data-i>대표 분자 <em>13</em>종</span><span class="en" data-i><em>13</em> representative molecules</span></span><span class="x">=</span><span class="fc bl">Li &amp; Greenfield <em>12</em></span><span class="x">+</span><span class="fc or"><span class="ko" data-i>고황 분자 <em>1</em></span><span class="en" data-i><em>1</em> high-sulfur molecule</span></span></div>
+<p><span class="ko" data-i>설계 변수 = 분획 wt% · 첨가제 → 벌크 셀(W06) · 분획 검증(W11)</span><span class="en" data-i>Design variables = fraction wt% · additive → bulk cell (W06) · fraction check (W11)</span></p></div>
+<div class="it a fill" style="--d:2"><div class="ih"><span class="icb" data-ico="brick-wall"></span><div><p class="k"><span class="ko" data-i>대조 예제</span><span class="en" data-i>Contrast example</span></p><h4><span class="ko" data-i>시멘트 클링커 · 4상 (wt% 대표값)</span><span class="en" data-i>Cement clinker · 4 phases (typical wt%)</span></h4></div></div>
+<div class="bars">
+<div class="bar"><div class="l"><span class="ko" data-i>C₃S 알라이트<small>빠른 수화 · 1~7일 강도</small></span><span class="en" data-i>C₃S alite<small>fast hydration · strength at 1~7 days</small></span></div><div class="b bl" style="width:300px"></div><div class="v">55</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>C₂S 벨라이트<small>느린 수화 · 28일 이후</small></span><span class="en" data-i>C₂S belite<small>slow hydration · after 28 days</small></span></div><div class="b gr" style="width:109px"></div><div class="v">20</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>C₃A 알루미네이트<small>초기 응결 · 발열</small></span><span class="en" data-i>C₃A aluminate<small>early setting · heat release</small></span></div><div class="b" style="width:55px"></div><div class="v">10</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>C₄AF 페라이트<small>색 · 내화학성</small></span><span class="en" data-i>C₄AF ferrite<small>color · chemical resistance</small></span></div><div class="b mt" style="width:44px"></div><div class="v">8</div></div>
+</div>
+<p><span class="ko" data-i>수화 생성물 C-S-H = 저규칙성 나노 구조 · 원자 모델 시작 구조 = 토버모라이트 유사 층상 구조 (W12)</span><span class="en" data-i>Hydration product C-S-H = poorly ordered nanostructure · starting atomic model = tobermorite-like layered structure (W12)</span></p></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 01주차 덱 #10 · #11 · SARA wt% = 연구 플랫폼 paper7 표(예시 조성) · 클링커 wt% = 보통포틀랜드시멘트 대표값</span><span class="en" data-i>Original week-01 deck #10 · #11 · SARA wt% = research platform paper7 table (example composition) · clinker wt% = typical ordinary Portland cement values</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 15 3차시 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 1-3 · 13분 · 영상 1편</span><span class="en" data-i>Session 1-3 · 13 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="layers"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">3</p><p class="hubt"><span class="ko" data-i>멀티스케일</span><span class="en" data-i>Multiscale</span></p><p class="hubs"><span class="ko" data-i>원자에서 구조물까지 · MD 와 대리모델의 자리</span><span class="en" data-i>From atoms to structures · where MD and surrogate models fit</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>MD 와 대리모델의 자리 그림</span><span class="en" data-i>Figure: where MD and surrogate models fit</span></h4></div></div><p><span class="ko" data-i>스케일 사다리 위에서 느린 물리 계산과 빠른 학습 모델이 어디에 서는지</span><span class="en" data-i>Where slow physics computation and fast learned models stand on the scale ladder</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>두 방법을 짝짓는 근거</span><span class="en" data-i>Rationale for pairing the two methods</span></h4></div></div><p><span class="ko" data-i>스케일별 비용 · 정확도 차이 → MD 점을 학습한 대리모델 · 불확실한 곳만 MD 추가</span><span class="en" data-i>Cost · accuracy differ by scale → surrogate trained on MD points · add MD only where uncertain</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 16 FIG 사다리 -->
+<section class="slide v3" data-min="2.5" data-src="01주차#13,01주차#14">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>1-3 · 무엇</span><span class="en" data-i>1-3 · What</span></p>
+<div class="hrow"><span class="hico" data-ico="layers-3"></span><h2 class="h"><span class="ko" data-i>스케일 사다리 4단: 아래 결과 = 위 입력 · 이 강좌 = 원자(MD) 단</span><span class="en" data-i>Scale ladder, 4 rungs: lower result = upper input · this course = atomic (MD) rung</span></h2></div>
+<p class="sub"><span class="ko" data-i>윗줄 점 = 작은 스케일의 결과가 위로 · 아랫줄 점 = 역설계의 요구가 아래로</span><span class="en" data-i>Top-row dots = small-scale results go up · bottom-row dots = inverse-design requirements go down</span></p>
+<div class="bd">
+<div class="frow a" style="--d:1"><div class="lab"><span class="ko" data-i>정보 흐름 →<small>결과가 위로</small></span><span class="en" data-i>Information flow →<small>results go up</small></span></div>
+<div class="st"><span class="sti" data-ico="atom"></span><span class="ko" data-i>양자<small>DFT · 힘장 상수 (W04)</small></span><span class="en" data-i>Quantum<small>DFT · force-field constants (W04)</small></span></div><span class="ar"></span>
+<div class="st pk"><span class="sti" data-ico="box"></span><span class="ko" data-i>원자 · 이 강좌<small>MD · 밀도 · CED · 점도 · 분리일</small></span><span class="en" data-i>Atomic · this course<small>MD · density · CED · viscosity · work of separation</small></span></div><span class="ar"></span>
+<div class="st"><span class="sti" data-ico="blocks"></span><span class="ko" data-i>메조<small>조대입자 · 미세구조</small></span><span class="en" data-i>Meso<small>coarse particles · microstructure</small></span></div><span class="ar"></span>
+<div class="st"><span class="sti" data-ico="building-2"></span><span class="ko" data-i>연속체<small>유한요소 · 포장 구조</small></span><span class="en" data-i>Continuum<small>finite element · pavement structure</small></span></div>
+<span class="rn"></span></div>
+<div class="frow back hot a" style="--d:2"><div class="lab"><span class="ko" data-i>역설계 ←<small>요구가 아래로</small></span><span class="en" data-i>Inverse design ←<small>requirements go down</small></span></div>
+<div class="st dk"><span class="ko" data-i>&lt; Å<small>결합 · 전하</small></span><span class="en" data-i>&lt; Å<small>bond · charge</small></span></div><span class="ar"></span>
+<div class="st dk"><span class="ko" data-i>Å ~ nm<small>수십만 원자 · 수십 ns</small></span><span class="en" data-i>Å ~ nm<small>hundreds of thousands of atoms · tens of ns</small></span></div><span class="ar"></span>
+<div class="st dk"><span class="ko" data-i>nm ~ μm<small>미세구조</small></span><span class="en" data-i>nm ~ μm<small>microstructure</small></span></div><span class="ar"></span>
+<div class="st dk"><span class="ko" data-i>mm ~ m<small>요구 성능</small></span><span class="en" data-i>mm ~ m<small>required performance</small></span></div>
+<span class="rn"></span></div>
+<div class="grid c2 tight">
+<div class="it a" style="--d:3"><div class="ih"><span class="icb" data-ico="microscope"></span><div><h4><span class="ko" data-i>정확한 쪽(양자 · 원자) = 작고 짧은 계</span><span class="en" data-i>Accurate side (quantum · atomic) = small, short systems</span></h4></div></div><p><span class="ko" data-i>MD 상한 = 수십만 원자 · 수십 ns → 물성을 <b>위 스케일로 전달</b></span><span class="en" data-i>MD limit = hundreds of thousands of atoms · tens of ns → <b>pass properties up to the upper scale</b></span></p></div>
+<div class="it a" style="--d:4"><div class="ih"><span class="icb" data-ico="building-2"></span><div><h4><span class="ko" data-i>큰 쪽(메조 · 연속체) = 재료 상수를 외부에서 입력</span><span class="en" data-i>Large side (meso · continuum) = material constants entered from outside</span></h4></div></div><p><span class="ko" data-i>위 스케일의 요구 → MD 의 <b>표적</b> · 상향 · 하향의 결합</span><span class="en" data-i>Requirement from upper scale → MD <b>target</b> · coupling of upward · downward</span></p></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 01주차 덱 #13 · #14</span><span class="en" data-i>Original week-01 deck #13 · #14</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 17 ANIM MD 순환 -->
+<section class="slide v3" data-min="3" data-src="01주차#15,01주차#16">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>1-3 · 어떻게</span><span class="en" data-i>1-3 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="refresh-cw"></span><h2 class="h"><span class="ko" data-i>MD 순환: 힘장 → 힘 → Δt 적분 → 궤적 → 시간 평균 = 물성</span><span class="en" data-i>MD loop: force field → force → Δt integration → trajectory → time average = property</span></h2></div>
+<p class="sub"><span class="ko" data-i>상자 안 원자 = 실제 계산 결과(2D LJ 장난감 계) · 물성 = 순간값 대신 <b>시간 평균</b></span><span class="en" data-i>Atoms in the box = real calculation result (2D LJ toy system) · property = <b>time average</b> instead of instantaneous value</span></p>
+<div class="bd px">
+<ul class="pxl">
+<li><span class="pxn">1</span><div><h4><span class="ko" data-i>힘장 U(r)</span><span class="en" data-i>Force field U(r)</span></h4><p><span class="ko" data-i>원자 쌍 거리마다 에너지 U 를 정한 식 + 상수 (W04)</span><span class="en" data-i>Formula + constants giving energy U for each atom-pair distance (W04)</span></p></div></li>
+<li><span class="pxn">2</span><div><h4><span class="ko" data-i>힘 F = −∇U</span><span class="en" data-i>Force F = −∇U</span></h4><p><span class="ko" data-i>U 의 기울기 = 각 원자가 받는 힘 · 빨간 화살표 (W03)</span><span class="en" data-i>Slope of U = force on each atom · red arrows (W03)</span></p></div></li>
+<li><span class="pxn">3</span><div><h4><span class="ko" data-i>Δt 적분</span><span class="en" data-i>Δt integration</span></h4><p><span class="ko" data-i>F = ma 로 짧은 시간 Δt(1 fs) 만큼 위치 · 속도 전진 (W03)</span><span class="en" data-i>Advance positions · velocities by a short time Δt (1 fs) using F = ma (W03)</span></p></div></li>
+<li><span class="pxn">4</span><div><h4><span class="ko" data-i>궤적 → 시간 평균</span><span class="en" data-i>Trajectory → time average</span></h4><p><span class="ko" data-i>수백만 번 반복한 기록 = 궤적 · 평균 = 밀도 · CED · 점도 (W09)</span><span class="en" data-i>Record of millions of repeats = trajectory · average = density · CED · viscosity (W09)</span></p></div></li>
+</ul>
+<div class="pxr"><div class="emb" data-emb="mdcycle" data-dur="12" data-steps="4" data-labels="① 힘장 U|② 힘 F = −∇U|③ Δt 적분|④ 궤적 → 물성" data-labels-en="① Force field U|② Force F = −∇U|③ Δt integration|④ Trajectory → property"></div></div>
+</div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 01주차 덱 #15 · #16 · 상자 = 2D LJ 환산단위 장난감 계 · 식과 단위는 W03</span><span class="en" data-i>Original week-01 deck #15 · #16 · box = 2D LJ reduced-unit toy system · formulas and units in W03</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 18 FIG MD vs 대리모델 -->
+<section class="slide v3" data-min="2.5" data-src="01주차#14,01주차#19">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>1-3 · 왜</span><span class="en" data-i>1-3 · Why</span></p>
+<div class="hrow"><span class="hico" data-ico="gauge"></span><h2 class="h"><span class="ko" data-i>MD 1조성 = GPU 시간 · 대리모델 = 밀리초 · 10³~10⁶배 · 범위 밖 = 오류</span><span class="en" data-i>MD 1 composition = GPU hours · surrogate = milliseconds · 10³~10⁶× · outside range = error</span></h2></div>
+<p class="sub"><span class="ko" data-i>MD 는 느리지만 물리 근거 · 대리모델은 빠르지만 MD 가 본 범위 안에서만 · 둘을 짝지어 쓰는 방법이 4차시</span><span class="en" data-i>MD is slow but physically grounded · surrogate is fast but only within the range MD has seen · how to pair them is session 4</span></p>
+<div class="bd">
+<div class="row">
+<div class="figw white fill"><svg viewBox="0 0 980 520" class="cfig">
+<line x1="110" y1="440" x2="900" y2="440" stroke="#6E655C" stroke-width="3"/><line x1="110" y1="440" x2="110" y2="50" stroke="#6E655C" stroke-width="3"/>
+<text x="505" y="490" class="cfs" text-anchor="middle"><tspan class="ko" data-i>조성 1개의 물성 한 벌을 얻는 시간 (로그)</tspan><tspan class="en" data-i>Time to get one set of properties for 1 composition (log)</tspan></text><text x="40" y="250" class="cfs" text-anchor="middle" transform="rotate(-90 40 250)"><tspan class="ko" data-i>정확도 · 근거</tspan><tspan class="en" data-i>Accuracy · grounding</tspan></text>
+<g class="cfm" text-anchor="middle"><text x="210" y="472">ms</text><text x="440" y="472"><tspan class="ko" data-i>초</tspan><tspan class="en" data-i>Seconds</tspan></text><text x="670" y="472"><tspan class="ko" data-i>시간</tspan><tspan class="en" data-i>Hours</tspan></text><text x="880" y="472"><tspan class="ko" data-i>일</tspan><tspan class="en" data-i>Days</tspan></text></g>
+<line class="tl" x1="665" y1="130" x2="235" y2="250" stroke-width="5" stroke-dasharray="12 8"/>
+<text x="380" y="162" class="cfx" text-anchor="middle" fill="#2E8B57" font-size="30"><tspan class="ko" data-i>10³ ~ 10⁶ 배 빠름</tspan><tspan class="en" data-i>10³ ~ 10⁶ × faster</tspan></text>
+<circle cx="690" cy="120" r="26" fill="#E37F1A"/><circle class="pulse" cx="690" cy="120" r="26" fill="#E37F1A" opacity=".4"/><text x="690" y="78" class="cfh" text-anchor="middle" fill="#C8610C"><tspan class="ko" data-i>MD · GPU 시간 단위</tspan><tspan class="en" data-i>MD · GPU-hour scale</tspan></text><text x="690" y="170" class="cfs" text-anchor="middle"><tspan class="ko" data-i>물리 계산 · 분자 수준 해석 포함</tspan><tspan class="en" data-i>Physical calculation · includes molecular-level interpretation</tspan></text>
+<circle cx="210" cy="260" r="26" fill="#4F7FB0"/><text x="210" y="218" class="cfh" text-anchor="middle" fill="#4F7FB0"><tspan class="ko" data-i>대리모델 · 밀리초</tspan><tspan class="en" data-i>Surrogate · milliseconds</tspan></text><text x="210" y="310" class="cfs" text-anchor="middle"><tspan class="ko" data-i>MD 결과를 학습 · 학습 범위 안에서만</tspan><tspan class="en" data-i>Trained on MD results · only within training range</tspan></text>
+<circle cx="880" cy="380" r="22" fill="#6E655C"/><text x="880" y="422" class="cfs" text-anchor="middle" font-weight="700"><tspan class="ko" data-i>실험 · 수 주</tspan><tspan class="en" data-i>Experiment · several weeks</tspan></text>
+</svg></div>
+<div class="col" style="width:560px;flex:none">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="cpu"></span><div><p class="k"><span class="ko" data-i>MD · 1조성</span><span class="en" data-i>MD · 1 composition</span></p><div class="n md nosum"><span class="ko" data-i>GPU 시간 단위</span><span class="en" data-i>GPU-hour scale</span></div></div></div><p><span class="ko" data-i>물리 계산 · 분자 수준 해석까지</span><span class="en" data-i>Physical calculation · down to molecular-level interpretation</span></p></div>
+<div class="it hot a" style="--d:2"><div class="ih"><span class="icb" data-ico="zap"></span><div><p class="k"><span class="ko" data-i>대리모델 · 1조성</span><span class="en" data-i>Surrogate · 1 composition</span></p><div class="n md nosum"><span class="ko" data-i>밀리초 · 10³~10⁶ ×</span><span class="en" data-i>Milliseconds · 10³~10⁶ ×</span></div></div></div><p><span class="ko" data-i>MD 점을 학습한 곡면 · 어느 조성이든 즉시</span><span class="en" data-i>Surface trained on MD points · any composition instantly</span></p></div>
+<div class="it dark a" style="--d:3"><div class="ih"><span class="icb" data-ico="triangle-alert"></span><div><p class="k"><span class="ko" data-i>한계</span><span class="en" data-i>Limit</span></p><h4><span class="ko" data-i>학습 범위 밖 = 오류</span><span class="en" data-i>Outside training range = error</span></h4></div></div><p><span class="ko" data-i>오류 지점을 MD 로 재계산 · 재학습 = <b>능동학습</b> (1-4)</span><span class="en" data-i>Recompute error points with MD · retrain = <b>active learning</b> (1-4)</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 01주차 덱 #14 · #19 (대리모델 정의 · 10³~10⁶배)</span><span class="en" data-i>Original week-01 deck #14 · #19 (surrogate definition · 10³~10⁶×)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 19 ANIM 대리모델 학습 -->
+<section class="slide v3" data-min="3" data-src="01주차#18,01주차#19,01주차#23">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>1-3 · 확인</span><span class="en" data-i>1-3 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="brain-circuit"></span><h2 class="h"><span class="ko" data-i>대리모델 = MD 점 → 곡면 학습 → 불확실한 곳만 MD 추가 (능동학습)</span><span class="en" data-i>Surrogate = MD points → learn a surface → add MD only where uncertain (active learning)</span></h2></div>
+<p class="sub"><span class="ko" data-i>입력 = 조성 wt% · 표현자(W14) · 출력 = 물성 + 불확실성(W15) · 띠가 넓은 곳이 다음 MD 계산 대상</span><span class="en" data-i>Input = composition wt% · descriptors (W14) · output = property + uncertainty (W15) · where the band is wide = next MD target</span></p>
+<div class="bd px">
+<ul class="pxl">
+<li><span class="pxn">1</span><div><h4><span class="ko" data-i>MD 점</span><span class="en" data-i>MD points</span></h4><p><span class="ko" data-i>MD 로 계산한 (조성, 물성) 쌍 · 1점 = GPU 시간 단위 · 점 5개 = 며칠</span><span class="en" data-i>(Composition, property) pairs computed by MD · 1 point = GPU hours · 5 points = days</span></p></div></li>
+<li><span class="pxn">2</span><div><h4><span class="ko" data-i>곡면 학습</span><span class="en" data-i>Learn the surface</span></h4><p><span class="ko" data-i>점을 지나는 곡면을 기계학습으로 · 어느 조성이든 밀리초 · 띠 = 불확실성</span><span class="en" data-i>Fit a surface through the points by machine learning · any composition in milliseconds · band = uncertainty</span></p></div></li>
+<li><span class="pxn">3</span><div><h4><span class="ko" data-i>불확실한 곳 추가</span><span class="en" data-i>Add where uncertain</span></h4><p><span class="ko" data-i>띠가 넓은 조성만 골라 MD 재계산 → 곡면 갱신 = 능동학습 (W15)</span><span class="en" data-i>Pick only compositions with a wide band, rerun MD → update surface = active learning (W15)</span></p></div></li>
+</ul>
+<div class="pxr"><div class="emb" data-emb="surr" data-dur="12" data-steps="3" data-labels="① MD 점|② 곡면 학습|③ 불확실한 곳 추가" data-labels-en="① MD points|② Learn surface|③ Add where uncertain"></div></div>
+</div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 01주차 덱 #18 · #19 · #23 · 트리 모델 W14 → 그래프 신경망 W15</span><span class="en" data-i>Original week-01 deck #18 · #19 · #23 · tree models W14 → graph neural networks W15</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 20 4차시 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 1-4 · 13분 · 영상 1편</span><span class="en" data-i>Session 1-4 · 13 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="workflow"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">4</p><p class="hubt"><span class="ko" data-i>디지털 트윈 · 18주 지도</span><span class="en" data-i>Digital twin · 18-week map</span></p><p class="hubs"><span class="ko" data-i>파이프라인 6단계와 18주의 대응 · 설치 · 첫 실행</span><span class="en" data-i>6 pipeline steps mapped to 18 weeks · install · first run</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>환경 점검 보고서 setup_report.json</span><span class="en" data-i>Environment check report setup_report.json</span></h4></div></div><p><span class="ko" data-i>설치 지시 I-1 · I-2 → 노트북 실행 → 보고서 · claude · lmp · conda 확인 · 실패 항목 = 조치 표</span><span class="en" data-i>Install prompts I-1 · I-2 → run notebook → report · check claude · lmp · conda · failed items = action table</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>과정의 최종 구조와 지도</span><span class="en" data-i>Final structure and map of the course</span></h4></div></div><p><span class="ko" data-i>6단계 순환 · 디지털 트윈 · 각 주차 = 순환의 한 칸</span><span class="en" data-i>6-step loop · digital twin · each week = one step of the loop</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 21 ANIM 6단계 파이프라인 -->
+<section class="slide v3" data-src="01주차#25,01주차#26,01주차#27,01주차#28">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>1-4 · 어떻게</span><span class="en" data-i>1-4 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="workflow"></span><h2 class="h"><span class="ko" data-i>자율 탐색 파이프라인 = 6단계 순환 · 능동학습 = 다음 계산 대상 선정</span><span class="en" data-i>Autonomous exploration pipeline = 6-step loop · active learning = choose next calculation target</span></h2></div>
+<p class="sub"><span class="ko" data-i>직선 대신 순환 · ⑥ 의 출력 = ① 의 입력 · 오른쪽 = 각 단계를 만드는 주차 · 실제 파일 = repo/loop</span><span class="en" data-i>Loop instead of a line · output of ⑥ = input of ① · right = week that builds each step · real files = repo/loop</span></p>
+<div class="bd loopw">
+<div class="emb loop" data-emb="loop6big" data-dur="12" data-steps="6" data-labels="①|②|③|④|⑤|⑥ → ①"></div>
+<div class="side" id="loop6-side">
+<div><span class="ko" data-i><b>① 문헌 · 후보 · W02 · W11</b></span><span class="en" data-i><b>① Literature · candidates · W02 · W11</b></span><span><span class="ko" data-i>문헌 · 데이터베이스에서 후보 분자 · 조성 입력 · loop/vault → 표적 2개</span><span class="en" data-i>Enter candidate molecules · compositions from literature · databases · loop/vault → 2 targets</span></span></div>
+<div><span class="ko" data-i><b>② 구조 생성 · W06 ~ W08 · W17</b></span><span class="en" data-i><b>② Structure generation · W06 ~ W08 · W17</b></span><span><span class="ko" data-i>RDKit · Packmol 로 벌크 · 계면 셀 생성 · 품질 게이트 · mdworkflow</span><span class="en" data-i>Build bulk · interface cells with RDKit · Packmol · quality gate · mdworkflow</span></span></div>
+<div><span class="ko" data-i><b>③ MD 계산 · W09 ~ W12 · W17</b></span><span class="en" data-i><b>③ MD calculation · W09 ~ W12 · W17</b></span><span><span class="ko" data-i>LAMMPS 로 밀도 · CED · 점도 · 분리일 계산</span><span class="en" data-i>Compute density · CED · viscosity · work of separation with LAMMPS</span></span></div>
+<div><span class="ko" data-i><b>④ 대리모델 · W13 ~ W15</b></span><span class="en" data-i><b>④ Surrogate model · W13 ~ W15</b></span><span><span class="ko" data-i>MD 결과를 학습한 빠른 예측 모델 + 불확실성 · gp · rf · xgb</span><span class="en" data-i>Fast prediction model trained on MD results + uncertainty · gp · rf · xgb</span></span></div>
+<div><span class="ko" data-i><b>⑤ 능동학습 · W15</b></span><span class="en" data-i><b>⑤ Active learning · W15</b></span><span><span class="ko" data-i>예측값이 좋거나 불확실성이 큰 조성만 골라 다음 MD · EHVI</span><span class="en" data-i>Pick only compositions with good predictions or high uncertainty for next MD · EHVI</span></span></div>
+<div><span class="ko" data-i><b>⑥ 최적화 · 재정련 · W16 · W18</b></span><span class="en" data-i><b>⑥ Optimization · refinement · W16 · W18</b></span><span><span class="ko" data-i>다목적 최적화로 조성 추천 → 후보를 ① 로 환류 · 볼트 노트</span><span class="en" data-i>Recommend composition by multi-objective optimization → feed candidates back to ① · vault notes</span></span></div>
+</div>
+</div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 01주차 덱 #25 ~ #28 · 다목적 최적화 · 플랫폼 화면 = W16 · 강좌 폐루프 = repo/loop: 문헌 → 표적 → MD 워크플로우 → 대리모델 → 능동학습 → 볼트 환류 · 한 바퀴 실습 = W18</span><span class="en" data-i>Original week-01 deck #25 ~ #28 · multi-objective optimization · platform screens = W16 · course closed loop = repo/loop: literature → targets → MD workflow → surrogate → active learning → vault feedback · one full turn = W18</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 22 FIG 디지털 트윈 · 루프 -->
+<section class="slide v3" data-src="01주차#21,01주차#22">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>1-4 · 무엇</span><span class="en" data-i>1-4 · What</span></p>
+<div class="hrow"><span class="hico" data-ico="refresh-cw"></span><h2 class="h"><span class="ko" data-i>디지털 트윈 = 시험값마다 갱신되는 모델 · 기준 = 실험</span><span class="en" data-i>Digital twin = model updated with every test value · standard = experiment</span></h2></div>
+<p class="sub"><span class="ko" data-i>위 카드 ② 동기화 = 아래 고리의 「실측 → 재학습」 화살표 · 이 고리를 사람 손 없이 도는 것이 W16 자율 탐색</span><span class="en" data-i>Card ② above, sync = "measurement → retrain" arrow in the loop below · this loop running without human hands is W16 autonomous exploration</span></p>
+<div class="bd">
+<div class="grid c3">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="layers"></span><div><p class="k"><span class="ko" data-i>기능 ①</span><span class="en" data-i>Function ①</span></p><h4><span class="ko" data-i>표현</span><span class="en" data-i>Representation</span></h4></div></div><p><span class="ko" data-i>분자 모델 + 힘장 + 대리모델 = 상태(조성 · 이력 · 온도)</span><span class="en" data-i>Molecular model + force field + surrogate = state (composition · history · temperature)</span></p></div>
+<div class="it hot a" style="--d:2"><div class="ih"><span class="icb" data-ico="refresh-cw"></span><div><p class="k"><span class="ko" data-i>기능 ②</span><span class="en" data-i>Function ②</span></p><h4><span class="ko" data-i>동기화</span><span class="en" data-i>Synchronization</span></h4></div></div><p><span class="ko" data-i>시험값(SARA · DSR · 인장) 입력 → 파라미터 보정 · <b>갱신 없는 시뮬레이션 ≠ 트윈</b></span><span class="en" data-i>Enter test values (SARA · DSR · tensile) → calibrate parameters · <b>simulation without updates ≠ twin</b></span></p></div>
+<div class="it a" style="--d:3"><div class="ih"><span class="icb" data-ico="trending-up"></span><div><p class="k"><span class="ko" data-i>기능 ③</span><span class="en" data-i>Function ③</span></p><h4><span class="ko" data-i>예측</span><span class="en" data-i>Prediction</span></h4></div></div><p><span class="ko" data-i>제작 전 성능 예측 · 다음 배합 제안</span><span class="en" data-i>Predict performance before making · propose next mix</span></p></div>
+</div>
+<div class="cyc a" style="--d:4">
+<div class="cys"><span class="cyi" data-ico="line-chart"></span><div><span class="ko" data-i><b>예측</b><small>대리모델 · MD</small></span><span class="en" data-i><b>Predict</b><small>surrogate · MD</small></span></div></div><span class="cya"></span>
+<div class="cys"><span class="cyi" data-ico="list-checks"></span><div><span class="ko" data-i><b>선정</b><small>후보 축소</small></span><span class="en" data-i><b>Select</b><small>narrow candidates</small></span></div></div><span class="cya"></span>
+<div class="cys gr"><span class="cyi" data-ico="flask-conical"></span><div><span class="ko" data-i><b>실측 (기준)</b><small>반증 사례 = 모델 수정 근거</small></span><span class="en" data-i><b>Measure (standard)</b><small>counterexample = ground to fix model</small></span></div></div><span class="cya"></span>
+<div class="cys hot"><span class="cyi" data-ico="refresh-cw"></span><div><span class="ko" data-i><b>재학습 · 힘장 보정</b><small>→ 다시 예측</small></span><span class="en" data-i><b>Retrain · force-field calibration</b><small>→ predict again</small></span></div></div>
+<p class="cyback"><span class="ko" data-i>↺ 기준 = 실험 · 모델 = 실험 횟수를 줄이는 수단 (대체 아님)</span><span class="en" data-i>↺ Standard = experiment · model = a way to cut the number of experiments (not a replacement)</span></p>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 01주차 덱 #21 · #22 · 강좌 안 실습 = W18 폐루프(repo/loop): 문헌 실측 표적 ↔ MD 결과 대조 · 볼트 환류</span><span class="en" data-i>Original week-01 deck #21 · #22 · course practice = W18 closed loop (repo/loop): measured literature targets ↔ MD results · vault feedback</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 23 FIG 18주 지도 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>1-4 · 확인</span><span class="en" data-i>1-4 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="map"></span><h2 class="h"><span class="ko" data-i>18주 지도: 5개 모듈 · 도구 주차 4개 · 각 주차 = 파이프라인의 한 칸</span><span class="en" data-i>18-week map: 5 modules · 4 tool weeks · each week = one step of the pipeline</span></h2></div>
+<p class="sub"><span class="ko" data-i>색 = 모듈 · 점선 = 도구 주차(새 물리 없음 · 다음 주차 도구 · 기초만) · 못 끝낸 주차 → expected_output 으로 연결</span><span class="en" data-i>Color = module · dotted = tool week (no new physics · tools for next week · basics only) · unfinished week → continue with expected_output</span></p>
+<div class="bd">
+<div class="modrow a" style="--d:1"><span class="mod" style="--m:#6E655C"><span class="ko" data-i><i></i>M0 준비 · ① 문헌</span><span class="en" data-i><i></i>M0 Setup · ① Literature</span></span><span class="mod" style="--m:#4F7FB0"><span class="ko" data-i><i></i>M1 MD 기초 · ③ 원리</span><span class="en" data-i><i></i>M1 MD basics · ③ Principles</span></span><span class="mod" style="--m:#E37F1A"><span class="ko" data-i><i></i>M2 LAMMPS · ② 구조 ③ MD</span><span class="en" data-i><i></i>M2 LAMMPS · ② Structure ③ MD</span></span><span class="mod" style="--m:#2E8B57"><span class="ko" data-i><i></i>M3 물성 · 소재 · ③ 물성</span><span class="en" data-i><i></i>M3 Properties · materials · ③ Properties</span></span><span class="mod" style="--m:#231F20"><span class="ko" data-i><i></i>M4 ML · M5 파이프라인 · ④ ⑤ ⑥</span><span class="en" data-i><i></i>M4 ML · M5 Pipeline · ④ ⑤ ⑥</span></span></div>
+<div class="wkmap" style="grid-template-columns:repeat(9,minmax(0,1fr))">
+<div class="wk now" style="--m:#6E655C"><b>W01</b><span><span class="ko" data-i>개요</span><span class="en" data-i>Overview</span></span><span class="ko" data-i><small>오늘</small></span><span class="en" data-i><small>Today</small></span></div>
+<div class="wk bridge" style="--m:#6E655C"><b>W02</b><span><span class="ko" data-i>계산 환경 · 문헌</span><span class="en" data-i>Compute environment · literature</span></span><span class="ko" data-i><small>도구</small></span><span class="en" data-i><small>Tool</small></span></div>
+<div class="wk " style="--m:#4F7FB0"><b>W03</b><span><span class="ko" data-i>운동방정식</span><span class="en" data-i>Equations of motion</span></span></div>
+<div class="wk " style="--m:#4F7FB0"><b>W04</b><span><span class="ko" data-i>힘장</span><span class="en" data-i>Force field</span></span></div>
+<div class="wk " style="--m:#4F7FB0"><b>W05</b><span><span class="ko" data-i>앙상블 · 오차</span><span class="en" data-i>Ensemble · error</span></span></div>
+<div class="wk " style="--m:#E37F1A"><b>W06</b><span><span class="ko" data-i>LAMMPS 입력</span><span class="en" data-i>LAMMPS input</span></span></div>
+<div class="wk bridge" style="--m:#E37F1A"><b>W07</b><span><span class="ko" data-i>자동화</span><span class="en" data-i>Automation</span></span><span class="ko" data-i><small>도구</small></span><span class="en" data-i><small>Tool</small></span></div>
+<div class="wk " style="--m:#E37F1A"><b>W08</b><span><span class="ko" data-i>다층 구조</span><span class="en" data-i>Multilayer structure</span></span></div>
+<div class="wk " style="--m:#2E8B57"><b>W09</b><span><span class="ko" data-i>물성 산출</span><span class="en" data-i>Property derivation</span></span></div>
+<div class="wk " style="--m:#2E8B57"><b>W10</b><span><span class="ko" data-i>계면 · 부착</span><span class="en" data-i>Interface · adhesion</span></span></div>
+<div class="wk " style="--m:#2E8B57"><b>W11</b><span><span class="ko" data-i>아스팔트</span><span class="en" data-i>Asphalt</span></span></div>
+<div class="wk " style="--m:#2E8B57"><b>W12</b><span><span class="ko" data-i>시멘트</span><span class="en" data-i>Cement</span></span></div>
+<div class="wk bridge" style="--m:#231F20"><b>W13</b><span><span class="ko" data-i>ML 기초</span><span class="en" data-i>ML basics</span></span><span class="ko" data-i><small>도구</small></span><span class="en" data-i><small>Tool</small></span></div>
+<div class="wk " style="--m:#231F20"><b>W14</b><span><span class="ko" data-i>대리모델</span><span class="en" data-i>Surrogate model</span></span></div>
+<div class="wk bridge" style="--m:#231F20"><b>W15</b><span><span class="ko" data-i>신경망</span><span class="en" data-i>Neural network</span></span><span class="ko" data-i><small>도구</small></span><span class="en" data-i><small>Tool</small></span></div>
+<div class="wk " style="--m:#231F20"><b>W16</b><span><span class="ko" data-i>파이프라인</span><span class="en" data-i>Pipeline</span></span></div>
+<div class="wk " style="--m:#231F20"><b>W17</b><span><span class="ko" data-i>MD 워크플로우 조립</span><span class="en" data-i>MD workflow assembly</span></span></div>
+<div class="wk " style="--m:#231F20"><b>W18</b><span><span class="ko" data-i>폐루프 통합</span><span class="en" data-i>Closed-loop integration</span></span><span class="ko" data-i><small>최종</small></span><span class="en" data-i><small>Final</small></span></div>
+</div>
+<div class="exf a" style="--d:4">
+<div class="exs"><span class="exi" data-ico="book-open"></span><div><h4><span class="ko" data-i>내 문제: 표적 · 후보</span><span class="en" data-i>My problem: targets · candidates</span></h4><p>W02 · W18</p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="layers"></span><div><h4><span class="ko" data-i>MD 워크플로우 계산</span><span class="en" data-i>MD workflow runs</span></h4><p>W17</p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="brain-circuit"></span><div><h4><span class="ko" data-i>대리모델 + 획득함수</span><span class="en" data-i>Surrogate + acquisition function</span></h4><p>W13 ~ W16</p></div></div><span class="exa"></span>
+<div class="exs hot"><span class="exi" data-ico="target"></span><div><h4><span class="ko" data-i>추천 → MD 검증 = W18 폐루프</span><span class="en" data-i>Recommend → MD check = W18 loop</span></h4><p><span class="ko" data-i>확장 예시 = 3층 셀 인장(W08 · W10)</span><span class="en" data-i>Extension example = 3-layer cell tension (W08 · W10)</span></p></div></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>최종 프로젝트 = W18 폐루프를 내 문제에 적용(week16/docs) · 확장 예시 = 직접인장 약 100건 → MD 재검증 1회(가이드 부록 A · 단분자 상자 밖) · W17 = repo/mdworkflow · W18 = repo/loop · 상세 = 저장소 index.html · STATUS.md</span><span class="en" data-i>Final project = W18 closed loop on my problem (week16/docs) · extension example = about 100 direct-tension runs → 1 MD re-validation (Guide Appendix A · beyond single-molecule boxes) · W17 = repo/mdworkflow · W18 = repo/loop · details = repository index.html · STATUS.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 24 FIG 설치 순서 (Claude Code 직접 1개 · 나머지 = 설치 지시 I-1 · I-2 · I-5) -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>1-4 · 준비 · 설치 순서</span><span class="en" data-i>1-4 · Setup · install order</span></p>
+<div class="hrow"><span class="hico" data-ico="download"></span><h2 class="h"><span class="ko" data-i>설치 순서: 직접 설치 = Claude Code 1개 · 나머지 = 설치 지시 I-1 · I-2 · I-5</span><span class="en" data-i>Install order: by hand = Claude Code only · the rest = install prompts I-1 · I-2 · I-5</span></h2></div>
+<p class="sub"><span class="ko" data-i>conda = 프로그램 묶음을 따로 담는 상자 · mdai = 이 강좌 전용 상자(MD + AI) · 포함: LAMMPS · Packmol · AmberTools · RDKit · scikit-learn</span><span class="en" data-i>conda = box that keeps program bundles separate · mdai = this course's own box (MD + AI) · includes: LAMMPS · Packmol · AmberTools · RDKit · scikit-learn</span></p>
+<div class="bd">
+<div class="exf a" style="--d:1">
+<div class="exs hot"><span class="exi" data-ico="mouse-pointer-click"></span><div><h4><span class="ko" data-i>① 직접 설치</span><span class="en" data-i>① Install by hand</span></h4><p><span class="ko" data-i>Claude Code · 로그인 · claude doctor</span><span class="en" data-i>Claude Code · login · claude doctor</span></p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="package"></span><div><h4>② I-1 conda</h4><p><span class="ko" data-i>Miniforge · 3분</span><span class="en" data-i>Miniforge · 3 min</span></p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="boxes"></span><div><h4>③ I-2 mdai</h4><p><span class="ko" data-i>environment.yml · 6~20분</span><span class="en" data-i>environment.yml · 6~20 min</span></p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="file-json"></span><div><h4><span class="ko" data-i>④ P1-2 점검</span><span class="en" data-i>④ P1-2 check</span></h4><p><span class="ko" data-i>다음 장 · setup_report.json</span><span class="en" data-i>Next slide · setup_report.json</span></p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="badge-check"></span><div><h4><span class="ko" data-i>⑤ I-5 전체 점검</span><span class="en" data-i>⑤ I-5 full check</span></h4><p><span class="ko" data-i>작은 MD · 폐루프 재생 · 3분</span><span class="en" data-i>Small MD · closed-loop replay · 3 min</span></p></div></div>
+</div>
+<div class="row">
+<div class="prompt a" data-id="I-2" style="--d:2;flex:1;white-space:pre-line"><span class="ko" data-i>@environment.yml 로 conda 환경 mdai 를 만들어라(conda env create -f environment.yml). 시간이 6~20분 걸린다.
+- mdai 가 이미 있으면 지우지 말고 먼저 나에게 알려라
+- 다른 conda 환경은 건드리지 마라
+만든 뒤 conda run -n mdai 로 다음을 확인해 out/I-2_result.md 에 표(프로그램 · 버전 · 확인)로 적어라:
+python · numpy · rdkit · scikit-learn · xgboost · shap · parmed · lmp(lmp -h 의 첫 줄과 Installed packages 에 KSPACE · MOLECULE · OPENMP 가 있는지) · packmol · antechamber · parmchk2 · tleap
+실패한 항목은 원인과 조치를 적고, 조치는 내 승인 뒤에만 해라.</span><span class="en" data-i>Create the conda environment mdai from @environment.yml (conda env create -f environment.yml). It takes 6~20 min.
+- If mdai already exists, do not delete it; tell me first
+- Do not touch other conda environments
+Then check the following with conda run -n mdai and write a table (program · version · check) to out/I-2_result.md:
+python · numpy · rdkit · scikit-learn · xgboost · shap · parmed · lmp(first line of lmp -h and whether KSPACE · MOLECULE · OPENMP are in Installed packages) · packmol · antechamber · parmchk2 · tleap
+For failed items, write cause and fix, and apply fixes only after my approval.</span></div>
+<div class="col" style="width:540px;flex:none">
+<div class="it a" style="--d:3"><div class="ih"><span class="icb" data-ico="user-check"></span><div><p class="k"><span class="ko" data-i>사람이 할 일</span><span class="en" data-i>What I do</span></p><h4><span class="ko" data-i>Claude Code 설치 · 승인</span><span class="en" data-i>Install Claude Code · approve</span></h4></div></div><p><span class="ko" data-i>설치 · 로그인 = docs/claude_code_quickstart.md · 시작 = 저장소 맨 위에서 claude · 승인 창 검토</span><span class="en" data-i>Install · login = docs/claude_code_quickstart.md · start = claude at repository top · review approval prompts</span></p></div>
+<div class="it dark a" style="--d:4"><div class="ih"><span class="icb" data-ico="terminal"></span><div><p class="k"><span class="ko" data-i>Claude Code 가 할 일</span><span class="en" data-i>What Claude Code does</span></p><h4><span class="ko" data-i>명령 제시 → 승인 뒤 실행</span><span class="en" data-i>Show command → run after approval</span></h4></div></div><p><span class="ko" data-i>결과 = out/I-n_result.md 표 · 오류 = I-6 진단 · W02 = I-3 Zotero · I-4 Obsidian</span><span class="en" data-i>Result = table in out/I-n_result.md · errors = I-6 diagnosis · W02 = I-3 Zotero · I-4 Obsidian</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>지시 원문 · OS 별 명령 · 기대 결과: repo/docs/install_prompts.md (I-1 ~ I-6 · Ubuntu · WSL2 검증 · macOS · Windows 미검증) · 환경 정의: repo/environment.yml</span><span class="en" data-i>Prompt text · commands per OS · expected results: repo/docs/install_prompts.md (I-1 ~ I-6 · verified on Ubuntu · WSL2 · macOS · Windows unverified) · environment: repo/environment.yml</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 25 MAKE P1-2 -->
+<section class="slide v3" data-src="01주차#29">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>1-4 · 만들어 보기</span><span class="en" data-i>1-4 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="terminal"></span><h2 class="h"><span class="ko" data-i>만들어 보기 P1-2: Claude Code 환경 점검 → setup_report.json</span><span class="en" data-i>Try it P1-2: Claude Code environment check → setup_report.json</span></h2></div>
+<div class="bd">
+<div class="make">
+<div class="left a" style="--d:1">
+<pre class="code">conda activate mdai
+cd week01 &amp;&amp; claude
+<span class="c"><span class="ko" data-i># 아래 지시 붙여 넣기 → 승인 창 검토</span><span class="en" data-i># Paste the prompt below → review the approval dialog</span></span>
+<span class="c"># → out/setup_report.json · png · P1-2_result.md</span></pre>
+<div class="prompt" data-id="P1-2"><span class="pid">P1-2</span><span class="ko" data-i>@notebooks/00_setup_check.ipynb 를 python ../run_nb.py 로 실행해 out/setup_report.json 을 만들어라. 이어서 claude --version · lmp 실행 가능 여부 · 현재 conda 환경 이름을 확인해 표 하나로 보고해라 · 열: 항목 · 값 · 판정(ok / 조치 필요). 조치 필요 항목마다 ① 원인 ② 내 환경([Windows WSL2 / macOS / Linux])의 조치 명령(mdai 안에서만) ③ 다시 확인하는 방법을 적고, 설치 · 변경은 내 승인을 받은 뒤 실행해라. 노트북과 scripts/ 는 고치지 마라. 끝나면 out/setup_report.json 의 ok · data_rows 를 expected_output/setup_report.json 과 비교해라.</span><span class="en" data-i>Run @notebooks/00_setup_check.ipynb with python ../run_nb.py to create out/setup_report.json. Then check claude --version · whether lmp runs · the current conda environment name, and report in one table · columns: item · value · verdict (ok / action needed). For each item needing action, write ① cause ② fix command for my environment ([Windows WSL2 / macOS / Linux]) (inside mdai only) ③ how to re-check, and run installs · changes only after my approval. Do not edit the notebook or scripts/. When done, compare ok · data_rows in out/setup_report.json with expected_output/setup_report.json.</span></div>
+</div>
+<div class="expect a" style="--d:2">
+<h4><span class="tic" data-ico="terminal"></span><span class="ko" data-i>기대 결과 · 노트북 마지막 셀</span><span class="en" data-i>Expected output · last cell of notebook</span></h4>
+<pre class="code">python 3.11.x   numpy ok   pandas ok   matplotlib ok
+data: asphalt_ml_101.csv → 101 rows · 2019~2025
+figure: papers_by_year.png (saved)
+report: week01/out/setup_report.json
+<span class="k"><span class="ko" data-i>✔ ok: true — W02 로 진행 가능</span><span class="en" data-i>✔ ok: true — ready to proceed to W02</span></span></pre>
+<div class="figw white"><svg viewBox="0 0 820 230"><text x="410" y="30" class="cfs" text-anchor="middle"><tspan class="ko" data-i>papers_by_year.png · 공개 데이터 101행 · 연도별 논문 수</tspan><tspan class="en" data-i>papers_by_year.png · 101 rows of public data · papers per year</tspan></text><g fill="#4F7FB0"><rect x="110" y="170" width="60" height="30"/><rect x="210" y="150" width="60" height="50"/><rect x="310" y="130" width="60" height="70"/><rect x="410" y="100" width="60" height="100"/><rect x="510" y="80" width="60" height="120"/><rect x="610" y="90" width="60" height="110"/><rect x="710" y="120" width="60" height="80"/></g><line x1="90" y1="200" x2="790" y2="200" stroke="#6E655C" stroke-width="2"/><g class="cfmu" text-anchor="middle"><text x="140" y="224">2019</text><text x="440" y="224">2022</text><text x="740" y="224">2025</text></g></svg></div>
+<p class="cap"><span class="ko" data-i>그림이 나오면 환경 · 데이터 · 저장 경로 세 가지가 모두 동작하는 것</span><span class="en" data-i>If the figure appears, environment · data · save path all work</span></p>
+</div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>setup_report.json 의 "ok": true · "data_rows": 101</span><span class="en" data-i>"ok": true · "data_rows": 101 in setup_report.json</span></p><p><span class="ko" data-i>조치 필요 항목 = 원인 · 조치 표 → 승인 후 실행 · 그래도 안 되면 expected_output 으로 W02 진행</span><span class="en" data-i>Items needing action = cause · fix table → run after approval · if still failing, proceed to W02 with expected_output</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>week01/notebooks/00_setup_check.ipynb · scripts/setup_check.py · 지시 원문 week01/prompts.md · P1-2 · 결과 out/P1-2_result.md</span><span class="en" data-i>week01/notebooks/00_setup_check.ipynb · scripts/setup_check.py · prompt source week01/prompts.md · P1-2 · result out/P1-2_result.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 26 다음 주차로 + 정리 -->
+<section class="slide v3 accent">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>다음 주차로 · W02 계산 환경과 문헌 도구</span><span class="en" data-i>Next week · W02 compute environment and literature tools</span></p>
+<div class="hrow"><span class="hico" data-ico="arrow-right"></span><h2 class="h"><span class="ko" data-i>오늘의 산출물 3: 조합 수 · 조성 변수 표 · 환경 보고서 → W02 입력</span><span class="en" data-i>Today's deliverables 3: combination count · composition-variable table · environment report → input for W02</span></h2></div>
+<p class="sub"><span class="ko" data-i>역설계 = 표적 선지정 · 조성 후탐색 · 조합은 곱 · 실험은 덧셈 · MD 는 원자 단 · 대리모델은 빠른 곡면 · 기준은 실험</span><span class="en" data-i>Inverse design = set target first · search composition after · combinations multiply · experiments add · MD = atomic rung · surrogate = fast surface · standard = experiment</span></p>
+<div class="bd">
+<div class="lines">
+<div class="ln a" style="--d:1"><span class="nn">01</span><div><h4><span class="ko" data-i>산출물</span><span class="en" data-i>Deliverables</span></h4><p><span class="file">week01/out/setup_report.json</span> · <span class="file">P1-1_result.md</span> <span class="ko" data-i>(조성 변수 · 표적 표 · 조합 수)</span><span class="en" data-i>(composition variables · target table · combination count)</span></p></div></div>
+<div class="ln a" style="--d:2"><span class="nn">02</span><div><h4><span class="ko" data-i>다음 주 W02</span><span class="en" data-i>Next week W02</span></h4><p><span class="ko" data-i>Claude Code 로 노트북 실행 → 내 문헌 267편의 지도 · 준비물 = GitHub 계정 · Zotero · Obsidian = 설치 지시 I-3 · I-4</span><span class="en" data-i>Run notebook with Claude Code → map of my 267 papers · prerequisites = GitHub account · Zotero · Obsidian = install prompts I-3 · I-4</span></p></div></div>
+<div class="ln a" style="--d:3"><span class="nn">03</span><div><h4><span class="ko" data-i>못 끝냈다면</span><span class="en" data-i>If unfinished</span></h4><p><span class="file">week01/expected_output/</span> <span class="ko" data-i>의 결과 파일로 W02 진행 가능 · 1주차 결과물은 나중에 보완</span><span class="en" data-i>result file lets you proceed to W02 · complete week 1 results later</span></p></div></div>
+<div class="ln a" style="--d:4"><span class="nn">04</span><div><h4><span class="ko" data-i>퀴즈 · 용어</span><span class="en" data-i>Quiz · terms</span></h4><p><span class="file">week01/quiz.md</span> · <span class="file">GLOSSARY.md</span></p></div></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>18주 지도 · 현황: 저장소 index.html · 설치 지시 I-1 ~ I-6: repo/docs/install_prompts.md</span><span class="en" data-i>18-week map · status: repository index.html · install prompts I-1 ~ I-6: repo/docs/install_prompts.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<script src="../common/icons.js"></script>
+<script src="../common/deck.js"></script>
+<script>
+/* ===== W01 v3 EMB · 참조 덱(FutureTech) 방식: 시간 t 의 함수로 SVG 문자열을 만든다 · 선아이콘은 IC[name] 경로를 중첩 svg 로 넣는다 ===== */
+function stepOf(root) { var s = parseInt(root.dataset.step || '0', 10); return isNaN(s) ? 0 : s; }
+function icoIn(n, x, y, s, col) { return '<svg x="' + x + '" y="' + y + '" width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" stroke="' + col + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + (IC[n] || '') + '</svg>'; }
+function ez(u) { u = Math.max(0, Math.min(1, u)); return 1 - Math.pow(1 - u, 3); }
+
+/* ---- 순환 고리 (참조 덱 .loop): HTML 노드(.nd .art 아이콘) + SVG 타원 위를 도는 점 · 가운데 .lc · 옆 .side 동기화 ---- */
+function loopEmb(root, RAF, cfg) {
+  var W = root.clientWidth || 960, H = root.clientHeight || 600, n = cfg.nodes.length;
+  var cx = W / 2, cy = H / 2 - 14 + (cfg.dy || 0), rx = cfg.rx || W * 0.36, ry = cfg.ry || H * 0.33;
+  var h = '<svg viewBox="0 0 ' + W + ' ' + H + '"><ellipse class="lbase" cx="' + cx + '" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '"/><path class="lp" d=""/><circle class="lh" r="22"/><circle class="ld" r="11"/></svg>';
+  cfg.nodes.forEach(function (nd, i) { var a = -Math.PI / 2 + i * 2 * Math.PI / n, x = cx + rx * Math.cos(a), y = cy + ry * Math.sin(a); h += '<div class="nd" style="left:' + x.toFixed(0) + 'px;top:' + y.toFixed(0) + 'px"><span class="art">' + ICO(nd.ico) + '</span><b>' + nd.label + '</b>' + (nd.small ? '<small>' + nd.small + '</small>' : '') + '</div>'; });
+  h += '<div class="lc"><b>' + cfg.title + '</b><span class="lcount"></span><span class="lstep"></span>' + (cfg.sub ? '<span class="lsub">' + cfg.sub + '</span>' : '') + '</div>';
+  root.innerHTML = h;
+  var lp = root.querySelector('.lp'), ld = root.querySelector('.ld'), lh = root.querySelector('.lh'), nds = root.querySelectorAll('.nd'), cnt = root.querySelector('.lcount'), stp = root.querySelector('.lstep');
+  var side = cfg.side ? document.querySelectorAll(cfg.side + ' > div') : [];
+  var P = cfg.period || 12, t0 = CLK(), last = -1;
+  function show(k) { for (var j = 0; j < n; j++) { nds[j].classList.toggle('on', j === k); nds[j].classList.toggle('past', j < k); } stp.textContent = cfg.nodes[k].label + (cfg.nodes[k].small ? ' · ' + cfg.nodes[k].small : ''); for (j = 0; j < side.length; j++) side[j].classList.toggle('on', j === k); }
+  function f(now) {
+    var st = stepOf(root), T = st ? ((st - 1) / n + 0.999 / n) * P * 1000 : (now - t0), p = (T % (P * 1000)) / (P * 1000), ln = st ? 1 : Math.floor(T / (P * 1000)) + 1;
+    var a = -Math.PI / 2 + p * 2 * Math.PI, x = cx + rx * Math.cos(a), y = cy + ry * Math.sin(a);
+    ld.setAttribute('cx', x); ld.setAttribute('cy', y); lh.setAttribute('cx', x); lh.setAttribute('cy', y);
+    lp.setAttribute('d', p < 0.003 ? '' : 'M' + cx + ' ' + (cy - ry) + ' A' + rx + ' ' + ry + ' 0 ' + (p > 0.5 ? 1 : 0) + ' 1 ' + x.toFixed(1) + ' ' + y.toFixed(1));
+    var k = Math.floor(p * n) % n; if (k !== last) { last = k; show(k); }
+    cnt.textContent = cfg.count ? cfg.count(ln, p, k) : __L('반복 ','Iteration ') + ln + __L('회',' ');
+    if (cfg.tick) cfg.tick(ln, p, k, st);
+    RAF(f);
+  }
+  RAF(f);
+}
+
+/* 4장: 배합 설계 시행착오 루프 */
+EMB["trial"] = function (root, RAF) {
+  var side = document.getElementById('trial-side'), wk = side && side.querySelector('[data-k=weeks]'), nn = side && side.querySelector('[data-k=n]');
+  loopEmb(root, RAF, {
+    period: 12, title: __L('시행착오 한 바퀴 = 수 주','One trial-and-error turn = several weeks'), sub: __L('조성 1개 → 결과 1개','1 composition → 1 result'),
+    nodes: [{ ico: 'flask-conical', label: __L('① 배합','① Mix'), small: __L('선례 + 숙련도','Precedent + skill') }, { ico: 'hourglass', label: __L('② 제작 · 양생','② Make · cure'), small: __L('수 주','Several weeks') }, { ico: 'gauge', label: __L('③ 시험','③ Test'), small: __L('강도 · 점도 · 부착','Strength · viscosity · adhesion') }, { ico: 'clipboard-check', label: __L('④ 평가','④ Evaluate'), small: __L('표적 미달 → 다시 ①','Target missed → back to ①') }],
+    count: function (ln, p) { return __L('반복 ','Iteration ') + ln + __L('회 · 약 ',' · approx. ') + (Math.floor((ln - 1) * 6 + p * 6)) + __L('주',' wk'); },
+    tick: function (ln, p, k, st) { var done = st ? (st === 4 ? 1 : 0) : ln - 1; if (wk) wk.textContent = __L('약 ','approx. ') + Math.floor((ln - 1) * 6 + p * 6) + __L(' 주 (한 바퀴 = 6주 가정 · 예시)',' wk (one turn = 6 wk assumed · example)'); if (nn) nn.textContent = done + __L(' 개 · 결과 ',' · results ') + done + __L(' 개 · 후보 10⁹ 개의 ',' · share of 10⁹ candidates: ') + (done ? (done / 1e9 * 100).toExponential(0).replace('e-', ' × 10⁻') + ' %' : '0 %'); }
+  });
+};
+
+/* 21장: 6단계 파이프라인 (큰 고리 · 옆 목록 동기화) */
+EMB["loop6big"] = function (root, RAF) {
+  loopEmb(root, RAF, {
+    period: 12, title: __L('자율 탐색 순환','Autonomous exploration loop'), sub: __L('⑥ 의 출력 = ① 의 입력','Output of ⑥ = input of ①'), side: '#loop6-side',
+    nodes: [{ ico: 'book-open', label: __L('① 문헌 · 후보','① Literature · candidates'), small: 'W02 · W11' }, { ico: 'boxes', label: __L('② 구조 생성','② Structure generation'), small: 'W06 ~ W08 · W17' }, { ico: 'cpu', label: __L('③ MD 계산','③ MD calculation'), small: 'W09 ~ W12 · W17' }, { ico: 'brain-circuit', label: __L('④ 대리모델','④ Surrogate model'), small: 'W13 ~ W15' }, { ico: 'crosshair', label: __L('⑤ 능동학습','⑤ Active learning'), small: 'W15' }, { ico: 'trophy', label: __L('⑥ 최적화 · 재정련','⑥ Optimization · refinement'), small: 'W16 · W18' }]
+  });
+};
+
+/* 1장 표지: 작은 고리 (SVG 만 · 아이콘 중첩) */
+EMB["loop6"] = function (root, RAF) {
+  var W = 560, H = 560, cx = 280, cy = 290, rx = 190, ry = 190;
+  var nodes = [['book-open', __L('문헌','Literature')], ['boxes', __L('구조 생성','Structure generation')], ['cpu', 'MD'], ['brain-circuit', __L('대리모델','Surrogate model')], ['crosshair', __L('능동학습','Active learning')], ['trophy', __L('최적화','Optimization')]];
+  var t0 = CLK();
+  function f(now) {
+    var p = ((now - t0) % 12000) / 12000, k = Math.floor(p * 6), a = -Math.PI / 2 + p * 2 * Math.PI, x = cx + rx * Math.cos(a), y = cy + ry * Math.sin(a), o = '';
+    o += '<svg viewBox="0 0 ' + W + ' ' + H + '"><ellipse cx="' + cx + '" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '" fill="none" stroke="#D3C6B5" stroke-width="6"/>';
+    o += '<path d="' + (p < 0.003 ? '' : 'M' + cx + ' ' + (cy - ry) + ' A' + rx + ' ' + ry + ' 0 ' + (p > 0.5 ? 1 : 0) + ' 1 ' + x.toFixed(1) + ' ' + y.toFixed(1)) + '" fill="none" stroke="#F99D1C" stroke-width="6" stroke-linecap="round"/>';
+    nodes.forEach(function (nd, i) { var b = -Math.PI / 2 + i * Math.PI / 3, nx = cx + rx * Math.cos(b), ny = cy + ry * Math.sin(b), on = i === k, past = i < k;
+      o += '<circle cx="' + nx.toFixed(0) + '" cy="' + ny.toFixed(0) + '" r="' + (on ? 44 : 38) + '" fill="' + (on ? '#FFFFFF' : '#F3EEE7') + '" stroke="' + (on ? '#F99D1C' : (past ? '#E37F1A' : '#D8CDBF')) + '" stroke-width="' + (on ? 5 : 3) + '"/>' + icoIn(nd[0], nx - 20, ny - 20, 40, on || past ? '#C8610C' : '#B9AE9E');
+      var lx = cx + (rx + 70) * Math.cos(b), ly = cy + (ry + 62) * Math.sin(b);
+      o += '<text x="' + lx.toFixed(0) + '" y="' + (ly + 7).toFixed(0) + '" text-anchor="middle" class="' + (on ? 'cfh' : 'cfs') + '" font-size="' + (on ? 22 : 19) + '">' + (i + 1) + ' ' + nd[1] + '</text>'; });
+    o += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="20" fill="#F99D1C" opacity=".3"/><circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="10" fill="#C8610C"/>';
+    o += '<text x="' + cx + '" y="' + (cy - 8) + '" text-anchor="middle" class="cfh" font-size="26">' + (k === 5 && p * 6 - 5 > 0.5 ? __L('⑥ → ① 환류','⑥ → ① feedback') : nodes[k][1]) + '</text><text x="' + cx + '" y="' + (cy + 26) + __L('" text-anchor="middle" class="cfs">역설계 도구 파이프라인</text></svg>','" text-anchor="middle" class="cfs">Inverse-design tool pipeline</text></svg>');
+    root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* 9장: 순방향 ↔ 역설계 (3단계 · 왼쪽 목록 동기화) */
+EMB["fwdinv"] = function (root, RAF) {
+  var W = 1060, H = 560, pts = [[130, 400], [210, 190], [330, 300], [410, 130]], ys = [[700, 390], [790, 220], [880, 330], [960, 150]], t0 = CLK();
+  function panel(x, title, xl, yl) { return '<rect x="' + x + '" y="60" width="440" height="400" rx="16" fill="#FFFFFF" stroke="#E2D8CA" stroke-width="2"/><text x="' + (x + 220) + '" y="42" text-anchor="middle" class="cfh">' + title + '</text><text x="' + (x + 220) + '" y="488" text-anchor="middle" class="cfs">' + xl + '</text><text x="' + (x + 18) + '" y="92" class="cfs">' + yl + '</text>'; }
+  function f(now) {
+    var st = stepOf(root), t = st ? [4.4, 6.9, 9.9][st - 1] : ((now - t0) / 1000) % 10, k = t < 4.5 ? 0 : (t < 7 ? 1 : 2), o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    o += panel(40, __L('조성 공간 x','Composition space x'), __L('x₁ 아스팔텐 wt%','x₁ asphaltene wt%'), __L('x₂ 첨가제 wt%','x₂ additive wt%')) + panel(580, __L('물성 공간 y = f(x)','Property space y = f(x)'), __L('y₁ 점도','y₁ viscosity'), __L('y₂ 분리일','y₂ work of separation'));
+    o += __L('<text x="530" y="42" text-anchor="middle" class="cfmu">순방향 f: 조성 → 물성</text>','<text x="530" y="42" text-anchor="middle" class="cfmu">Forward f: composition → property</text>');
+    for (var i = 0; i < 4; i++) { var u = ez((t - 0.6 - i * 0.6) / 1.2); if (u > 0) o += '<line x1="' + pts[i][0] + '" y1="' + pts[i][1] + '" x2="' + (pts[i][0] + (ys[i][0] - pts[i][0]) * u).toFixed(1) + '" y2="' + (pts[i][1] + (ys[i][1] - pts[i][1]) * u).toFixed(1) + '" stroke="#D3C6B5" stroke-width="3"/>'; if (u >= 1) o += '<circle cx="' + ys[i][0] + '" cy="' + ys[i][1] + '" r="14" fill="#F99D1C"/>'; }
+    pts.forEach(function (p, i) { o += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="14" fill="#4F7FB0"/><text x="' + p[0] + '" y="' + (p[1] - 24) + '" text-anchor="middle" class="cfs" fill="#4F7FB0">x⁽' + (i + 1) + '⁾</text>'; });
+    if (k >= 1) o += __L('<circle cx="886" cy="324" r="34" fill="none" stroke="#D9534F" stroke-width="5" stroke-dasharray="10 7"/><circle cx="886" cy="324" r="6" fill="#D9534F"/><text x="886" y="276" text-anchor="middle" class="cfh" fill="#D9534F" font-size="22">표적 y* (과녁)</text>','<circle cx="886" cy="324" r="34" fill="none" stroke="#D9534F" stroke-width="5" stroke-dasharray="10 7"/><circle cx="886" cy="324" r="6" fill="#D9534F"/><text x="886" y="276" text-anchor="middle" class="cfh" fill="#D9534F" font-size="22">Target y* (bull\'s-eye)</text>');
+    var v = ez((t - 5) / 1.5);
+    if (t > 5) o += '<line x1="880" y1="330" x2="' + (880 + (330 - 880) * v).toFixed(1) + '" y2="' + (330 + (300 - 330) * v).toFixed(1) + '" stroke="#E37F1A" stroke-width="7" stroke-dasharray="16 10" opacity=".9"/>';
+    if (v >= 1) o += '<circle cx="330" cy="300" r="28" fill="none" stroke="#E37F1A" stroke-width="7"/><text x="330" y="350" text-anchor="middle" class="cfh" fill="#C8610C" font-size="22">x* = x⁽³⁾</text>';
+    o += '<rect x="280" y="506" width="500" height="48" rx="12" fill="#FFF1E0"/><text x="530" y="537" text-anchor="middle" class="cfh" font-size="21">' + [__L('① 순방향: 조성 1개 → 물성 1개','① Forward: 1 composition → 1 property'), __L('② 역방향: 표적 y* 에 가장 가까운 물성점','② Inverse: property point nearest target y*'), __L('③ 그 점의 조성 x* 가 해 · 구현 = 순방향 반복','③ Composition x* of that point = solution · implementation = repeated forward runs')][k] + '</text></svg>';
+    root.innerHTML = o; PXSYNC(root, k); RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 2D LJ 엔진 (W05 와 동일 · 환산단위) ===== */
+function LJ2D(N, L, T0, seed) {
+  var rc = 2.5, rc2 = rc * rc, dt = 0.005, dof = 2 * N - 2, s6c = 1 / Math.pow(rc2, 3), ecut = 4 * (s6c * s6c - s6c);
+  var x = new Float64Array(N), y = new Float64Array(N), vx = new Float64Array(N), vy = new Float64Array(N), fx = new Float64Array(N), fy = new Float64Array(N);
+  seed = seed || 7; function rnd() { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; }
+  var nc = Math.ceil(Math.sqrt(N)), sp = Math.min(L / nc, 1.25), off = (L - sp * (nc - 1)) / 2;
+  for (var i = 0; i < N; i++) { x[i] = off + sp * (i % nc) + (rnd() - 0.5) * 0.12; y[i] = off + sp * Math.floor(i / nc) + (rnd() - 0.5) * 0.12; vx[i] = rnd() - 0.5; vy[i] = rnd() - 0.5; }
+  var cx = 0, cy = 0; for (i = 0; i < N; i++) { cx += vx[i]; cy += vy[i]; } cx /= N; cy /= N;
+  var k0 = 0; for (i = 0; i < N; i++) { vx[i] -= cx; vy[i] -= cy; k0 += 0.5 * (vx[i] * vx[i] + vy[i] * vy[i]); }
+  var sc = Math.sqrt(T0 * dof / (2 * k0)); for (i = 0; i < N; i++) { vx[i] *= sc; vy[i] *= sc; }
+  var S = { N: N, L: L, x: x, y: y, fx: fx, fy: fy, pe: 0 };
+  function forces() { S.pe = 0; for (var i = 0; i < N; i++) { fx[i] = 0; fy[i] = 0; } for (i = 0; i < N - 1; i++) for (var j = i + 1; j < N; j++) { var dx = x[i] - x[j], dy = y[i] - y[j]; dx -= L * Math.round(dx / L); dy -= L * Math.round(dy / L); var r2 = dx * dx + dy * dy; if (r2 < rc2 && r2 > 0.04) { var inv = 1 / r2, s6 = inv * inv * inv, fr = 24 * (2 * s6 * s6 - s6) * inv; fx[i] += fr * dx; fy[i] += fr * dy; fx[j] -= fr * dx; fy[j] -= fr * dy; S.pe += 4 * (s6 * s6 - s6) - ecut; } } }
+  forces();
+  S.kin = function () { var k = 0; for (var i = 0; i < N; i++) k += 0.5 * (vx[i] * vx[i] + vy[i] * vy[i]); return k; };
+  S.step = function () { for (var i = 0; i < N; i++) { vx[i] += 0.5 * dt * fx[i]; vy[i] += 0.5 * dt * fy[i]; x[i] += dt * vx[i]; y[i] += dt * vy[i]; x[i] -= L * Math.floor(x[i] / L); y[i] -= L * Math.floor(y[i] / L); } forces(); for (i = 0; i < N; i++) { vx[i] += 0.5 * dt * fx[i]; vy[i] += 0.5 * dt * fy[i]; } };
+  return S;
+}
+
+/* 17장: MD 순환 4단계 + 움직이는 상자 (왼쪽 목록 동기화) */
+EMB["mdcycle"] = function (root, RAF) {
+  var W = 1060, H = 560, S = LJ2D(8, 7, 0.6, 7), ox = 40, oy = 520, side = 470, px = side / S.L, hist = [], t0 = CLK();
+  var names = [__L('① 힘장 U(r)','① Force field U(r)'), __L('② 힘 F = −∇U','② Force F = −∇U'), __L('③ Δt 적분','③ Δt integration'), __L('④ 궤적 → 시간 평균','④ Trajectory → time average')], cols = ['#4F7FB0', '#D9534F', '#E37F1A', '#2E8B57'];
+  function f(now) {
+    var st = stepOf(root), t = st ? (st - 1) * 3 + 1.5 : ((now - t0) / 1000) % 12, k = Math.floor(t / 3), o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    if (k >= 2 || !st) for (var s = 0; s < 6; s++) S.step();
+    o += '<rect x="' + ox + '" y="' + (oy - side) + '" width="' + side + '" height="' + side + '" fill="#FFFFFF" stroke="#F99D1C" stroke-width="3" stroke-dasharray="10 8"/><text x="' + (ox + side / 2) + __L('" y="30" text-anchor="middle" class="cfh" font-size="20">원자 상자 (2D LJ · 주기경계)</text>','" y="30" text-anchor="middle" class="cfh" font-size="20">Atom box (2D LJ · periodic boundary)</text>');
+    if (k === 0) { for (var i = 0; i < S.N - 1; i++) for (var j = i + 1; j < S.N; j++) { var dx = S.x[i] - S.x[j], dy = S.y[i] - S.y[j]; dx -= S.L * Math.round(dx / S.L); dy -= S.L * Math.round(dy / S.L); if (dx * dx + dy * dy < 6.25 && Math.abs(S.x[i] - S.x[j]) < 3.5 && Math.abs(S.y[i] - S.y[j]) < 3.5) o += '<line x1="' + (ox + S.x[i] * px).toFixed(1) + '" y1="' + (oy - S.y[i] * px).toFixed(1) + '" x2="' + (ox + S.x[j] * px).toFixed(1) + '" y2="' + (oy - S.y[j] * px).toFixed(1) + '" stroke="#4F7FB0" stroke-width="2" stroke-dasharray="4 5" opacity=".6"/>'; } }
+    for (i = 0; i < S.N; i++) { var X = ox + S.x[i] * px, Y = oy - S.y[i] * px; if (k >= 1) { var fm = Math.hypot(S.fx[i], S.fy[i]) || 1e-9, len = Math.min(80, 6 + fm * 5); o += '<line x1="' + X.toFixed(1) + '" y1="' + Y.toFixed(1) + '" x2="' + (X + S.fx[i] / fm * len).toFixed(1) + '" y2="' + (Y - S.fy[i] / fm * len).toFixed(1) + '" stroke="#D9534F" stroke-width="4" stroke-linecap="round"/>'; } o += '<circle cx="' + X.toFixed(1) + '" cy="' + Y.toFixed(1) + '" r="14" fill="' + (i ? '#4F7FB0' : '#E37F1A') + '" stroke="#FFFDF9" stroke-width="2"/>'; }
+    var T = 2 * S.kin() / (2 * S.N - 2); hist.push(T); if (hist.length > 150) hist.shift();
+    /* 오른쪽: 현재 단계 카드 + 온도 시계열 */
+    o += '<rect x="560" y="50" width="470" height="200" rx="16" fill="' + cols[k] + '"/><text x="590" y="110" class="cfw" font-size="30">' + names[k] + '</text><text x="590" y="160" class="cfw" font-size="20" opacity=".9">' + [__L('원자 쌍 거리마다 에너지를 정한 식','Formula giving energy for each atom-pair distance'), __L('기울기 = 각 원자가 받는 힘 (빨간 화살표)','Slope = force on each atom (red arrows)'), __L('F = ma 로 Δt 만큼 위치 · 속도 전진','Advance positions · velocities by Δt with F = ma'), __L('수백만 번 반복 → 궤적 → 시간 평균','Millions of repeats → trajectory → time average')][k] + '</text><text x="590" y="200" class="cfw" font-size="18" opacity=".8">' + [__L('(힘장 · W04)','(force field · W04)'), '(W03)', '(1 fs · W03)', __L('(밀도 · CED · 점도 · W09)','(density · CED · viscosity · W09)')][k] + '</text>';
+    o += __L('<rect x="560" y="280" width="470" height="240" rx="16" fill="#FFFFFF" stroke="#E2D8CA" stroke-width="2"/><text x="590" y="316" class="cft" font-size="19">온도 시계열 (환산단위)</text>','<rect x="560" y="280" width="470" height="240" rx="16" fill="#FFFFFF" stroke="#E2D8CA" stroke-width="2"/><text x="590" y="316" class="cft" font-size="19">Temperature time series (reduced units)</text>');
+    if (k >= 3) { var d = ''; hist.forEach(function (v, i) { d += (i ? 'L' : 'M') + (590 + i / 149 * 410).toFixed(1) + ' ' + (480 - Math.min(1.5, v) / 1.5 * 130).toFixed(1); }); var m = hist.reduce(function (a, b) { return a + b; }, 0) / hist.length; o += '<path d="' + d + '" fill="none" stroke="#4F7FB0" stroke-width="3"/><line x1="590" y1="' + (480 - Math.min(1.5, m) / 1.5 * 130).toFixed(1) + '" x2="1000" y2="' + (480 - Math.min(1.5, m) / 1.5 * 130).toFixed(1) + '" stroke="#2E8B57" stroke-width="3" stroke-dasharray="8 6"/><text x="1000" y="' + (470 - Math.min(1.5, m) / 1.5 * 130).toFixed(1) + '" text-anchor="end" class="cfm" fill="#2E8B57">T̄ = ' + m.toFixed(2) + __L('</text><text x="795" y="508" text-anchor="middle" class="cfs" font-size="18">물성 = 순간값 대신 평균</text>','</text><text x="795" y="508" text-anchor="middle" class="cfs" font-size="18">Property = average, not instantaneous value</text>'); }
+    else o += __L('<text x="795" y="410" text-anchor="middle" class="cfmu">④ 에서 궤적의 시간 평균 표시</text>','<text x="795" y="410" text-anchor="middle" class="cfmu">Time average of trajectory shown in ④</text>');
+    o += '</svg>'; root.innerHTML = o; PXSYNC(root, k); RAF(f);
+  }
+  RAF(f);
+};
+
+/* 19장: 대리모델 (3단계 · 왼쪽 목록 동기화) */
+EMB["surr"] = function (root, RAF) {
+  var W = 1060, H = 560, X0 = 90, X1 = 1000, Y0 = 470, Y1 = 60, t0 = CLK();
+  function fy(x) { return 0.55 + 0.3 * Math.sin(x * 5.5) * Math.exp(-x) + 0.25 * x * x; }
+  function X(x) { return X0 + x * (X1 - X0); } function Y(y) { return Y0 - y * (Y0 - Y1); }
+  function path(a, b) { var d = ''; for (var i = 0; i <= 60; i++) { var x = a + (b - a) * i / 60; d += (i ? 'L' : 'M') + X(x).toFixed(1) + ' ' + Y(fy(x)).toFixed(1); } return d; }
+  function band(a, b, shrink) { var up = '', dn = ''; for (var i = 0; i <= 60; i++) { var x = a + (b - a) * i / 60, w = 0.02 + (shrink ? 0.06 : 0.25) * Math.max(0, x - 0.62) + 0.02 * Math.abs(Math.sin(x * 9)); up += (i ? 'L' : 'M') + X(x).toFixed(1) + ' ' + Y(fy(x) + w).toFixed(1); dn = 'L' + X(x).toFixed(1) + ' ' + Y(fy(x) - w).toFixed(1) + ' ' + dn; } return up + ' ' + dn + ' Z'; }
+  var xs = [0.08, 0.2, 0.35, 0.5, 0.62];
+  function f(now) {
+    var st = stepOf(root), t = st ? [3.9, 7.9, 11.9][st - 1] : ((now - t0) / 1000) % 12, k = Math.min(2, Math.floor(t / 4)), u = (t % 4) / 4, o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    o += '<line x1="' + X0 + '" y1="' + Y0 + '" x2="' + X1 + '" y2="' + Y0 + '" stroke="#6E655C" stroke-width="3"/><line x1="' + X0 + '" y1="' + Y0 + '" x2="' + X0 + '" y2="' + Y1 + '" stroke="#6E655C" stroke-width="3"/><text x="' + ((X0 + X1) / 2) + __L('" y="520" text-anchor="middle" class="cfs">조성 x (예: 아스팔텐 wt%)</text><text x="','" y="520" text-anchor="middle" class="cfs">Composition x (e.g. asphaltene wt%)</text><text x="') + X0 + __L('" y="40" class="cfs">물성 y (예: 점도)</text>','" y="40" class="cfs">Property y (e.g. viscosity)</text>');
+    if (k >= 1) o += '<path d="' + band(0.05, 0.95, k >= 2 && u > 0.6) + '" fill="#4F7FB0" opacity="' + (k >= 2 && u > 0.6 ? 0.08 : 0.15) + '"/><path d="' + path(0.05, 0.95) + '" fill="none" stroke="' + (k >= 2 && u > 0.6 ? '#2E8B57' : '#4F7FB0') + '" stroke-width="5"/>';
+    if (k === 1 || (k === 2 && u <= 0.6)) o += '<rect x="' + X(0.66) + '" y="' + Y1 + '" width="' + (X(0.95) - X(0.66)) + '" height="' + (Y0 - Y1) + '" fill="#D9534F" opacity=".06"/><text x="' + X(0.8) + '" y="' + (Y1 + 30) + __L('" text-anchor="middle" class="cfh" fill="#D9534F" font-size="20">띠 폭 ↑ = 불확실</text>','" text-anchor="middle" class="cfh" fill="#D9534F" font-size="20">Wider band ↑ = uncertain</text>');
+    xs.forEach(function (x, i) { if (k > 0 || u > (i + 1) / 6) o += '<circle cx="' + X(x).toFixed(1) + '" cy="' + Y(fy(x)).toFixed(1) + '" r="13" fill="#E37F1A"/>'; });
+    if (k >= 2 && u > 0.3) [0.8, 0.9].forEach(function (x) { o += '<circle cx="' + X(x).toFixed(1) + '" cy="' + Y(fy(x)).toFixed(1) + '" r="13" fill="#D9534F"/><circle class="pulse" cx="' + X(x).toFixed(1) + '" cy="' + Y(fy(x)).toFixed(1) + '" r="13" fill="#D9534F" opacity=".4"/>'; });
+    o += '<rect x="620" y="400" width="400" height="56" rx="12" fill="#FFF1E0"/><text x="820" y="436" text-anchor="middle" class="cfh" font-size="21">' + [__L('① MD 점 · 1점 = GPU 시간 단위','① MD points · 1 point = GPU hours'), __L('② 곡면 = 밀리초 예측 · 띠 = 불확실성','② Surface = millisecond prediction · band = uncertainty'), k === 2 && u > 0.6 ? __L('③ 점 추가 → 곡면 갱신 · 띠 축소','③ add point → update surface · band narrows') : __L('③ 띠가 넓은 조성을 MD 로 재계산','③ Recompute wide-band compositions with MD')][k] + '</text>';
+    o += __L('<g transform="translate(470,34)"><circle cx="8" cy="-6" r="8" fill="#E37F1A"/><text x="24" y="0" class="cfmu">MD 계산 점</text><line x1="190" y1="-6" x2="230" y2="-6" stroke="#4F7FB0" stroke-width="4"/><text x="240" y="0" class="cfmu">학습 곡면</text><circle cx="380" cy="-6" r="8" fill="#D9534F"/><text x="396" y="0" class="cfmu">추가한 MD 점 (능동학습)</text></g></svg>','<g transform="translate(470,34)"><circle cx="8" cy="-6" r="8" fill="#E37F1A"/><text x="24" y="0" class="cfmu">MD calculation point</text><line x1="190" y1="-6" x2="230" y2="-6" stroke="#4F7FB0" stroke-width="4"/><text x="240" y="0" class="cfmu">Learned surface</text><circle cx="380" cy="-6" r="8" fill="#D9534F"/><text x="396" y="0" class="cfmu">Added MD point (active learning)</text></g></svg>');
+    root.innerHTML = o; PXSYNC(root, k); RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 6장 조작형: 조합 공간 계산기 ===== */
+(function () {
+  var root = document.getElementById('sim-space'); if (!root) return;
+  var svg = root.querySelector('svg'), st = { mol: 13, lev: 5, tmp: 4 }, EXP = 100;
+  function sup(e) { return String(e).replace(/\d/g, function (d) { return '⁰¹²³⁴⁵⁶⁷⁸⁹'[d]; }); }
+  function fmt(n) { if (n >= 1e4) { var e = Math.floor(Math.log10(n)); return (n / Math.pow(10, e)).toFixed(1) + ' × 10' + sup(e); } return n.toLocaleString('ko-KR'); }
+  function draw() {
+    var n = Math.pow(st.lev, st.mol) * st.tmp, gap = Math.log10(n / EXP), X0 = 100, X1 = 1080, Y = 190, maxE = 16, o = '';
+    o += '<line x1="' + X0 + '" y1="' + Y + '" x2="' + X1 + '" y2="' + Y + '" stroke="#6E655C" stroke-width="3"/>';
+    for (var e = 0; e <= maxE; e += 2) { var x = X0 + e / maxE * (X1 - X0); o += '<line x1="' + x + '" y1="' + (Y - 10) + '" x2="' + x + '" y2="' + (Y + 10) + '" stroke="#6E655C" stroke-width="2"/><text x="' + x + '" y="' + (Y + 42) + '" text-anchor="middle" class="cfm" fill="#4A4540">10' + sup(e) + '</text>'; }
+    o += '<text x="' + ((X0 + X1) / 2) + '" y="' + (Y + 80) + __L('" text-anchor="middle" class="cfs">로그 눈금 · 개수 (한 칸 = 100배)</text>','" text-anchor="middle" class="cfs">Log scale · count (one step = 100×)</text>');
+    var xe = X0 + 2 / maxE * (X1 - X0), xn = X0 + Math.min(maxE, Math.log10(n)) / maxE * (X1 - X0);
+    o += '<rect x="' + Math.min(xe, xn) + '" y="' + (Y - 54) + '" width="' + Math.abs(xn - xe) + '" height="30" rx="6" fill="#FDE3BF"/>';
+    o += '<circle cx="' + xe + '" cy="' + (Y - 39) + '" r="15" fill="#2E8B57"/><text x="' + xe + '" y="' + (Y - 72) + __L('" text-anchor="middle" class="cfh" fill="#2E8B57" font-size="22">실험 10²/년</text>','" text-anchor="middle" class="cfh" fill="#2E8B57" font-size="22">Experiments 10²/yr</text>');
+    o += '<circle cx="' + xn + '" cy="' + (Y - 39) + '" r="15" fill="#E37F1A"/><circle class="pulse" cx="' + xn + '" cy="' + (Y - 39) + '" r="15" fill="#E37F1A" opacity=".4"/><text x="' + Math.min(xn, X1 - 120) + '" y="' + (Y - 110) + __L('" text-anchor="middle" class="cfh" fill="#C8610C" font-size="22">후보 조합 ','" text-anchor="middle" class="cfh" fill="#C8610C" font-size="22">Candidates ') + fmt(n) + '</text>';
+    svg.innerHTML = o;
+    root.querySelector('[data-o=n]').innerHTML = fmt(n) + __L('<small>후보</small>','<small>candidates</small>');
+    root.querySelector('[data-o=gap]').textContent = gap <= 0 ? __L('실험 전수 가능','Full experimental sweep feasible') : gap.toFixed(1) + __L(' 자릿수',' orders');
+    ['mol', 'lev', 'tmp'].forEach(function (k) { root.querySelector('[data-o=' + k + '2]').textContent = st[k]; });
+  }
+  root.querySelectorAll('input[type=range]').forEach(function (inp) { inp.addEventListener('input', function () { st[inp.dataset.k] = +inp.value; root.querySelector('[data-o=' + inp.dataset.k + ']').textContent = inp.value; draw(); }); });
+  function set(o) { for (var k in o) { st[k] = o[k]; root.querySelector('input[data-k=' + k + ']').value = o[k]; root.querySelector('[data-o=' + k + ']').textContent = o[k]; } draw(); }
+  root.querySelector('[data-act=fail]').onclick = function () { set({ mol: 3, lev: 2, tmp: 4 }); };
+  root.querySelector('[data-act=reset]').onclick = function () { set({ mol: 13, lev: 5, tmp: 4 }); };
+  draw();
+})();
+</script>
+</body>
+</html>

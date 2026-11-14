@@ -1,0 +1,31 @@
+{
+  "n_mol": 50,
+  "mol_mass": 92.141,
+  "rho0": 0.2,
+  "L_A": 33.69,
+  "tolerance": 3.0,
+  "seed": 20240901,
+  "packmol": {
+    "exit_code": 0,
+    "success_in_log": true,
+    "atom_count_ok": true,
+    "n_atoms": 750,
+    "min_intermolecular_distance_A": 3.283,
+    "threshold_A": 2.7,
+    "min_distance_ok": true,
+    "pass": true,
+    "attempt": 1,
+    "seed": 20240901
+  },
+  "data": {
+    "atoms": 750,
+    "bonds": 750,
+    "angles": 1200,
+    "dihedrals": 1500,
+    "atom_types": 4,
+    "bond_types": 4,
+    "angle_types": 5,
+    "dihedral_types": 6,
+    "charge_sum": -5e-05
+  }
+}

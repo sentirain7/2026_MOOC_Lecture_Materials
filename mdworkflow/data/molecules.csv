@@ -1,0 +1,14 @@
+name,sara,smiles,source
+Toluene,solvent,Cc1ccccc1,시험용 작은 분자 (W04 · W06 과 같은 분자)
+SA-Hopane,saturate,CCCCCC[C@@H](C)[C@H]1CC[C@@]2(C)[C@@H]1CC[C@@]1(C)[C@H]2CC[C@H]2[C@]3(C)CC[C@](C)(C)C[C@H]3CC[C@]21C,"Li & Greenfield (2014) Fuel 115, 347–356 · 12분자 모델 (SMILES = 강좌 W11 sara_molecules.csv)"
+SA-Squalane,saturate,C[C@H](C)CCC[C@H](C)CCC[C@H](C)CCCC[C@H](C)CCC[C@@H](C)CCC[C@H](C)C,"Li & Greenfield (2014) Fuel 115, 347–356 · 12분자 모델 (SMILES = 강좌 W11 sara_molecules.csv)"
+AR-DOCHN,aromatic,CCCCCCCC[C@H]1Cc2cc3ccccc3cc2C[C@@H]1CCCCCCCC,"Li & Greenfield (2014) Fuel 115, 347–356 · 12분자 모델 (SMILES = 강좌 W11 sara_molecules.csv)"
+AR-PHPN,aromatic,CCCc1cccc(C[C@@H]2CC[C@H]3CC[C@@H]4c5cc6cc(C)c(CC)cc6cc5CC[C@@H]4[C@H]3C2)c1,"Li & Greenfield (2014) Fuel 115, 347–356 · 12분자 모델 (SMILES = 강좌 W11 sara_molecules.csv)"
+RE-Benzo,resin,c1ccc2c(c1)sc1cc3c(cc12)sc1ccccc13,"Li & Greenfield (2014) Fuel 115, 347–356 · 12분자 모델 (SMILES = 강좌 W11 sara_molecules.csv)"
+RE-Pyrid,resin,CCCCCc1cc(C)c2c(n1)C[C@@]1(C)[C@@H]2CC[C@]2(C)[C@@H]1CC[C@@H]1[C@@]3(C)CCC[C@](C)(C)[C@H]3CC[C@]12C,"Li & Greenfield (2014) Fuel 115, 347–356 · 12분자 모델 (SMILES = 강좌 W11 sara_molecules.csv)"
+RE-Quin,resin,CCCCCc1ccc2nc3c(c(C)c2c1)[C@H]1CC[C@]2(C)[C@H](CC[C@@H]4[C@@]5(C)CCC[C@@](C)(C)[C@H]5CC[C@]42C)[C@@]1(C)C3,"Li & Greenfield (2014) Fuel 115, 347–356 · 12분자 모델 (SMILES = 강좌 W11 sara_molecules.csv)"
+RE-Thio,resin,Cc1cc(CC[C@H](C)CCC[C@H](C)CCc2c(C)ccc(C)c2C)sc1CC[C@@H](C)CCc1c(C)ccc(C)c1C,"Li & Greenfield (2014) Fuel 115, 347–356 · 12분자 모델 (SMILES = 강좌 W11 sara_molecules.csv)"
+RE-Trim,resin,Cc1cc(C)c2c(c1C)O[C@@](C)(CCC[C@H](C)CCC[C@@H](C)CCC[C@@H](C)C)CC2,"Li & Greenfield (2014) Fuel 115, 347–356 · 12분자 모델 (SMILES = 강좌 W11 sara_molecules.csv)"
+AS-Phenol,asphaltene,CCCC[C@H]1Cc2c(cc3c4cc(O)cc5c(CC[C@@H](C)C)c(CCC)cc(c6cc(C[C@@H](C)C)cc2c63)c54)[C@H](CC)C1,"Li & Greenfield (2014) Fuel 115, 347–356 · 12분자 모델 (SMILES = 강좌 W11 sara_molecules.csv)"
+AS-Pyrrole,asphaltene,CCCc1cc2c(cc1CCC(C)CC)c1c3c4c(c(CCC(C)C)cc5c4c4c(c([C@@H](C)CCC)c6cc(CCCCC[C@@H](C)CC)c7c8cc[nH]c8cc8c2c3c4c6c87)C[C@H]5CC)CC1,"Li & Greenfield (2014) Fuel 115, 347–356 · 12분자 모델 (SMILES = 강좌 W11 sara_molecules.csv)"
+AS-Thio,asphaltene,CCCC[C@@H]1Cc2c(cc3c4cc5c(C)cc(CC[C@@H](C)CCC)c6c5c5c(cc7sc8c(C[C@@H](C)C)cc2c3c8c7c45)[C@@H](CCC)C6)[C@H](CC)C1,"Li & Greenfield (2014) Fuel 115, 347–356 · 12분자 모델 (SMILES = 강좌 W11 sara_molecules.csv)"

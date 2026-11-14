@@ -1,0 +1,34 @@
+{
+ "id": "dbt-1x2",
+ "comp": {
+  "dbt-1x2": 55
+ },
+ "sara": null,
+ "mass_gmol": 11677.05,
+ "rho0": 0.5,
+ "L_A": 33.848,
+ "tolerance": 2.0,
+ "gate": {
+  "attempt": 1,
+  "seed": 1,
+  "packmol_success": true,
+  "atom_count_ok": true,
+  "min_intermolecular_A": 2.188,
+  "threshold_A": 1.8,
+  "pass": true
+ },
+ "data": {
+  "atoms": 1485,
+  "molecules": 55,
+  "atom_types": 6,
+  "bond_types": 8,
+  "angle_types": 14,
+  "dihedral_types": 23,
+  "improper_types": 5,
+  "charge_sum": -0.00017
+ },
+ "ff_files": {
+  "dbt-1x2": "ff/dbt-1x2_gaff2.json"
+ },
+ "charge_ok": true
+}

@@ -1,0 +1,17 @@
+# 폐루프 설정 — 이 파일만 바꿔 내 문제로 옮긴다 (W18)
+name: avg_molecule_2target
+mode: replay            # replay = 기준 MD 값으로 진행(경로가 기준과 같음) · live = 내 컴퓨터에서 MD 실행
+design:                 # 설계 = 「아스팔트 평균 분자」 후보 표(scripts/library.py) · 방향족 핵 × 사슬 수 × 사슬 길이
+  library: library.csv
+  features: [MW, fa, HC, het, rot]      # 대리모델 입력 = RDKit 기술자
+targets:                # 역설계 표적 2개 = 문헌 노트(vault/papers)에서 읽는다 → lit_targets.json
+  density: {tol: 0.02}  # g/cm³ · tol = 「맞았다」 판정 폭 · 문헌 실측 흩어짐(사분위 약 1.01 ~ 1.04) 기준
+  ced:     {tol: 20.0}  # MJ/m³ · δ ±0.5 MPa^0.5 정도
+model: gp               # gp · rf · xgb  (불확실성 σ 를 내는 모델만)
+acquisition: cheb       # cheb(더 먼 표적 쪽 거리를 줄일 기대 개선 · 기본) · ehvi(두 표적 교환 관계 전선 · W16) · ucb(가중 합)
+batch: 2                # 라운드마다 새 MD 수
+rounds: 3
+init: 6                 # 초기 설계 점 수(기술자 공간에서 서로 먼 후보 · seed 고정)
+seed: 7
+md: {atoms: 1500, protocol: standard, threads: 4, T: 298.0}
+stop: {both_within_tol: true, max_md: 12}

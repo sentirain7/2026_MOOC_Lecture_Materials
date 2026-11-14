@@ -1,0 +1,7 @@
+simulation_name portlandite_water
+tabulate_long_range 10000 0.0001
+nbrhood_cutoff 4.0
+hbond_cutoff 7.5
+bond_graph_cutoff 0.3
+thb_cutoff 0.001
+thb_cutoff_sq 0.00001

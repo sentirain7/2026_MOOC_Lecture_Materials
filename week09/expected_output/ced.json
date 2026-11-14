@@ -1,0 +1,17 @@
+{
+ "n_mol": 50,
+ "E_bulk_run0_kcalmol": 196.09,
+ "V_run0_A3": 9066.3,
+ "sum_E_single_fixed": 629.74,
+ "E_inter_kcalmol": -433.65,
+ "CED_A_MJm3": 332.3,
+ "delta_A_MPa05": 18.23,
+ "E_gas_relaxed_mean": 14.126,
+ "E_bulk_prod_mean": 217.07,
+ "V_prod_mean_A3": 9066.3,
+ "CED_B_MJm3": 374.9,
+ "delta_B_MPa05": 19.36,
+ "diff_pct": 12.8,
+ "gas_steps": 20000,
+ "note": "짧은 실행(수십 ps · ρ 수렴 전) — 두 경로의 「구조」와 차이를 보는 값 · 데이터셋 전체에서 한 방식 고정(원본 06주차 #16)"
+}

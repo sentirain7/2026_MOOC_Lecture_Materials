@@ -1,0 +1,64 @@
+{
+ "density": {
+  "value": 1.018,
+  "mean": 1.0208,
+  "n": 22,
+  "citekeys": [
+   "ai2024properties",
+   "assaf2024predicting",
+   "cui2022study",
+   "jiang2026atomistic",
+   "jiao2022evaluating",
+   "li2022investigation",
+   "liu2021molecular",
+   "ren2022insight",
+   "yan2022molecular",
+   "zhang2021molecular",
+   "zou2024adhesion"
+  ],
+  "values": [
+   1.016,
+   1.005,
+   1.038,
+   1.019,
+   1.042,
+   1.041,
+   1.051,
+   1.07,
+   1.01,
+   1.04,
+   1.0126,
+   1.012,
+   1.002,
+   0.95,
+   1.08,
+   1.017,
+   0.94,
+   1.012,
+   1.01,
+   1.02,
+   1.03,
+   1.04
+  ]
+ },
+ "ced": {
+  "value": 354.2,
+  "mean": 348.3549,
+  "n": 7,
+  "citekeys": [
+   "gao2022molecular",
+   "liu2025study",
+   "rouidi2024molecular",
+   "zhu2019use"
+  ],
+  "values": [
+   382.1,
+   354.2,
+   353.3,
+   354.6,
+   322.5616,
+   305.0,
+   366.7225
+  ]
+ }
+}

@@ -1,0 +1,888 @@
+<!doctype html>
+<html lang="ko" data-v="3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>W02 계산 환경과 문헌 도구 · Claude Code 실행 · 검색식 · 문헌 지도 · 인용키</title>
+<link rel="stylesheet" href="../common/deck.css">
+</head>
+<body>
+
+<!-- 1 표지 -->
+<section class="slide v3 cover">
+<div class="stop">
+<div class="ribbon"></div>
+<div class="cover-txt">
+<p class="eb a" style="--d:0"><span class="ko" data-i>건설소재 역설계 도구 개발을 위한 AI와 분자동역학 활용 · WEEK 02 · 모듈 M0 준비 · 도구 주차 · 차시 2-1 ~ 2-4 · 50분</span><span class="en" data-i>AI and Molecular Dynamics for Inverse Design of Construction Materials · WEEK 02 · Module M0 Setup · Tool week · Sessions 2-1 ~ 2-4 · 50 min</span></p>
+<h1 class="cover-h a" style="--d:1"><span class="ko" data-i>계산 환경과 문헌 도구</span><span class="en" data-i>Compute environment and literature tools</span></h1>
+<p class="cover-sub a" style="--d:2"><span class="ko" data-i>Claude Code 실행 · 검색식 · 문헌 지도 · 인용키 · 내 문헌 267편의 지도 만들기</span><span class="en" data-i>Run Claude Code · search query · literature map · citation key · build a map of my 267 papers</span></p>
+<p class="who a" style="--d:3"><span class="ko" data-i><b>윤태영</b> 연구위원 · 한국건설기술연구원 도로교통연구본부 · 과학기술연합대학원대학교(UST) 교수</span><span class="en" data-i><b>Taeyoung Yun</b> Senior Research Fellow · Department of Highway & Transportation Research, Korea Institute of Civil Engineering and Building Technology (KICT) · Professor, University of Science and Technology (UST)</span></p>
+<div class="rel a" style="--d:4;justify-content:flex-start"><span><span class="ko" data-i>새 물리 없음 · 도구만</span><span class="en" data-i>No new physics · tools only</span></span><span><span class="ko" data-i>준비물 · Claude 유료 요금제 · GitHub 계정</span><span class="en" data-i>Prerequisites · paid Claude plan · GitHub account</span></span><span><span class="ko" data-i>Claude Code · Zotero · Obsidian (지시 I-3 · I-4)</span><span class="en" data-i>Claude Code · Zotero · Obsidian (prompts I-3 · I-4)</span></span></div>
+</div>
+<div class="cover-fig"><div class="emb" data-emb="term" data-dur="9"></div></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 2 오늘 만들 것 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>오늘 만들 것 · 4차시 · 50분</span><span class="en" data-i>What we build today · 4 sessions · 50 min</span></p>
+<div class="hrow"><span class="hico" data-ico="package-check"></span><h2 class="h"><span class="ko" data-i>오늘의 완성물 2개: 내 문헌 267편의 지도 · 중복 제거 보고서</span><span class="en" data-i>2 deliverables today: map of my 267 papers · deduplication report</span></h2></div>
+<p class="sub"><span class="ko" data-i>지난주 <b>setup_report.json</b> ok → mdai 환경 준비 끝 · 오늘 Claude Code 첫 실행 · 지시 3개 · 슬라이더 1개</span><span class="en" data-i>Last week's <b>setup_report.json</b> ok → mdai environment ready · first Claude Code run today · 3 prompts · 1 slider</span></p>
+<div class="bd today">
+<div class="goal">
+<div class="it white a" style="--d:1">
+<div class="ih"><span class="icb" data-ico="network"></span><div><p class="k"><span class="ko" data-i>완성물 ①</span><span class="en" data-i>Deliverable ①</span></p><h4><span class="ko" data-i>주제 동시출현 지도 · 점 13 · 선 = 함께 다룬 논문 수</span><span class="en" data-i>Topic co-occurrence map · 13 dots · line = papers covering both</span></h4></div></div>
+<div class="figw"><svg viewBox="0 0 760 250" class="cfig">
+<g transform="translate(200,125)" stroke="#4F7FB0" stroke-opacity=".45"><line class="tl" x1="0" y1="-95" x2="70" y2="-60" stroke-width="8"/><line x1="0" y1="-95" x2="90" y2="-15" stroke-width="6"/><line x1="70" y1="-60" x2="90" y2="-15" stroke-width="5"/><line x1="0" y1="-95" x2="-75" y2="-58" stroke-width="4"/><line x1="90" y1="-15" x2="75" y2="55" stroke-width="3"/><line x1="-75" y1="-58" x2="-90" y2="15" stroke-width="3"/><line x1="0" y1="-95" x2="30" y2="90" stroke-width="2"/><line x1="-90" y1="15" x2="-60" y2="75" stroke-width="2"/></g>
+<g transform="translate(200,125)" fill="#FFFDF9" stroke="#4F7FB0" stroke-width="3"><circle cx="0" cy="-95" r="18"/><circle cx="70" cy="-60" r="15"/><circle cx="90" cy="-15" r="15"/><circle cx="-75" cy="-58" r="13"/><circle cx="75" cy="55" r="12"/><circle cx="-90" cy="15" r="12"/><circle cx="30" cy="90" r="10"/><circle cx="-60" cy="75" r="8"/><circle cx="-20" cy="105" r="7" stroke="#D3C6B5"/></g>
+<g class="cfmu" text-anchor="middle" font-size="16"><text x="200" y="14"><tspan class="ko" data-i>아스팔트 191</tspan><tspan class="en" data-i>Asphalt 191</tspan></text><text x="300" y="60"><tspan class="ko" data-i>골재 127</tspan><tspan class="en" data-i>Aggregate 127</tspan></text><text x="330" y="112"><tspan class="ko" data-i>계면 124</tspan><tspan class="en" data-i>Interface 124</tspan></text><text x="90" y="62"><tspan class="ko" data-i>시멘트 93</tspan><tspan class="en" data-i>Cement 93</tspan></text><text x="180" y="245" fill="#6E655C"><tspan class="ko" data-i>기계학습 5 · 고립</tspan><tspan class="en" data-i>Machine learning 5 · isolated</tspan></text></g>
+<text x="400" y="60" class="cfh" font-size="22"><tspan class="ko" data-i>267편 · 13주제 · 70쌍</tspan><tspan class="en" data-i>267 papers · 13 topics · 70 pairs</tspan></text><text x="400" y="100" class="cfs"><tspan class="ko" data-i>최강 연결 아스팔트 ↔ 계면 101편</tspan><tspan class="en" data-i>Strongest link asphalt ↔ interface 101 papers</tspan></text><text x="400" y="134" class="cfs"><tspan class="ko" data-i>2위 골재 ↔ 계면 90편</tspan><tspan class="en" data-i>2nd aggregate ↔ interface 90 papers</tspan></text><text x="400" y="178" class="cfm" fill="#C8610C"><tspan class="ko" data-i>임계값 ↑ → 중심 쌍만 잔존 (22장)</tspan><tspan class="en" data-i>Threshold ↑ → only core pairs remain (slide 22)</tspan></text>
+</svg></div>
+</div>
+<div class="it dark a" style="--d:2">
+<div class="ih"><span class="icb" data-ico="file-json"></span><div><p class="k"><span class="ko" data-i>완성물 ②</span><span class="en" data-i>Deliverable ②</span></p><h4>dedup_report.json</h4></div></div>
+<p class="mono-line">{ "records": 534, "unique": <b>267</b>, "duplicates": 267 }</p>
+<p><span class="ko" data-i>Claude Code 로 노트북 실행 (12장) · 지도의 입력 · W03 실행의 전제</span><span class="en" data-i>Run notebook with Claude Code (slide 12) · input of the map · prerequisite for W03 run</span></p>
+</div>
+</div>
+<div class="plan">
+<div class="lines">
+<div class="ln a" style="--d:1"><span class="nn">2-1</span><div><h4><span class="ko" data-i>오늘 만들 것</span><span class="en" data-i>What we build today</span></h4><p><span class="ko" data-i>지도 읽기 · 단계 4 · P2-1 내 검색식</span><span class="en" data-i>Read the map · 4 steps · P2-1 my search query</span></p></div><span class="min"><span class="ko" data-i>12분</span><span class="en" data-i>12 min</span></span></div>
+<div class="ln a" style="--d:2"><span class="nn">2-2</span><div><h4><span class="ko" data-i>Claude Code 실행</span><span class="en" data-i>Run Claude Code</span></h4><p><span class="ko" data-i>3단계 · 셸 6 · 저장소 순서 · P2-2</span><span class="en" data-i>3 steps · 6 shell commands · repository order · P2-2</span></p></div><span class="min"><span class="ko" data-i>12분</span><span class="en" data-i>12 min</span></span></div>
+<div class="ln a" style="--d:3"><span class="nn">2-3</span><div><h4><span class="ko" data-i>검색식과 수집</span><span class="en" data-i>Search query and collection</span></h4><p><span class="ko" data-i>조립기 · DB 4종 · 수집 흐름 · 기록 카드</span><span class="en" data-i>Builder · 4 databases · collection flow · record card</span></p></div><span class="min"><span class="ko" data-i>14분</span><span class="en" data-i>14 min</span></span></div>
+<div class="ln a" style="--d:4"><span class="nn">2-4</span><div><h4><span class="ko" data-i>지도와 노트</span><span class="en" data-i>Map and notes</span></h4><p><span class="ko" data-i>네트워크 · DOI 정규화 · Zotero · Obsidian = 폐루프 ① · P2-3</span><span class="en" data-i>Network · DOI normalization · Zotero · Obsidian = closed loop ① · P2-3</span></p></div><span class="min"><span class="ko" data-i>15분</span><span class="en" data-i>15 min</span></span></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>준비물: <b>Claude 유료 요금제(Pro 이상) 또는 Console 계정</b> · <b>Zotero · Obsidian</b>(설치 지시 I-3 · I-4 · 사용은 2-4) · GitHub 계정</span><span class="en" data-i>Prerequisites: <b>Paid Claude plan (Pro or higher) or Console account</b> · <b>Zotero · Obsidian</b> (install prompts I-3 · I-4 · used in 2-4) · GitHub account</span></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>계획서 50분 · 원본 11주차 11-1 · 11-2 · 11-4 축약 · Claude Code · 셸 · Git 설명은 repo/docs/claude_code_quickstart.md · git_quickstart.md · Colab(선택 경로) = colab_quickstart.md</span><span class="en" data-i>Plan 50 min · condensed from original week-11 11-1 · 11-2 · 11-4 · Claude Code · shell · Git explained in repo/docs/claude_code_quickstart.md · git_quickstart.md · Colab (optional route) = colab_quickstart.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 3 차시 2-1 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 2-1 · 12분 · 영상 1편</span><span class="en" data-i>Session 2-1 · 12 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="map"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">1</p><p class="hubt"><span class="ko" data-i>오늘 만들 것: 문헌 지도</span><span class="en" data-i>What we build today: literature map</span></p><p class="hubs"><span class="ko" data-i>완성물 → 단계 4 → 용어 5</span><span class="en" data-i>Deliverables → 4 steps → 5 terms</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>내 주제의 검색식 (P2-1)</span><span class="en" data-i>Search query for my topic (P2-1)</span></h4></div></div><p><span class="ko" data-i>블록 4 · 동의어 OR · 배제 NOT · 두 DB 문법 · 기록 표</span><span class="en" data-i>4 blocks · OR synonyms · NOT exclusion · syntax for both DBs · record table</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>파이프라인 ① 문헌 단계의 도구</span><span class="en" data-i>Tool for pipeline step ① literature</span></h4></div></div><p><span class="ko" data-i>W11 재료 문헌 · W16 후보 생성의 입력 = 이 검색식</span><span class="en" data-i>Input for W11 materials literature · W16 candidate generation = this search query</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 4 FIG 지도 읽기 -->
+<section class="slide v3" data-src="11주차#10">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>2-1 · 무엇</span><span class="en" data-i>2-1 · What</span></p>
+<div class="hrow"><span class="hico" data-ico="network"></span><h2 class="h"><span class="ko" data-i>문헌 지도 읽기: 점 = 주제 13 · 선 = 함께 다룬 논문 수 · 고립 점 = 공백</span><span class="en" data-i>Reading the literature map: dot = 13 topics · line = papers covering both · isolated dot = gap</span></h2></div>
+<p class="sub"><span class="ko" data-i>굵고 늦게까지 남는 선 = 분야의 중심 주제 쌍 · 고립되는 점(기계학습 5편) = 이 강좌 W13~W16 이 채우는 공백</span><span class="en" data-i>Thick, long-surviving line = core topic pair of the field · isolated dot (machine learning, 5 papers) = gap that W13~W16 of this course fill</span></p>
+<div class="bd">
+<div class="row">
+<div class="figw white fill"><svg viewBox="0 0 820 560" class="cfig">
+<g transform="translate(400,280)" stroke="#4F7FB0" stroke-opacity=".45">
+<line class="tl" x1="0" y1="-230" x2="170" y2="-150" stroke-width="10"/><line class="tl" x1="0" y1="-230" x2="230" y2="-30" stroke-width="8"/><line class="tl" x1="170" y1="-150" x2="230" y2="-30" stroke-width="7"/><line x1="0" y1="-230" x2="-190" y2="-140" stroke-width="6"/><line x1="230" y1="-30" x2="190" y2="140" stroke-width="5"/><line x1="-190" y1="-140" x2="-215" y2="40" stroke-width="4"/><line x1="0" y1="-230" x2="80" y2="220" stroke-width="4"/><line x1="170" y1="-150" x2="-190" y2="-140" stroke-width="3"/><line x1="-215" y1="40" x2="-150" y2="180" stroke-width="3"/><line x1="190" y1="140" x2="80" y2="220" stroke-width="2"/>
+</g>
+<g transform="translate(400,280)" fill="#FFFDF9" stroke="#4F7FB0" stroke-width="3">
+<circle cx="0" cy="-230" r="36"/><circle cx="170" cy="-150" r="30"/><circle cx="230" cy="-30" r="30"/><circle cx="-190" cy="-140" r="26"/><circle cx="190" cy="140" r="24"/><circle cx="-215" cy="40" r="24"/><circle cx="80" cy="220" r="20"/><circle cx="-150" cy="180" r="16"/><circle cx="-50" cy="245" r="13" stroke="#D3C6B5"/><circle cx="260" cy="60" r="12" stroke="#D3C6B5"/>
+</g>
+<g class="cfs" text-anchor="middle" font-size="19" fill="#231F20"><text x="400" y="18"><tspan class="ko" data-i>아스팔트 · 역청 191</tspan><tspan class="en" data-i>Asphalt · bitumen 191</tspan></text><text x="640" y="110"><tspan class="ko" data-i>골재 127</tspan><tspan class="en" data-i>Aggregate 127</tspan></text><text x="700" y="258"><tspan class="ko" data-i>수분 · 부착 · 계면 124</tspan><tspan class="en" data-i>Moisture · adhesion · interface 124</tspan></text><text x="150" y="112"><tspan class="ko" data-i>시멘트 · C-S-H 93</tspan><tspan class="en" data-i>Cement · C-S-H 93</tspan></text><text x="660" y="455"><tspan class="ko" data-i>역학 · 유변 81</tspan><tspan class="en" data-i>Mechanics · rheology 81</tspan></text><text x="110" y="330"><tspan class="ko" data-i>재생제 · RAP 81</tspan><tspan class="en" data-i>Rejuvenator · RAP 81</tspan></text><text x="480" y="535"><tspan class="ko" data-i>열 · 확산 58</tspan><tspan class="en" data-i>Heat · diffusion 58</tspan></text><text x="190" y="492"><tspan class="ko" data-i>노화 36</tspan><tspan class="en" data-i>Aging 36</tspan></text><text x="330" y="552" fill="#6E655C"><tspan class="ko" data-i>기계학습 5 · 고립</tspan><tspan class="en" data-i>Machine learning 5 · isolated</tspan></text><text x="720" y="352" fill="#6E655C">ReaxFF 13</text></g>
+</svg></div>
+<div class="col" style="width:640px;flex:none">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="circle-dot"></span><div><h4><span class="ko" data-i>점 = 주제 13 · 크기 = 논문 수</span><span class="en" data-i>Dot = 13 topics · size = number of papers</span></h4></div></div></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="git-branch"></span><div><h4><span class="ko" data-i>선 = 함께 가진 논문 수 · 굵기 = 수</span><span class="en" data-i>Line = papers sharing both · thickness = count</span></h4></div></div><p><span class="ko" data-i>임계값 미만은 숨김 → 임계값 ↑ = 중심 쌍만</span><span class="en" data-i>Below threshold hidden → threshold ↑ = core pairs only</span></p></div>
+<div class="it hot a" style="--d:3"><div class="ih"><span class="icb" data-ico="circle-x"></span><div><h4><span class="ko" data-i>선이 없는 점 = 공백</span><span class="en" data-i>Dot with no line = gap</span></h4></div></div><p><span class="ko" data-i>함께 다뤄진 사례가 적은 영역</span><span class="en" data-i>Area with few papers covering both</span></p></div>
+<div class="it dark a" style="--d:4"><div class="cb plain"><span class="fc dk"><span class="ko" data-i><em>267</em>편</span><span class="en" data-i><em>267</em> papers</span></span><span class="fc dk"><span class="ko" data-i><em>70</em> / 78 쌍</span><span class="en" data-i><em>70</em> / 78 pairs</span></span><span class="fc dk"><span class="ko" data-i>최강 <em>101</em>편</span><span class="en" data-i>Strongest <em>101</em> papers</span></span></div><p><span class="ko" data-i>최강 아스팔트 ↔ 계면 · 2위 골재 ↔ 계면 90 · 22장에서 임계값 조작으로 직접 제작</span><span class="en" data-i>Strongest asphalt ↔ interface · 2nd aggregate ↔ interface 90 · build it yourself by moving the threshold on slide 22</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 11주차 덱 #10 · 데이터 week02/data/md_construction_literature_2021_2026.csv (267편)</span><span class="en" data-i>Original week-11 deck #10 · data week02/data/md_construction_literature_2021_2026.csv (267 papers)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 5 FIG 단계 4 -->
+<section class="slide v3" data-src="11주차#6,11주차#20">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>2-1 · 어떻게</span><span class="en" data-i>2-1 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="route"></span><h2 class="h"><span class="ko" data-i>지도까지 4단계: 검색식 → 수집(CSV) → 중복 제거 → 지도</span><span class="en" data-i>4 steps to the map: search query → collection (CSV) → deduplication → map</span></h2></div>
+<p class="sub"><span class="ko" data-i>왼쪽 둘은 「무엇을 찾을지」 · 오른쪽 둘은 「찾은 것을 어떻게 볼지」 · 오늘 손으로 하는 것은 지시 1 · 노트북 실행 1 · 슬라이더 1</span><span class="en" data-i>Left two = "what to find" · right two = "how to view what was found" · by hand today: 1 prompt · 1 notebook run · 1 slider</span></p>
+<div class="bd">
+<div class="exf a" style="--d:1">
+<div class="exs"><span class="exi" data-ico="search"></span><div><h4><span class="ko" data-i>① 검색식</span><span class="en" data-i>① Search query</span></h4><p><span class="ko" data-i>P2-1 · 조립기 16장</span><span class="en" data-i>P2-1 · builder slide 16</span></p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="download"></span><div><h4><span class="ko" data-i>② 수집 → CSV</span><span class="en" data-i>② Collect → CSV</span></h4><p><span class="ko" data-i>수집 흐름 19장 · 기록 20장</span><span class="en" data-i>Collection flow slide 19 · record slide 20</span></p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="merge"></span><div><h4><span class="ko" data-i>③ 중복 제거</span><span class="en" data-i>③ Deduplicate</span></h4><p><span class="ko" data-i>노트북 P2-2 12장 · 조작형 23장</span><span class="en" data-i>Notebook P2-2 slide 12 · interactive slide 23</span></p></div></div><span class="exa"></span>
+<div class="exs hot"><span class="exi" data-ico="network"></span><div><h4><span class="ko" data-i>④ 지도</span><span class="en" data-i>④ Map</span></h4><p><span class="ko" data-i>조작형 22장</span><span class="en" data-i>Interactive slide 22</span></p></div></div>
+</div>
+<div class="grid c2 tight">
+<div class="it a" style="--d:2"><pre class="code">( asphalt OR bitumen )
+<span class="k">AND</span> ( "molecular dynamics" OR MD )
+<span class="o">NOT</span> review</pre><p><span class="ko" data-i>블록 = AND · 동의어 = OR · 배제 = NOT</span><span class="en" data-i>Block = AND · synonym = OR · exclusion = NOT</span></p></div>
+<div class="it a" style="--d:2"><div class="cb"><span class="fc bl">Crossref</span><span class="x">+</span><span class="fc bl">OpenAlex</span><span class="x">→</span><span class="fc"><span class="ko" data-i><em>534</em>행</span><span class="en" data-i><em>534</em> rows</span></span></div><p><span class="ko" data-i>질의 10개 · 2021~2026 · 기록 3항목(식 · 날짜 · 건수)</span><span class="en" data-i>10 queries · 2021~2026 · 3 record items (query · date · count)</span></p></div>
+<div class="it a" style="--d:3"><div class="cb"><span class="fc"><em>534</em></span><span class="x">→</span><span class="fc or"><span class="ko" data-i><em>267</em>편</span><span class="en" data-i><em>267</em> papers</span></span></div><p><span class="ko" data-i>DOI 정규화 3단계 → dedup_report.json</span><span class="en" data-i>DOI normalization 3 steps → dedup_report.json</span></p></div>
+<div class="it warm a" style="--d:3"><div class="cb"><span class="fc"><span class="ko" data-i><em>13</em>주제</span><span class="en" data-i><em>13</em> topics</span></span><span class="x">·</span><span class="fc"><span class="ko" data-i><em>70</em>쌍</span><span class="en" data-i><em>70</em> pairs</span></span></div><p><span class="ko" data-i>주제 태그 동시출현 · 임계값 슬라이더</span><span class="en" data-i>Topic-tag co-occurrence · threshold slider</span></p></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>② 의 기록 3항목(검색식 · 날짜 · 건수)이 없으면 ④ 의 숫자 <b>재현 불가</b></span><span class="en" data-i>Without the 3 record items of ② (query · date · count), numbers in ④ are <b>not reproducible</b></span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 11주차 덱 #6 · #20 · 상세: repo/week02/docs/scraping_and_extraction.md</span><span class="en" data-i>Original week-11 deck #6 · #20 · details: repo/week02/docs/scraping_and_extraction.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 6 DEF 5 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>용어 정의</span><span class="en" data-i>Key terms</span></p>
+<div class="hrow"><span class="hico" data-ico="book-marked"></span><h2 class="h"><span class="ko" data-i>새 용어 6: 저장소 · 불리언 검색식 · 인용키 · 위키링크 · 셸 · Claude Code</span><span class="en" data-i>6 new terms: repository · Boolean query · citation key · wikilink · shell · Claude Code</span></h2></div>
+<p class="sub"><span class="ko" data-i>Git · 가상환경 · Claude Code 상세: repo/docs/claude_code_quickstart.md · git_quickstart.md</span><span class="en" data-i>Git · virtual environment · Claude Code details: repo/docs/claude_code_quickstart.md · git_quickstart.md</span></p>
+<div class="bd">
+<div class="defs icon" style="grid-template-columns:repeat(6,minmax(0,1fr))">
+<div class="defcard icon a" style="--d:1"><span class="lic" data-ico="folder-git-2"></span><p class="term"><span class="ko" data-i>저장소<em>repository</em></span><span class="en" data-i>Repository<em>repository</em></span></p><p class="def"><span class="ko" data-i>덱 · 노트북 · 데이터 · 정답을 담은 폴더 · GitHub 사본 · 받기(clone) · 갱신(pull)만</span><span class="en" data-i>Folder holding decks · notebooks · data · answers · GitHub copy · only clone · pull</span></p><p class="again"><span class="ko" data-i>11장</span><span class="en" data-i>Slide 11</span></p></div>
+<div class="defcard icon a" style="--d:2"><span class="lic" data-ico="search"></span><p class="term"><span class="ko" data-i>불리언 검색식<em>Boolean query</em></span><span class="en" data-i>Boolean query<em>Boolean query</em></span></p><p class="def"><span class="ko" data-i>블록 사이 AND · 블록 안 동의어 OR · 배제 NOT · 식 · 날짜 · 건수를 함께 기록</span><span class="en" data-i>AND between blocks · OR for synonyms within a block · NOT for exclusion · record query · date · count together</span></p><p class="again"><span class="ko" data-i>15 · 16장</span><span class="en" data-i>Slides 15 · 16</span></p></div>
+<div class="defcard icon a" style="--d:3"><span class="lic" data-ico="hash"></span><p class="term"><span class="ko" data-i>인용키<em>citation key</em></span><span class="en" data-i>Citation key<em>citation key</em></span></p><p class="def"><span class="ko" data-i>논문 한 편의 짧은 이름(저자 + 연도 + 첫 단어) · 서지 · 노트 · 원고 · 데이터를 이 이름으로</span><span class="en" data-i>Short name of one paper (author + year + first word) · bibliography · notes · manuscript · data use this name</span></p><p class="again"><span class="ko" data-i>24장</span><span class="en" data-i>Slide 24</span></p></div>
+<div class="defcard icon a" style="--d:4"><span class="lic" data-ico="link"></span><p class="term"><span class="ko" data-i>위키링크<em>wikilink</em></span><span class="en" data-i>Wikilink<em>wikilink</em></span></p><p class="def"><span class="ko" data-i>[[노트 이름]] 으로 거는 연결 · 상대 쪽에 백링크 자동 · 없는 이름 = 새 노트</span><span class="en" data-i>Link made with [[note name]] · backlink added automatically on the other side · nonexistent name = new note</span></p><p class="again"><span class="ko" data-i>25장</span><span class="en" data-i>Slide 25</span></p></div>
+<div class="defcard icon a" style="--d:4"><span class="lic" data-ico="terminal"></span><p class="term"><span class="ko" data-i>셸<em>shell</em></span><span class="en" data-i>Shell<em>shell</em></span></p><p class="def"><span class="ko" data-i>글자 명령으로 파일 · 폴더 · 프로그램을 다루는 창 · 명령 6개 · Claude Code 안 = !명령</span><span class="en" data-i>Window to handle files · folders · programs with text commands · 6 commands · inside Claude Code = !command</span></p><p class="again"><span class="ko" data-i>10장</span><span class="en" data-i>Slide 10</span></p></div>
+<div class="defcard icon a" style="--d:4"><span class="lic" data-ico="bot"></span><p class="term">Claude Code<em>AI coding agent</em></p><p class="def"><span class="ko" data-i>폴더의 파일 읽기 · 명령 실행 AI 도구 · 수정 · 실행 전 승인(permission) · 규칙 = CLAUDE.md</span><span class="en" data-i>AI tool that reads files in a folder · runs commands · asks approval (permission) before edits · runs · rules = CLAUDE.md</span></p><p class="again"><span class="ko" data-i>9 · 11 · 12장</span><span class="en" data-i>Slides 9 · 11 · 12</span></p></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>정의 문구 = GLOSSARY.md</span><span class="en" data-i>Definition wording = GLOSSARY.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 7 MAKE P2-1 -->
+<section class="slide v3" data-src="11주차#6">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>2-1 · 만들어 보기</span><span class="en" data-i>2-1 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="pencil-ruler"></span><h2 class="h"><span class="ko" data-i>만들어 보기 P2-1: 내 주제의 검색식 · 블록 4 · 두 DB 문법</span><span class="en" data-i>Try it P2-1: search query for my topic · 4 blocks · syntax for both DBs</span></h2></div>
+<div class="bd">
+<div class="make">
+<div class="left a" style="--d:1">
+<pre class="code"><span class="c"><span class="ko" data-i># 환경: week02 의 Claude Code (W01 12장)</span><span class="en" data-i># Setup: Claude Code in week02 (W01 slide 12)</span></span>
+<span class="c"><span class="ko" data-i># 1. /clear → 「복사」 → 붙여 넣기 → [주제] 수정</span><span class="en" data-i># 1. /clear → "Copy" → paste → edit [topic]</span></span>
+<span class="c"><span class="ko" data-i># 2. 결과 → out/P2-1_result.md (자동 저장)</span><span class="en" data-i># 2. Result → out/P2-1_result.md (saved automatically)</span></span>
+<span class="c"><span class="ko" data-i># 3. 16장 조립기로 블록 구조 재현 → 편수</span><span class="en" data-i># 3. Reproduce the block structure with slide 16 builder → paper count</span></span></pre>
+<div class="prompt" data-id="P2-1"><span class="ko" data-i>내 연구 주제는 [아스팔트 바인더의 수분 손상을 분자동역학으로 다루는 연구]다. 문헌 검색식을 만들어라. ① 개념 블록 4개(재료 · 방법 · 성분/조건 · 물성)로 나누고, 블록 안은 동의어를 OR 로, 블록 사이는 AND 로 묶어라. ② 배제할 유형(리뷰 · 특허 등)은 NOT 으로 한 줄. ③ 연도 하한을 넣어라. ④ 같은 식을 Scopus 문법과 Crossref API 질의 문자열 두 가지로 써라. ⑤ 마지막에 기록 표(검색식 · 실행 날짜 · DB · 결과 건수 · 한계)의 빈 칸을 만들어라. 검색은 아직 실행하지 말고, P2-1 결과로 out/P2-1_result.md 에 저장해라.</span><span class="en" data-i>My research topic is [a study of moisture damage in asphalt binder using molecular dynamics]. Build a literature search query. ① Split into 4 concept blocks (material · method · component/condition · property); join synonyms inside a block with OR and blocks with AND. ② Put excluded types (reviews · patents etc.) on one line with NOT. ③ Add a lower year bound. ④ Write the same query in two forms: Scopus syntax and a Crossref API query string. ⑤ At the end, make blank cells for a record table (query · run date · DB · result count · limits). Do not run the search yet; save as the P2-1 result in out/P2-1_result.md.</span></div>
+</div>
+<div class="expect a" style="--d:2">
+<h4><span class="tic" data-ico="search"></span><span class="ko" data-i>기대 결과 · 검색식 2가지 + 기록 표</span><span class="en" data-i>Expected output · 2 queries + record table</span></h4>
+<pre class="code">( asphalt OR bitumen OR binder )
+<span class="k">AND</span> ( "molecular dynamics" OR MD OR simulation )
+<span class="k">AND</span> ( moisture OR water OR stripping )
+<span class="k">AND</span> ( adhesion OR "work of separation" OR debonding )
+<span class="o">AND NOT</span> ( review )  <span class="k">AND</span> PUBYEAR &gt; 2014
+<span class="c"># Crossref: query=asphalt+molecular+dynamics+moisture …</span></pre>
+<table class="t"><thead><tr><th><span class="ko" data-i>검색식</span><span class="en" data-i>Query</span></th><th><span class="ko" data-i>실행 날짜</span><span class="en" data-i>Run date</span></th><th>DB</th><th><span class="ko" data-i>결과 건수</span><span class="en" data-i>Result count</span></th><th><span class="ko" data-i>한계</span><span class="en" data-i>Limits</span></th></tr></thead><tbody>
+<tr><td><span class="ko" data-i>위 식 (Scopus)</span><span class="en" data-i>Query above (Scopus)</span></td><td>[ ]</td><td>Scopus</td><td>[ ]</td><td><span class="ko" data-i>기관 구독</span><span class="en" data-i>Institutional subscription</span></td></tr>
+<tr><td><span class="ko" data-i>위 식 (Crossref)</span><span class="en" data-i>Query above (Crossref)</span></td><td>[ ]</td><td>Crossref</td><td>[ ]</td><td><span class="ko" data-i>초록 일부</span><span class="en" data-i>Partial abstract</span></td></tr></tbody></table>
+<p class="cap"><span class="ko" data-i>블록 4 · AND 3 · OR 동의어 · NOT 1 · 연도 1 · 빈 칸은 실행 뒤 기입 · 16장 조립기(태그 11종)에서 같은 구조의 편수 변화 확인</span><span class="en" data-i>4 blocks · AND 3 · OR synonyms · NOT 1 · year 1 · blanks filled after running · check the paper-count change for the same structure in the slide 16 builder (11 tags)</span></p>
+</div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>블록 사이가 AND 로만 이어지고 블록 안에 OR 동의어가 2개 이상 있는가</span><span class="en" data-i>Are blocks joined only by AND, with 2 or more OR synonyms inside a block?</span></p><p><span class="ko" data-i>기록 표에 검색식 · 날짜 · DB · 건수 · 한계 5칸이 있는가 · 없으면 재현 불가</span><span class="en" data-i>Does the record table have 5 cells: query · date · DB · count · limits? · if not, not reproducible</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 11주차 덱 #6 · 지시문 원문 week02/prompts.md · P2-1</span><span class="en" data-i>Original week-11 deck #6 · prompt source week02/prompts.md · P2-1</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 8 차시 2-2 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 2-2 · 12분 · 영상 1편</span><span class="en" data-i>Session 2-2 · 12 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="play"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">2</p><p class="hubt"><span class="ko" data-i>Claude Code 로 실행</span><span class="en" data-i>Run with Claude Code</span></p><p class="hubs"><span class="ko" data-i>설치 → claude → 지시 · 승인 → 결과 비교</span><span class="en" data-i>Install → claude → prompt · approve → compare results</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4>dedup_report.json (P2-2)</h4></div></div><p><span class="ko" data-i>지시 1번 · 승인 · unique 267 · 오류 = 원인 · 조치 표 → 승인 후 실행</span><span class="en" data-i>Prompt 1 · approve · unique 267 · error = cause · fix table → run after approval</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>18주 실습의 실행 방식</span><span class="en" data-i>How the 18-week practice runs</span></h4></div></div><p><span class="ko" data-i>Claude Code 3단계 · 셸 명령 6 · 저장소 순서 4 · 설명은 repo/docs 로</span><span class="en" data-i>Claude Code 3 steps · 6 shell commands · 4-step repository order · explanations in repo/docs</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 9 ANIM Claude Code 3단계 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>2-2 · 어떻게</span><span class="en" data-i>2-2 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="bot"></span><h2 class="h"><span class="ko" data-i>Claude Code 3단계: 폴더에서 claude → @경로로 지시 · 승인 → 정답과 비교</span><span class="en" data-i>Claude Code 3 steps: claude in folder → prompt with @path · approve → compare with answer</span></h2></div>
+<p class="sub"><span class="ko" data-i>사람 = 지시 · 검토 · 승인 · Claude Code = 파일 읽기 · 명령 · 노트북 실행 · 18주 전부 같은 3단계 · 주차별로 폴더 이름만 변경</span><span class="en" data-i>Human = prompt · review · approve · Claude Code = read files · commands · run notebooks · same 3 steps all 18 weeks · only the folder name changes by week</span></p>
+<div class="bd"><div class="emb" data-emb="cc3" data-dur="12" data-steps="3" data-labels="① 열기 · claude|② 지시 · 승인|③ 확인 · 비교" data-labels-en="① Open · claude|② Prompt · approve|③ Check · compare"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>상세(설치 · 로그인 · 권한 모드 · 조작 · 안전): repo/docs/claude_code_quickstart.md · 요금 · 설치 명령 = 공식 문서에서 최신 확인</span><span class="en" data-i>Details (install · login · permission mode · usage · safety): repo/docs/claude_code_quickstart.md · check latest pricing · install command in official docs</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 10 ANIM 셸 6 -->
+<section class="slide v3" data-min="2">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>2-2 · 무엇</span><span class="en" data-i>2-2 · What</span></p>
+<div class="hrow"><span class="hico" data-ico="terminal"></span><h2 class="h"><span class="ko" data-i>셸 명령 6개 = 폴더 다루기: pwd · ls · cd · mkdir · cp · python3</span><span class="en" data-i>6 shell commands = handling folders: pwd · ls · cd · mkdir · cp · python3</span></h2></div>
+<p class="sub"><span class="ko" data-i>명령 타이핑 ↔ 왼쪽 폴더의 해당 줄 켜짐 · 6개로 18주 전부 · 터미널에 그대로 · Claude Code 안에서는 앞에 !</span><span class="en" data-i>Typing a command ↔ matching line in left folder lights up · 6 commands cover all 18 weeks · type as-is in terminal · inside Claude Code prefix with !</span></p>
+<div class="bd"><div class="emb" data-emb="shell6" data-dur="14" data-steps="6" data-labels="pwd|ls|mkdir|python3|cp|cd"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>규칙: data/ 입력 · out/ 출력 · 공백 · 한글 없는 이름 · 상세: repo/docs/claude_code_quickstart.md §4 (!명령) · §6 (오류) · 연습 셀 = 노트북 01</span><span class="en" data-i>Rules: data/ input · out/ output · names with no spaces or Hangul · details: repo/docs/claude_code_quickstart.md §4 (!command) · §6 (errors) · practice cells = notebook 01</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 11 FIG 저장소 순서 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>2-2 · 어떻게</span><span class="en" data-i>2-2 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="folder-git-2"></span><h2 class="h"><span class="ko" data-i>저장소 순서 4: README → notebooks → out → 정답 비교</span><span class="en" data-i>Repository order 4: README → notebooks → out → compare with answer</span></h2></div>
+<p class="sub"><span class="ko" data-i>폴더 이름 = 순서 · 어느 주차든 같은 4단계 · 맨 위 CLAUDE.md = 강좌 규칙 · Git 3개(받기 · 갱신 · 저장)</span><span class="en" data-i>Folder name = order · same 4 steps in any week · top-level CLAUDE.md = course rules · 3 Git commands (clone · pull · save)</span></p>
+<div class="bd">
+<div class="exf a" style="--d:1">
+<div class="exs"><span class="exi" data-ico="book-open"></span><div><h4>① README</h4><p><span class="ko" data-i>목표 · 순서 · 소요 시간 · 읽기 3분</span><span class="en" data-i>Goal · order · time required · read in 3 min</span></p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="notebook"></span><div><h4>② notebooks</h4><p><span class="ko" data-i>실행 지시 · 번호순</span><span class="en" data-i>Run prompts · in numbered order</span></p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="folder-open"></span><div><h4>③ out/</h4><p><span class="ko" data-i>내 결과 파일</span><span class="en" data-i>My result files</span></p></div></div><span class="exa"></span>
+<div class="exs hot"><span class="exi" data-ico="badge-check"></span><div><h4><span class="ko" data-i>④ 비교</span><span class="en" data-i>④ Compare</span></h4><p><span class="ko" data-i>expected_output = 다음 주 입력</span><span class="en" data-i>expected_output = next week's input</span></p></div></div>
+</div>
+<div class="row fill">
+<pre class="code fill" style="flex:1">2026_MOOC_Lecture_Materials/
+  <span class="o">CLAUDE.md</span>   environment.yml   GLOSSARY.md   docs/
+  <span class="o">week02/</span>
+    <span class="k">① README.md</span>          <span class="ko" data-i>목표 · 순서 · 소요 시간
+    slides/               덱 (더블클릭)</span><span class="en" data-i>Goal · order · time required
+    slides/               decks (double-click)</span>
+    <span class="k">② notebooks/</span>         <span class="ko" data-i>01_… 02_… 번호순
+    data/  scripts/  live/  prompts.md</span><span class="en" data-i>01_… 02_… in numbered order
+    data/  scripts/  live/  prompts.md</span>
+    <span class="o">③ out/</span>                <span class="ko" data-i>내 결과</span><span class="en" data-i>My result</span>
+    <span class="k">④ expected_output/</span>   <span class="ko" data-i>정답 = 다음 주 입력
+    quiz.md
+  week03/ … week18/       같은 구조</span><span class="en" data-i>Answer = next week's input
+    quiz.md
+  week03/ … week18/       same structure</span></pre>
+<div class="col" style="width:700px;flex:none">
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="shield-check"></span><div><p class="k"><span class="ko" data-i>맨 위 CLAUDE.md</span><span class="en" data-i>Top-level CLAUDE.md</span></p><h4><span class="ko" data-i>강좌 규칙 · 세션 시작 때 자동 읽기</span><span class="en" data-i>Course rules · read automatically at session start</span></h4></div></div><p><span class="ko" data-i>data/ 입력 · out/ 출력 · scripts/ 수정 금지 · 설치 · 삭제 전 승인</span><span class="en" data-i>data/ input · out/ output · do not edit scripts/ · approval before install · delete</span></p></div>
+<div class="it warm a" style="--d:3"><p><span class="ko" data-i>못 끝냈으면 ④ 의 파일을 ③ 자리에 두고 다음 주로 진행 · 파일 이름 · 값이 같은지 비교 = 이번 주 체크리스트</span><span class="en" data-i>If unfinished, put the files from ④ in place of ③ and move on to next week · comparing file names · values = this week's checklist</span></p></div>
+<pre class="code a wrap" style="--d:4"><span class="c"><span class="ko" data-i># Git 3개 · 터미널 (Claude Code 안 = !git)</span><span class="en" data-i># 3 Git commands · terminal (inside Claude Code = !git)</span></span>
+git clone https://github.com/sentirain7/2026_MOOC_Lecture_Materials.git   <span class="c"><span class="ko" data-i># 처음 1회 · 전체 받기</span><span class="en" data-i># First time (×1) · download everything</span></span>
+git pull                  <span class="c"><span class="ko" data-i># 매주 · 강사 갱신분 받기</span><span class="en" data-i># Every week · get the instructor's updates</span></span>
+git add -A; git commit -m save  <span class="c"><span class="ko" data-i># 큰 수정 전</span><span class="en" data-i># Before big edits</span></span></pre>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>Git 의 개념 · 계정 · 토큰 · 올리기(push)는 선택 · repo/docs/git_quickstart.md (원본 W02 v1 2차시 3장을 문서로)</span><span class="en" data-i>Git concepts · account · token · push are optional · repo/docs/git_quickstart.md (original W02 v1 session-2 slide 3 as a document)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 12 MAKE P2-2 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>2-2 · 만들어 보기</span><span class="en" data-i>2-2 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="play"></span><h2 class="h"><span class="ko" data-i>만들어 보기 P2-2: claude → 노트북 실행 지시 → dedup_report.json</span><span class="en" data-i>Try it P2-2: claude → notebook run prompt → dedup_report.json</span></h2></div>
+<div class="bd">
+<div class="make">
+<div class="left a" style="--d:1">
+<pre class="code wrap"><span class="c"><span class="ko" data-i># 처음 1회: 공식 설치 명령 (quickstart §2)</span><span class="en" data-i># First time (×1): official install command (quickstart §2)</span></span>
+claude --version &amp;&amp; claude doctor   <span class="c"><span class="ko" data-i># 설치 확인 · 점검</span><span class="en" data-i># Check install · diagnose</span></span>
+git clone https://github.com/sentirain7/2026_MOOC_Lecture_Materials.git
+conda activate mdai &amp;&amp; cd */week02 &amp;&amp; claude
+<span class="c"><span class="ko" data-i># 처음이면 로그인 → 지시 붙여 넣기 → 승인 창 검토</span><span class="en" data-i># First time: log in → paste prompt → review approval dialog</span></span></pre>
+<div class="prompt" data-id="P2-2"><span class="ko" data-i>@notebooks/02_dedup_doi.ipynb 를 실행해라. 내 환경은 [Ubuntu / macOS / Windows WSL2]다. 오류가 나면 ① 어느 셀 · 어느 줄에서 멈췄는지 ② 원인 한 줄 ③ 조치(명령) ④ 다시 확인하는 방법을 표로 보고하고, 조치는 내 승인을 받은 뒤 실행해라. 노트북과 scripts/ 는 고치지 말고 환경 · 경로 · 입력 파일 쪽에서 해결해라. 성공하면 out/dedup_report.json 의 records · unique · duplicates 를 expected_output/ 과 비교해 P2-2 결과로 out/P2-2_result.md 에 저장해라.</span><span class="en" data-i>Run @notebooks/02_dedup_doi.ipynb. My environment is [Ubuntu / macOS / Windows WSL2]. If an error occurs, report in a table ① which cell · line it stopped at ② one-line cause ③ fix (command) ④ how to re-check, and run fixes only after my approval. Do not edit the notebook or scripts/; fix on the environment · path · input file side. On success, compare records · unique · duplicates in out/dedup_report.json with expected_output/ and save as the P2-2 result in out/P2-2_result.md.</span></div>
+</div>
+<div class="expect a" style="--d:2">
+<h4><span class="tic" data-ico="terminal"></span><span class="ko" data-i>기대 결과 · 노트북 마지막 셀 출력 + Claude Code 비교 보고</span><span class="en" data-i>Expected output · last-cell output of notebook + Claude Code comparison report</span></h4>
+<pre class="code">files: md_corpus_267.csv (267) + md_asphalt_…csv (267)
+records 534 → normalized keys → unique 267
+duplicates 267   <span class="c"><span class="ko" data-i># 정규화 전 집계였다면 534 로 과대</span><span class="en" data-i># Counting before normalization would overstate as 534</span></span>
+<span class="k">✔ saved week02/out/dedup_report.json</span>
+<span class="c">{"records": 534, "unique": 267, "duplicates": 267}</span></pre>
+<div class="bars">
+<div class="bar"><div class="l"><span class="ko" data-i>원문<small>534행</small></span><span class="en" data-i>Raw<small>534 rows</small></span></div><div class="b mt" style="width:400px"></div><div class="v nosum">534</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>① 공백 · 마침표</span><span class="en" data-i>① Whitespace · period</span></div><div class="b bl" style="width:360px"></div><div class="v nosum">481</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>② URL · doi: 접두</span><span class="en" data-i>② URL · doi: prefix</span></div><div class="b bl" style="width:234px"></div><div class="v nosum">312</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>③ 소문자</span><span class="en" data-i>③ Lowercase</span></div><div class="b" style="width:200px"></div><div class="v nosum">267</div></div>
+</div>
+<p class="cap"><span class="ko" data-i>unique 267 이면 통과 · 막대 = 정규화 단계별 고유 키 수(중간 값은 데이터마다 다름 · 단계 효과만 확인)</span><span class="en" data-i>Pass if unique is 267 · bars = unique keys per normalization step (intermediate values vary by data · check step effect only)</span></p>
+</div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>out/dedup_report.json 의 "unique": 267 · "duplicates": 267</span><span class="en" data-i>"unique": 267 · "duplicates": 267 in out/dedup_report.json</span></p><p><span class="ko" data-i>오류 → 원인 · 조치 표 → 승인 후 실행 · 그래도 안 되면 expected_output/dedup_report.json 으로 W03</span><span class="en" data-i>Error → cause · fix table → run after approval · if still failing, go to W03 with expected_output/dedup_report.json</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>week02/notebooks/02_dedup_doi.ipynb · scripts/norm_doi.py · 지시문 원문 week02/prompts.md · P2-2</span><span class="en" data-i>week02/notebooks/02_dedup_doi.ipynb · scripts/norm_doi.py · prompt source week02/prompts.md · P2-2</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 13 TWEAK 연도 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>2-2 · 바꿔 보기</span><span class="en" data-i>2-2 · Try changing</span></p>
+<div class="hrow"><span class="hico" data-ico="calendar"></span><h2 class="h"><span class="ko" data-i>연도 하한 2021 → 2023: 267편 → 177편 · 매개변수 1개 = 결과 1개</span><span class="en" data-i>Year lower bound 2021 → 2023: 267 → 177 papers · 1 parameter = 1 result</span></h2></div>
+<p class="sub"><span class="ko" data-i>지시 1줄 「첫 셀 YEAR_MIN 을 2023 으로 바꿔 다시 실행」 → 승인 · 숫자 하나만 변경 · 노트북 = 읽기 대신 실행</span><span class="en" data-i>1-line prompt "Change YEAR_MIN in first cell to 2023 and rerun" → approve · change only one number · notebook = run instead of read</span></p>
+<div class="bd">
+<div class="tweak">
+<div class="pane before a" style="--d:1"><h3><span class="tic" data-ico="minus"></span><span class="ko" data-i>전 · YEAR_MIN = 2021 (기본)</span><span class="en" data-i>Before · YEAR_MIN = 2021 (default)</span></h3>
+<pre class="code">YEAR_MIN = <span class="o">2021</span>   <span class="c"><span class="ko" data-i># 노트북 첫 셀</span><span class="en" data-i># First cell of notebook</span></span></pre>
+<div class="figw white"><svg viewBox="0 0 700 260"><g fill="#4F7FB0"><rect x="80" y="60" width="70" height="140"/><rect x="180" y="100" width="70" height="100"/><rect x="280" y="80" width="70" height="120"/><rect x="380" y="110" width="70" height="90"/><rect x="480" y="140" width="70" height="60"/><rect x="580" y="180" width="70" height="20"/></g><line x1="60" y1="200" x2="670" y2="200" stroke="#6E655C" stroke-width="2"/><g class="cfmu" text-anchor="middle"><text x="115" y="232">2021</text><text x="215" y="232">2022</text><text x="315" y="232">2023</text><text x="415" y="232">2024</text><text x="515" y="232">2025</text><text x="615" y="232">2026</text></g></svg></div>
+<div class="n md nosum">unique = 267</div>
+<p class="cap"><span class="ko" data-i>2021~2026 전체 · 지도의 기준 데이터</span><span class="en" data-i>2021~2026 all · baseline data of the map</span></p></div>
+<div class="pane after a" style="--d:2"><h3><span class="tic" data-ico="plus"></span><span class="ko" data-i>후 · YEAR_MIN = 2023</span><span class="en" data-i>After · YEAR_MIN = 2023</span></h3>
+<pre class="code">YEAR_MIN = <span class="o">2023</span></pre>
+<div class="figw white"><svg viewBox="0 0 700 260"><g><rect x="80" y="60" width="70" height="140" fill="#E2D8CA"/><rect x="180" y="100" width="70" height="100" fill="#E2D8CA"/><rect x="280" y="80" width="70" height="120" fill="#E37F1A"/><rect x="380" y="110" width="70" height="90" fill="#E37F1A"/><rect x="480" y="140" width="70" height="60" fill="#E37F1A"/><rect x="580" y="180" width="70" height="20" fill="#E37F1A"/></g><line x1="60" y1="200" x2="670" y2="200" stroke="#6E655C" stroke-width="2"/><g class="cfmu" text-anchor="middle"><text x="115" y="232">2021</text><text x="215" y="232">2022</text><text x="315" y="232">2023</text><text x="415" y="232">2024</text><text x="515" y="232">2025</text><text x="615" y="232">2026</text></g></svg></div>
+<div class="n md nosum"><span class="ko" data-i>unique = 177 · 최근 3년이 2/3</span><span class="en" data-i>unique = 177 · last 3 years are 2/3</span></div>
+<p class="cap"><span class="ko" data-i>회색 = 제외된 2021~2022 · 지도도 177편 기준으로 재작성</span><span class="en" data-i>Gray = excluded 2021~2022 · map redrawn on 177 papers</span></p></div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>바뀐 unique 값을 out/ 의 보고서에서 확인</span><span class="en" data-i>Check the changed unique value in the report in out/</span></p><p><span class="ko" data-i>지도(22장)에서 선 감소 여부 확인</span><span class="en" data-i>Check on the map (slide 22) whether lines decrease</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>집계 = week02/data/md_corpus_267.csv 의 year 열 (2021~2026 · ≥2023 177편)</span><span class="en" data-i>Count = year column of week02/data/md_corpus_267.csv (2021~2026 · ≥2023 177 papers)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 14 차시 2-3 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 2-3 · 14분 · 영상 1편</span><span class="en" data-i>Session 2-3 · 14 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="search"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">3</p><p class="hubt"><span class="ko" data-i>검색식과 수집</span><span class="en" data-i>Search query and collection</span></p><p class="hubs"><span class="ko" data-i>검색식 · DB · 수집 흐름 · 기록 카드</span><span class="en" data-i>Search query · DB · collection flow · record card</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>조립기로 내 검색식 구조의 편수</span><span class="en" data-i>Paper count of my query structure with the builder</span></h4></div></div><p><span class="ko" data-i>태그 11종 칩 · 654편 코퍼스 · OR ↑ AND ↓ NOT 배제</span><span class="en" data-i>11 tag chips · 654-paper corpus · OR ↑ AND ↓ NOT exclude</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>파이프라인 ① 문헌 · 재현 가능한 수집</span><span class="en" data-i>Pipeline ① literature · reproducible collection</span></h4></div></div><p><span class="ko" data-i>검색식 · 실행 날짜 · 건수 · DB · 한계의 기록 → W11 · W16 의 입력</span><span class="en" data-i>Record of query · run date · count · DB · limits → input for W11 · W16</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 15 FIG 불리언 벤 -->
+<section class="slide v3" data-src="11주차#6">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>2-3 · 무엇</span><span class="en" data-i>2-3 · What</span></p>
+<div class="hrow"><span class="hico" data-ico="combine"></span><h2 class="h"><span class="ko" data-i>불리언 구조 = 블록 사이 AND(교집합) · 블록 안 OR(합집합) · NOT(빼기)</span><span class="en" data-i>Boolean structure = AND between blocks (intersection) · OR within block (union) · NOT (subtract)</span></h2></div>
+<p class="sub"><span class="ko" data-i>OR 추가 → 편수 ↑ · AND 블록 추가 → 편수 ↓ · NOT → 유형 제거 · P2-1 에서 받은 식이 이 구조인지 16장 조립기에서 확인</span><span class="en" data-i>Add OR → count ↑ · add AND block → count ↓ · NOT → remove a type · check on the slide 16 builder that the query from P2-1 has this structure</span></p>
+<div class="bd">
+<div class="row">
+<div class="grid c3" style="flex:1">
+<div class="it a" style="--d:1"><p class="k"><span class="ko" data-i>블록 안 OR = 합집합 ↑</span><span class="en" data-i>OR within block = union ↑</span></p><div class="figw white"><svg viewBox="0 0 400 220"><circle cx="150" cy="110" r="80" fill="#DCE8F2" fill-opacity=".85"/><circle cx="250" cy="110" r="80" fill="#DCE8F2" fill-opacity=".85"/><text x="110" y="116" text-anchor="middle" class="cfs">asphalt</text><text x="290" y="116" text-anchor="middle" class="cfs">bitumen</text></svg></div><p><span class="ko" data-i>동의어 추가 → 범위 확대</span><span class="en" data-i>Add synonym → wider range</span></p></div>
+<div class="it a" style="--d:2"><p class="k"><span class="ko" data-i>블록 사이 AND = 교집합 ↓</span><span class="en" data-i>AND between blocks = intersection ↓</span></p><div class="figw white"><svg viewBox="0 0 400 220"><circle cx="150" cy="110" r="80" fill="#DCE8F2" fill-opacity=".6"/><circle cx="250" cy="110" r="80" fill="#FDE3BF" fill-opacity=".6"/><path class="fl" d="M200 41 A80 80 0 0 1 200 179 A80 80 0 0 1 200 41 Z" fill="#E37F1A" fill-opacity=".75"/><text x="100" y="116" text-anchor="middle" class="cfs"><tspan class="ko" data-i>재료</tspan><tspan class="en" data-i>Material</tspan></text><text x="300" y="116" text-anchor="middle" class="cfs">MD</text></svg></div><p><span class="ko" data-i>블록 추가 → 범위 축소</span><span class="en" data-i>Add block → narrower range</span></p></div>
+<div class="it a" style="--d:3"><p class="k"><span class="ko" data-i>NOT = 빼기</span><span class="en" data-i>NOT = subtract</span></p><div class="figw white"><svg viewBox="0 0 400 220"><circle cx="200" cy="110" r="80" fill="#E37F1A" fill-opacity=".7"/><circle class="flow" cx="262" cy="150" r="40" fill="#FFFDF9" stroke="#D9534F" stroke-width="4" stroke-dasharray="8 6"/><text x="262" y="156" text-anchor="middle" class="cfs" fill="#D9534F">review</text></svg></div><p><span class="ko" data-i>유형 배제 · 한 줄만</span><span class="en" data-i>Exclude type · one line only</span></p></div>
+</div>
+<pre class="code" style="width:600px;flex:none">( asphalt OR bitumen OR binder )
+<span class="k">AND</span> ( "molecular dynamics" OR MD )
+<span class="k">AND</span> ( SARA OR asphaltene OR modifier )
+<span class="k">AND</span> ( viscosity OR Tg OR adhesion )
+<span class="o">NOT</span> review  <span class="k">AND</span> PUBYEAR &gt; 2014
+<span class="c"><span class="ko" data-i># 블록 4 = 재료 · 방법 · 성분 · 물성</span><span class="en" data-i># 4 blocks = material · method · component · property</span></span></pre>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>규칙: 블록은 <b>4개 안팎</b> · 동의어는 블록당 2~4개 · NOT 은 1줄 · 기록 3항목(검색식 · 실행 날짜 · 결과 건수)이 없으면 재현 불가</span><span class="en" data-i>Rule: about <b>4 blocks</b> · 2~4 synonyms per block · 1 NOT line · without 3 record items (query · run date · result count), not reproducible</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 11주차 덱 #6</span><span class="en" data-i>Original week-11 deck #6</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 16 SIM 조립기 -->
+<section class="slide v3" data-src="11주차#7">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>2-3 · 확인 · 조작형</span><span class="en" data-i>2-3 · Check · interactive</span></p>
+<div class="hrow"><span class="hico" data-ico="sliders-horizontal"></span><h2 class="h"><span class="ko" data-i>검색식 조립기 654편: OR 확장 ↑ · AND 교차 ↓ · NOT 배제</span><span class="en" data-i>Query builder, 654 papers: OR expand ↑ · AND intersect ↓ · NOT exclude</span></h2></div>
+<p class="sub"><span class="ko" data-i>칩 클릭 = 미사용 → 블록 A → 블록 B → NOT 순환 · 블록 안 OR · 블록 사이 AND · 내 검색식(P2-1)의 구조를 여기서 재현</span><span class="en" data-i>Click chip = unused → block A → block B → NOT cycle · OR within block · AND between blocks · reproduce the structure of your query (P2-1) here</span></p>
+<div class="bd">
+<div class="sim" id="sim-bq" style="grid-template-columns:560px minmax(0,1fr)">
+<div class="ctl">
+<div class="chips" id="bq_chips"></div>
+<button type="button" data-act="year"><span class="ko" data-i>연도: 전체</span><span class="en" data-i>Year: all</span></button>
+<button type="button" class="alt" data-act="reset"><span class="ko" data-i>초기 예시 (258편)</span><span class="en" data-i>Initial example (258 papers)</span></button>
+<button type="button" class="alt" data-act="clear"><span class="ko" data-i>모두 해제 (654편)</span><span class="en" data-i>Clear all (654 papers)</span></button>
+</div>
+<div class="view" id="bq_view">
+<pre class="code" id="bq_formula" style="margin:18px 22px 0;min-height:150px"></pre>
+<div class="kpi"><div><span class="ko" data-i>결과 <b><span id="bq_n"> · </span> / 654 편</b></span><span class="en" data-i>Results <b><span id="bq_n"> · </span> / 654 papers</b></span></div><div><span class="ko" data-i>블록별 <b id="bq_ab"> · </b></span><span class="en" data-i>By block <b id="bq_ab"> · </b></span></div><div><span class="ko" data-i>전문 XML 보유 <b id="bq_x"> · </b></span><span class="en" data-i>With full-text XML <b id="bq_x"> · </b></span></div></div>
+<div id="bq_cats" style="padding:4px 22px 16px"></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 11주차 덱 #7 · 데이터 전문 코퍼스 색인 654편 · 같은 계산: week02/live/query_builder.ipynb (공개 267편)</span><span class="en" data-i>Original week-11 deck #7 · data: full-text corpus index of 654 papers · same calculation: week02/live/query_builder.ipynb (public 267 papers)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 17 TWEAK OR vs AND -->
+<section class="slide v3" data-src="11주차#7">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>2-3 · 바꿔 보기</span><span class="en" data-i>2-3 · Try changing</span></p>
+<div class="hrow"><span class="hico" data-ico="git-compare"></span><h2 class="h"><span class="ko" data-i>기준 436편 → AND 힘장 블록 추가 258 ↓ · 그 위에 OR 노화 추가 262 ↑</span><span class="en" data-i>Baseline 436 papers → add AND force-field block 258 ↓ · then add OR aging 262 ↑</span></h2></div>
+<p class="sub"><span class="ko" data-i>AND 블록 1개 = 40 % 감소 · OR 동의어 1개 = +4 · 블록 4개 초과 → 편수 0 에 근접</span><span class="en" data-i>1 AND block = 40 % decrease · 1 OR synonym = +4 · over 4 blocks → count near 0</span></p>
+<div class="bd">
+<div class="tweak">
+<div class="pane before a" style="--d:1"><h3><span class="tic" data-ico="minus"></span><span class="ko" data-i>전 · A = (계면 · 부착 OR 수분) NOT 리뷰</span><span class="en" data-i>Before · A = (interface · adhesion OR moisture) NOT review</span></h3>
+<div class="figw white"><svg viewBox="0 0 700 260"><circle cx="270" cy="120" r="95" fill="#DCE8F2" fill-opacity=".9"/><circle cx="380" cy="120" r="95" fill="#DCE8F2" fill-opacity=".9"/><text x="220" y="126" text-anchor="middle" class="cfs"><tspan class="ko" data-i>계면 · 부착</tspan><tspan class="en" data-i>Interface · adhesion</tspan></text><text x="430" y="126" text-anchor="middle" class="cfs"><tspan class="ko" data-i>수분</tspan><tspan class="en" data-i>Moisture</tspan></text><circle cx="520" cy="200" r="38" fill="#FFFDF9" stroke="#D9534F" stroke-width="4" stroke-dasharray="8 6"/><text x="520" y="206" text-anchor="middle" class="cfs" fill="#D9534F"><tspan class="ko" data-i>리뷰</tspan><tspan class="en" data-i>Review</tspan></text></svg></div>
+<div class="n md nosum"><span class="ko" data-i>436 편 / 654</span><span class="en" data-i>436 papers / 654</span></div>
+<p class="cap"><span class="ko" data-i>넓은 합집합 · 힘장 없는 실험 논문도 섞임</span><span class="en" data-i>Wide union · includes experimental papers without force field</span></p></div>
+<div class="pane after a" style="--d:2"><h3><span class="tic" data-ico="plus"></span><span class="ko" data-i>후 · + AND 힘장 → 258 · 다시 OR 노화 → 262</span><span class="en" data-i>After · + AND force field → 258 · then OR aging → 262</span></h3>
+<div class="figw white"><svg viewBox="0 0 700 260"><circle cx="270" cy="110" r="95" fill="#DCE8F2" fill-opacity=".6"/><circle cx="380" cy="110" r="95" fill="#DCE8F2" fill-opacity=".6"/><circle cx="325" cy="170" r="95" fill="#FDE3BF" fill-opacity=".7"/><path class="fl" d="M270 125 Q325 80 380 125 Q325 205 270 125 Z" fill="#E37F1A" fill-opacity=".85"/><text x="325" y="250" text-anchor="middle" class="cfh" fill="#C8610C" font-size="20"><tspan class="ko" data-i>AND 힘장</tspan><tspan class="en" data-i>AND force field</tspan></text><text x="560" y="60" text-anchor="middle" class="cfs" fill="#4F7FB0"><tspan class="ko" data-i>+ OR 노화 → 262</tspan><tspan class="en" data-i>+ OR aging → 262</tspan></text></svg></div>
+<div class="n md nosum"><span class="ko" data-i>258 편 → 262 편</span><span class="en" data-i>258 papers → 262 papers</span></div>
+<p class="cap"><span class="ko" data-i>AND 블록 1개 = 40 % 감소 · OR 동의어 1개 = +4</span><span class="en" data-i>1 AND block = 40 % decrease · 1 OR synonym = +4</span></p></div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>조립기: 초기 예시 → 힘장 칩 미사용 = 436 · 노화 칩 A = 262 확인</span><span class="en" data-i>Builder: initial example → force-field chip unused = 436 · aging chip A = 262 to check</span></p><p><span class="ko" data-i>블록 4개 초과 → 편수 0 에 근접 · 블록 수 축소</span><span class="en" data-i>Over 4 blocks → count near 0 · reduce number of blocks</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>수치 = 조립기 데이터(654편)에서 집계</span><span class="en" data-i>Numbers = counted from builder data (654 papers)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 18 FIG DB 4종 -->
+<section class="slide v3" data-src="11주차#6">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>2-3 · 어떻게</span><span class="en" data-i>2-3 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="database"></span><h2 class="h"><span class="ko" data-i>서지 DB 4종: 구독형 · 공개 API(Crossref · OpenAlex) · 심사 전</span><span class="en" data-i>4 bibliographic DB types: subscription · open API (Crossref · OpenAlex) · preprint</span></h2></div>
+<p class="sub"><span class="ko" data-i>주황 둘(Crossref · OpenAlex)이 이 강좌의 수집 도구 · 코드로 받아 CSV 로 · 구독형은 검색식 설계 · 검증에 · 심사 전 원고는 방법 추적에</span><span class="en" data-i>The two orange (Crossref · OpenAlex) are this course's collection tools · fetch by code to CSV · subscription for query design · validation · preprints for method tracking</span></p>
+<div class="bd">
+<div class="grid c4">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="landmark"></span><div><p class="k"><span class="ko" data-i>구독형</span><span class="en" data-i>Subscription</span></p><h4>Scopus · Web of Science</h4></div></div><p><span class="ko" data-i>정제된 메타 · 인용 지표 · 수동 검색 · 검색식 설계</span><span class="en" data-i>Curated metadata · citation metrics · manual search · query design</span></p><span class="fc"><span class="ko" data-i>기관 구독</span><span class="en" data-i>Institutional subscription</span></span></div>
+<div class="it hot a" style="--d:2"><div class="ih"><span class="icb" data-ico="database"></span><div><p class="k"><span class="ko" data-i>공개 API</span><span class="en" data-i>Open API</span></p><h4>Crossref</h4></div></div><p><span class="ko" data-i>DOI 기준 서지 · 코드로 수집 (오늘 · W11)</span><span class="en" data-i>DOI-based bibliography · collect by code (today · W11)</span></p><span class="fc"><span class="ko" data-i>무료 · API</span><span class="en" data-i>Free · API</span></span></div>
+<div class="it hot a" style="--d:3"><div class="ih"><span class="icb" data-ico="globe"></span><div><p class="k"><span class="ko" data-i>공개 API</span><span class="en" data-i>Open API</span></p><h4>OpenAlex</h4></div></div><p><span class="ko" data-i>개방형 · 인용 그래프 · 소속 기관 · 문헌맵 · 기관 집계</span><span class="en" data-i>Open · citation graph · affiliation · literature map · institution counts</span></p><span class="fc"><span class="ko" data-i>무료 · API</span><span class="en" data-i>Free · API</span></span></div>
+<div class="it a" style="--d:4"><div class="ih"><span class="icb" data-ico="file-text"></span><div><p class="k"><span class="ko" data-i>심사 전</span><span class="en" data-i>Preprint</span></p><h4>arXiv · ChemRxiv</h4></div></div><p><span class="ko" data-i>심사 전 원고 · 최신 방법론 · <b>인용 시 주의</b></span><span class="en" data-i>Unreviewed manuscripts · latest methods · <b>caution when citing</b></span></p><span class="fc"><span class="ko" data-i>방법 추적</span><span class="en" data-i>Method tracking</span></span></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>선택 기준 2: <b>기관 구독이 있는가 · 공개 API 가 있는가</b> · 기록 규칙 4: 검색식 · 실행 날짜 · 결과 건수 · DB 이름 = 재현성 요건</span><span class="en" data-i>2 selection criteria: <b>is there an institutional subscription · is there an open API</b> · 4 record rules: query · run date · result count · DB name = reproducibility requirements</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 11주차 덱 #6</span><span class="en" data-i>Original week-11 deck #6</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 19 ANIM 수집 흐름 -->
+<section class="slide v3" data-src="11주차#8,11주차#20">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>2-3 · 어떻게</span><span class="en" data-i>2-3 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="download"></span><h2 class="h"><span class="ko" data-i>수집 흐름 4단계: 질의 10개 → 응답 → CSV 534행 → 중복 제거 267</span><span class="en" data-i>Collection flow, 4 steps: 10 queries → response → CSV 534 rows → deduplicate 267</span></h2></div>
+<p class="sub"><span class="ko" data-i>기록 3항목(식 · 날짜 · DB)을 단계마다 기록 · 아래 점 하나 = 레코드 하나 · 빨강 = 같은 DOI 의 다른 표기</span><span class="en" data-i>Record 3 items (query · date · DB) at every step · each dot below = one record · red = different notation of the same DOI</span></p>
+<div class="bd">
+<div class="exf" id="hv_flow">
+<div class="exs"><span class="exi" data-ico="search"></span><div><h4><span class="ko" data-i>① 질의 10개</span><span class="en" data-i>① 10 queries</span></h4><p><span class="ko" data-i>검색식 변형 · 2021~2026</span><span class="en" data-i>Query variants · 2021~2026</span></p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="cloud"></span><div><h4><span class="ko" data-i>② Crossref 응답</span><span class="en" data-i>② Crossref response</span></h4><p><span class="ko" data-i>JSON: 제목 · DOI · 연도 · 초록</span><span class="en" data-i>JSON: title · DOI · year · abstract</span></p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="file-spreadsheet"></span><div><h4><span class="ko" data-i>③ CSV 534행</span><span class="en" data-i>③ CSV 534 rows</span></h4><p><span class="ko" data-i>같은 논문이 여러 질의에</span><span class="en" data-i>Same paper in several queries</span></p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="merge"></span><div><h4><span class="ko" data-i>④ 중복 제거 267</span><span class="en" data-i>④ Deduplicate 267</span></h4><p><span class="ko" data-i>초록 108편 · 지도의 입력</span><span class="en" data-i>108 abstracts · input of the map</span></p></div></div>
+</div>
+<div class="emb fill" data-emb="harvest" data-dur="12" data-steps="4" data-labels="① 질의 10개|② API 응답|③ CSV 534행|④ 중복 제거 267" data-labels-en="① 10 queries|② API response|③ CSV 534 rows|④ Duplicate removal 267"></div>
+</div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 11주차 덱 #8 · #20 · 숫자 = 문헌맵 기록(질의 10개 · 2021~2026 · 267편 · 초록 108편) · 코드: repo/week02/docs/scraping_and_extraction.md</span><span class="en" data-i>Original week-11 deck #8 · #20 · numbers = literature-map record (10 queries · 2021~2026 · 267 papers · 108 abstracts) · code: repo/week02/docs/scraping_and_extraction.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 20 FIG 기록 카드 3 -->
+<section class="slide v3" data-src="11주차#8">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>2-3 · 확인</span><span class="en" data-i>2-3 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="clipboard-list"></span><h2 class="h"><span class="ko" data-i>검색 기록 카드 3: 검색원 · 범위 · 기준 · 결과 · 한계 5칸</span><span class="en" data-i>3 search record cards: source · scope · criteria · result · limits, 5 cells</span></h2></div>
+<p class="sub"><span class="ko" data-i>세 카드의 5칸 = P2-1 기록 표의 5칸 · 기록 누락(가운데) → 두 숫자 모두 사용 불가</span><span class="en" data-i>5 cells of the three cards = 5 cells of the P2-1 record table · record missing (middle) → both numbers unusable</span></p>
+<div class="bd">
+<div class="grid c3">
+<div class="it white a" style="--d:1"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>① 문헌맵</span><span class="en" data-i>① Literature map</span></p><h4><span class="ko" data-i>Crossref · 질의 10 · 2021~2026</span><span class="en" data-i>Crossref · 10 queries · 2021~2026</span></h4></div></div>
+<table class="t"><tbody><tr><td><span class="ko" data-i>기준</span><span class="en" data-i>Criteria</span></td><td><span class="ko" data-i>분자 시뮬레이션 + 건설재료</span><span class="en" data-i>Molecular simulation + construction materials</span></td></tr><tr><td><span class="ko" data-i>결과</span><span class="en" data-i>Result</span></td><td><span class="ko" data-i>267편 · 초록 108편</span><span class="en" data-i>267 papers · 108 abstracts</span></td></tr><tr><td><span class="ko" data-i>한계</span><span class="en" data-i>Limits</span></td><td><span class="ko" data-i>OpenAlex 미사용</span><span class="en" data-i>OpenAlex not used</span></td></tr></tbody></table>
+<span class="fc gr"><span class="ko" data-i>기록 완전 → 재실행 가능</span><span class="en" data-i>Record complete → rerunnable</span></span></div>
+<div class="it white a" style="--d:2"><div class="ih"><span class="icb" data-ico="triangle-alert"></span><div><p class="k"><span class="ko" data-i>② 실험 문헌 원장</span><span class="en" data-i>② Experimental literature ledger</span></p><h4><span class="ko" data-i>OpenAlex · 질의 44 · 4라운드</span><span class="en" data-i>OpenAlex · 44 queries · 4 rounds</span></h4></div></div>
+<table class="t"><tbody><tr><td><span class="ko" data-i>기준</span><span class="en" data-i>Criteria</span></td><td><span class="ko" data-i>MDPI · Hindawi 등 제외</span><span class="en" data-i>MDPI · Hindawi etc. excluded</span></td></tr><tr><td><span class="ko" data-i>결과</span><span class="en" data-i>Result</span></td><td><span class="ko" data-i>374편(README) · CSV 484행</span><span class="en" data-i>374 papers (README) · CSV 484 rows</span></td></tr><tr><td><span class="ko" data-i>한계</span><span class="en" data-i>Limits</span></td><td><span class="ko" data-i>갱신 기록 없음</span><span class="en" data-i>No update record</span></td></tr></tbody></table>
+<span class="fc rd"><span class="ko" data-i>374 ↔ 484 불일치 · 둘 다 사용 불가</span><span class="en" data-i>374 ↔ 484 mismatch · neither usable</span></span></div>
+<div class="it white a" style="--d:3"><div class="ih"><span class="icb" data-ico="library"></span><div><p class="k"><span class="ko" data-i>③ 전문 코퍼스 색인</span><span class="en" data-i>③ Full-text corpus index</span></p><h4><span class="ko" data-i>수집 폴더 31개</span><span class="en" data-i>31 collection folders</span></h4></div></div>
+<table class="t"><tbody><tr><td><span class="ko" data-i>기준</span><span class="en" data-i>Criteria</span></td><td><span class="ko" data-i>DOI → PII → 제목 순 통합</span><span class="en" data-i>Merge in order DOI → PII → title</span></td></tr><tr><td><span class="ko" data-i>결과</span><span class="en" data-i>Result</span></td><td><span class="ko" data-i>877건 → 654편</span><span class="en" data-i>877 records → 654 papers</span></td></tr><tr><td><span class="ko" data-i>한계</span><span class="en" data-i>Limits</span></td><td><span class="ko" data-i>태그 = 정규식 · 경계 사례 확인</span><span class="en" data-i>Tags = regex · boundary cases checked</span></td></tr></tbody></table>
+<span class="fc or"><span class="ko" data-i>16장 조립기의 654편 · 규칙 = 23장</span><span class="en" data-i>654 papers in slide 16 builder · rules = slide 23</span></span></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>우선순위: 결과 건수 &lt; <b>기준과 한계의 기록</b> · P2-1 기록 표의 빈 칸이 이것</span><span class="en" data-i>Priority: result count &lt; <b>record of criteria and limits</b> · the blanks in the P2-1 record table are this</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 11주차 덱 #8 · 상세: repo/week02/docs/literature_map.md</span><span class="en" data-i>Original week-11 deck #8 · details: repo/week02/docs/literature_map.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 21 차시 2-4 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 2-4 · 15분 · 영상 1편</span><span class="en" data-i>Session 2-4 · 15 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="network"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">4</p><p class="hubt"><span class="ko" data-i>지도와 노트</span><span class="en" data-i>Map and notes</span></p><p class="hubs"><span class="ko" data-i>지도 → 중복 제거 → Zotero → Obsidian</span><span class="en" data-i>Map → deduplication → Zotero → Obsidian</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>문헌 지도(임계값 조작) · 논문 노트 1장(P2-3)</span><span class="en" data-i>Literature map (threshold control) · 1 paper note (P2-3)</span></h4></div></div><p><span class="ko" data-i>슬라이더로 중심 쌍 · 공백 탐색 · DOI 1개 → 볼트 노트 1장</span><span class="en" data-i>Explore core pairs · gaps with slider · 1 DOI → 1 vault note</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>폐루프 ① 문헌: 인용키 1개로 묶이는 서지 · 노트 · 원고 · 데이터</span><span class="en" data-i>Closed loop ① literature: bibliography · note · manuscript · data tied by 1 citation key</span></h4></div></div><p><span class="ko" data-i>W11 자동 추출 · W16 주장–문헌 지도 · W18 폐루프 표적 = 같은 노트 필드</span><span class="en" data-i>W11 auto extraction · W16 claim–literature map · W18 closed-loop targets = same note fields</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 22 SIM 네트워크 -->
+<section class="slide v3" data-src="11주차#10">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>2-4 · 확인 · 조작형</span><span class="en" data-i>2-4 · Check · interactive</span></p>
+<div class="hrow"><span class="hico" data-ico="network"></span><h2 class="h"><span class="ko" data-i>주제 동시출현 지도: 임계값 ↑ → 중심 쌍만 · 고립 주제 = 공백</span><span class="en" data-i>Topic co-occurrence map: threshold ↑ → core pairs only · isolated topic = gap</span></h2></div>
+<p class="sub"><span class="ko" data-i>늦게까지 남는 선 = 중심 주제 쌍 · 먼저 고립되는 점 = 공백(기계학습 5편) · 같은 그림: live/cooccurrence.ipynb</span><span class="en" data-i>Line surviving longest = core topic pair · dot isolated first = gap (machine learning, 5 papers) · same figure: live/cooccurrence.ipynb</span></p>
+<div class="bd">
+<div class="sim" id="sim-co">
+<div class="ctl">
+<label><span class="ko" data-i><b>임계값 (공유 논문 수 ≥) <output data-o="th">20</output></b></span><span class="en" data-i><b>Threshold (shared papers ≥) <output data-o="th">20</output></b></span><input type="range" min="1" max="101" value="20" step="1" data-k="th"></label>
+<div class="chips"><button type="button" class="alt" data-th="5">5</button><button type="button" class="alt" data-th="20">20</button><button type="button" class="alt" data-th="40">40</button><button type="button" class="alt" data-th="80">80</button></div>
+<p class="note"><span class="ko" data-i>표시 연결 <b id="co_ne"> · </b> / 70쌍 (가능 78쌍)</span><span class="en" data-i>Links shown <b id="co_ne"> · </b> / 70 pairs (78 possible)</span></p>
+<p class="note"><span class="ko" data-i>고립 주제:</span><span class="en" data-i>Isolated topics:</span> <span id="co_iso"> · </span></p>
+</div>
+<div class="view"><svg viewBox="0 0 1200 560" aria-label="주제 동시출현 네트워크" id="co_svg"></svg>
+<div class="kpi"><div><span class="ko" data-i>최강 연결 <b>아스팔트 ↔ 계면 101편</b></span><span class="en" data-i>Strongest link <b>asphalt ↔ interface 101 papers</b></span></div><div><span class="ko" data-i>2위 <b>골재 ↔ 계면 90편</b></span><span class="en" data-i>2nd <b>aggregate ↔ interface 90 papers</b></span></div><div><span class="ko" data-i>데이터 <b>267편 · 13주제</b></span><span class="en" data-i>Data <b>267 papers · 13 topics</b></span></div></div></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 11주차 덱 #10 · 데이터 week02/data/md_construction_literature_2021_2026.csv</span><span class="en" data-i>Original week-11 deck #10 · data week02/data/md_construction_literature_2021_2026.csv</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 23 SIM DOI -->
+<section class="slide v3" data-src="11주차#21">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>2-4 · 확인 · 조작형</span><span class="en" data-i>2-4 · Check · interactive</span></p>
+<div class="hrow"><span class="hico" data-ico="merge"></span><h2 class="h"><span class="ko" data-i>중복 제거 = DOI 정규화 3단계: 레코드 8건 → 고유 키 8 → 7 → 5 → 3</span><span class="en" data-i>Deduplication = DOI normalization in 3 steps: 8 records → unique keys 8 → 7 → 5 → 3</span></h2></div>
+<p class="sub"><span class="ko" data-i>중복 키 = DOI → 없으면 PII → 없으면 제목 앞 60자 · 정규화 전 집계 금지 (P2-2 의 534 → 267 이 이 규칙)</span><span class="en" data-i>Duplicate key = DOI → else PII → else first 60 chars of title · no counting before normalization (534 → 267 in P2-2 follows this rule)</span></p>
+<div class="bd">
+<div class="sim" id="sim-dd">
+<div class="ctl">
+<button type="button" class="alt" data-s="0"><span class="ko" data-i>원문</span><span class="en" data-i>Raw</span></button>
+<button type="button" class="alt" data-s="1"><span class="ko" data-i>① 공백 · 끝 마침표 제거</span><span class="en" data-i>① Strip whitespace · trailing period</span></button>
+<button type="button" class="alt" data-s="2"><span class="ko" data-i>② URL · doi: 접두 제거</span><span class="en" data-i>② Strip URL · doi: prefix</span></button>
+<button type="button" class="alt" data-s="3"><span class="ko" data-i>③ 소문자 변환</span><span class="en" data-i>③ Convert to lowercase</span></button>
+<p class="note"><span class="ko" data-i>고유 키 <b id="dd_n"> · </b> / 레코드 8건</span><span class="en" data-i>Unique keys <b id="dd_n"> · </b> / 8 records</span></p>
+<p class="note"><span class="ko" data-i>단계 누적 적용 · 실제 코퍼스: 폴더별 877건 → 654편 · 노트북 02 의 norm_doi() 가 같은 3단계</span><span class="en" data-i>Steps applied cumulatively · actual corpus: 877 records by folder → 654 papers · norm_doi() in notebook 02 does the same 3 steps</span></p>
+</div>
+<div class="view"><table class="t" id="dd_table" style="margin:12px 22px 6px;width:calc(100% - 44px)"></table>
+<pre class="code" style="margin:0 22px 12px">def norm_doi(d):
+    d = d.strip().rstrip('.')                                    <span class="c"># ①</span>
+    d = re.sub(r'^(https?://(dx\.)?doi\.org/|doi:\s*)', '', d)   <span class="c"># ②</span>
+    return d.lower()                                             <span class="c"># ③</span></pre></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 11주차 덱 #21 · scripts/norm_doi.py</span><span class="en" data-i>Original week-11 deck #21 · scripts/norm_doi.py</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 24 ANIM Zotero · 인용키 -->
+<section class="slide v3" data-min="2" data-src="11주차#29,11주차#30">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>2-4 · 어떻게</span><span class="en" data-i>2-4 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="hash"></span><h2 class="h"><span class="ko" data-i>폐루프 ① 문헌: Zotero 4단계 → loop/lit/library.bib</span><span class="en" data-i>Closed loop ① literature: Zotero 4 steps → loop/lit/library.bib</span></h2></div>
+<p class="sub"><span class="ko" data-i>인용키 1개 = 서지 · 노트 · 원고 · 데이터 출처가 공유 → 「어느 논문의 값인가」 끝까지 추적 · .bib 자동 내보내기 · 설치 = 지시 I-3</span><span class="en" data-i>1 citation key shared by bibliography · note · manuscript · data source → trace "which paper is this value from" to the end · .bib auto-export · install = prompt I-3</span></p>
+<div class="bd">
+<div class="exf a" style="--d:1">
+<div class="exs"><span class="exi" data-ico="download"></span><div><h4><span class="ko" data-i>① 수집</span><span class="en" data-i>① Collect</span></h4><p><span class="ko" data-i>Connector 1번 · DOI 여러 개</span><span class="en" data-i>Connector 1 click · several DOIs</span></p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="folder-open"></span><div><h4><span class="ko" data-i>② 정리</span><span class="en" data-i>② Organize</span></h4><p><span class="ko" data-i>컬렉션 · 태그 · 중복 병합 · PDF</span><span class="en" data-i>Collections · tags · merge duplicates · PDF</span></p></div></div><span class="exa"></span>
+<div class="exs hot"><span class="exi" data-ico="hash"></span><div><h4><span class="ko" data-i>③ 인용키 고정</span><span class="en" data-i>③ Fix citation key</span></h4><p>Better BibTeX · yao2022discussion</p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="file-text"></span><div><h4><span class="ko" data-i>④ .bib 자동 내보내기</span><span class="en" data-i>④ Auto-export .bib</span></h4><p><span class="ko" data-i>Keep updated → loop/lit/library.bib · LaTeX · Pandoc · Obsidian 공유</span><span class="en" data-i>Keep updated → loop/lit/library.bib · share with LaTeX · Pandoc · Obsidian</span></p></div></div>
+</div>
+<div class="emb fill" data-emb="zotkey" data-dur="8"></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 11주차 덱 #29 · #30 · 예시 서지 = 코퍼스 #228 (Yao 2022 · 10.1016/j.cis.2021.102565) · Zotero · Better BibTeX 설치 · 내보내기 = 지시 I-3 (repo/docs/install_prompts.md) · 강좌 제공 사례 서지 15편 = loop/lit/library.bib (Zotero 없이도 폐루프 동작) · 상세 = repo/week02/docs/zotero_obsidian_loop.md</span><span class="en" data-i>Original week-11 deck #29 · #30 · example reference = corpus #228 (Yao 2022 · 10.1016/j.cis.2021.102565) · Zotero · Better BibTeX install · export = prompt I-3 (repo/docs/install_prompts.md) · course sample bibliography 15 papers = loop/lit/library.bib (closed loop runs without Zotero) · details = repo/week02/docs/zotero_obsidian_loop.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 25 FIG Obsidian -->
+<section class="slide v3" data-src="11주차#15,11주차#16,11주차#17">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>2-4 · 무엇</span><span class="en" data-i>2-4 · What</span></p>
+<div class="hrow"><span class="hico" data-ico="notebook-pen"></span><h2 class="h"><span class="ko" data-i>폐루프 ① 문헌: Obsidian 볼트 loop/vault → 표적 2개</span><span class="en" data-i>Closed loop ① literature: Obsidian vault loop/vault → 2 targets</span></h2></div>
+<p class="sub"><span class="ko" data-i>볼트 = 폴더 1개 · 노트 = 평문 .md · [[이름]] 한 번 = 선 하나 · 백링크 · 템플릿 = templates/논문노트.md · 설치 = 지시 I-4</span><span class="en" data-i>Vault = 1 folder · note = plain .md · one [[name]] = one line · backlink · template = templates/ paper-note template · install = prompt I-4</span></p>
+<div class="bd">
+<div class="row">
+<div class="doc a fill" style="--d:1"><span class="doc-pub"><span class="ko" data-i>loop/vault/papers/zhang2021molecular.md · 논문 노트</span><span class="en" data-i>loop/vault/papers/zhang2021molecular.md · paper note</span></span>
+<pre class="code doccode"><span class="c">---</span>
+citekey: <span class="o">zhang2021molecular</span>
+doi: 10.1016/j.fuel.2020.119175
+year: 2021   loop_role: <span class="o">target</span>   tags: [paper, target]
+<span class="c">---</span>
+<span class="k"><span class="ko" data-i>## 한 줄 요약</span><span class="en" data-i>## One-line summary</span></span>
+<span class="k"><span class="ko" data-i>## 보고 물성</span><span class="en" data-i>## Reported properties</span></span>
+<span class="ko" data-i>| 물성 | 값    | 단위  | 조건                | 근거 |
+| 밀도 | 1.012 | g/cm³ | 25 °C (298 K) · 실측 | 논문 인용 실측 |</span><span class="en" data-i>| property | value | unit  | condition                | basis |
+| density  | 1.012 | g/cm³ | 25 °C (298 K) · measured | measured value cited in paper |</span>
+<span class="k"><span class="ko" data-i>## 연결</span><span class="en" data-i>## Links</span></span>   <span class="ko" data-i>[[00_루프지도]]  [[밀도]]  [[CED]]</span><span class="en" data-i>[[00_loop-map]]  [[density]]  [[CED]]</span></pre>
+<span class="doc-m"><span class="ko" data-i>loop_role: target = 표적 · validation = 대조 · none = 읽기만 · W11 자동 추출 · W16 주장–문헌 지도와 같은 필드 · git 으로 관리 가능</span><span class="en" data-i>loop_role: target = target · validation = comparison · none = read only · same fields as W11 auto extraction · W16 claim–literature map · can be managed with git</span></span></div>
+<div class="col" style="width:620px;flex:none">
+<div class="figw white fill"><svg viewBox="0 0 600 400" class="cfig">
+<g stroke="#D3C6B5" stroke-width="2"><line class="tl" x1="300" y1="200" x2="190" y2="100"/><line class="tl" x1="300" y1="200" x2="410" y2="90"/><line class="tl" x1="300" y1="200" x2="200" y2="320"/><line class="tl" x1="420" y1="310" x2="410" y2="90"/><line x1="420" y1="310" x2="200" y2="320"/></g>
+<circle class="pulse" cx="300" cy="200" r="36" fill="#E37F1A" opacity=".35"/><circle cx="300" cy="200" r="36" fill="#E37F1A"/><text x="300" y="205" text-anchor="middle" class="cfw" font-size="13">zhang2021</text>
+<g fill="#4F7FB0"><circle cx="190" cy="100" r="36"/><circle cx="410" cy="90" r="36"/><circle cx="200" cy="320" r="38"/></g><circle cx="420" cy="310" r="38" fill="#E37F1A"/>
+<g class="cfw" text-anchor="middle" font-size="13"><text x="190" y="105"><tspan class="ko" data-i>밀도</tspan><tspan class="en" data-i>Density</tspan></text><text x="410" y="95">CED</text><text x="200" y="325"><tspan class="ko" data-i>루프지도</tspan><tspan class="en" data-i>Loop map</tspan></text><text x="420" y="315">gao2022</text></g>
+<text x="300" y="385" text-anchor="middle" class="cfmu"><tspan class="ko" data-i>그래프 뷰 = 링크 누적 · 논문 ↔ 물성 개념 ↔ 루프지도</tspan><tspan class="en" data-i>Graph view = accumulated links · paper ↔ property concept ↔ loop map</tspan></text>
+</svg></div>
+<div class="foot a" style="--d:2"><span class="ko" data-i>lit_extract.py: 노트 15편 → 밀도 <b>1.018</b> g/cm³ (11편 · 실측 22개 중앙값) · CED <b>354.2</b> MJ/m³ (7개 중앙값) · 근거 없는 값 기재 금지</span><span class="en" data-i>lit_extract.py: 15 notes → density <b>1.018</b> g/cm³ (11 papers · median of 22 measured values) · CED <b>354.2</b> MJ/m³ (median of 7 values) · no value without basis</span></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 11주차 덱 #15 ~ #17 · 템플릿: repo/loop/vault/templates/논문노트.md (= repo/week02/docs/obsidian_template.md + loop_role) · 읽는 규칙: repo/loop/scripts/lit_extract.py · 덱에서 옮긴 내용: repo/week02/docs/zotero_obsidian_loop.md</span><span class="en" data-i>Original week-11 deck #15 ~ #17 · template: repo/loop/vault/templates/ paper-note template (= repo/week02/docs/obsidian_template.md + loop_role) · reading rules: repo/loop/scripts/lit_extract.py · content moved from deck: repo/week02/docs/zotero_obsidian_loop.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 26 MAKE P2-3 -->
+<section class="slide v3" data-src="11주차#17">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>2-4 · 만들어 보기</span><span class="en" data-i>2-4 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="pencil-ruler"></span><h2 class="h"><span class="ko" data-i>만들어 보기 P2-3: DOI + 초록 → 논문 노트 1장 → loop/vault/papers 저장</span><span class="en" data-i>Try it P2-3: DOI + abstract → 1 paper note → save to loop/vault/papers</span></h2></div>
+<div class="bd">
+<div class="make">
+<div class="left a" style="--d:1">
+<pre class="code"><span class="c"><span class="ko" data-i># 환경: week02 의 Claude Code · 새 주제 = /clear</span><span class="en" data-i># Setup: Claude Code in week02 · new topic = /clear</span></span>
+<span class="c"><span class="ko" data-i># 1. 「복사」 → 붙여 넣기 → [DOI] · [초록] 채움</span><span class="en" data-i># 1. "Copy" → paste → fill in [DOI] · [abstract]</span></span>
+<span class="c"><span class="ko" data-i># 2. 노트 → ../loop/vault/papers/&lt;citekey&gt;.md (자동 저장)</span><span class="en" data-i># 2. Note → ../loop/vault/papers/&lt;citekey&gt;.md (saved automatically)</span></span>
+<span class="c"><span class="ko" data-i># 3. lit_extract 확인 → Obsidian 그래프에 점 1개</span><span class="en" data-i># 3. Check lit_extract → 1 dot in Obsidian graph</span></span></pre>
+<div class="prompt" data-id="P2-3"><span class="ko" data-i>아래 논문의 노트를 @../loop/vault/templates/논문노트.md 템플릿 그대로 작성해라(제목 · 연도 · 학술지 = @data/md_corpus_267.csv 의 같은 DOI 행). 보고 물성 = 물성 · 값 · 단위 · 조건 · 근거 다섯 칸 · 연결 = 템플릿 링크 3개 + 관련 개념 [[ ]] 2개. citekey = 첫 저자 성 + 연도 + 제목 첫 단어(소문자). 초록에 없는 값은 「미기재」로 두고 지어내지 마라. loop_role 은 none(표적 여부는 W18). ../loop/vault/papers/&lt;citekey&gt;.md 로 저장하고(같은 이름이 있으면 먼저 알려라), python ../loop/scripts/lit_extract.py 로 표적이 그대로인지 확인해 out/P2-3_result.md 에 요약해라.
+
+DOI: [10.1016/j.cis.2021.102565]
+초록: [Zotero 에서 복사한 초록 또는 본문 일부]</span><span class="en" data-i>Write a note for the paper below using the paper-note template in @../loop/vault/templates/ as is (title · year · journal = row with the same DOI in @data/md_corpus_267.csv). Reported properties = five cells: property · value · unit · condition · basis · links = 3 template links + 2 related concepts [[ ]]. citekey = first author surname + year + first title word (lowercase). Leave values not in the abstract as "not stated" and do not invent them. Set loop_role to none (whether it becomes a target is decided in W18). Save to ../loop/vault/papers/&lt;citekey&gt;.md (if the same name exists, tell me first), then check with python ../loop/scripts/lit_extract.py that the targets are unchanged and summarize in out/P2-3_result.md.
+
+DOI: [10.1016/j.cis.2021.102565]
+Abstract: [abstract or part of the text copied from Zotero]</span></div>
+</div>
+<div class="expect a" style="--d:2">
+<h4><span class="tic" data-ico="notebook-pen"></span><span class="ko" data-i>기대 결과 · papers/yao2022discussion.md</span><span class="en" data-i>Expected output · papers/yao2022discussion.md</span></h4>
+<div class="doc"><span class="doc-pub">yao2022discussion.md</span>
+<pre class="code doccode sm">citekey: <span class="o">yao2022discussion</span>   year: 2022
+doi: 10.1016/j.cis.2021.102565   loop_role: <span class="o">none</span>
+tags: [paper, review, asphalt, MD]
+<span class="k"><span class="ko" data-i>## 한 줄 요약</span><span class="en" data-i>## One-line summary</span></span>  <span class="ko" data-i>아스팔트 MD 의 힘장 · 모델 · 물성 산출법 리뷰</span><span class="en" data-i>Review of force fields · models · property derivation in asphalt MD</span>
+<span class="k"><span class="ko" data-i>## 계 · 힘장 · 앙상블</span><span class="en" data-i>## System · force field · ensemble</span></span>  <span class="ko" data-i>SARA 대표 분자 · GAFF/OPLS/COMPASS · NPT → NVT  (미기재: 셀 크기)</span><span class="en" data-i>SARA representative molecules · GAFF/OPLS/COMPASS · NPT → NVT  (not stated: cell size)</span>
+<span class="k"><span class="ko" data-i>## 보고 물성</span><span class="en" data-i>## Reported properties</span></span>  <span class="ko" data-i>| 밀도 | 미기재 | g/cm³ | 298 K | 리뷰 |</span><span class="en" data-i>| Density | not stated | g/cm³ | 298 K | review |</span>
+<span class="k"><span class="ko" data-i>## 연결</span><span class="en" data-i>## Links</span></span>  <span class="ko" data-i>[[00_루프지도]] [[밀도]] [[CED]] [[GAFF2]] [[SARA 모델]]</span><span class="en" data-i>[[00_loop-map]] [[density]] [[CED]] [[GAFF2]] [[SARA model]]</span></pre></div>
+<p class="cap"><span class="ko" data-i>「미기재」 = 지어낸 값 없음 · [[ ]] 5개 → 선 5개 · 점 1개 · loop_role: none → 표적 불변</span><span class="en" data-i>"Not stated" = no invented value · 5 [[ ]] → 5 lines · 1 dot · loop_role: none → targets unchanged</span></p>
+</div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>보고 물성 표의 모든 값에 조건 · 근거가 있거나 「미기재」인가</span><span class="en" data-i>Does every value in the reported-properties table have condition · basis or "not stated"?</span></p><p><span class="ko" data-i>citekey = Better BibTeX 규칙 · lit_extract 표적 1.018 · 354.2 그대로</span><span class="en" data-i>citekey = Better BibTeX rule · lit_extract targets 1.018 · 354.2 unchanged</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 11주차 덱 #17 · 지시문 원문 week02/prompts.md · P2-3 · 템플릿 repo/loop/vault/templates/논문노트.md · 이전 판 지시(out/ 저장) = repo/week02/docs/zotero_obsidian_loop.md</span><span class="en" data-i>Original week-11 deck #17 · prompt source week02/prompts.md · P2-3 · template repo/loop/vault/templates/ paper-note template · previous prompt version (save to out/) = repo/week02/docs/zotero_obsidian_loop.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 27 다음 주차로 -->
+<section class="slide v3 accent">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>다음 주차로 · W03 원자 세계와 운동방정식</span><span class="en" data-i>Next: W03 atoms and equations of motion</span></p>
+<div class="hrow"><span class="hico" data-ico="arrow-right"></span><h2 class="h"><span class="ko" data-i>오늘의 산출물 4: 검색식 · 중복 제거 보고서 · 지도 · 논문 노트 → W03</span><span class="en" data-i>Today's deliverables 4: search query · deduplication report · map · paper note → W03</span></h2></div>
+<p class="sub"><span class="ko" data-i>도구 4 = Claude Code(지시 · 승인) · 저장소(받기 · 비교) · 검색식(AND · OR · NOT + 기록) · 인용키(서지 · 노트 · 원고 · 데이터 묶기)</span><span class="en" data-i>4 tools = Claude Code (prompt · approve) · repository (clone · compare) · search query (AND · OR · NOT + record) · citation key (tie bibliography · note · manuscript · data)</span></p>
+<div class="bd">
+<div class="lines">
+<div class="ln a" style="--d:1"><span class="nn">01</span><div><h4><span class="ko" data-i>산출물</span><span class="en" data-i>Deliverables</span></h4><p><span class="file">out/P2-1_result.md</span> · <span class="file">dedup_report.json</span> <span class="ko" data-i>· 지도(22장) ·</span><span class="en" data-i>· map (slide 22) ·</span> <span class="file">loop/vault/papers/&lt;citekey&gt;.md</span> · <span class="file">P2-3_result.md</span></p></div></div>
+<div class="ln a" style="--d:2"><span class="nn">02</span><div><h4><span class="ko" data-i>다음 주 W03</span><span class="en" data-i>Next week W03</span></h4><p><span class="ko" data-i>같은 3단계(폴더 → claude → 지시 · 승인)로 노트북 실행 → 원자쌍 한 스텝 · Δt 바꿔 보기 · 준비물 없음</span><span class="en" data-i>Same 3 steps (folder → claude → prompt · approve) to run the notebook → one atom-pair step · change Δt · no prerequisites</span></p></div></div>
+<div class="ln a" style="--d:3"><span class="nn">03</span><div><h4><span class="ko" data-i>못 끝냈다면</span><span class="en" data-i>If unfinished</span></h4><p><span class="file">week02/expected_output/</span> <span class="ko" data-i>의 결과 파일로 W03 진행 가능</span><span class="en" data-i>result file lets you proceed to W03</span></p></div></div>
+<div class="ln a" style="--d:4"><span class="nn">04</span><div><h4><span class="ko" data-i>퀴즈 · 용어 · 설명서</span><span class="en" data-i>Quiz · terms · manual</span></h4><p><span class="file">week02/quiz.md</span> · <span class="file">GLOSSARY.md</span> · <span class="file">repo/docs/</span></p></div></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>도구 주차 끝 · 다음 주부터 물리 (M1)</span><span class="en" data-i>Tool week over · physics starts next week (M1)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<script src="../common/icons.js"></script>
+<script src="../common/deck.js"></script>
+<script>
+function stepOf(root) { var s = parseInt(root.dataset.step || '0', 10); return isNaN(s) ? 0 : s; }
+function icoIn(n, x, y, s, col) { return '<svg x="' + x + '" y="' + y + '" width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" stroke="' + col + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + (IC[n] || '') + '</svg>'; }
+function win(W, H, title, dark) { return '<rect x="2" y="2" width="' + (W - 4) + '" height="' + (H - 4) + '" rx="16" fill="' + (dark ? '#231F20' : '#FFFFFF') + '" stroke="' + (dark ? '#231F20' : '#E2D8CA') + '" stroke-width="2"/><rect x="2" y="2" width="' + (W - 4) + '" height="40" rx="16" fill="' + (dark ? '#3A322D' : '#EFE7DB') + '"/><rect x="2" y="26" width="' + (W - 4) + '" height="16" fill="' + (dark ? '#3A322D' : '#EFE7DB') + '"/><circle cx="24" cy="22" r="6" fill="#D9534F"/><circle cx="44" cy="22" r="6" fill="#FBB44E"/><circle cx="64" cy="22" r="6" fill="#2E8B57"/><text x="' + (W / 2) + '" y="28" text-anchor="middle" class="cft" fill="' + (dark ? '#CFC5B8' : '#4A4540') + '">' + title + '</text>'; }
+function mono(x, y, s, col, size) { return '<text x="' + x + '" y="' + y + '" font-family="JetBrains Mono, monospace" font-size="' + (size || 20) + '" fill="' + col + '">' + s + '</text>'; }
+function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+/* ===== 표지: 터미널 자동 타이핑 (W02 고유) ===== */
+EMB["term"] = function (root, RAF) {
+  var lines = ['$ conda activate mdai', '(mdai) $ cd week02 && claude', __L('● Claude Code · 규칙 CLAUDE.md 읽음','● Claude Code · read rules CLAUDE.md'), __L('> @notebooks/02_dedup_doi.ipynb 실행','> run @notebooks/02_dedup_doi.ipynb'), __L('승인 → python ../run_nb.py notebooks/…','Approve → python ../run_nb.py notebooks/…'), __L('records 534 → unique 267 · 정답 일치','records 534 → unique 267 · matches answer')];
+  var t0 = CLK();
+  function f(now) {
+    var t = ((now - t0) / 1000) % 9, o = '<svg viewBox="0 0 560 560">' + win(560, 560, 'terminal · week02', true);
+    lines.forEach(function (l, i) { var u = Math.max(0, Math.min(1, (t - i * 1.3) / 1.0)), n = Math.floor(l.length * u); o += mono(22, 96 + i * 58, esc(l.slice(0, n)) + (u < 1 && u > 0 ? '▌' : ''), /^[$(>]/.test(l) ? '#F4EEE6' : '#FBB44E', 19); });
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 9장: Claude Code 3단계 · 터미널 창 3개가 차례로 움직인다 ===== */
+EMB["cc3"] = function (root, RAF) {
+  var W = 1588, H = 560, t0 = CLK();
+  function typed(s, k, kk, u) { if (k > kk) return s; if (k < kk) return ''; return s.slice(0, Math.floor(s.length * Math.max(0, Math.min(1, u)))); }
+  function f(now) {
+    var st = stepOf(root), t = st ? (st - 1) * 4 + 3.9 : ((now - t0) / 1000) % 12, k = Math.floor(t / 4), u = (t % 4) / 4, o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    /* ① 터미널 → claude */
+    o += '<g transform="translate(0,0)" opacity="' + (k >= 0 ? 1 : 0.4) + '">' + win(500, 470, 'terminal · bash', true);
+    var L1 = [['$ conda activate mdai', 0, 0.3], ['(mdai) $ cd week02', 0.3, 0.55], ['(mdai) $ claude', 0.55, 0.75]];
+    L1.forEach(function (r, i) { var v = k > 0 ? 1 : Math.max(0, Math.min(1, (u - r[1]) / (r[2] - r[1]))), n = Math.floor(r[0].length * v); o += mono(26, 86 + i * 40, esc(r[0].slice(0, n)) + (k === 0 && v > 0 && v < 1 ? '▌' : ''), '#F4EEE6', 17); });
+    if (k > 0 || u > 0.78) o += '<rect x="22" y="196" width="456" height="78" rx="10" fill="none" stroke="#F99D1C" stroke-width="2"/>' + mono(40, 226, '● Claude Code · cwd week02', '#FBB44E', 17) + mono(40, 256, __L('규칙 CLAUDE.md 자동 읽기','Auto-read rules CLAUDE.md'), '#CFC5B8', 15);
+    o += __L('<text x="250" y="330" text-anchor="middle" class="cfw" font-size="18">처음 1회: 공식 설치 명령 → claude --version</text><text x="250" y="362" text-anchor="middle" class="cfw" font-size="18">첫 실행 = 로그인 (유료 요금제 · Console)</text><text x="250" y="424" text-anchor="middle" fill="#CFC5B8" font-size="16">대화 이어서 = claude -c</text></g>','<text x="250" y="330" text-anchor="middle" class="cfw" font-size="18">First time (×1): official install command → claude --version</text><text x="250" y="362" text-anchor="middle" class="cfw" font-size="18">First run = login (paid plan · Console)</text><text x="250" y="424" text-anchor="middle" fill="#CFC5B8" font-size="16">Continue chat = claude -c</text></g>');
+    /* ② 지시 → 승인 */
+    o += '<g transform="translate(544,0)" opacity="' + (k >= 1 ? 1 : 0.4) + '">' + win(500, 470, 'Claude Code · week02', true);
+    o += mono(26, 84, esc('> ' + typed(__L('@notebooks/02_dedup_doi.ipynb 를','Run @notebooks/02_dedup_doi.ipynb'), k, 1, u * 2.4)), '#F4EEE6', 16) + mono(26, 110, esc('  ' + typed(__L('실행하고 결과를 요약해','and summarize the result'), k, 1, u * 2.4 - 1)), '#F4EEE6', 16);
+    if (k > 1 || (k === 1 && u > 0.35)) {
+      o += '<rect x="22" y="132" width="456" height="56" rx="8" fill="#3A322D"/>' + mono(36, 155, 'Bash(python ../run_nb.py', '#CFC5B8', 15) + mono(36, 178, '     notebooks/02_dedup_doi.ipynb)', '#CFC5B8', 15);
+      var ok = k > 1 || u > 0.72;
+      o += '<rect x="22" y="200" width="456" height="104" rx="10" fill="none" stroke="' + (ok ? '#2E8B57' : '#F99D1C') + '" stroke-width="3"/>' + mono(40, 230, __L('실행 승인?','Approve run?'), '#FBB44E', 17);
+      o += '<rect x="34" y="242" width="200" height="30" rx="6" fill="' + (u > 0.55 || k > 1 ? '#F99D1C' : 'none') + '"/>' + mono(44, 264, __L('❯ 1. 예','❯ 1. Yes'), u > 0.55 || k > 1 ? '#231F20' : '#F4EEE6', 16) + mono(260, 264, __L('2. 아니오 (Esc)','2. No (Esc)'), '#CFC5B8', 16);
+      if (ok) o += mono(26, 336, __L('✔ 노트북 실행 · 출력 저장','✔ Notebook run · output saved'), '#7FD19B', 16);
+    }
+    o += __L('<text x="250" y="394" text-anchor="middle" class="cfw" font-size="18">Shift+Tab = 권한 모드 전환</text><text x="250" y="424" text-anchor="middle" fill="#CFC5B8" font-size="16">Esc = 멈춤 · Esc 두 번 = 되돌리기</text></g>','<text x="250" y="394" text-anchor="middle" class="cfw" font-size="18">Shift+Tab = switch permission mode</text><text x="250" y="424" text-anchor="middle" fill="#CFC5B8" font-size="16">Esc = stop · Esc twice = rewind</text></g>');
+    /* ③ 확인 → 비교 */
+    o += '<g transform="translate(1088,0)" opacity="' + (k >= 2 ? 1 : 0.4) + '">' + win(500, 470, __L('Claude Code · 결과 비교','Claude Code · compare results'), true);
+    o += mono(26, 84, 'out/ ↔ expected_output/', '#FBB44E', 17);
+    var rows = [['records', '534', '534'], ['unique', '267', '267'], ['duplicates', '267', '267']];
+    o += mono(26, 124, 'dedup_report', '#CFC5B8', 15) + mono(176, 124, __L('내 결과','My result'), '#CFC5B8', 15) + mono(276, 124, __L('정답','Answer'), '#CFC5B8', 15);
+    rows.forEach(function (r, i) { var y = 160 + i * 38, on = k > 2 || (k === 2 && u > 0.15 + i * 0.2); if (!on) return; o += mono(26, y, r[0], '#F4EEE6', 16) + mono(176, y, r[1], '#F4EEE6', 16) + mono(276, y, r[2], '#F4EEE6', 16) + mono(356, y, '✔', '#7FD19B', 18); });
+    if (k === 2 && u > 0.75) o += __L('<rect x="22" y="276" width="456" height="40" rx="8" fill="#2E8B57"/><text x="250" y="303" text-anchor="middle" class="cfw" font-size="18">일치 · P2-2_result.md 저장</text>','<rect x="22" y="276" width="456" height="40" rx="8" fill="#2E8B57"/><text x="250" y="303" text-anchor="middle" class="cfw" font-size="18">Match · P2-2_result.md saved</text>');
+    o += __L('<text x="250" y="364" text-anchor="middle" class="cfw" font-size="18">결과 = 내 컴퓨터 out/ 에 그대로</text><text x="250" y="394" text-anchor="middle" class="cfw" font-size="18">보관 = git commit</text><text x="250" y="424" text-anchor="middle" fill="#CFC5B8" font-size="16">/clear = 새 대화 · /usage = 사용량</text></g>','<text x="250" y="364" text-anchor="middle" class="cfw" font-size="18">Results stay in out/ on my computer</text><text x="250" y="394" text-anchor="middle" class="cfw" font-size="18">Keep = git commit</text><text x="250" y="424" text-anchor="middle" fill="#CFC5B8" font-size="16">/clear = new chat · /usage = usage</text></g>');
+    o += '<rect x="250" y="498" width="1088" height="50" rx="12" fill="#FFF1E0"/><text x="794" y="531" text-anchor="middle" class="cfh" font-size="21">' + [__L('① 터미널 → conda activate mdai → cd week02 → claude','① Terminal → conda activate mdai → cd week02 → claude'), __L('② @경로로 지시 → 승인 창 검토 → 승인 → 실행','② Prompt with @path → review approval dialog → approve → run'), __L('③ out/ ↔ expected_output/ 비교 보고 · 실패 시 expected_output/ 로 다음 주','③ Compare out/ ↔ expected_output/ and report · on failure go to next week with expected_output/')][k] + '</text></svg>';
+    root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+/* ===== 10장: 셸 6 · 명령 타이핑 ↔ 폴더 줄 켜짐 ===== */
+EMB["shell6"] = function (root, RAF) {
+  var W = 1588, H = 560, t0 = CLK();
+  var cmds = [['pwd', '~/…/week02', 0, __L('pwd · 지금 어느 폴더인가','pwd · which folder am I in')], ['ls data', 'md_corpus_267.csv  comid_…csv', 1, __L('ls · 폴더 안 목록','ls · list folder contents')], ['mkdir -p out', '', 5, __L('mkdir · 폴더 만들기','mkdir · make a folder')], ['python3 scripts/norm_doi.py data/md_corpus_267.csv', 'records 534 → unique 267', 4, __L('python3 · 스크립트 실행 → out/ 에 결과','python3 · run script → result in out/')], ['cp out/dedup_report.json mine.json', '', 6, __L('cp · 파일 복사 (expected_output 과 비교)','cp · copy file (compare with expected_output)')], ['cd ../week03', '~/…/week03', 8, __L('cd · 폴더 이동 → 그 폴더에서 claude','cd · change folder → claude in that folder')]];
+  var tree = [['📁 week02/', 0], ['📁 data/', 1], ['md_corpus_267.csv', 2], ['comid_unified_bibliography.csv', 2], ['📁 scripts/  norm_doi.py', 1], ['📁 out/', 1], ['dedup_report.json', 2], ['📁 expected_output/  dedup_report.json', 1], ['📁 week03/', 0]];
+  function f(now) {
+    var st = stepOf(root), t = st ? (st - 1) * 2.3 + 2.2 : ((now - t0) / 1000) % 14, k = Math.min(5, Math.floor(t / 2.3)), u = (t % 2.3) / 2.3, o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    var hi = cmds[k][2];
+    o += '<rect x="0" y="0" width="700" height="' + H + __L('" rx="18" fill="#F6F0E7"/><text x="30" y="44" class="cfh" font-size="22">폴더 (저장소 안)</text>','" rx="18" fill="#F6F0E7"/><text x="30" y="44" class="cfh" font-size="22">Folder (in repository)</text>');
+    tree.forEach(function (r, i) { var y = 90 + i * 48, on = i === hi || (k === 3 && i === 6 && u > 0.6); if (on) o += '<rect x="20" y="' + (y - 30) + '" width="660" height="42" rx="8" fill="#FFF1E0" stroke="#F99D1C" stroke-width="3"/>'; o += mono(40 + r[1] * 36, y, esc(r[0]), on ? '#C8610C' : (r[1] === 2 ? '#6E655C' : '#231F20'), 20); });
+    o += __L('<text x="350" y="540" text-anchor="middle" class="cfmu">규칙: data/ 입력 · out/ 출력 · 공백 · 한글 없는 이름</text>','<text x="350" y="540" text-anchor="middle" class="cfmu">Rules: data/ input · out/ output · names with no spaces or Hangul</text>');
+    o += '<g transform="translate(740,0)">' + win(848, H, __L('터미널 · Claude Code 안에서는 앞에 !','In terminal · inside Claude Code prefix with !'), true);
+    for (var i = 0; i <= k; i++) { var c = cmds[i], y = 90 + i * 72, full = i < k ? 1 : Math.min(1, u * 1.8), n = Math.floor(c[0].length * full); o += mono(28, y, esc(c[0].slice(0, n)) + (full < 1 ? '▌' : ''), '#F4EEE6', 20); if (full >= 1 && c[1]) o += mono(28, y + 30, esc(c[1]), '#FBB44E', 18); }
+    o += '<rect x="26" y="490" width="796" height="48" rx="10" fill="#3A322D"/><text x="424" y="521" text-anchor="middle" class="cfw" font-size="20">' + cmds[k][3] + '</text></g>';
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 19장: 수집 흐름 · 점 = 레코드 · 위 흐름 칸 동기화 ===== */
+EMB["harvest"] = function (root, RAF) {
+  var W = 1588, H = 400, seed = 5; function rnd() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+  var recs = []; for (var k = 0; k < 160; k++) recs.push({ dup: rnd() < 0.5, x: 60 + rnd() * 1460, y: 70 + rnd() * 250 });
+  var flow = document.getElementById('hv_flow'), t0 = CLK(), last = -1;
+  function f(now) {
+    var st = stepOf(root), t = st ? (st - 1) * 3 + 2.9 : ((now - t0) / 1000) % 12, k = Math.floor(t / 3), u = (t % 3) / 3, o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig"><rect x="0" y="0" width="' + W + '" height="' + H + '" rx="18" fill="#FFFFFF" stroke="#E2D8CA" stroke-width="2"/>';
+    if (k !== last && flow) { last = k; var ex = flow.querySelectorAll('.exs'); for (var i = 0; i < ex.length; i++) ex[i].classList.toggle('hot', i === k); }
+    var lab = '';
+    if (k === 0) { for (var q = 0; q < 10; q++) if (u > q / 10) o += '<rect x="' + (70 + q * 148) + '" y="140" width="120" height="70" rx="10" fill="#DCE8F2"/><text x="' + (130 + q * 148) + '" y="183" text-anchor="middle" class="cfm" fill="#4F7FB0">Q' + (q + 1) + '</text>'; lab = __L('질의 ','Query ') + Math.min(10, Math.ceil(u * 10)) + __L(' / 10 · 식 · 날짜 · DB 기록',' / 10 · record query · date · DB'); }
+    else if (k === 1) { recs.forEach(function (r, i) { if (u > i / 160) o += '<circle cx="' + r.x.toFixed(0) + '" cy="' + r.y.toFixed(0) + '" r="7" fill="#6E655C"/>'; }); lab = __L('응답 수집 중 … ','Collecting responses … ') + Math.round(534 * Math.min(1, u)) + __L(' 건',' '); }
+    else if (k === 2) { recs.forEach(function (r) { o += '<circle cx="' + r.x.toFixed(0) + '" cy="' + r.y.toFixed(0) + '" r="7" fill="' + (r.dup && u > 0.5 ? '#D9534F' : '#E37F1A') + '"/>'; }); lab = u > 0.5 ? __L('CSV 534행 · 빨강 = 같은 DOI 가 다른 표기로 중복','CSV 534 rows · red = same DOI duplicated in a different form') : __L('CSV 534행 누적','CSV 534 rows accumulated'); }
+    else { recs.forEach(function (r) { if (!r.dup) o += '<circle cx="' + r.x.toFixed(0) + '" cy="' + r.y.toFixed(0) + '" r="7" fill="#2E8B57"/>'; else if (u < 0.5) o += '<circle cx="' + r.x.toFixed(0) + '" cy="' + r.y.toFixed(0) + '" r="' + (7 * (1 - u * 2)).toFixed(1) + '" fill="#D9534F"/>'; }); lab = __L('DOI 정규화 → 고유 267편 · duplicates 267 → dedup_report.json','DOI normalization → 267 unique papers · duplicates 267 → dedup_report.json'); }
+    o += '<rect x="394" y="340" width="800" height="44" rx="10" fill="#FFF1E0"/><text x="794" y="369" text-anchor="middle" class="cfh" font-size="20">' + lab + '</text></svg>';
+    root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 24장: 인용키 1개 → 네 곳 (선이 차례로 맥동) ===== */
+EMB["zotkey"] = function (root, RAF) {
+  var W = 1588, H = 340, t0 = CLK(), nodes = [['book-marked', __L('Zotero 서지 · PDF','Zotero bibliography · PDF'), 230], ['notebook-pen', __L('Obsidian 노트 (25장)','Obsidian note (slide 25)'), 610], ['file-text', __L('원고 \\cite · [@키]','Manuscript \\cite · [@key]'), 980], ['table', __L('데이터 출처 열 (W16)','Data source column (W16)'), 1360]];
+  function f(now) {
+    var t = ((now - t0) / 1000) % 8, k = Math.floor(t / 2), u = (t % 2) / 2, o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig"><rect x="0" y="0" width="' + W + '" height="' + H + '" rx="18" fill="#FFFFFF" stroke="#E2D8CA" stroke-width="2"/>';
+    o += __L('<text x="794" y="44" text-anchor="middle" class="cfh">인용키 1개가 묶는 네 곳</text><rect x="604" y="64" width="380" height="54" rx="12" fill="#231F20"/>','<text x="794" y="44" text-anchor="middle" class="cfh">1 citation key ties four places</text><rect x="604" y="64" width="380" height="54" rx="12" fill="#231F20"/>') + mono(794 - 110, 99, 'yao2022discussion', '#FBB44E', 24);
+    nodes.forEach(function (n, i) { var on = i === k, done = i < k, x = n[2]; o += '<line x1="' + (700 + i * 60) + '" y1="118" x2="' + x + '" y2="200" stroke="' + (on || done ? '#E37F1A' : '#E2D8CA') + '" stroke-width="' + (on ? 5 : 3) + '"' + (on ? ' stroke-dasharray="14 10" class="flow"' : '') + '/>'; if (on) { var px = 700 + i * 60 + (x - 700 - i * 60) * u, py = 118 + 82 * u; o += '<circle cx="' + px.toFixed(1) + '" cy="' + py.toFixed(1) + '" r="9" fill="#C8610C"/>'; } o += '<rect x="' + (x - 150) + '" y="200" width="300" height="100" rx="14" fill="' + (on ? '#FFF1E0' : '#F6F0E7') + '" stroke="' + (on ? '#F99D1C' : '#E2D8CA') + '" stroke-width="' + (on ? 3 : 2) + '"/>' + icoIn(n[0], x - 130, 228, 44, on ? '#C8610C' : '#6E655C') + '<text x="' + (x - 70) + '" y="258" class="cfh" font-size="21">' + n[1] + '</text>'; });
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+/* ===== 조작형 16: 불리언 검색식 조립기 (원본 11주차 #7 bqDraw 이식) ===== */
+(function () {
+  var root = document.getElementById('sim-bq'); if (!root) return;
+  var D = "jarj3s6lcj77j776jsj05j70j6bj5ljbnjcrj2vj74izwj09jazj6wja3jcvj75jchj3nj3rj20jv7jw3jaljarj75js8j37j1lj80japj8zj4hj03jw3j10j98j7d6oj6n1j54jarjabjc9j03jarj3nj1xj79jadjarj37jb1j3rk4hj3riypj01j3njarj7dj7hj6sjarj3pjarjv7j3nj5hj3rj03ja9j03k1vj9zjarj2rjscjchjw7k4zjcnjahj1wj3tja9j98jfoj0bj2pjark7dj2rj2djspjarjarjahjavj4gjokji8jarjarj08jcjj3zjanj9aj4hj39j79j3nj3lj3vja7jxtj3nj94ja0js8k3bj3pja5j9vjavk2fjbpj9vjarj1sj9tk1djvjjavj74k3hj37japj7fj9x6griz4izoj5jj8sj3lj0oj4cjaxjadjaxj81j2rj70j6rj37iz4je0jarjcnj5fj0gjtgjc3k43j6ij9v6nxj6tj6tjabjc5j9zj29k37k3bj01jxvjbpjbliznj3n6mbj6qjcnjzgjstj2pj3njb7j35j08izmjacj3piz8j6pj0ok37jarj8gj0gj0kjbnjabj1kj41j416nbj0cjxgj1sk1fizkjbtjzej5fj7gj0sj00jcjjw7k4xja9jszj35j3lj5fjchj376k5iztja9j35j8kj01iz5k2bjbnj8ciza6cgj79j3nj4xj8nj9rj416jliypk0kj2dj1oj5nj5fj8kjbbjarcvrcypcybcwwd190blctzctvcyocx4ctjcvmd0ocnqcybct5cvdcp8ct3co2cn4cxvdtj03ccsjcojdhod10cn7cs3d1bct5cszcqw09ccs7cqwkygkl7ky1l0gl5vkn1kqllgzkjtkmgkkbkndljwkkzkkom0ekl3kygkz7knllrckz7ksklkbknrkwrklbknl7xv7xjkz5kyo7xwkkfku4kmd8tvko9ku9ky4kywkojks7l00ld1kl7ky8ky0kkzkojlh3ky0knlkxsl8cl1dkvtlrckvnkxskxskorkywkkikntkkpkjmkka7xsky0kywkknkq9ky8lqwkkzkojldfkvx84o7xvldokkzkndkonkl3kl4km1lczkkzkk8lewkkbkvnkop8qfkntlcwkonknrkppkphkkzkxsko3kq7kz0ky4kywld0kk8lq8kofkrsklakkokn784zkurkks7xkkkzkkjkjskojkndkkokr4kki84zkks7y7kuhkkkkkzec9ec1f0zefce90e8d1w3e9henne9fe9fe9f1taf151tqe93egqe9debhe9f1t1ea0e9j1l4f1kejx1s0mf9m9dmcnae9m9fm5vmczmf7md2m8zm9fn1tmhemhvm9dm4wmdumcim9dm93mgmm5om8hmn7mgj9tpmibm9nm83m9dm9dn42mcim4ommbm9l9t1mg2m4wmgjm5emczmfnm5dm5tmgjm9hm93mcomxvm9nm8jn1fn35m81m5em4imapmbmm5em5emm9mibmg3mcrm8zm9dm50mcmm88m8zag5mg3m8hmf9m4img3m5k3cyg0wgpn3gr3z5g1eg01g3lg0yfwhfxnfxj3dufxt3d4fswftvfxdfxt37efwgfxdg16fwjftt37dfxd439g4hfszg0yg0gg1dfsz468fszft3fu2g0yfsxg03fxkfwg3zc3zkoagnpio3so77o4so3sotvnu9nqao3so7cnqaolvnqpnuhnufo4oo4gnwjnqanu9o4onqao3sny2nxunqznquntjo3sb3so3ko4ynufnpkhfehduhduhf6hdyhnmhduhojheqhl7hp5hpvhm2hlzhhfheqhdyhdthlvhe3heqheuhihhlvheqi74hew4qvief5jc5k84s84s95cw";
+  var REC = []; for (var i = 0; i < D.length; i += 3) REC.push(parseInt(D.substr(i, 3), 36));
+  var TAGS = ["interface/adhesion", "moisture", "aging", "rheology/viscosity", "tensile/fracture", "modifier/recycling", "molecular model", "force field", "diffusion/transport", "ML/data", "review"];
+  var KO = [__L("계면 · 부착","Interface · adhesion"), __L("수분","Moisture"), __L("노화","Aging"), __L("유변 · 점도","Rheology · viscosity"), __L("인장 · 파괴","Tension · fracture"), __L("개질 · 재생","Modification · rejuvenation"), __L("분자 모델","Molecular model"), __L("힘장","Force field"), __L("확산 · 수송","Diffusion · transport"), __L("ML · 데이터","ML · data"), __L("리뷰","Review")];
+  var CAT = [__L("A 아스팔트 × MD","A Asphalt × MD"), __L("B 아스팔트 실험","B Asphalt experiment"), __L("C MD · 계면 이론","C MD · interface theory"), __L("D 기타","D Other")];
+  var INIT = [1, 1, 0, 0, 0, 0, 0, 2, 0, 0, 3];
+  var st = INIT.slice(), yr = 0;
+  var SK = [[__L('미사용','Unused'), '#FFFFFF', '#6E655C'], ['A', '#DCE8F2', '#4F7FB0'], ['B', '#FDE3BF', '#C8610C'], ['NOT', '#FBE3E1', '#A83A32']];
+  var chips = root.querySelector('#bq_chips');
+  KO.forEach(function (k, i) { var b = document.createElement('button'); b.type = 'button'; b.className = 'alt'; b.dataset.i = i; b.onclick = function () { st[i] = (st[i] + 1) % 4; draw(); }; chips.appendChild(b); });
+  var cats = root.querySelector('#bq_cats'); cats.innerHTML = CAT.map(function (c, k) { return '<div style="display:flex;align-items:center;gap:14px;margin-bottom:8px;"><div style="width:230px;font-size:20px;font-weight:600;color:var(--ink-2)">' + c + '</div><div style="flex:1;height:22px;background:var(--card-2);border-radius:8px;overflow:hidden;"><div id="bq_bar' + k + '" style="height:100%;background:var(--orange);width:0;border-radius:8px;transition:width .4s"></div></div><div id="bq_c' + k + '" style="width:120px;text-align:right;font:700 19px var(--f-mono);color:var(--rust)"></div></div>'; }).join('');
+  function draw() {
+    var A = 0, B = 0, N = 0;
+    for (var i = 0; i < 11; i++) { if (st[i] === 1) A |= (1 << i); if (st[i] === 2) B |= (1 << i); if (st[i] === 3) N |= (1 << i); }
+    var n = 0, na = 0, nb = 0, nx = 0, cat = [0, 0, 0, 0], ctot = [0, 0, 0, 0];
+    REC.forEach(function (r) {
+      var m = r & 2047, c = (r >> 11) & 3, y = (r >> 13) & 1, x = (r >> 14) & 1;
+      if (yr && !y) return; ctot[c]++;
+      if (m & N) return;
+      var oa = A ? (m & A) !== 0 : true, ob = B ? (m & B) !== 0 : true;
+      if (oa) na++; if (ob) nb++;
+      if (oa && ob) { n++; cat[c]++; nx += x; }
+    });
+    var names = function (mask) { return TAGS.filter(function (t, i) { return mask & (1 << i); }); };
+    var lines = [];
+    if (A) lines.push('( ' + names(A).join(' OR ') + ' )');
+    if (B) lines.push((lines.length ? 'AND ' : '') + '( ' + names(B).join(' OR ') + ' )');
+    if (N) lines.push((lines.length ? '' : __L('(전체) ','(all) ')) + 'NOT ( ' + names(N).join(' OR ') + ' )');
+    if (yr) lines.push((lines.length ? 'AND ' : '') + 'PUBYEAR ≥ 2021');
+    root.querySelector('#bq_formula').textContent = lines.length ? lines.join('\n') : __L('(조건 없음 · 코퍼스 전체)','(no condition · whole corpus)');
+    root.querySelector('#bq_n').textContent = n; root.querySelector('#bq_x').textContent = nx + __L(' 편',' papers');
+    root.querySelector('#bq_ab').textContent = 'A ' + na + ' · B ' + nb + ' → AND ' + n;
+    for (var k = 0; k < 4; k++) { root.querySelector('#bq_bar' + k).style.width = (ctot[k] ? 100 * cat[k] / ctot[k] : 0).toFixed(1) + '%'; root.querySelector('#bq_c' + k).textContent = cat[k] + ' / ' + ctot[k]; }
+    chips.querySelectorAll('button').forEach(function (b) { var s = SK[st[+b.dataset.i]]; b.textContent = s[0] + ' · ' + KO[+b.dataset.i]; b.style.background = s[1]; b.style.color = s[2]; });
+    root.querySelector('[data-act=year]').textContent = yr ? __L('연도: 2021 이후','Year: 2021 onward') : __L('연도: 전체','Year: all');
+  }
+  root.querySelector('[data-act=year]').onclick = function () { yr = 1 - yr; draw(); };
+  root.querySelector('[data-act=reset]').onclick = function () { st = INIT.slice(); yr = 0; draw(); };
+  root.querySelector('[data-act=clear]').onclick = function () { st = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; yr = 0; draw(); };
+  draw();
+})();
+
+/* ===== 조작형 22: 주제 동시출현 네트워크 (원본 11주차 #10 coDraw 이식) ===== */
+(function () {
+  var root = document.getElementById('sim-co'); if (!root) return;
+  var P = [[0, 2, 101], [1, 2, 90], [0, 1, 79], [0, 5, 76], [1, 3, 56], [0, 6, 48], [0, 4, 45], [3, 4, 42], [1, 4, 40], [2, 5, 40], [2, 3, 36], [0, 7, 36], [2, 4, 32], [2, 6, 29], [4, 5, 29], [1, 5, 28], [3, 6, 27], [1, 6, 26], [4, 6, 26], [0, 3, 25], [5, 6, 24], [5, 7, 21], [2, 7, 19], [3, 8, 18], [3, 9, 16], [2, 8, 16], [4, 7, 15], [6, 7, 15], [1, 9, 15], [0, 10, 15], [1, 8, 15], [1, 7, 14], [3, 5, 14], [0, 9, 12], [4, 8, 11], [4, 9, 10], [1, 10, 9], [2, 9, 9], [2, 10, 9], [3, 11, 8], [4, 10, 7], [7, 10, 6], [3, 10, 6], [0, 11, 6], [3, 7, 6], [6, 8, 5], [5, 10, 5], [6, 9, 5], [1, 11, 5], [4, 11, 5], [0, 8, 4], [7, 9, 4], [5, 8, 4], [3, 12, 3], [6, 10, 3], [5, 9, 3], [2, 11, 3], [6, 11, 3], [7, 11, 3], [10, 11, 2], [1, 12, 2], [0, 12, 2], [6, 12, 1], [8, 10, 1], [8, 12, 1], [10, 12, 1], [8, 11, 1], [5, 11, 1], [9, 10, 1], [8, 9, 1]];
+  var KO = [__L("아스팔트 · 역청","Asphalt · bitumen"), __L("골재 상호작용","Aggregate interaction"), __L("수분 · 부착 · 계면","Moisture · adhesion · interface"), __L("시멘트 · C-S-H","Cement · C-S-H"), __L("역학 · 유변","Mechanics · rheology"), __L("재생제 · RAP","Rejuvenator · RAP"), __L("열 · 확산","Heat · diffusion"), __L("노화 · 산화","Aging · oxidation"), __L("콘크리트 · 지오폴리머","Concrete · geopolymer"), __L("나노 첨가제","Nano additive"), __L("다중스케일","Multiscale"), __L("ReaxFF · 반응성","ReaxFF · reactive"), __L("기계학습","Machine learning")];
+  var CNT = [191, 127, 124, 93, 81, 81, 58, 36, 26, 25, 18, 13, 5];
+  var svg = root.querySelector('#co_svg'), NS = 'http://www.w3.org/2000/svg', th = 20;
+  function E(t, a, p) { var e = document.createElementNS(NS, t); for (var k in a) e.setAttribute(k, a[k]); (p || svg).appendChild(e); return e; }
+  var cx = 600, cy = 285, rx = 360, ry = 200, pos = [];
+  for (var i = 0; i < 13; i++) { var a = -Math.PI / 2 + i * 2 * Math.PI / 13; pos.push([cx + rx * Math.cos(a), cy + ry * Math.sin(a), a]); }
+  var edges = E('g', {}), nodes = [];
+  pos.forEach(function (p, i) {
+    var g = E('g', {}); var r = 10 + 22 * Math.sqrt(CNT[i] / 191);
+    var c = E('circle', { cx: p[0], cy: p[1], r: r, fill: '#FFFDFA', stroke: '#156082', 'stroke-width': 3 }, g);
+    var lx = p[0] + (r + 10) * Math.cos(p[2]), ly = p[1] + (r + 14) * Math.sin(p[2]);
+    var anchor = Math.abs(Math.cos(p[2])) < 0.25 ? 'middle' : (Math.cos(p[2]) > 0 ? 'start' : 'end');
+    var t = E('text', { x: lx, y: ly + (Math.sin(p[2]) > 0.3 ? 20 : (Math.sin(p[2]) < -0.3 ? -4 : 8)), 'text-anchor': anchor, 'font-size': 22, fill: '#231F20', 'font-weight': 600 }, g); t.textContent = KO[i] + ' ' + CNT[i];
+    nodes.push({ c: c, t: t });
+  });
+  function draw() {
+    while (edges.firstChild) edges.removeChild(edges.firstChild);
+    var deg = []; for (var i = 0; i < 13; i++) deg.push(0);
+    var ne = 0;
+    P.forEach(function (e) { if (e[2] < th) return; ne++; deg[e[0]]++; deg[e[1]]++; E('line', { x1: pos[e[0]][0], y1: pos[e[0]][1], x2: pos[e[1]][0], y2: pos[e[1]][1], stroke: '#156082', 'stroke-opacity': 0.5, 'stroke-width': (1.5 + 9 * e[2] / 101).toFixed(1) }, edges); });
+    var iso = [];
+    nodes.forEach(function (n, i) { n.c.setAttribute('stroke', deg[i] ? '#156082' : '#C9C1B6'); n.t.setAttribute('fill', deg[i] ? '#231F20' : '#907D6A'); if (!deg[i]) iso.push(KO[i]); });
+    root.querySelector('#co_ne').textContent = ne; root.querySelector('#co_iso').textContent = iso.length ? iso.join(' · ') : __L('없음','None');
+    root.querySelector('[data-o=th]').textContent = th; root.querySelector('input[data-k=th]').value = th;
+  }
+  root.querySelector('input[data-k=th]').addEventListener('input', function (e) { th = +e.target.value; draw(); });
+  root.querySelectorAll('button[data-th]').forEach(function (b) { b.onclick = function () { th = +b.dataset.th; draw(); }; });
+  draw();
+})();
+
+/* ===== 조작형 23: DOI 정규화 (원본 11주차 #21 ddDraw 이식) ===== */
+(function () {
+  var root = document.getElementById('sim-dd'); if (!root) return;
+  var RAW = ["10.1016/j.conbuildmat.2026.146313", "https://doi.org/10.1016/j.conbuildmat.2026.146313", "10.1016/J.CONBUILDMAT.2026.146313", "10.1016/j.fuel.2024.133011", "doi: 10.1016/j.fuel.2024.133011", " 10.1016/j.fuel.2024.133011. ", "10.1016/j.molliq.2025.127679", "https://dx.doi.org/10.1016/J.MOLLIQ.2025.127679"];
+  var SRC = ["md_fulltext_20260719_cbm", "paper1/references", "paper13/references", "md_fulltext_20260718", "_pdf_collected_20260727", "paper2/references", "md_fulltext_20260719_p2ff", "paper10/references"];
+  var step = 0, tbl = root.querySelector('#dd_table');
+  function norm(d) { if (step >= 1) d = d.trim().replace(/\.+$/, ''); if (step >= 2) d = d.replace(/^https?:\/\/(dx\.)?doi\.org\//i, '').replace(/^doi:\s*/i, ''); if (step >= 3) d = d.toLowerCase(); return d; }
+  function draw() {
+    var keys = RAW.map(norm), uniq = 0, rows = __L('<thead><tr><th style="width:60px">#</th><th>DOI 문자열 (␣ = 공백)</th><th style="width:240px">판정</th></tr></thead>','<thead><tr><th style="width:60px">#</th><th>DOI string (␣ = space)</th><th style="width:240px">Verdict</th></tr></thead>');
+    keys.forEach(function (k, i) { var j = keys.indexOf(k), isNew = j === i; if (isNew) uniq++; rows += '<tr' + (isNew ? '' : ' class="hl"') + '><td>' + (i + 1) + '</td><td class="mono" title="' + SRC[i] + '">' + k.replace(/ /g, '␣') + '</td><td>' + (isNew ? __L('신규 키','New key') : __L('중복 → #','Duplicate → #') + (j + 1) + __L(' 병합',' merged')) + '</td></tr>'; });
+    tbl.innerHTML = rows; root.querySelector('#dd_n').textContent = uniq;
+    root.querySelectorAll('button[data-s]').forEach(function (b) { b.classList.toggle('alt', +b.dataset.s !== step); });
+  }
+  root.querySelectorAll('button[data-s]').forEach(function (b) { b.onclick = function () { step = +b.dataset.s; draw(); }; });
+  draw();
+})();
+
+</script>
+</body>
+</html>

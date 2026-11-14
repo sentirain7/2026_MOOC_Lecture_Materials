@@ -1,0 +1,16 @@
+{
+ "id": "naph-1x4",
+ "density_gcm3": 0.9784,
+ "density_se": 0.0018,
+ "density_half_diff_pct": 0.479,
+ "density_ok": true,
+ "n_thermo": 161,
+ "t_prod_ps": 40.0,
+ "ced_MJm3": 420.6,
+ "ced_se": 3.8,
+ "delta_MPa05": 20.51,
+ "n_frames": 17,
+ "n_molecules": 50,
+ "max_molecule_extent_A": 12.0,
+ "ced_note": "E_inter = E_bulk(PPPM · tail) − Σ E_분자(직접 합) · 생산 구간 앞 20 % 버림"
+}

@@ -1,0 +1,3 @@
+[submodule "강의자"]
+	path = 강의자
+	url = https://github.com/sentirain7/2026_MOOC_Instructor.git

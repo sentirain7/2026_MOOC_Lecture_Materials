@@ -1,0 +1,31 @@
+{
+ "rules": [
+  {
+   "rule": "R1 함수 형태 하나 (12-6)",
+   "pass": true,
+   "evidence": "pair_style 12-6"
+  },
+  {
+   "rule": "R2 조합 규칙 하나",
+   "pass": true,
+   "evidence": "pair_modify mix arithmetic"
+  },
+  {
+   "rule": "R3 전하 척도 하나 (고정 점전하)",
+   "pass": true,
+   "evidence": "층별 전하: AM1-BCC fixed · ClayFF fixed · SPC/E fixed"
+  },
+  {
+   "rule": "R4 special_bonds 1줄",
+   "pass": true,
+   "evidence": "1줄: lj 0.0 0.0 0.5 coul 0.0 0.0 0.833333"
+  },
+  {
+   "rule": "R5 층상 셀 (p p f → slab · 변 ≥ 2rc · 진공 ≥ 30)",
+   "pass": true,
+   "evidence": "boundary p p f · slab 유 · 변/2rc 1.024 · 진공 30.0 Å"
+  }
+ ],
+ "all_pass": true,
+ "input": "in.stack"
+}

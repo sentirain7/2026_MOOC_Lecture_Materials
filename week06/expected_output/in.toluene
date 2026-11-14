@@ -1,0 +1,38 @@
+# in.toluene — week06 · 톨루엔 50분자 · GAFF2 + AM1-BCC · 최소화 → NPT 298 K (원본 04주차 #20 구조)
+units          real
+atom_style     full
+boundary       p p p
+
+# 스타일 선언은 read_data 보다 앞 — data 파일 안의 Coeffs 절을 읽을 때 필요 (없으면 ERROR: Must define pair_style before Pair Coeffs)
+pair_style     lj/cut/coul/long 12.0
+bond_style     harmonic
+angle_style    harmonic
+dihedral_style fourier
+special_bonds  amber
+
+read_data      toluene_box.data
+
+pair_modify    mix arithmetic tail yes
+kspace_style   pppm 1.0e-4
+neighbor       2.0 bin
+neigh_modify   every 1 delay 0 check yes
+
+thermo_style   custom step temp press density pe
+thermo         100
+minimize       1.0e-4 1.0e-6 5000 50000
+reset_timestep 0
+
+velocity       all create 298.0 4928459 mom yes rot yes dist gaussian
+timestep       1.0
+fix            eq all npt temp 298.0 298.0 100.0 iso 1.0 1.0 1000.0
+thermo         200
+run            6000
+unfix          eq
+
+variable       dens equal density
+fix            avg all ave/time 100 10 1000 v_dens file density.txt
+fix            prod all nvt temp 298.0 298.0 100.0
+dump           d1 all custom 1000 prod.lammpstrj id type x y z
+run            3000
+write_data     final.data
+write_restart  final.restart

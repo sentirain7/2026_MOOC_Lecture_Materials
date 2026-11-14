@@ -1,0 +1,152 @@
+{
+ "target_wt": {
+  "saturate": 0.15,
+  "aromatic": 0.45,
+  "resin": 0.15,
+  "asphaltene": 0.25
+ },
+ "counts": {
+  "SA-Squalane": 3,
+  "SA-Hopane": 3,
+  "AR-PHPN": 9,
+  "AR-DOCHN": 9,
+  "RE-Quin": 1,
+  "RE-Pyrid": 1,
+  "RE-Thio": 1,
+  "RE-Benzo": 2,
+  "RE-Trim": 1,
+  "AS-Pyrrole": 1,
+  "AS-Phenol": 1,
+  "AS-Thio": 2,
+  "AS-HighS13": 2
+ },
+ "n_molecules": 36,
+ "n_atoms": 3106,
+ "total_mass_gmol": 17522.4,
+ "actual_wt": {
+  "saturate": 15.5,
+  "aromatic": 44.8,
+  "resin": 15.0,
+  "asphaltene": 24.7
+ },
+ "wt_error_pct": {
+  "saturate": 0.5,
+  "aromatic": -0.2,
+  "resin": -0.0,
+  "asphaltene": -0.3
+ },
+ "elements": {
+  "C": 1265,
+  "H": 1823,
+  "N": 3,
+  "O": 2,
+  "S": 13
+ },
+ "HC": 1.441,
+ "SC": 0.0103,
+ "NC": 0.0024,
+ "OC": 0.0016,
+ "rho0": 0.2,
+ "L_A": 52.59,
+ "reference_tables": {
+  "AAA1": {
+   "counts": {
+    "SA-Squalane": 4,
+    "SA-Hopane": 4,
+    "AR-PHPN": 11,
+    "AR-DOCHN": 13,
+    "RE-Quin": 4,
+    "RE-Pyrid": 4,
+    "RE-Thio": 4,
+    "RE-Benzo": 15,
+    "RE-Trim": 5,
+    "AS-Pyrrole": 2,
+    "AS-Phenol": 3,
+    "AS-Thio": 3
+   },
+   "sara": {
+    "saturate": 0.111,
+    "aromatic": 0.333,
+    "resin": 0.444,
+    "asphaltene": 0.111
+   },
+   "total": 72,
+   "wt_from_MW": {
+    "saturate": 11.1,
+    "aromatic": 31.9,
+    "resin": 39.7,
+    "asphaltene": 17.2
+   },
+   "HC": 1.373,
+   "SC": 0.0159,
+   "n_atoms": 5572,
+   "mean_MW": 452.7
+  },
+  "AAK1": {
+   "counts": {
+    "SA-Squalane": 2,
+    "SA-Hopane": 2,
+    "AR-PHPN": 10,
+    "AR-DOCHN": 10,
+    "RE-Quin": 4,
+    "RE-Pyrid": 4,
+    "RE-Thio": 4,
+    "RE-Benzo": 12,
+    "RE-Trim": 4,
+    "AS-Pyrrole": 2,
+    "AS-Phenol": 3,
+    "AS-Thio": 3
+   },
+   "sara": {
+    "saturate": 0.067,
+    "aromatic": 0.333,
+    "resin": 0.467,
+    "asphaltene": 0.133
+   },
+   "total": 60,
+   "wt_from_MW": {
+    "saturate": 6.5,
+    "aromatic": 31.3,
+    "resin": 41.9,
+    "asphaltene": 20.2
+   },
+   "HC": 1.35,
+   "SC": 0.0156,
+   "n_atoms": 4717,
+   "mean_MW": 463.6
+  },
+  "AAM1": {
+   "counts": {
+    "SA-Squalane": 1,
+    "SA-Hopane": 1,
+    "AR-PHPN": 20,
+    "AR-DOCHN": 21,
+    "RE-Quin": 10,
+    "RE-Pyrid": 10,
+    "RE-Thio": 10,
+    "RE-Benzo": 4,
+    "RE-Trim": 10,
+    "AS-Pyrrole": 1,
+    "AS-Phenol": 1,
+    "AS-Thio": 1
+   },
+   "sara": {
+    "saturate": 0.022,
+    "aromatic": 0.456,
+    "resin": 0.489,
+    "asphaltene": 0.033
+   },
+   "total": 90,
+   "wt_from_MW": {
+    "saturate": 2.1,
+    "aromatic": 41.9,
+    "resin": 50.8,
+    "asphaltene": 5.1
+   },
+   "HC": 1.452,
+   "SC": 0.0062,
+   "n_atoms": 7594,
+   "mean_MW": 472.5
+  }
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "forcefield": "GAFF2 + AM1-BCC (COMID 스택)",
+ "ensemble": "NPT 평형 → 물성 평균 (W05 · W09)",
+ "length": "screening tier (원본 10주차 보충B #18)",
+ "error_report": "평균 ± 블록 SE · n 병기 (W05)",
+ "split": "관측 400 / 후보 212 (고정 난수 7) · 첨가제 홀드아웃은 확장 과제"
+}

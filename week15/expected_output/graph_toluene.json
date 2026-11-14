@@ -1,0 +1,224 @@
+{
+ "name": "toluene",
+ "smiles": "Cc1ccccc1",
+ "nodes": [
+  {
+   "idx": 0,
+   "symbol": "C",
+   "hyb": "SP3",
+   "aromatic": false,
+   "ring": false,
+   "nH": 3,
+   "charge": 0,
+   "x": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    3.0,
+    0.0
+   ]
+  },
+  {
+   "idx": 1,
+   "symbol": "C",
+   "hyb": "SP2",
+   "aromatic": true,
+   "ring": true,
+   "nH": 0,
+   "charge": 0,
+   "x": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    1.0,
+    1.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "idx": 2,
+   "symbol": "C",
+   "hyb": "SP2",
+   "aromatic": true,
+   "ring": true,
+   "nH": 1,
+   "charge": 0,
+   "x": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    1.0,
+    1.0,
+    1.0,
+    0.0
+   ]
+  },
+  {
+   "idx": 3,
+   "symbol": "C",
+   "hyb": "SP2",
+   "aromatic": true,
+   "ring": true,
+   "nH": 1,
+   "charge": 0,
+   "x": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    1.0,
+    1.0,
+    1.0,
+    0.0
+   ]
+  },
+  {
+   "idx": 4,
+   "symbol": "C",
+   "hyb": "SP2",
+   "aromatic": true,
+   "ring": true,
+   "nH": 1,
+   "charge": 0,
+   "x": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    1.0,
+    1.0,
+    1.0,
+    0.0
+   ]
+  },
+  {
+   "idx": 5,
+   "symbol": "C",
+   "hyb": "SP2",
+   "aromatic": true,
+   "ring": true,
+   "nH": 1,
+   "charge": 0,
+   "x": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    1.0,
+    1.0,
+    1.0,
+    0.0
+   ]
+  },
+  {
+   "idx": 6,
+   "symbol": "C",
+   "hyb": "SP2",
+   "aromatic": true,
+   "ring": true,
+   "nH": 1,
+   "charge": 0,
+   "x": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    1.0,
+    1.0,
+    1.0,
+    0.0
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "u": 0,
+   "v": 1,
+   "order": 1.0,
+   "aromatic": false,
+   "ring": false
+  },
+  {
+   "u": 1,
+   "v": 2,
+   "order": 1.5,
+   "aromatic": true,
+   "ring": true
+  },
+  {
+   "u": 2,
+   "v": 3,
+   "order": 1.5,
+   "aromatic": true,
+   "ring": true
+  },
+  {
+   "u": 3,
+   "v": 4,
+   "order": 1.5,
+   "aromatic": true,
+   "ring": true
+  },
+  {
+   "u": 4,
+   "v": 5,
+   "order": 1.5,
+   "aromatic": true,
+   "ring": true
+  },
+  {
+   "u": 5,
+   "v": 6,
+   "order": 1.5,
+   "aromatic": true,
+   "ring": true
+  },
+  {
+   "u": 6,
+   "v": 1,
+   "order": 1.5,
+   "aromatic": true,
+   "ring": true
+  }
+ ],
+ "feature_names": [
+  "C",
+  "N",
+  "O",
+  "S",
+  "SP",
+  "SP2",
+  "SP3",
+  "aromatic",
+  "ring",
+  "nH",
+  "charge"
+ ]
+}

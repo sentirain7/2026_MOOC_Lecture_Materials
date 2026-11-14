@@ -1,0 +1,2 @@
+exp_id,n_atoms,n_mol,T_K,rho_gcc,rho_se,rho_converged,ced_A_MJm3,ced_B_MJm3,ced_method_fixed,delta_MPa05,eta_gk_running_mPas,eta_plateau,Tg_K,Tg_n_T,t_total_ps,scripts_version,flags
+toluene50_w09,750,50,298,0.834,0.00621,False,332.3,374.9,B,19.36,0.2819,True,356.5,4,50.0,week09-v3,short-run;rho-not-converged

@@ -1,0 +1,56 @@
+{
+ "source": "data/core672.csv",
+ "rule": "실패 · 이상값은 삭제 대신 플래그 · 원인이 계산 조건이면 그 조건의 물성만 제외",
+ "stages": [
+  {
+   "stage": "raw",
+   "label": "코어 행(완료 실험)",
+   "n": 672
+  },
+  {
+   "stage": "gate",
+   "label": "물리 범위 게이트(표시)",
+   "n": 672,
+   "flagged": 56,
+   "K_gt_50GPa": 50,
+   "CED_negative": 48
+  },
+  {
+   "stage": "tier",
+   "label": "점도(전단) 런 제외 — K · CED 정의 불가",
+   "n": 614,
+   "removed": 58,
+   "removed_with_flag": 56,
+   "flag_left": 0
+  },
+  {
+   "stage": "relabel",
+   "label": "노화 라벨 복원 · K 재백필(원본 로그)",
+   "n": 614,
+   "aging_relabeled": 182,
+   "K_backfilled": 36
+  },
+  {
+   "stage": "dedup",
+   "label": "중복 조건 검사",
+   "n": 614,
+   "duplicates": 0
+  },
+  {
+   "stage": "complete",
+   "label": "두 목표(K · CED) 완비",
+   "n": 612,
+   "missing": 2,
+   "missing_rows": [
+    [
+     "AAK1",
+     "Lignin"
+    ],
+    [
+     "AAM1",
+     "Carbon_Nano_Tube"
+    ]
+   ]
+  }
+ ]
+}

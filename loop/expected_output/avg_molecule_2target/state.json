@@ -1,0 +1,164 @@
+{
+ "round": 3,
+ "history": [
+  {
+   "round": 0,
+   "ids": [
+    "r0_1",
+    "r0_2",
+    "r0_3",
+    "r0_4",
+    "r0_5",
+    "r0_6"
+   ],
+   "cands": [
+    "quinoline-2x3",
+    "tetralin-2x12",
+    "phenanthrene-1x1",
+    "benzene-1x9",
+    "benzothiophene-1x1",
+    "tetralin-2x1"
+   ],
+   "mode": "live",
+   "model": "gp",
+   "acq": "ehvi",
+   "best": "r0_1",
+   "best_cand": "quinoline-2x3",
+   "best_dist": 3.04,
+   "note": "라운드 0 = 앞선 실행과 같은 6개 MD 결과를 그대로 사용(같은 코드 · 프로토콜)"
+  },
+  {
+   "round": 1,
+   "ids": [
+    "r1_1",
+    "r1_2"
+   ],
+   "cands": [
+    "tetralin-1x1",
+    "benzene-1x3"
+   ],
+   "mode": "live",
+   "model": "gp",
+   "acq": "cheb",
+   "n_obs": 6,
+   "picks": [
+    {
+     "cand": "tetralin-1x1",
+     "score": 0.173032,
+     "mu": [
+      0.9624,
+      409.2424
+     ],
+     "sd": [
+      0.0055,
+      2.8923
+     ]
+    },
+    {
+     "cand": "benzene-1x3",
+     "score": 0.159309,
+     "mu": [
+      0.953,
+      404.827
+     ],
+     "sd": [
+      0.0226,
+      11.8129
+     ]
+    }
+   ],
+   "best": "r0_1",
+   "best_cand": "quinoline-2x3",
+   "best_dist": 3.04
+  },
+  {
+   "round": 2,
+   "ids": [
+    "r2_1",
+    "r2_2"
+   ],
+   "cands": [
+    "dibenzothiophene-2x4",
+    "phenanthrene-2x3"
+   ],
+   "mode": "live",
+   "model": "gp",
+   "acq": "cheb",
+   "n_obs": 8,
+   "picks": [
+    {
+     "cand": "dibenzothiophene-2x4",
+     "score": 0.308693,
+     "mu": [
+      0.9745,
+      413.4054
+     ],
+     "sd": [
+      0.0357,
+      28.2458
+     ]
+    },
+    {
+     "cand": "phenanthrene-2x3",
+     "score": 0.298757,
+     "mu": [
+      0.9787,
+      417.6534
+     ],
+     "sd": [
+      0.0453,
+      35.3041
+     ]
+    }
+   ],
+   "best": "r2_1",
+   "best_cand": "dibenzothiophene-2x4",
+   "best_dist": 2.64
+  },
+  {
+   "round": 3,
+   "ids": [
+    "r3_1",
+    "r3_2"
+   ],
+   "cands": [
+    "dibenzothiophene-1x10",
+    "dibenzothiophene-2x6"
+   ],
+   "mode": "live",
+   "model": "gp",
+   "acq": "cheb",
+   "n_obs": 10,
+   "picks": [
+    {
+     "cand": "dibenzothiophene-1x10",
+     "score": 0.955105,
+     "mu": [
+      0.9986,
+      384.2393
+     ],
+     "sd": [
+      0.0136,
+      13.4414
+     ]
+    },
+    {
+     "cand": "dibenzothiophene-2x6",
+     "score": 0.890492,
+     "mu": [
+      0.9905,
+      374.2643
+     ],
+     "sd": [
+      0.0193,
+      18.1972
+     ]
+    }
+   ],
+   "best": "r3_2",
+   "best_cand": "dibenzothiophene-2x6",
+   "best_dist": 1.965
+  }
+ ],
+ "done": true
+}

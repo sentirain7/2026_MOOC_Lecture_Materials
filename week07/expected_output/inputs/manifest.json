@@ -1,0 +1,56 @@
+[
+ {
+  "run_id": "T08_s11",
+  "file": "out/inputs/in.T08_s11",
+  "hash": "8db366",
+  "T": "0.8",
+  "seed": "11",
+  "dt": "0.005",
+  "steps": "1000"
+ },
+ {
+  "run_id": "T08_s22",
+  "file": "out/inputs/in.T08_s22",
+  "hash": "fa0abd",
+  "T": "0.8",
+  "seed": "22",
+  "dt": "0.005",
+  "steps": "1000"
+ },
+ {
+  "run_id": "T10_s11",
+  "file": "out/inputs/in.T10_s11",
+  "hash": "fd2e8d",
+  "T": "1.0",
+  "seed": "11",
+  "dt": "0.005",
+  "steps": "1000"
+ },
+ {
+  "run_id": "T10_s22",
+  "file": "out/inputs/in.T10_s22",
+  "hash": "c20153",
+  "T": "1.0",
+  "seed": "22",
+  "dt": "0.005",
+  "steps": "1000"
+ },
+ {
+  "run_id": "T12_s11",
+  "file": "out/inputs/in.T12_s11",
+  "hash": "1c7aa5",
+  "T": "1.2",
+  "seed": "11",
+  "dt": "0.005",
+  "steps": "1000"
+ },
+ {
+  "run_id": "T12_s22",
+  "file": "out/inputs/in.T12_s22",
+  "hash": "d5b234",
+  "T": "1.2",
+  "seed": "22",
+  "dt": "0.03",
+  "steps": "1000"
+ }
+]

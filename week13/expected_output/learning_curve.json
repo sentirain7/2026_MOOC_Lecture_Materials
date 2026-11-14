@@ -1,0 +1,88 @@
+{
+ "fracs": [
+  0.1,
+  0.2,
+  0.3,
+  0.5,
+  0.7,
+  1.0
+ ],
+ "models": {
+  "linear": [
+   {
+    "frac": 0.1,
+    "n_train": 27,
+    "train_rmse": 0.00418,
+    "val_rmse": 0.0108
+   },
+   {
+    "frac": 0.2,
+    "n_train": 55,
+    "train_rmse": 0.00538,
+    "val_rmse": 0.00772
+   },
+   {
+    "frac": 0.3,
+    "n_train": 78,
+    "train_rmse": 0.00561,
+    "val_rmse": 0.00721
+   },
+   {
+    "frac": 0.5,
+    "n_train": 136,
+    "train_rmse": 0.00567,
+    "val_rmse": 0.0074
+   },
+   {
+    "frac": 0.7,
+    "n_train": 187,
+    "train_rmse": 0.00595,
+    "val_rmse": 0.0065
+   },
+   {
+    "frac": 1.0,
+    "n_train": 268,
+    "train_rmse": 0.00621,
+    "val_rmse": 0.00644
+   }
+  ],
+  "forest": [
+   {
+    "frac": 0.1,
+    "n_train": 27,
+    "train_rmse": 0.00343,
+    "val_rmse": 0.03192
+   },
+   {
+    "frac": 0.2,
+    "n_train": 58,
+    "train_rmse": 0.00299,
+    "val_rmse": 0.02195
+   },
+   {
+    "frac": 0.3,
+    "n_train": 80,
+    "train_rmse": 0.00286,
+    "val_rmse": 0.01686
+   },
+   {
+    "frac": 0.5,
+    "n_train": 139,
+    "train_rmse": 0.00312,
+    "val_rmse": 0.01106
+   },
+   {
+    "frac": 0.7,
+    "n_train": 186,
+    "train_rmse": 0.00293,
+    "val_rmse": 0.00818
+   },
+   {
+    "frac": 1.0,
+    "n_train": 268,
+    "train_rmse": 0.00298,
+    "val_rmse": 0.00621
+   }
+  ]
+ }
+}

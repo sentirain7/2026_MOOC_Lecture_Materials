@@ -1,0 +1,16 @@
+{
+ "column": "Density",
+ "n_samples": 301,
+ "n_used": 211,
+ "discard_fraction": 0.3,
+ "t_total_ps": 30.0,
+ "mean": 0.834,
+ "block_se": 0.00621,
+ "n_block": 10,
+ "first_half": 0.82064,
+ "second_half": 0.84724,
+ "half_diff_pct": 3.189,
+ "converged_0p5pct": false,
+ "naive_se": 0.00154,
+ "unit": "g/cm3"
+}

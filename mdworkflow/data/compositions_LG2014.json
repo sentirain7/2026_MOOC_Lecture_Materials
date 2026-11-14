@@ -1,0 +1,53 @@
+{
+ "AAA1": {
+  "counts": {
+   "SA-Squalane": 4,
+   "SA-Hopane": 4,
+   "AR-PHPN": 11,
+   "AR-DOCHN": 13,
+   "RE-Quin": 4,
+   "RE-Pyrid": 4,
+   "RE-Thio": 4,
+   "RE-Benzo": 15,
+   "RE-Trim": 5,
+   "AS-Pyrrole": 2,
+   "AS-Phenol": 3,
+   "AS-Thio": 3
+  },
+  "reference": "Li and Greenfield (2014), Table 1"
+ },
+ "AAK1": {
+  "counts": {
+   "SA-Squalane": 2,
+   "SA-Hopane": 2,
+   "AR-PHPN": 10,
+   "AR-DOCHN": 10,
+   "RE-Quin": 4,
+   "RE-Pyrid": 4,
+   "RE-Thio": 4,
+   "RE-Benzo": 12,
+   "RE-Trim": 4,
+   "AS-Pyrrole": 2,
+   "AS-Phenol": 3,
+   "AS-Thio": 3
+  },
+  "reference": "Li and Greenfield (2014), Table 1 (X1 = table counts; X2/X3 = x2/x3). Corrected 2026-10-12 (P-14) — previous values were an AAA1 pattern scaled to wt%, not the paper table"
+ },
+ "AAM1": {
+  "counts": {
+   "SA-Squalane": 1,
+   "SA-Hopane": 1,
+   "AR-PHPN": 20,
+   "AR-DOCHN": 21,
+   "RE-Quin": 10,
+   "RE-Pyrid": 10,
+   "RE-Thio": 10,
+   "RE-Benzo": 4,
+   "RE-Trim": 10,
+   "AS-Pyrrole": 1,
+   "AS-Phenol": 1,
+   "AS-Thio": 1
+  },
+  "reference": "Li and Greenfield (2014), Table 1 (X1 = table counts; X2/X3 = x2/x3). Corrected 2026-10-12 (P-14) — previous values were an AAA1 pattern scaled to wt%, not the paper table"
+ }
+}

@@ -1,0 +1,16 @@
+{
+ "Ca/Si": 1.706,
+ "Si_total": 17,
+ "pair_tetra": 16,
+ "bridge_tetra": 1,
+ "bridge_removed": 7,
+ "Ca_main": 15,
+ "Ca_interlayer": 14,
+ "repeat_units": 4,
+ "mean_chain_length_tetra": 2.1,
+ "interlayer_H2O": 17.0,
+ "H2O_per_Si": 2.0,
+ "layer_spacing_A(개념)": 14.0,
+ "density_est_g_cm3(확인 필요)": 2.23,
+ "note": "구성 단위 수 모델 · 결정 좌표 아님 · 밀도 · 간격은 문헌 범위 보간(확인 필요)"
+}

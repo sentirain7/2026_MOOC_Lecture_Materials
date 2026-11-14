@@ -1,0 +1,506 @@
+{
+ "density": {
+  "unit": "g/cm³",
+  "n": 670,
+  "base": 1.0108171701431274,
+  "rank": [
+   {
+    "feature": "temperature_K",
+    "ko": "온도",
+    "mean_abs": 0.03332,
+    "direction": "−",
+    "monotonic": 1.0
+   },
+   {
+    "feature": "b_logP",
+    "ko": "바인더 logP",
+    "mean_abs": 0.01519,
+    "direction": "−",
+    "monotonic": 0.9
+   },
+   {
+    "feature": "b_O_frac",
+    "ko": "바인더 O 분율",
+    "mean_abs": 0.00751,
+    "direction": "+",
+    "monotonic": 0.9
+   },
+   {
+    "feature": "add_density",
+    "ko": "첨가제 밀도",
+    "mean_abs": 0.00723,
+    "direction": "+",
+    "monotonic": 0.79
+   },
+   {
+    "feature": "b_aro_frac",
+    "ko": "바인더 방향족 분율",
+    "mean_abs": 0.00323,
+    "direction": "−",
+    "monotonic": 0.69
+   },
+   {
+    "feature": "add_aspect",
+    "ko": "첨가제 종횡비",
+    "mean_abs": 0.00297,
+    "direction": "−",
+    "monotonic": 0.62
+   },
+   {
+    "feature": "b_n_heavy",
+    "ko": "바인더 분자 크기",
+    "mean_abs": 0.00216,
+    "direction": "+",
+    "monotonic": 0.72
+   },
+   {
+    "feature": "b_HC_ratio",
+    "ko": "바인더 H/C",
+    "mean_abs": 0.00136,
+    "direction": "+",
+    "monotonic": 0.69
+   },
+   {
+    "feature": "add_stiffness",
+    "ko": "첨가제 강성",
+    "mean_abs": 0.00123,
+    "direction": "+",
+    "monotonic": 0.65
+   },
+   {
+    "feature": "add_polymer",
+    "ko": "첨가제 고분자",
+    "mean_abs": 0.00056,
+    "direction": "+",
+    "monotonic": 0.75
+   },
+   {
+    "feature": "b_hetero_frac",
+    "ko": "바인더 헤테로 분율",
+    "mean_abs": 0.00036,
+    "direction": "+",
+    "monotonic": 0.75
+   },
+   {
+    "feature": "b_aspect",
+    "ko": "바인더 종횡비",
+    "mean_abs": 0.00033,
+    "direction": "+",
+    "monotonic": 0.7
+   },
+   {
+    "feature": "b_Rg",
+    "ko": "바인더 회전반경",
+    "mean_abs": 0.00033,
+    "direction": "−",
+    "monotonic": 0.3
+   },
+   {
+    "feature": "b_MW",
+    "ko": "바인더 분자량",
+    "mean_abs": 0.00011,
+    "direction": "−",
+    "monotonic": 0.58
+   },
+   {
+    "feature": "add_inorganic",
+    "ko": "첨가제 무기",
+    "mean_abs": 4e-05,
+    "direction": "+",
+    "monotonic": 0.22
+   },
+   {
+    "feature": "add_nano",
+    "ko": "첨가제 나노",
+    "mean_abs": 1e-05,
+    "direction": "+",
+    "monotonic": 0.85
+   },
+   {
+    "feature": "b_TPSA",
+    "ko": "바인더 TPSA",
+    "mean_abs": 1e-05,
+    "direction": "+",
+    "monotonic": 0.2
+   }
+  ]
+ },
+ "CED": {
+  "unit": "MJ/m³",
+  "n": 613,
+  "base": 329.5541076660156,
+  "rank": [
+   {
+    "feature": "temperature_K",
+    "ko": "온도",
+    "mean_abs": 27.76925,
+    "direction": "−",
+    "monotonic": 0.99
+   },
+   {
+    "feature": "b_O_frac",
+    "ko": "바인더 O 분율",
+    "mean_abs": 12.37728,
+    "direction": "+",
+    "monotonic": 0.9
+   },
+   {
+    "feature": "add_polymer",
+    "ko": "첨가제 고분자",
+    "mean_abs": 7.21393,
+    "direction": "−",
+    "monotonic": 0.79
+   },
+   {
+    "feature": "add_density",
+    "ko": "첨가제 밀도",
+    "mean_abs": 5.05676,
+    "direction": "+",
+    "monotonic": 0.55
+   },
+   {
+    "feature": "b_n_heavy",
+    "ko": "바인더 분자 크기",
+    "mean_abs": 2.3732,
+    "direction": "+",
+    "monotonic": 0.88
+   },
+   {
+    "feature": "b_hetero_frac",
+    "ko": "바인더 헤테로 분율",
+    "mean_abs": 1.9708,
+    "direction": "+",
+    "monotonic": 0.93
+   },
+   {
+    "feature": "add_aspect",
+    "ko": "첨가제 종횡비",
+    "mean_abs": 1.14415,
+    "direction": "−",
+    "monotonic": 0.03
+   },
+   {
+    "feature": "add_inorganic",
+    "ko": "첨가제 무기",
+    "mean_abs": 0.96245,
+    "direction": "+",
+    "monotonic": 0.86
+   },
+   {
+    "feature": "b_logP",
+    "ko": "바인더 logP",
+    "mean_abs": 0.88111,
+    "direction": "−",
+    "monotonic": 0.94
+   },
+   {
+    "feature": "b_HC_ratio",
+    "ko": "바인더 H/C",
+    "mean_abs": 0.67931,
+    "direction": "−",
+    "monotonic": 0.55
+   },
+   {
+    "feature": "b_aro_frac",
+    "ko": "바인더 방향족 분율",
+    "mean_abs": 0.31918,
+    "direction": "−",
+    "monotonic": 0.75
+   },
+   {
+    "feature": "add_stiffness",
+    "ko": "첨가제 강성",
+    "mean_abs": 0.15048,
+    "direction": "−",
+    "monotonic": 0.44
+   },
+   {
+    "feature": "b_Rg",
+    "ko": "바인더 회전반경",
+    "mean_abs": 0.10271,
+    "direction": "+",
+    "monotonic": 0.1
+   },
+   {
+    "feature": "b_aspect",
+    "ko": "바인더 종횡비",
+    "mean_abs": 0.08253,
+    "direction": "+",
+    "monotonic": 0.04
+   },
+   {
+    "feature": "b_MW",
+    "ko": "바인더 분자량",
+    "mean_abs": 0.05582,
+    "direction": "+",
+    "monotonic": 0.65
+   },
+   {
+    "feature": "b_TPSA",
+    "ko": "바인더 TPSA",
+    "mean_abs": 0.02087,
+    "direction": "+",
+    "monotonic": 0.76
+   },
+   {
+    "feature": "add_nano",
+    "ko": "첨가제 나노",
+    "mean_abs": 0.00515,
+    "direction": "−",
+    "monotonic": 0.34
+   }
+  ]
+ },
+ "bulk": {
+  "unit": "GPa",
+  "n": 576,
+  "base": 2.6722488403320312,
+  "rank": [
+   {
+    "feature": "temperature_K",
+    "ko": "온도",
+    "mean_abs": 0.78393,
+    "direction": "−",
+    "monotonic": 0.99
+   },
+   {
+    "feature": "add_density",
+    "ko": "첨가제 밀도",
+    "mean_abs": 0.05048,
+    "direction": "+",
+    "monotonic": 0.46
+   },
+   {
+    "feature": "b_n_heavy",
+    "ko": "바인더 분자 크기",
+    "mean_abs": 0.04269,
+    "direction": "+",
+    "monotonic": 0.67
+   },
+   {
+    "feature": "add_aspect",
+    "ko": "첨가제 종횡비",
+    "mean_abs": 0.0367,
+    "direction": "−",
+    "monotonic": 0.5
+   },
+   {
+    "feature": "b_logP",
+    "ko": "바인더 logP",
+    "mean_abs": 0.03523,
+    "direction": "−",
+    "monotonic": 0.83
+   },
+   {
+    "feature": "b_O_frac",
+    "ko": "바인더 O 분율",
+    "mean_abs": 0.03149,
+    "direction": "+",
+    "monotonic": 0.81
+   },
+   {
+    "feature": "b_HC_ratio",
+    "ko": "바인더 H/C",
+    "mean_abs": 0.02148,
+    "direction": "−",
+    "monotonic": 0.4
+   },
+   {
+    "feature": "b_Rg",
+    "ko": "바인더 회전반경",
+    "mean_abs": 0.01714,
+    "direction": "+",
+    "monotonic": 0.16
+   },
+   {
+    "feature": "b_aro_frac",
+    "ko": "바인더 방향족 분율",
+    "mean_abs": 0.01533,
+    "direction": "−",
+    "monotonic": 0.42
+   },
+   {
+    "feature": "add_polymer",
+    "ko": "첨가제 고분자",
+    "mean_abs": 0.01395,
+    "direction": "+",
+    "monotonic": 0.13
+   },
+   {
+    "feature": "b_aspect",
+    "ko": "바인더 종횡비",
+    "mean_abs": 0.01341,
+    "direction": "+",
+    "monotonic": 0.36
+   },
+   {
+    "feature": "b_hetero_frac",
+    "ko": "바인더 헤테로 분율",
+    "mean_abs": 0.01304,
+    "direction": "+",
+    "monotonic": 0.66
+   },
+   {
+    "feature": "add_stiffness",
+    "ko": "첨가제 강성",
+    "mean_abs": 0.00567,
+    "direction": "+",
+    "monotonic": 0.51
+   },
+   {
+    "feature": "add_inorganic",
+    "ko": "첨가제 무기",
+    "mean_abs": 0.00451,
+    "direction": "+",
+    "monotonic": 0.05
+   },
+   {
+    "feature": "b_MW",
+    "ko": "바인더 분자량",
+    "mean_abs": 0.00396,
+    "direction": "+",
+    "monotonic": 0.54
+   },
+   {
+    "feature": "b_TPSA",
+    "ko": "바인더 TPSA",
+    "mean_abs": 0.00149,
+    "direction": "−",
+    "monotonic": 0.22
+   },
+   {
+    "feature": "add_nano",
+    "ko": "첨가제 나노",
+    "mean_abs": 0.00023,
+    "direction": "−",
+    "monotonic": 0.69
+   }
+  ]
+ },
+ "E_inter": {
+  "unit": "kcal/mol",
+  "n": 576,
+  "base": -2257.387451171875,
+  "rank": [
+   {
+    "feature": "temperature_K",
+    "ko": "온도",
+    "mean_abs": 140.03955,
+    "direction": "+",
+    "monotonic": 0.99
+   },
+   {
+    "feature": "b_n_heavy",
+    "ko": "바인더 분자 크기",
+    "mean_abs": 92.22095,
+    "direction": "−",
+    "monotonic": 0.97
+   },
+   {
+    "feature": "add_polymer",
+    "ko": "첨가제 고분자",
+    "mean_abs": 43.52049,
+    "direction": "−",
+    "monotonic": 0.75
+   },
+   {
+    "feature": "add_density",
+    "ko": "첨가제 밀도",
+    "mean_abs": 21.91229,
+    "direction": "−",
+    "monotonic": 0.53
+   },
+   {
+    "feature": "add_aspect",
+    "ko": "첨가제 종횡비",
+    "mean_abs": 15.92478,
+    "direction": "+",
+    "monotonic": 0.38
+   },
+   {
+    "feature": "b_MW",
+    "ko": "바인더 분자량",
+    "mean_abs": 13.50629,
+    "direction": "−",
+    "monotonic": 0.93
+   },
+   {
+    "feature": "b_O_frac",
+    "ko": "바인더 O 분율",
+    "mean_abs": 7.32625,
+    "direction": "−",
+    "monotonic": 0.74
+   },
+   {
+    "feature": "b_Rg",
+    "ko": "바인더 회전반경",
+    "mean_abs": 6.25982,
+    "direction": "−",
+    "monotonic": 0.81
+   },
+   {
+    "feature": "b_HC_ratio",
+    "ko": "바인더 H/C",
+    "mean_abs": 4.37766,
+    "direction": "−",
+    "monotonic": 0.14
+   },
+   {
+    "feature": "b_aro_frac",
+    "ko": "바인더 방향족 분율",
+    "mean_abs": 4.35887,
+    "direction": "+",
+    "monotonic": 0.22
+   },
+   {
+    "feature": "b_logP",
+    "ko": "바인더 logP",
+    "mean_abs": 2.89517,
+    "direction": "−",
+    "monotonic": 0.45
+   },
+   {
+    "feature": "b_aspect",
+    "ko": "바인더 종횡비",
+    "mean_abs": 2.11365,
+    "direction": "+",
+    "monotonic": 0.37
+   },
+   {
+    "feature": "b_hetero_frac",
+    "ko": "바인더 헤테로 분율",
+    "mean_abs": 2.09165,
+    "direction": "−",
+    "monotonic": 0.62
+   },
+   {
+    "feature": "add_stiffness",
+    "ko": "첨가제 강성",
+    "mean_abs": 1.86121,
+    "direction": "−",
+    "monotonic": 0.49
+   },
+   {
+    "feature": "add_inorganic",
+    "ko": "첨가제 무기",
+    "mean_abs": 0.95539,
+    "direction": "+",
+    "monotonic": 0.3
+   },
+   {
+    "feature": "b_TPSA",
+    "ko": "바인더 TPSA",
+    "mean_abs": 0.2751,
+    "direction": "+",
+    "monotonic": 0.02
+   },
+   {
+    "feature": "add_nano",
+    "ko": "첨가제 나노",
+    "mean_abs": 0.10429,
+    "direction": "−",
+    "monotonic": 0.49
+   }
+  ]
+ }
+}

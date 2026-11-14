@@ -1,0 +1,34 @@
+{
+ "id": "bt-1x6",
+ "comp": {
+  "bt-1x6": 45
+ },
+ "sara": null,
+ "mass_gmol": 9826.11,
+ "rho0": 0.5,
+ "L_A": 31.956,
+ "tolerance": 2.0,
+ "gate": {
+  "attempt": 1,
+  "seed": 1,
+  "packmol_success": true,
+  "atom_count_ok": true,
+  "min_intermolecular_A": 2.196,
+  "threshold_A": 1.8,
+  "pass": true
+ },
+ "data": {
+  "atoms": 1485,
+  "molecules": 45,
+  "atom_types": 8,
+  "bond_types": 11,
+  "angle_types": 17,
+  "dihedral_types": 26,
+  "improper_types": 6,
+  "charge_sum": 5e-05
+ },
+ "ff_files": {
+  "bt-1x6": "ff/bt-1x6_gaff2.json"
+ },
+ "charge_ok": true
+}

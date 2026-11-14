@@ -1,0 +1,23 @@
+{
+ "id": "r2_1",
+ "cell": "r2_1",
+ "protocol": "standard",
+ "T": 298.0,
+ "Thot": 500.0,
+ "Phi_atm": 1000.0,
+ "seed": 4928460,
+ "threads": 4,
+ "attempts": [
+  {
+   "dt_fs": 1.0,
+   "exit": 0,
+   "wall_s": 445.2,
+   "ok": true,
+   "error": null
+  }
+ ],
+ "ok": true,
+ "wall_s_total": 445.2,
+ "frames": 21,
+ "lammps_version": "22 Jul 2025 - Update 6"
+}

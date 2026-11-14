@@ -1,0 +1,11 @@
+out/
+*/out/
+ws/
+*/ws/
+loop/vault/runs/
+loop/vault/rounds/
+loop/vault/.obsidian/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.DS_Store

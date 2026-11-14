@@ -1,0 +1,327 @@
+{
+  "schema_version": 2,
+  "ff_family": "organic_gaff2",
+  "charge_model": "am1_bcc",
+  "mol_id": "Toluene",
+  "generator": "antechamber_am1bcc",
+  "generator_version": "ambertools_parmed",
+  "generation_profile": "baseline",
+  "provenance": "Generated from Toluene.mol",
+  "canonical_smiles": "Cc1ccccc1",
+  "formal_charge": 0,
+  "topology_hash": "",
+  "charge_sum": -1e-06,
+  "atoms": [
+    {
+      "index": 1,
+      "element": "C",
+      "ff_type": "ca",
+      "charge": -0.0773,
+      "epsilon": 0.0988,
+      "sigma": 3.31521231
+    },
+    {
+      "index": 2,
+      "element": "C",
+      "ff_type": "ca",
+      "charge": -0.131,
+      "epsilon": 0.0988,
+      "sigma": 3.31521231
+    },
+    {
+      "index": 3,
+      "element": "C",
+      "ff_type": "ca",
+      "charge": -0.127,
+      "epsilon": 0.0988,
+      "sigma": 3.31521231
+    },
+    {
+      "index": 4,
+      "element": "C",
+      "ff_type": "ca",
+      "charge": -0.135,
+      "epsilon": 0.0988,
+      "sigma": 3.31521231
+    },
+    {
+      "index": 5,
+      "element": "C",
+      "ff_type": "ca",
+      "charge": -0.127,
+      "epsilon": 0.0988,
+      "sigma": 3.31521231
+    },
+    {
+      "index": 6,
+      "element": "C",
+      "ff_type": "ca",
+      "charge": -0.131,
+      "epsilon": 0.0988,
+      "sigma": 3.31521231
+    },
+    {
+      "index": 7,
+      "element": "C",
+      "ff_type": "c3",
+      "charge": -0.0538,
+      "epsilon": 0.1078,
+      "sigma": 3.39770953
+    },
+    {
+      "index": 8,
+      "element": "H",
+      "ff_type": "ha",
+      "charge": 0.13,
+      "epsilon": 0.0161,
+      "sigma": 2.62547852
+    },
+    {
+      "index": 9,
+      "element": "H",
+      "ff_type": "ha",
+      "charge": 0.13,
+      "epsilon": 0.0161,
+      "sigma": 2.62547852
+    },
+    {
+      "index": 10,
+      "element": "H",
+      "ff_type": "ha",
+      "charge": 0.13,
+      "epsilon": 0.0161,
+      "sigma": 2.62547852
+    },
+    {
+      "index": 11,
+      "element": "H",
+      "ff_type": "ha",
+      "charge": 0.13,
+      "epsilon": 0.0161,
+      "sigma": 2.62547852
+    },
+    {
+      "index": 12,
+      "element": "H",
+      "ff_type": "ha",
+      "charge": 0.13,
+      "epsilon": 0.0161,
+      "sigma": 2.62547852
+    },
+    {
+      "index": 13,
+      "element": "H",
+      "ff_type": "hc",
+      "charge": 0.044033,
+      "epsilon": 0.0208,
+      "sigma": 2.600177
+    },
+    {
+      "index": 14,
+      "element": "H",
+      "ff_type": "hc",
+      "charge": 0.044033,
+      "epsilon": 0.0208,
+      "sigma": 2.600177
+    },
+    {
+      "index": 15,
+      "element": "H",
+      "ff_type": "hc",
+      "charge": 0.044033,
+      "epsilon": 0.0208,
+      "sigma": 2.600177
+    }
+  ],
+  "bond_types": [
+    {
+      "key": "ca-ca",
+      "k": 354.25,
+      "r0": 1.3986
+    },
+    {
+      "key": "ca-c3",
+      "k": 243.91,
+      "r0": 1.5147
+    },
+    {
+      "key": "ca-ha",
+      "k": 360.69,
+      "r0": 1.086
+    },
+    {
+      "key": "c3-hc",
+      "k": 345.25,
+      "r0": 1.0962
+    }
+  ],
+  "angle_types": [
+    {
+      "key": "ca-ca-ca",
+      "k": 63.67,
+      "theta0": 120.020052
+    },
+    {
+      "key": "ca-ca-c3",
+      "k": 60.74,
+      "theta0": 120.830052
+    },
+    {
+      "key": "ca-ca-ha",
+      "k": 44.9,
+      "theta0": 119.880051
+    },
+    {
+      "key": "ca-c3-hc",
+      "k": 43.61,
+      "theta0": 110.630047
+    },
+    {
+      "key": "hc-c3-hc",
+      "k": 35.8,
+      "theta0": 107.730046
+    }
+  ],
+  "dihedral_types": [
+    {
+      "key": "ca-ca-ca-ca",
+      "style": "fourier",
+      "coeffs": [
+        3.625,
+        2.0,
+        180.0
+      ]
+    },
+    {
+      "key": "c3-ca-ca-ca",
+      "style": "fourier",
+      "coeffs": [
+        3.625,
+        2.0,
+        180.0
+      ]
+    },
+    {
+      "key": "ca-ca-ca-ha",
+      "style": "fourier",
+      "coeffs": [
+        3.625,
+        2.0,
+        180.0
+      ]
+    },
+    {
+      "key": "ca-ca-c3-hc",
+      "style": "fourier",
+      "coeffs": [
+        0.0,
+        1.0,
+        0.0
+      ]
+    },
+    {
+      "key": "c3-ca-ca-ha",
+      "style": "fourier",
+      "coeffs": [
+        3.625,
+        2.0,
+        180.0
+      ]
+    },
+    {
+      "key": "ha-ca-ca-ha",
+      "style": "fourier",
+      "coeffs": [
+        3.625,
+        2.0,
+        180.0
+      ]
+    }
+  ],
+  "improper_types": [
+    {
+      "key": "c3-ca-ca-ca",
+      "style": "cvff",
+      "coeffs": [
+        1.1,
+        -1.0,
+        2.0
+      ]
+    },
+    {
+      "key": "ca-ca-ca-ha",
+      "style": "cvff",
+      "coeffs": [
+        1.1,
+        -1.0,
+        2.0
+      ]
+    }
+  ],
+  "improper_instances": [
+    {
+      "atom1": 7,
+      "atom2": 1,
+      "atom3": 6,
+      "atom4": 2
+    },
+    {
+      "atom1": 1,
+      "atom2": 3,
+      "atom3": 2,
+      "atom4": 8
+    },
+    {
+      "atom1": 2,
+      "atom2": 4,
+      "atom3": 3,
+      "atom4": 9
+    },
+    {
+      "atom1": 3,
+      "atom2": 5,
+      "atom3": 4,
+      "atom4": 10
+    },
+    {
+      "atom1": 4,
+      "atom2": 6,
+      "atom3": 5,
+      "atom4": 11
+    },
+    {
+      "atom1": 1,
+      "atom2": 5,
+      "atom3": 6,
+      "atom4": 12
+    }
+  ],
+  "dihedral_convention": "fourier:K,n,phase_deg|cvff:K,d,n",
+  "adoption_check": {
+    "passed": true,
+    "counts": {
+      "amber": {
+        "bonds": 15,
+        "angles": 24,
+        "propers": 30,
+        "impropers": 6
+      },
+      "lammps": {
+        "bonds": 15,
+        "angles": 24,
+        "propers": 30,
+        "impropers": 6
+      }
+    },
+    "n_conformers": 6,
+    "worst_abs_diff_kcal": {
+      "bond": 0.0001946000000003778,
+      "angle": 0.00016135999999988826,
+      "dihedral": 5.1130000000121356e-05,
+      "vdw": 8.53699999998625e-05,
+      "elec": 7.21700000003711e-05
+    },
+    "checked_at": "2026-09-26T11:05:17",
+    "tool": "scripts/verify/ff_adoption_check_20260925.py"
+  }
+}

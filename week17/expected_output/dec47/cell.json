@@ -1,0 +1,34 @@
+{
+ "id": "dec47",
+ "comp": {
+  "Decane": 47
+ },
+ "sara": null,
+ "mass_gmol": 6687.44,
+ "rho0": 0.5,
+ "L_A": 28.109,
+ "tolerance": 2.0,
+ "gate": {
+  "attempt": 1,
+  "seed": 1,
+  "packmol_success": true,
+  "atom_count_ok": true,
+  "min_intermolecular_A": 2.122,
+  "threshold_A": 1.8,
+  "pass": true
+ },
+ "data": {
+  "atoms": 1504,
+  "molecules": 47,
+  "atom_types": 2,
+  "bond_types": 2,
+  "angle_types": 3,
+  "dihedral_types": 3,
+  "improper_types": 0,
+  "charge_sum": 9e-05
+ },
+ "ff_files": {
+  "Decane": "ff/Decane_gaff2.json"
+ },
+ "charge_ok": true
+}

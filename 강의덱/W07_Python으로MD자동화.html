@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="ko" data-v="3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>W07 Python 으로 MD 자동화 · 템플릿 · 반복 실행 · 로그 파싱 · 실패 감지 · 간단 생성기</title>
+<link rel="stylesheet" href="../common/deck.css">
+</head>
+<body>
+
+<!-- 1 표지 -->
+<section class="slide v3 cover">
+<div class="stop">
+<div class="ribbon"></div>
+<div class="cover-txt">
+<p class="eb a" style="--d:0"><span class="ko" data-i>건설소재 역설계 도구 개발을 위한 AI와 분자동역학 활용 · WEEK 07 · 모듈 M2 LAMMPS · 도구 주차 · 차시 7-1 ~ 7-3 · 50분</span><span class="en" data-i>AI and Molecular Dynamics for Inverse Design of Construction Materials · WEEK 07 · Module M2 LAMMPS · Tools week · Sessions 7-1 ~ 7-3 · 50 min</span></p>
+<h1 class="cover-h a" style="--d:1"><span class="ko" data-i>Python 으로 MD 자동화</span><span class="en" data-i>Automating MD with Python</span></h1>
+<p class="cover-sub a" style="--d:2"><span class="ko" data-i>표 6줄 → 입력 6개 → 실행 7회 → 표 1장 · 손 대신 스크립트 3개</span><span class="en" data-i>6-row table → 6 inputs → 7 runs → 1 table · 3 scripts instead of hands</span></p>
+<p class="who a" style="--d:3"><span class="ko" data-i><b>윤태영</b> 연구위원 · 한국건설기술연구원 도로교통연구본부 · 과학기술연합대학원대학교(UST) 교수</span><span class="en" data-i><b>Taeyoung Yun</b> Senior Research Fellow · Department of Highway & Transportation Research, Korea Institute of Civil Engineering and Building Technology (KICT) · Professor, University of Science and Technology (UST)</span></p>
+<div class="rel a" style="--d:4;justify-content:flex-start"><span><span class="ko" data-i>새 물리 없음 · 도구만</span><span class="en" data-i>No new physics · tools only</span></span><span><span class="ko" data-i>준비물 · LAMMPS(W06 설치)</span><span class="en" data-i>Needed · LAMMPS (installed in W06)</span></span><span><span class="ko" data-i>W06 in · data 파일</span><span class="en" data-i>W06 in · data files</span></span></div>
+</div>
+<div class="cover-fig"><div class="emb" data-emb="cover7" data-dur="10"></div></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 2 오늘 만들 것 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>오늘 만들 것 · 3차시 · 50분</span><span class="en" data-i>What we build today · 3 sessions · 50 min</span></p>
+<div class="hrow"><span class="hico" data-ico="package-check"></span><h2 class="h"><span class="ko" data-i>오늘의 완성물 2개: 실행 상태 표 status.csv · 요약 summary.json</span><span class="en" data-i>2 deliverables today: run status table status.csv · summary summary.json</span></h2></div>
+<p class="sub"><span class="ko" data-i>손으로 쓰는 것은 <b>매개변수 표 6줄</b>뿐 · 입력 6개 · 실행 7회 · 로그 파싱 = 저장소 스크립트 3개</span><span class="en" data-i>Only the <b>6-row parameter table</b> is written by hand · 6 inputs · 7 runs · log parsing = 3 repository scripts</span></p>
+<div class="bd today">
+<div class="goal">
+<div class="it white a" style="--d:1">
+<div class="ih"><span class="icb" data-ico="list-checks"></span><div><p class="k"><span class="ko" data-i>완성물 ①</span><span class="en" data-i>Deliverable ①</span></p><h4><span class="ko" data-i>status.csv · 실행 7행 · ok 6 · 실패 1 → 재시도 ok</span><span class="en" data-i>status.csv · 7 run rows · ok 6 · failed 1 → retry ok</span></h4></div></div>
+<table class="t"><thead><tr><th>run_id</th><th><span class="ko" data-i>시도</span><span class="en" data-i>Attempt</span></th><th>Δt</th><th><span class="ko" data-i>상태</span><span class="en" data-i>Status</span></th><th><span class="ko" data-i>벽시계</span><span class="en" data-i>Wall clock</span></th></tr></thead><tbody>
+<tr><td>T08_s11 … T12_s11</td><td>1</td><td class="mono">0.005</td><td>ok × 5</td><td class="mono">0.35 ~ 0.37 s</td></tr>
+<tr class="hl"><td>T12_s22</td><td>1</td><td class="mono">0.03</td><td>lost_atoms</td><td class="mono">0.11 s</td></tr>
+<tr><td>T12_s22</td><td>2</td><td class="mono">0.015</td><td><span class="ko" data-i>ok (Δt 절반)</span><span class="en" data-i>ok (half Δt)</span></td><td class="mono">0.54 s</td></tr></tbody></table>
+</div>
+<div class="it dark a" style="--d:2">
+<div class="ih"><span class="icb" data-ico="file-json"></span><div><p class="k"><span class="ko" data-i>완성물 ②</span><span class="en" data-i>Deliverable ②</span></p><h4><span class="ko" data-i>summary.json · 6건 평균 온도 T̄ (목표 0.8 · 1.0 · 1.2)</span><span class="en" data-i>summary.json · mean temperature T̄ of 6 runs (targets 0.8 · 1.0 · 1.2)</span></h4></div></div>
+<div class="cb plain"><span class="fc dk"><em>0.799</em> · <em>0.810</em></span><span class="fc dk"><em>1.005</em> · <em>1.012</em></span><span class="fc dk"><em>1.207</em> · <em>1.203</em></span></div>
+<p><span class="ko" data-i>LJ 유체 500원자 · 1,000스텝 · 전체 7회 실행 2.5초 (CPU) · 로그 7개 → CSV 7개</span><span class="en" data-i>LJ fluid 500 atoms · 1,000 steps · all 7 runs 2.5 s (CPU) · 7 logs → 7 CSVs</span></p>
+</div>
+</div>
+<div class="plan">
+<div class="lines">
+<div class="ln a" style="--d:1"><span class="nn">7-1</span><div><h4><span class="ko" data-i>템플릿과 반복 실행</span><span class="en" data-i>Templates and repeated runs</span></h4><p><span class="ko" data-i>표 → 입력 6개 · 자리표시 · 해시 · P7-1</span><span class="en" data-i>Table → 6 inputs · placeholders · hash · P7-1</span></p></div><span class="min"><span class="ko" data-i>15분</span><span class="en" data-i>15 min</span></span></div>
+<div class="ln a" style="--d:2"><span class="nn">7-2</span><div><h4><span class="ko" data-i>실행 · 실패 감지 · 로그 파싱</span><span class="en" data-i>Run · failure detection · log parsing</span></h4><p><span class="ko" data-i>배치 큐 · 규칙 4 + 1 · thermo → 표 · P7-2</span><span class="en" data-i>Batch queue · 4 + 1 rules · thermo → table · P7-2</span></p></div><span class="min"><span class="ko" data-i>15분</span><span class="en" data-i>15 min</span></span></div>
+<div class="ln a" style="--d:3"><span class="nn">7-3</span><div><h4><span class="ko" data-i>자기교정과 간단 생성기</span><span class="en" data-i>Self-correction and a simple generator</span></h4><p><span class="ko" data-i>결정 트리 · 상태 다이어그램 · 사례 2 · 생성기 · P7-3</span><span class="en" data-i>Decision tree · state diagram · 2 cases · generator · P7-3</span></p></div><span class="min"><span class="ko" data-i>18분</span><span class="en" data-i>18 min</span></span></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>준비물: <b>LAMMPS</b>(W06 · conda mdai) · W06 의 <b>in.toluene · toluene_box.data</b>(이름만) · <b>Claude Code</b></span><span class="en" data-i>Needed: <b>LAMMPS</b> (W06 · conda mdai) · W06 <b>in.toluene · toluene_box.data</b> (names only) · <b>Claude Code</b></span></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>계획서 50분 · 원본 05주차 5-1 · 5-2 를 학부 수준으로 · 수치 = week07 스크립트 실행 결과(expected_output · 2026-11-08 · LAMMPS 22 Jul 2025)</span><span class="en" data-i>Plan 50 min · original week-05 5-1 · 5-2 at undergraduate level · values = week07 script run results (expected_output · 2026-11-08 · LAMMPS 22 Jul 2025)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 3 차시 7-1 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 7-1 · 15분 · 영상 1편</span><span class="en" data-i>Session 7-1 · 15 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="file-code"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">1</p><p class="hubt"><span class="ko" data-i>템플릿과 반복 실행</span><span class="en" data-i>Templates and repeated runs</span></p><p class="hubs"><span class="ko" data-i>표 6줄 → 입력 파일 6개</span><span class="en" data-i>6-row table → 6 input files</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>입력 파일 6개 + manifest.json (P7-1)</span><span class="en" data-i>6 input files + manifest.json (P7-1)</span></h4></div></div><p><span class="ko" data-i>render_inputs.py 한 번 · 표의 열 이름 = 템플릿의 자리표시</span><span class="en" data-i>render_inputs.py once · table column name = template placeholder</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>파이프라인 ② · ③ 칸의 도구</span><span class="en" data-i>Tools for pipeline cells ② · ③</span></h4></div></div><p><span class="ko" data-i>W06 의 in · data 를 손으로 쓴 마지막 주 · 이후 모든 입력은 표에서 생성</span><span class="en" data-i>Last week W06 in · data are written by hand · every input after this is generated from a table</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 4 FIG 왜 자동화 -->
+<section class="slide v3" data-src="05주차#7,05주차#8">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>7-1 · 왜</span><span class="en" data-i>7-1 · Why</span></p>
+<div class="hrow"><span class="hico" data-ico="repeat"></span><h2 class="h"><span class="ko" data-i>입력 파일 = 산출물 · 표 = 유일한 기준: 손 수정 30곳 → 표 6줄</span><span class="en" data-i>Input file = output · table = single source of truth: 30 hand edits → 6 table rows</span></h2></div>
+<p class="sub"><span class="ko" data-i>같은 LJ 유체 · 온도 3 × 시드 2 · 손으로 쓰면 파일 6개 · 숫자 30곳, 표로 쓰면 6줄</span><span class="en" data-i>Same LJ fluid · temperature 3 × seed 2 · by hand: 6 files · 30 numbers; with a table: 6 rows</span></p>
+<div class="bd">
+<div class="grid c3">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="pencil-ruler"></span><div><p class="k"><span class="ko" data-i>손으로</span><span class="en" data-i>By hand</span></p><h4><span class="ko" data-i>파일 6개 · 숫자 30곳</span><span class="en" data-i>6 files · 30 numbers</span></h4></div></div><div class="bars"><div class="bar"><div class="l"><span class="ko" data-i>수정 자리</span><span class="en" data-i>Edit spots</span></div><div class="b mt" style="width:300px"></div><div class="v nosum"><span class="ko" data-i>30곳</span><span class="en" data-i>30</span></div></div><div class="bar"><div class="l"><span class="ko" data-i>기록</span><span class="en" data-i>Record</span></div><div class="b mt" style="width:10px"></div><div class="v nosum"><span class="ko" data-i>없음</span><span class="en" data-i>none</span></div></div></div><p><span class="ko" data-i>자리표시 5 × 6 · 한 곳 틀리면 <b>어느 파일이 다른지 추적 불가</b></span><span class="en" data-i>Placeholders 5 × 6 · one mistake and <b>you cannot trace which file differs</b></span></p></div>
+<div class="it hot a" style="--d:2"><div class="ih"><span class="icb" data-ico="table"></span><div><p class="k"><span class="ko" data-i>표 + 템플릿</span><span class="en" data-i>Table + template</span></p><h4><span class="ko" data-i>표 6줄 · 템플릿 1개</span><span class="en" data-i>6-row table · 1 template</span></h4></div></div><div class="bars"><div class="bar"><div class="l"><span class="ko" data-i>수정 자리</span><span class="en" data-i>Edit spots</span></div><div class="b dk" style="width:60px"></div><div class="v nosum"><span class="ko" data-i>6줄</span><span class="en" data-i>6 rows</span></div></div><div class="bar"><div class="l"><span class="ko" data-i>기록</span><span class="en" data-i>Record</span></div><div class="b dk" style="width:200px"></div><div class="v nosum"><span class="ko" data-i>해시 6개</span><span class="en" data-i>6 hashes</span></div></div></div><p><span class="ko" data-i>표를 고치고 <b>다시 생성</b> · 입력 파일은 산출물 · 직접 수정 금지</span><span class="en" data-i>Fix the table and <b>regenerate</b> · input files are outputs · no direct edits</span></p></div>
+<div class="it a" style="--d:3"><div class="ih"><span class="icb" data-ico="workflow"></span><div><p class="k"><span class="ko" data-i>수백 개가 되면</span><span class="en" data-i>With hundreds of runs</span></p><h4><span class="ko" data-i>같은 스크립트 3개</span><span class="en" data-i>Same 3 scripts</span></h4></div></div><div class="cb"><span class="fc"><span class="ko" data-i>생성</span><span class="en" data-i>Generate</span></span><span class="x">→</span><span class="fc"><span class="ko" data-i>실행</span><span class="en" data-i>run</span></span><span class="x">→</span><span class="fc"><span class="ko" data-i>파싱</span><span class="en" data-i>Parse</span></span></div><p><span class="ko" data-i>물성 하나 추가 = 템플릿 1 + 파서 1 · W16 파이프라인 ② · ③ 칸</span><span class="en" data-i>One more property = 1 template + 1 parser · W16 pipeline cells ② · ③</span></p></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>규칙: <b>표 = 유일한 기준</b> · 입력 파일 = 산출물 · 수정 = 표 수정 후 재생성</span><span class="en" data-i>Rule: <b>table = single source of truth</b> · input file = output · to change: edit table then regenerate</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 05주차 덱 #7 · #8 · 자리표시 5 × 6 = 30 은 data/in.lj.template 기준</span><span class="en" data-i>Original week-05 deck #7 · #8 · placeholders 5 × 6 = 30 based on data/in.lj.template</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 5 FIG 흐름 · 스크립트 3 -->
+<section class="slide v3" data-min="2.5" data-src="05주차#15">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>7-1 · 어떻게</span><span class="en" data-i>7-1 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="route"></span><h2 class="h"><span class="ko" data-i>스크립트 3개의 입력 · 출력: 표 → 입력 6 → 로그 7 · 상태 표 → CSV 7 · 요약</span><span class="en" data-i>Inputs · outputs of the 3 scripts: table → 6 inputs → 7 logs · status table → 7 CSVs · summary</span></h2></div>
+<p class="sub"><span class="ko" data-i>표준 라이브러리만(str.format · re · csv · json · subprocess) · 바꿀 것은 data/params.csv 뿐</span><span class="en" data-i>Standard library only (str.format · re · csv · json · subprocess) · only data/params.csv changes</span></p>
+<div class="bd">
+<div class="exf a" style="--d:1">
+<div class="exs"><span class="exi" data-ico="table"></span><div><h4>params.csv</h4><p><span class="ko" data-i>6줄 · T · seed · Δt · 스텝</span><span class="en" data-i>6 rows · T · seed · Δt · steps</span></p></div></div><span class="exa"></span>
+<div class="exs hot"><span class="exi" data-ico="file-code"></span><div><h4>① render_inputs.py</h4><p><span class="ko" data-i>템플릿 치환 → in.* 6 · 해시</span><span class="en" data-i>template substitution → 6 in.* · hashes</span></p></div></div><span class="exa"></span>
+<div class="exs hot"><span class="exi" data-ico="play"></span><div><h4>② run_batch.py</h4><p><span class="ko" data-i>7회 실행 · 실패 감지 · 재시도 1</span><span class="en" data-i>7 runs · failure detection · 1 retry</span></p></div></div><span class="exa"></span>
+<div class="exs hot"><span class="exi" data-ico="file-spreadsheet"></span><div><h4>③ parse_log.py</h4><p>thermo → CSV · summary.json</p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="badge-check"></span><div><h4>status · summary</h4><p><span class="ko" data-i>제출물 · W08 · W09 의 입력</span><span class="en" data-i>deliverables · input for W08 · W09</span></p></div></div>
+</div>
+<div class="grid c3">
+<div class="it a" style="--d:2"><p class="k"><span class="ko" data-i>① 입력 → 출력</span><span class="en" data-i>① input → output</span></p><pre class="code">params.csv + in.lj.template
+→ inputs/in.*  (6)
+→ manifest.json <span class="c"><span class="ko" data-i># 해시</span><span class="en" data-i># hash</span></span></pre></div>
+<div class="it a" style="--d:3"><p class="k"><span class="ko" data-i>② 입력 → 출력</span><span class="en" data-i>② input → output</span></p><pre class="code">inputs/in.*  (6)
+→ runs/*/log.lammps  (7)
+→ status.csv <span class="c"><span class="ko" data-i># 시도·Δt·상태</span><span class="en" data-i># attempt · Δt · status</span></span></pre></div>
+<div class="it a" style="--d:4"><p class="k"><span class="ko" data-i>③ 입력 → 출력</span><span class="en" data-i>③ input → output</span></p><pre class="code">runs/*/log.lammps  (7)
+→ thermo/*.csv  (7)
+→ summary.json <span class="c"># T̄ · P̄ · Ē</span></pre></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>멱등성: 같은 표 → 같은 해시 → 완료 실행 건너뜀 · 수백 개 스윕을 반복해도 <b>중복 계산 없음</b> (원본 05주차 #15)</span><span class="en" data-i>Idempotence: same table → same hash → completed runs skipped · repeating a sweep of hundreds causes <b>no duplicate computation</b> (original week-05 #15)</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 05주차 덱 #15(실행 패키지 · 입력 해시) · 스크립트: week07/scripts/</span><span class="en" data-i>Original week-05 deck #15 (run package · input hash) · scripts: week07/scripts/</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 6 ANIM 템플릿 치환 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>7-1 · 어떻게 · 동적</span><span class="en" data-i>7-1 · How · dynamic</span></p>
+<div class="hrow"><span class="hico" data-ico="braces"></span><h2 class="h"><span class="ko" data-i>템플릿 치환: 자리표시 {T} {seed} {dt} {steps} ← 표 한 줄 = 입력 파일 1개</span><span class="en" data-i>Template substitution: placeholders {T} {seed} {dt} {steps} ← one table row = 1 input file</span></h2></div>
+<p class="sub"><span class="ko" data-i>표의 열 이름 = 템플릿의 자리표시 · 글자가 다르면 KeyError · 6번째 줄 Δt 0.03 은 <b>일부러 실패하도록</b> 넣은 건</span><span class="en" data-i>Table column name = template placeholder · mismatched letters → KeyError · Δt 0.03 in row 6 is <b>deliberately inserted to fail</b></span></p>
+<div class="bd"><div class="emb" data-emb="tpl" data-dur="12" data-steps="6" data-labels="T08_s11|T08_s22|T10_s11|T10_s22|T12_s11|T12_s22"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>data/in.lj.template · data/params.csv · 해시 = manifest.json(sha1 앞 6자리) · 원본 05주차 덱 #10(템플릿 엔진) 을 str.format 으로 단순화</span><span class="en" data-i>data/in.lj.template · data/params.csv · hash = manifest.json (first 6 chars of sha1) · original week-05 deck #10 (template engine) simplified with str.format</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 7 DEF 5 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>용어 정의</span><span class="en" data-i>Key terms</span></p>
+<div class="hrow"><span class="hico" data-ico="book-marked"></span><h2 class="h"><span class="ko" data-i>새 용어 5: 템플릿 · 자리표시 · 매개변수 표 · 배치 실행 · 입력 해시</span><span class="en" data-i>5 new terms: template · placeholder · parameter table · batch run · input hash</span></h2></div>
+<p class="sub"><span class="ko" data-i>영어 병기 · 한 줄 정의 · 다시 나오는 곳: W08(다층 셀 생성) · W09(물성 배치) · W16(파이프라인)</span><span class="en" data-i>English given · one-line definition · where it returns: W08 (multilayer cell generation) · W09 (property batch) · W16 (pipeline)</span></p>
+<div class="bd">
+<div class="defs icon">
+<div class="defcard icon a" style="--d:1"><span class="lic" data-ico="file-code"></span><p class="term"><span class="ko" data-i>템플릿<em>template</em></span><span class="en" data-i>Template<em>template</em></span></p><p class="def"><span class="ko" data-i>값이 들어갈 자리를 비워 둔 입력 파일 원본 · 1개로 N개</span><span class="en" data-i>Original input file with blanks where values go · 1 makes N</span></p><p class="again"><span class="ko" data-i>6장</span><span class="en" data-i>slide 6</span></p></div>
+<div class="defcard icon a" style="--d:2"><span class="lic" data-ico="braces"></span><p class="term"><span class="ko" data-i>자리표시<em>placeholder</em></span><span class="en" data-i>Placeholder<em>placeholder</em></span></p><p class="def"><span class="ko" data-i>{T} 처럼 중괄호로 적은 빈칸 · 표의 열 이름과 글자 단위 일치 시에만 채움</span><span class="en" data-i>Blank written in braces like {T} · filled only when it matches a table column name letter for letter</span></p><p class="again"><span class="ko" data-i>6 · 8장</span><span class="en" data-i>slides 6 · 8</span></p></div>
+<div class="defcard icon a" style="--d:3"><span class="lic" data-ico="table"></span><p class="term"><span class="ko" data-i>매개변수 표<em>parameter table</em></span><span class="en" data-i>Parameter table<em>parameter table</em></span></p><p class="def"><span class="ko" data-i>한 줄 = 실행 1건 · 열 = 자리표시 · 유일한 기준 · 버전 관리 대상</span><span class="en" data-i>One row = 1 run · column = placeholder · single source of truth · under version control</span></p><p class="again"><span class="ko" data-i>4 · 5장</span><span class="en" data-i>slides 4 · 5</span></p></div>
+<div class="defcard icon a" style="--d:4"><span class="lic" data-ico="list-ordered"></span><p class="term"><span class="ko" data-i>배치 실행<em>batch run</em></span><span class="en" data-i>Batch run<em>batch run</em></span></p><p class="def"><span class="ko" data-i>입력 N개를 차례로 돌리고 상태(ok · 실패 · 재시도)를 표로 남김</span><span class="en" data-i>Run N inputs in turn and keep status (ok · failed · retried) in a table</span></p><p class="again"><span class="ko" data-i>10 · 13장</span><span class="en" data-i>slides 10 · 13</span></p></div>
+<div class="defcard icon a" style="--d:4"><span class="lic" data-ico="hash"></span><p class="term"><span class="ko" data-i>입력 해시<em>input hash</em></span><span class="en" data-i>Input hash<em>input hash</em></span></p><p class="def"><span class="ko" data-i>입력 파일 내용의 지문 6자리 · 같은 표면 같은 해시 · 다르면 다른 실행</span><span class="en" data-i>6-digit fingerprint of input file contents · same table gives same hash · different = different run</span></p><p class="again"><span class="ko" data-i>5 · 15장</span><span class="en" data-i>slides 5 · 15</span></p></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>정의 문구 = 저장소 GLOSSARY.md</span><span class="en" data-i>Definitions = repository GLOSSARY.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 8 MAKE P7-1 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>7-1 · 만들어 보기</span><span class="en" data-i>7-1 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="pencil-ruler"></span><h2 class="h"><span class="ko" data-i>만들어 보기 P7-1: 표 6줄 → 입력 6개 · 내 표에 열 추가</span><span class="en" data-i>Try it P7-1: 6-row table → 6 inputs · add a column to my table</span></h2></div>
+<div class="bd">
+<div class="make">
+<div class="left a" style="--d:1">
+<pre class="code"><span class="c"><span class="ko" data-i># 환경: week07 폴더 · claude (W01 12장)</span><span class="en" data-i># Environment: week07 folder · claude (W01 slide 12)</span></span>
+python3 scripts/render_inputs.py  <span class="c"><span class="ko" data-i># 승인 후 실행</span><span class="en" data-i># Run after approval</span></span>
+<span class="c"># → out/inputs/in.T08_s11 … in.T12_s22 · manifest.json</span>
+<span class="c"><span class="ko" data-i># 지시: @data 두 파일 → 열 [rho] → P7-1_result.md</span><span class="en" data-i># Prompt: @data two files → column [rho] → P7-1_result.md</span></span></pre>
+<div class="prompt" data-id="P7-1"><span class="ko" data-i>`python3 scripts/render_inputs.py` 를 실행하고 out/inputs/manifest.json 의 해시 6개를 expected_output 과 비교해라. 이어서 `@data/in.lj.template` 와 `@data/params.csv` 를 읽고, 표에 열 [rho](격자 밀도 · 0.6 ~ 0.9) 를 추가해 템플릿의 `lattice fcc 0.8` 이 `lattice fcc {rho}` 가 되도록 ① 템플릿에서 바뀌는 줄 ② 표의 새 열과 6행의 값(T 3 × 시드 2 는 그대로) ③ render_inputs.py 는 고치지 않아도 되는 이유(str.format 이 열 이름을 자리표시로 쓴다) 를 표로 정리해 out/P7-1_result.md 에 저장해라. data/ · scripts/ 는 고치지 말고, 값을 지어내지 말고 범위 밖이면 「확인 필요」로 표시해라.</span><span class="en" data-i>Run `python3 scripts/render_inputs.py` and compare the 6 hashes in out/inputs/manifest.json with expected_output. Then read `@data/in.lj.template` and `@data/params.csv`, add a column [rho] (lattice density · 0.6 ~ 0.9) to the table so that `lattice fcc 0.8` in the template becomes `lattice fcc {rho}`, and tabulate ① the lines that change in the template ② the new column and its values for 6 rows (T 3 × seed 2 unchanged) ③ why render_inputs.py needs no edit (str.format uses column names as placeholders), then save to out/P7-1_result.md. Do not edit data/ · scripts/; do not invent values, and mark anything out of range as "needs check".</span></div>
+</div>
+<div class="expect a" style="--d:2">
+<h4><span class="tic" data-ico="table"></span><span class="ko" data-i>기대 결과 · manifest.json (실제 실행 값)</span><span class="en" data-i>Expected output · manifest.json (actual run values)</span></h4>
+<table class="t"><thead><tr><th>run_id</th><th>T</th><th>seed</th><th>Δt</th><th>steps</th><th><span class="ko" data-i>해시</span><span class="en" data-i>Hash</span></th></tr></thead><tbody>
+<tr><td>T08_s11</td><td>0.8</td><td>11</td><td>0.005</td><td>1000</td><td class="mono">8db366</td></tr>
+<tr><td>T08_s22</td><td>0.8</td><td>22</td><td>0.005</td><td>1000</td><td class="mono">fa0abd</td></tr>
+<tr><td>T10_s11</td><td>1.0</td><td>11</td><td>0.005</td><td>1000</td><td class="mono">fd2e8d</td></tr>
+<tr><td>T10_s22</td><td>1.0</td><td>22</td><td>0.005</td><td>1000</td><td class="mono">c20153</td></tr>
+<tr><td>T12_s11</td><td>1.2</td><td>11</td><td>0.005</td><td>1000</td><td class="mono">1c7aa5</td></tr>
+<tr class="hl"><td>T12_s22</td><td>1.2</td><td>22</td><td>0.03</td><td>1000</td><td class="mono">d5b234</td></tr></tbody></table>
+<p class="cap"><span class="ko" data-i>열 하나 추가 = 템플릿 1줄 + 표 1열 · 스크립트는 그대로 · 열 이름 = 자리표시 글자 단위 일치(불일치 시 KeyError)</span><span class="en" data-i>One column added = 1 template line + 1 table column · script unchanged · column name = placeholder letter for letter (mismatch → KeyError)</span></p>
+</div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>manifest.json 에 6행 · 해시 6자리가 있는가 · Δt 0.03 행이 들어 있는가</span><span class="en" data-i>Does manifest.json have 6 rows with 6-char hashes · is the Δt 0.03 row included</span></p><p><span class="ko" data-i>P7-1 답에서 템플릿이 바뀐 줄이 1줄뿐인가 · 새 열 이름 = 자리표시인가</span><span class="en" data-i>In the P7-1 answer, is only 1 template line changed · is the new column name = placeholder</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>지시문 원문 week07/prompts.md · P7-1 · 해시 = expected_output/inputs/manifest.json</span><span class="en" data-i>Original prompt week07/prompts.md · P7-1 · hash = expected_output/inputs/manifest.json</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 9 차시 7-2 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 7-2 · 15분 · 영상 1편</span><span class="en" data-i>Session 7-2 · 15 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="play"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">2</p><p class="hubt"><span class="ko" data-i>실행 · 실패 감지 · 로그 파싱</span><span class="en" data-i>Run · failure detection · log parsing</span></p><p class="hubs"><span class="ko" data-i>6건 → 로그 7개 → 표 1장</span><span class="en" data-i>6 runs → 7 logs → 1 table</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4>status.csv · summary.json (P7-2)</h4></div></div><p><span class="ko" data-i>run_batch.py → parse_log.py · 실패 1건의 로그를 Claude Code 로 판독</span><span class="en" data-i>run_batch.py → parse_log.py · read the 1 failed log with Claude Code</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>규칙 4 + 1 = 자기교정의 최소 단위</span><span class="en" data-i>4 + 1 rules = minimal unit of self-correction</span></h4></div></div><p><span class="ko" data-i>참고 사례(연구 플랫폼)의 수백 건 무인 실행 규칙 축소판 (원본 05주차 #17)</span><span class="en" data-i>Condensed version of the reference case (research platform) unattended-run rules for hundreds of runs (original week-05 #17)</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 10 ANIM 배치 큐 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>7-2 · 어떻게 · 동적</span><span class="en" data-i>7-2 · How · dynamic</span></p>
+<div class="hrow"><span class="hico" data-ico="list-ordered"></span><h2 class="h"><span class="ko" data-i>배치 큐 6건: 대기 → 실행 중 → 완료 ✓ / 실패 ✗ → 재시도 1회 → 완료</span><span class="en" data-i>Batch queue of 6: waiting → running → done ✓ / failed ✗ → 1 retry → done</span></h2></div>
+<p class="sub"><span class="ko" data-i>상태 전이 4단계 · 실패한 1건(T12_s22 · Δt 0.03)은 Δt 절반으로 1회 재실행 후 종료 · 전체 7회 2.5초</span><span class="en" data-i>4 state transitions · the 1 failed run (T12_s22 · Δt 0.03) is rerun 1 time with half Δt then ends · all 7 runs 2.5 s</span></p>
+<div class="bd"><div class="emb" data-emb="queue" data-dur="12" data-steps="4" data-labels="① 대기 6건|② 실행 중 · 완료 5|③ 실패 감지 1|④ 재시도 → 완료" data-labels-en="① 6 waiting|② running · 5 done|③ 1 failure detected|④ retry → done"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>status.csv = expected_output/runs/status.csv (벽시계 0.11 ~ 0.54 s/건 · CPU) · 원본 05주차 덱 #17 「Δt 절반 · 재시도 상한」</span><span class="en" data-i>status.csv = expected_output/runs/status.csv (wall clock 0.11 ~ 0.54 s per run · CPU) · original week-05 deck #17 "half Δt · retry cap"</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 11 FIG 규칙 4 + 1 -->
+<section class="slide v3" data-src="05주차#17,05주차#18">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>7-2 · 무엇</span><span class="en" data-i>7-2 · What</span></p>
+<div class="hrow"><span class="hico" data-ico="shield-check"></span><h2 class="h"><span class="ko" data-i>실패 감지 규칙 4 + 재시도 규칙 1: 신호 → 분류 → Δt 절반 1회 → 사람</span><span class="en" data-i>4 failure-detection rules + 1 retry rule: signal → classify → half Δt 1 time → human</span></h2></div>
+<p class="sub"><span class="ko" data-i>예측 가능한 실패는 정규식으로 · 처음 보는 실패만 사람이 · 재시도는 성패가 섞이는 경계에서만</span><span class="en" data-i>Predictable failures by regex · humans only for first-seen failures · retry only at the boundary where outcomes mix</span></p>
+<div class="bd">
+<div class="fig row">
+<table class="t" style="flex:1"><thead><tr><th><span class="ko" data-i>규칙</span><span class="en" data-i>Rule</span></th><th><span class="ko" data-i>로그 · 종료 코드 신호</span><span class="en" data-i>Log · exit-code signal</span></th><th><span class="ko" data-i>이번 주 예</span><span class="en" data-i>This week's example</span></th></tr></thead><tbody>
+<tr><td>① lost_atoms</td><td>ERROR: Lost atoms</td><td class="mono">T12_s22 · Δt 0.03 · 500 → 494</td></tr>
+<tr><td>② nan</td><td><span class="ko" data-i>thermo 값 nan · inf</span><span class="en" data-i>thermo value nan · inf</span></td><td><span class="ko" data-i>압력 발산 (05#18 pressure_blowup)</span><span class="en" data-i>Pressure blow-up (05#18 pressure_blowup)</span></td></tr>
+<tr><td>③ error</td><td><span class="ko" data-i>ERROR 로 시작하는 줄</span><span class="en" data-i>Line starting with ERROR</span></td><td><span class="ko" data-i>파일 없음 · 명령 오타</span><span class="en" data-i>Missing file · command typo</span></td></tr>
+<tr><td>④ exit_code</td><td><span class="ko" data-i>종료 코드 ≠ 0 · 신호 없음</span><span class="en" data-i>Exit code ≠ 0 · no signal</span></td><td><span class="ko" data-i>메모리 · 시간 초과</span><span class="en" data-i>Memory · timeout</span></td></tr></tbody></table>
+<div class="col" style="width:600px;flex:none">
+<div class="it hot a" style="--d:1"><div class="ih"><span class="icb" data-ico="refresh-cw"></span><div><p class="k"><span class="ko" data-i>재시도 규칙 1</span><span class="en" data-i>Retry rule 1</span></p><h4><span class="ko" data-i>Δt 절반 · 상한 1회</span><span class="en" data-i>Half Δt · cap 1 time</span></h4></div></div><p><span class="ko" data-i>0.03 → 0.015 · 다시 실패하면 멈추고 <b>사람 확인</b></span><span class="en" data-i>0.03 → 0.015 · if it fails again, stop and <b>ask a human</b></span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="octagon-alert"></span><div><p class="k"><span class="ko" data-i>결정론적 실패</span><span class="en" data-i>Deterministic failure</span></p><h4><span class="ko" data-i>재시도 금지 · fail-closed</span><span class="en" data-i>No retry · fail-closed</span></h4></div></div><p><span class="ko" data-i>경로 · 타입 누락 · 문법은 Δt 를 바꿔도 같은 곳에서 정지 · 실패로 기록</span><span class="en" data-i>Path · missing type · syntax stops at the same place even if Δt changes · record as failure</span></p></div>
+</div>
+</div>
+<div class="foot a" style="--d:3"><span class="ko" data-i>③ ④ = 재시도 제외 · <b>① ② 만 Δt 절반</b> · 그래도 실패하면 상자 · 힘장(W08)</span><span class="en" data-i>③ ④ = excluded from retry · <b>only ① ② get half Δt</b> · if it still fails, suspect box · force field (W08)</span></div>
+<p class="note a" style="--d:4"><span class="ko" data-i>MD 워크플로우 ④ run(M-4): R1 = ① lost_atoms → Δt 절반 1회 · R2 = 그 밖 → 멈춤</span><span class="en" data-i>MD workflow ④ run (M-4): R1 = ① lost_atoms → half Δt, 1 retry · R2 = all others → stop</span></p>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 05주차 덱 #17 · #18 · 참고 사례(연구 플랫폼) 실행기(ERROR 줄 추출) · scripts/run_batch.py RULES · MD 워크플로우 mdwf/runner.py</span><span class="en" data-i>Original week-05 deck #17 · #18 · reference case (research platform) runner (ERROR line extraction) · scripts/run_batch.py RULES · MD workflow mdwf/runner.py</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 12 ANIM 로그 파싱 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>7-2 · 어떻게 · 동적</span><span class="en" data-i>7-2 · How · dynamic</span></p>
+<div class="hrow"><span class="hico" data-ico="scan-search"></span><h2 class="h"><span class="ko" data-i>로그 파싱 3규칙: Step 머리줄 → 숫자 줄 = 자료 → Loop time 에서 끝 → 요약</span><span class="en" data-i>3 log-parsing rules: Step header line → number lines = data → end at Loop time → summary</span></h2></div>
+<p class="sub"><span class="ko" data-i>로그 = 글자 덩어리 → 규칙 3개로 표 변환 · 21행 × 5열 → CSV · 뒤 절반 평균 = summary.json</span><span class="en" data-i>Log = blob of text → 3 rules turn it into a table · 21 rows × 5 columns → CSV · second-half mean = summary.json</span></p>
+<div class="bd"><div class="emb" data-emb="parse" data-dur="12" data-steps="3" data-labels="① Step 머리줄|② 숫자 줄 → 표 행|③ Loop time → 요약" data-labels-en="① Step header line|② number lines → table rows|③ Loop time → summary"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>로그 = expected_output/runs/T10_s11/log.lammps · 규칙 = 참고 사례(연구 플랫폼) 로그 파서와 동일 · scripts/parse_log.py</span><span class="en" data-i>Log = expected_output/runs/T10_s11/log.lammps · rules = same as the reference case (research platform) log parser · scripts/parse_log.py</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 13 FIG 결과 -->
+<section class="slide v3" data-min="2.5">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>7-2 · 확인</span><span class="en" data-i>7-2 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="badge-check"></span><h2 class="h"><span class="ko" data-i>결과 표 2장: status.csv 7행 · 평균 온도 6건 = 목표 ±2 % · 전체 2.5초</span><span class="en" data-i>2 result tables: status.csv 7 rows · mean temperature of 6 runs = target ±2 % · total 2.5 s</span></h2></div>
+<p class="sub"><span class="ko" data-i>실패 건은 0.11초에 멈추고 재시도 0.54초 · 손으로 6개를 돌릴 때 생기는 「어느 파일이 틀렸나」 → 표 두 장으로 해결</span><span class="en" data-i>Failed run stops at 0.11 s, retry 0.54 s · "which file is wrong" from running 6 by hand → solved by two tables</span></p>
+<div class="bd">
+<div class="row">
+<table class="t" style="flex:1"><thead><tr><th>run_id</th><th><span class="ko" data-i>시도</span><span class="en" data-i>Attempt</span></th><th>Δt</th><th><span class="ko" data-i>상태</span><span class="en" data-i>Status</span></th><th><span class="ko" data-i>벽시계</span><span class="en" data-i>Wall clock</span></th></tr></thead><tbody>
+<tr><td>T08_s11</td><td>1</td><td class="mono">0.005</td><td>ok</td><td class="mono">0.35 s</td></tr>
+<tr><td>T08_s22</td><td>1</td><td class="mono">0.005</td><td>ok</td><td class="mono">0.35 s</td></tr>
+<tr><td>T10_s11</td><td>1</td><td class="mono">0.005</td><td>ok</td><td class="mono">0.36 s</td></tr>
+<tr><td>T10_s22</td><td>1</td><td class="mono">0.005</td><td>ok</td><td class="mono">0.37 s</td></tr>
+<tr><td>T12_s11</td><td>1</td><td class="mono">0.005</td><td>ok</td><td class="mono">0.37 s</td></tr>
+<tr class="hl"><td>T12_s22</td><td>1</td><td class="mono">0.03</td><td>lost_atoms</td><td class="mono">0.11 s</td></tr>
+<tr><td>T12_s22</td><td>2</td><td class="mono">0.015</td><td>ok</td><td class="mono">0.54 s</td></tr></tbody></table>
+<div class="it a fill" style="--d:1"><div class="ih"><span class="icb" data-ico="thermometer"></span><div><p class="k"><span class="ko" data-i>summary.json · 뒤 절반 평균 T̄</span><span class="en" data-i>summary.json · second-half mean T̄</span></p><h4><span class="ko" data-i>목표 0.8 · 1.0 · 1.2 에 ±2 % 안</span><span class="en" data-i>Within ±2 % of targets 0.8 · 1.0 · 1.2</span></h4></div></div>
+<div class="bars">
+<div class="bar"><div class="l"><span class="ko" data-i>T08_s11 · s22<small>목표 0.8</small></span><span class="en" data-i>T08_s11 · s22<small>target 0.8</small></span></div><div class="b bl" style="width:260px"></div><div class="v nosum">0.799 · 0.810</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>T10_s11 · s22<small>목표 1.0</small></span><span class="en" data-i>T10_s11 · s22<small>target 1.0</small></span></div><div class="b bl" style="width:325px"></div><div class="v nosum">1.005 · 1.012</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>T12_s11 · s22(재시도)<small>목표 1.2</small></span><span class="en" data-i>T12_s11 · s22 (retry)<small>target 1.2</small></span></div><div class="b" style="width:390px"></div><div class="v nosum">1.207 · 1.203</div></div>
+</div>
+<p><span class="ko" data-i>NVT 500원자 · 1,000스텝 · thermo 50 → 21행 · 재시도 건도 같은 T̄ · <b>Δt 축소에도 물성 동일</b></span><span class="en" data-i>NVT 500 atoms · 1,000 steps · thermo 50 → 21 rows · retried run gives the same T̄ · <b>property unchanged with smaller Δt</b></span></p></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>expected_output/runs/status.csv · thermo/summary.json (2026-11-08 · LAMMPS 22 Jul 2025 · conda mdai · CPU 1코어)</span><span class="en" data-i>expected_output/runs/status.csv · thermo/summary.json (2026-11-08 · LAMMPS 22 Jul 2025 · conda mdai · CPU 1 core)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 14 MAKE P7-2 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>7-2 · 만들어 보기</span><span class="en" data-i>7-2 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="play"></span><h2 class="h"><span class="ko" data-i>만들어 보기 P7-2: 7회 실행 → status.csv · 실패 로그 40줄 → 원인 · 처방 표</span><span class="en" data-i>Try it P7-2: 7 runs → status.csv · 40-line failure log → cause · remedy table</span></h2></div>
+<div class="bd">
+<div class="make">
+<div class="left a" style="--d:1">
+<pre class="code"><span class="c"><span class="ko" data-i># 환경: week07 폴더 · claude · 두 줄 승인 후 실행</span><span class="en" data-i># Environment: week07 folder · claude · run after approving two lines</span></span>
+python3 scripts/run_batch.py --lmp lmp
+python3 scripts/parse_log.py
+<span class="c"># → out/runs/status.csv · out/thermo/summary.json</span>
+<span class="c"><span class="ko" data-i># 1회 실행 후 종료: claude -p "status.csv 요약"</span><span class="en" data-i># Run 1 time and exit: claude -p "summarize status.csv"</span></span></pre>
+<div class="prompt" data-id="P7-2"><span class="ko" data-i>`python3 scripts/run_batch.py --lmp lmp` 와 `python3 scripts/parse_log.py` 를 차례로 실행하고 out/runs/status.csv 를 expected_output 과 비교해라. 이어서 실패한 실행의 log.lammps 끝 40줄을 읽고, run_batch.py 의 실패 감지 규칙 4개(ERROR 줄 · Lost atoms · nan/inf · 종료 코드 ≠ 0) 기준으로 ① 어느 규칙에 걸렸는지 ② 멈춘 스텝과 그때의 thermo 값 ③ 원인 후보 2개(물리적 · 설정) ④ 자동 조치(Δt 절반 1회)가 맞는 처방인지, 아니면 사람이 봐야 하는지를 표로 정리해 out/P7-2_result.md 에 저장해라. 로그에 없는 값은 지어내지 마라.</span><span class="en" data-i>Run `python3 scripts/run_batch.py --lmp lmp` then `python3 scripts/parse_log.py` and compare out/runs/status.csv with expected_output. Then read the last 40 lines of the failed run's log.lammps and, against the 4 failure-detection rules in run_batch.py (ERROR line · Lost atoms · nan/inf · exit code ≠ 0), tabulate ① which rule it hit ② the step where it stopped and the thermo values then ③ 2 candidate causes (physical · setup) ④ whether the automatic action (half Δt 1 time) is the right remedy or a human must look, and save to out/P7-2_result.md. Do not invent values not in the log.</span></div>
+</div>
+<div class="expect a" style="--d:2">
+<h4><span class="tic" data-ico="terminal"></span><span class="ko" data-i>기대 결과 · 실패 로그(T12_s22 · Δt 0.03) 와 상태 칩</span><span class="en" data-i>Expected output · failure log (T12_s22 · Δt 0.03) and status chips</span></h4>
+<pre class="code">   Step   Temp       Press      PotEng     TotEng
+      0   1.2       -5.2508866 -6.3647465 -4.5683465
+     50   1.0470405  1.845399  -5.0771282 -3.5097086
+<span class="o">ERROR: Lost atoms: original 500 current 494</span>
+<span class="c"><span class="ko" data-i>(src/thermo.cpp:526) — 스텝 50 뒤 원자 6개 손실</span><span class="en" data-i>(src/thermo.cpp:526) — 6 atoms lost after step 50</span></span></pre>
+<div class="cb"><span class="fc gr">ok × 5</span><span class="fc rd">lost_atoms × 1</span><span class="x">→</span><span class="fc or"><span class="ko" data-i>재시도 Δt 0.015</span><span class="en" data-i>retry Δt 0.015</span></span><span class="x">→</span><span class="fc gr">ok</span></div>
+<p class="cap"><span class="ko" data-i>P7-2 답의 「멈춘 스텝 50 · 원자 500 → 494」 = 로그와 글자 단위 일치 · 처방 = Δt 절반(규칙 ①) · 사람 확인 생략</span><span class="en" data-i>P7-2 answer "stopped at step 50 · atoms 500 → 494" = matches log letter for letter · remedy = half Δt (rule ①) · human check skipped</span></p>
+</div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>status.csv 7행 · ok 6 · lost_atoms 1 · 재시도 행의 Δt 가 0.015 인가</span><span class="en" data-i>status.csv 7 rows · ok 6 · lost_atoms 1 · is the retry row's Δt 0.015</span></p><p><span class="ko" data-i>P7-2 의 스텝 · 값이 로그와 같은가 · 「사람이 봐야 한다」 면 근거가 있는가</span><span class="en" data-i>Do step · values in P7-2 match the log · if "a human must look", is there a basis</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>지시문 원문 week07/prompts.md · P7-2 · 로그 = expected_output/runs/T12_s22/log.lammps</span><span class="en" data-i>Original prompt week07/prompts.md · P7-2 · log = expected_output/runs/T12_s22/log.lammps</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 15 TWEAK 수동 ↔ 자동 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>7-2 · 바꿔 보기</span><span class="en" data-i>7-2 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="git-compare"></span><h2 class="h"><span class="ko" data-i>손 6건 ↔ 표 6줄: 수정 30곳 → 6줄 · 기록 0 → 2 파일 · 실패 처리 수동 → 자동</span><span class="en" data-i>6 by hand ↔ 6-row table: 30 edits → 6 rows · records 0 → 2 files · failure handling manual → automatic</span></h2></div>
+<p class="sub"><span class="ko" data-i>계산 시간 동일(LAMMPS 실행) · 차이 = 사람 손이 닿는 곳의 수와 남는 기록</span><span class="en" data-i>Same compute time (LAMMPS run) · difference = number of places a human touches and the records left behind</span></p>
+<div class="bd">
+<div class="tweak">
+<div class="pane before a" style="--d:1"><h3><span class="tic" data-ico="minus"></span><span class="ko" data-i>전 · 손으로 6건</span><span class="en" data-i>Before · 6 runs by hand</span></h3>
+<div class="bars">
+<div class="bar"><div class="l"><span class="ko" data-i>수정 자리</span><span class="en" data-i>Edit spots</span></div><div class="b mt" style="width:300px"></div><div class="v nosum"><span class="ko" data-i>30곳</span><span class="en" data-i>30</span></div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>남는 기록</span><span class="en" data-i>Records left</span></div><div class="b mt" style="width:8px"></div><div class="v nosum">0</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>실패 처리</span><span class="en" data-i>Failure handling</span></div><div class="b mt" style="width:300px"></div><div class="v nosum"><span class="ko" data-i>로그 6개 열어 보기</span><span class="en" data-i>Open 6 logs</span></div></div>
+</div>
+<div class="n md nosum"><span class="ko" data-i>틀린 파일 = 못 찾음</span><span class="en" data-i>Wrong file = cannot find</span></div>
+<p class="cap"><span class="ko" data-i>파일 하나의 Δt 를 잘못 적어도 어느 것인지 비교할 기준 부재</span><span class="en" data-i>Even if one file's Δt is wrong, there is no baseline to tell which</span></p></div>
+<div class="pane after a" style="--d:2"><h3><span class="tic" data-ico="plus"></span><span class="ko" data-i>후 · 표 + 스크립트 3</span><span class="en" data-i>After · table + 3 scripts</span></h3>
+<div class="bars">
+<div class="bar"><div class="l"><span class="ko" data-i>수정 자리</span><span class="en" data-i>Edit spots</span></div><div class="b" style="width:60px"></div><div class="v nosum"><span class="ko" data-i>6줄</span><span class="en" data-i>6 rows</span></div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>남는 기록</span><span class="en" data-i>Records left</span></div><div class="b" style="width:200px"></div><div class="v nosum">manifest · status</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>실패 처리</span><span class="en" data-i>Failure handling</span></div><div class="b" style="width:100px"></div><div class="v nosum"><span class="ko" data-i>자동 1회 · 표 1행</span><span class="en" data-i>Automatic 1 time · 1 table row</span></div></div>
+</div>
+<div class="n md nosum"><span class="ko" data-i>틀린 줄 = 표에서 1줄</span><span class="en" data-i>Wrong line = 1 line in table</span></div>
+<p class="cap"><span class="ko" data-i>해시가 다른 입력 = 다른 실행 · 실패 건은 status.csv 의 한 행</span><span class="en" data-i>Different hash = different run · failed run is one row in status.csv</span></p></div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>params.csv 에 한 줄(T 1.3) 추가 → 스크립트 3개 다시 실행 → status 8행</span><span class="en" data-i>Add one row (T 1.3) to params.csv → rerun the 3 scripts → status 8 rows</span></p><p><span class="ko" data-i>생성된 in 파일을 직접 고친 뒤 다시 생성하면 해시가 돌아오는지 확인</span><span class="en" data-i>Hand-edit a generated in file, regenerate, and check the hash returns</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>수정 자리 30 = 자리표시 5 × 6 (data/in.lj.template)</span><span class="en" data-i>Edit spots 30 = placeholders 5 × 6 (data/in.lj.template)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 16 차시 7-3 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 7-3 · 18분 · 영상 1편</span><span class="en" data-i>Session 7-3 · 18 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="shield-check"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">3</p><p class="hubt"><span class="ko" data-i>자기교정과 간단 생성기</span><span class="en" data-i>Self-correction and a simple generator</span></p><p class="hubs"><span class="ko" data-i>결정 트리 · 상태 다이어그램 · 사례 2 · 생성기</span><span class="en" data-i>Decision tree · state diagram · 2 cases · generator</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>생성기 규칙 1개 추가 (P7-3)</span><span class="en" data-i>Add 1 generator rule (P7-3)</span></h4></div></div><p><span class="ko" data-i>시드 변경 재시도 · 상한 · 결정론적 실패 구분 · 바뀌는 부분만</span><span class="en" data-i>Seed-change retry · cap · deterministic-failure distinction · only the changed parts</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>W16 자율 탐색의 「무인 실행」 조건</span><span class="en" data-i>"Unattended run" condition for W16 autonomous exploration</span></h4></div></div><p><span class="ko" data-i>규칙 기반이 먼저 · 반복 실패는 원인 분석 → 새 규칙 · 처음 보는 실패만 사람 (원본 05주차 #17)</span><span class="en" data-i>Rules first · repeated failures → root-cause analysis → new rule · humans only for first-seen failures (original week-05 #17)</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 17 ANIM 결정 트리 -->
+<section class="slide v3" data-src="05주차#17,05주차#18">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>7-3 · 어떻게 · 동적</span><span class="en" data-i>7-3 · How · dynamic</span></p>
+<div class="hrow"><span class="hico" data-ico="git-fork"></span><h2 class="h"><span class="ko" data-i>실패 감지 결정 트리: 종료 코드 → 로그 신호 → 재시도 횟수 → 조치 3</span><span class="en" data-i>Failure-detection decision tree: exit code → log signal → retry count → 3 actions</span></h2></div>
+<p class="sub"><span class="ko" data-i>분기 순차 점등 · 끝 잎 3개: 완료 · Δt 절반 재실행 · 사람 확인</span><span class="en" data-i>Branches light up in order · 3 end leaves: done · rerun with half Δt · human check</span></p>
+<div class="bd"><div class="emb" data-emb="dtree" data-dur="12" data-steps="4" data-labels="① 종료 코드 · ERROR?|② 신호 분류|③ 재시도 < 1?|④ 조치" data-labels-en="① exit code · ERROR?|② classify signal|③ retry < 1?|④ action"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 05주차 덱 #17 · #18 (감지 신호 → 자동 조치 → 한계) · scripts/run_batch.py classify()</span><span class="en" data-i>Original week-05 deck #17 · #18 (detection signal → automatic action → limit) · scripts/run_batch.py classify()</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 18 ANIM 상태 다이어그램 -->
+<section class="slide v3" data-src="05주차#17">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>7-3 · 무엇 · 동적</span><span class="en" data-i>7-3 · What · dynamic</span></p>
+<div class="hrow"><span class="hico" data-ico="refresh-cw"></span><h2 class="h"><span class="ko" data-i>자기교정 상태 5: 대기 → 실행 → 성공 / 실패 → 재시도 ≤ 1 → 사람 확인</span><span class="en" data-i>5 self-correction states: waiting → running → success / failure → retry ≤ 1 → human check</span></h2></div>
+<p class="sub"><span class="ko" data-i>화살표마다 조건 표기 · 상태 · 조건 · 재시도 횟수 기록 → 무한 반복 방지</span><span class="en" data-i>Condition on each arrow · record state · condition · retry count → prevents infinite loops</span></p>
+<div class="bd"><div class="emb" data-emb="fsm" data-dur="12" data-steps="5" data-labels="① 대기 → 실행|② 성공|③ 실패 → 재시도|④ 재실행 → 성공|⑤ 재실패 → 사람" data-labels-en="① waiting → running|② success|③ failure → retry|④ rerun → success|⑤ failed again → human"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 05주차 덱 #17 「무한 루프 방지: 조치 이력 · 재시도 횟수 기록 · 상한」 · status.csv 의 attempt 열이 그 기록</span><span class="en" data-i>Original week-05 deck #17 "infinite-loop prevention: action history · retry count record · cap" · the attempt column in status.csv is that record</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 19 FIG 사례 2 -->
+<section class="slide v3" data-src="05주차#19,05주차#20">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>7-3 · 확인</span><span class="en" data-i>7-3 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="clipboard-list"></span><h2 class="h"><span class="ko" data-i>실제 사례 2: 진공 40 → 60 Å · 반복 실패 3회 = 재시도 중단 + 원인 분석</span><span class="en" data-i>2 real cases: vacuum 40 → 60 Å · 3 repeated failures = stop retrying + root-cause analysis</span></h2></div>
+<p class="sub"><span class="ko" data-i>재시도로 풀리는 실패와 안 풀리는 실패 · 같은 곳에서 3번 멈추면 새 규칙</span><span class="en" data-i>Failures that retrying fixes vs does not · stops 3 times at the same place → new rule</span></p>
+<div class="bd">
+<div class="row">
+<div class="it a fill" style="--d:1"><div class="ih"><span class="icb" data-ico="expand"></span><div><p class="k"><span class="ko" data-i>사례 1 · 한계선상 실패</span><span class="en" data-i>Case 1 · borderline failure</span></p><h4><span class="ko" data-i>PPPM out of range → 진공 40 → 60 Å</span><span class="en" data-i>PPPM out of range → vacuum 40 → 60 Å</span></h4></div></div>
+<div class="bars">
+<div class="bar"><div class="l"><span class="ko" data-i>SiO₂<small>사후 대응</small></span><span class="en" data-i>SiO₂<small>reactive response</small></span></div><div class="b mt" style="width:290px"></div><div class="v nosum"><span class="ko" data-i>29조합 누적 후 교체</span><span class="en" data-i>Replace after 29 combinations accumulated</span></div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>Al₂O₃<small>선별 승격</small></span><span class="en" data-i>Al₂O₃<small>selective promotion</small></span></div><div class="b" style="width:190px"></div><div class="v nosum"><span class="ko" data-i>실패 38 % → 60 Å</span><span class="en" data-i>38 % failures → 60 Å</span></div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>Fe₂O₃<small>선제 적용</small></span><span class="en" data-i>Fe₂O₃<small>preemptive application</small></span></div><div class="b gr" style="width:60px"></div><div class="v nosum"><span class="ko" data-i>전량 60 Å · 실패 0</span><span class="en" data-i>60 Å for all · 0 failures</span></div></div>
+</div>
+<p><span class="ko" data-i>결과 = 표준값 확정: 진공 X1 <b>60 Å</b> · X3 <b>80 Å</b> · 다음 캠페인은 첫 스택부터</span><span class="en" data-i>Result = standard value fixed: vacuum X1 <b>60 Å</b> · X3 <b>80 Å</b> · next campaign starts from the first stack</span></p></div>
+<div class="it a fill" style="--d:2"><div class="ih"><span class="icb" data-ico="octagon-alert"></span><div><p class="k"><span class="ko" data-i>사례 2 · 결정론적 실패</span><span class="en" data-i>Case 2 · deterministic failure</span></p><h4><span class="ko" data-i>Bond atoms missing 3연속 → 재시도 중단</span><span class="en" data-i>Bond atoms missing 3 times in a row → stop retrying</span></h4></div></div>
+<table class="t"><thead><tr><th><span class="ko" data-i>스텝</span><span class="en" data-i>Step</span></th><th><span class="ko" data-i>필름 높이 · 수정 전</span><span class="en" data-i>Film height · before fix</span></th><th><span class="ko" data-i>수정 후</span><span class="en" data-i>After fix</span></th></tr></thead><tbody>
+<tr><td>10k</td><td class="mono">185.5 Å</td><td class="mono">174.1 Å</td></tr><tr><td>20k</td><td class="mono">200.7</td><td class="mono">174.2</td></tr><tr><td>30k</td><td class="mono">222.5</td><td class="mono">174.1</td></tr><tr><td>40k</td><td class="mono">251.1</td><td class="mono">174.2</td></tr></tbody></table>
+<p><span class="ko" data-i>원인 = 필름 등가속 부상(조절기 인공물) → <b>fix momentum</b> 으로 z 질량중심 제거</span><span class="en" data-i>Cause = film uniform-acceleration drift (thermostat artifact) → remove z center of mass with <b>fix momentum</b></span></p></div>
+</div>
+<div class="foot a" style="--d:3"><span class="ko" data-i>표준 3단계: ① 정규 재시도 → ② 조립 미세변경 → ③ <b>원인 분석 → 새 규칙</b></span><span class="en" data-i>Standard 3 stages: ① regular retry → ② minor assembly change → ③ <b>root-cause analysis → new rule</b></span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 05주차 덱 #19 · #20 (참고 사례 · 연구 플랫폼 층상 인장 캠페인 기록)</span><span class="en" data-i>Original week-05 deck #19 · #20 (reference case · research platform layered tensile campaign record)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 20 FIG 자동화 대상 물성 6 -->
+<section class="slide v3" data-src="05주차#7">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>7-3 · 어디에</span><span class="en" data-i>7-3 · Where</span></p>
+<div class="hrow"><span class="hico" data-ico="layers-3"></span><h2 class="h"><span class="ko" data-i>같은 생성기 · 물성 6: 템플릿 1 + 파서 1 씩 추가 · 이번 주 LJ 는 최소형</span><span class="en" data-i>Same generator · 6 properties: add 1 template + 1 parser each · this week's LJ is the minimal form</span></h2></div>
+<p class="sub"><span class="ko" data-i>W09 ~ W10 의 물성 = 이 세 스크립트의 변형 · 바뀌는 것은 템플릿과 파서뿐</span><span class="en" data-i>W09 ~ W10 properties = variants of these three scripts · only the template and parser change</span></p>
+<div class="bd">
+<div class="grid c3">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="box"></span><div><p class="k"><span class="ko" data-i>밀도 · W09</span><span class="en" data-i>Density · W09</span></p><h4><span class="ko" data-i>NPT 298 K → 부피 블록 평균</span><span class="en" data-i>NPT 298 K → volume block average</span></h4></div></div><p><span class="ko" data-i>파서: 평형 구간 → 수렴 판정</span><span class="en" data-i>Parser: equilibrium span → convergence test</span></p></div>
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="thermometer"></span><div><p class="k">Tg · W09</p><h4><span class="ko" data-i>단계 냉각 스캔 → 비체적–온도</span><span class="en" data-i>Stepwise cooling scan → specific volume–temperature</span></h4></div></div><p><span class="ko" data-i>파서: 두 직선의 교점</span><span class="en" data-i>Parser: intersection of two lines</span></p></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="move-horizontal"></span><div><p class="k"><span class="ko" data-i>인장 · W10</span><span class="en" data-i>Tension · W10</span></p><h4><span class="ko" data-i>deform 일정 변형률 → σ–ε</span><span class="en" data-i>deform constant strain rate → σ–ε</span></h4></div></div><p><span class="ko" data-i>파서: 최대 응력</span><span class="en" data-i>Parser: maximum stress</span></p></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="split"></span><div><p class="k"><span class="ko" data-i>파괴 모드 · W10</span><span class="en" data-i>Failure mode · W10</span></p><h4><span class="ko" data-i>파단면 원자 분포</span><span class="en" data-i>Atom distribution on fracture surface</span></h4></div></div><p><span class="ko" data-i>파서: 박리 vs 응집 판정</span><span class="en" data-i>Parser: delamination vs cohesion test</span></p></div>
+<div class="it a" style="--d:3"><div class="ih"><span class="icb" data-ico="layers"></span><div><p class="k"><span class="ko" data-i>샌드위치 전단 · W10</span><span class="en" data-i>Sandwich shear · W10</span></p><h4><span class="ko" data-i>집합체 | 바인더 | 집합체 전단</span><span class="en" data-i>Aggregate | binder | aggregate shear</span></h4></div></div><p><span class="ko" data-i>파서: 전단 응력 정점</span><span class="en" data-i>Parser: shear-stress peak</span></p></div>
+<div class="it hot a" style="--d:3"><div class="ih"><span class="icb" data-ico="unlink"></span><div><p class="k"><span class="ko" data-i>분리일 · W10 · W16</span><span class="en" data-i>Work of separation · W10 · W16</span></p><h4><span class="ko" data-i>계면 수직 분리 → 힘–거리 적분</span><span class="en" data-i>Normal separation of interface → force–distance integral</span></h4></div></div><p><span class="ko" data-i>파서: 적분 · mJ/m² · 최종 프로젝트 표적</span><span class="en" data-i>Parser: integral · mJ/m² · final-project target</span></p></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i><b>물성 하나 추가 = 템플릿 하나 + 파서 하나</b> · 생성 · 실행 · 상태 표는 그대로</span><span class="en" data-i><b>One more property = a template + a parser</b> · generate · run · status table unchanged</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 05주차 덱 #7 (자동화 대상 · 물성별 절차)</span><span class="en" data-i>Original week-05 deck #7 (automation targets · per-property procedures)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 21 SIM 간단 생성기 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>7-3 · 확인 · 조작형</span><span class="en" data-i>7-3 · Check · interactive</span></p>
+<div class="hrow"><span class="hico" data-ico="sliders-horizontal"></span><h2 class="h"><span class="ko" data-i>간단 생성기: T · Δt · 스텝 3개 → 스크립트 즉시 갱신 · 예상 시간 · Δt 판정</span><span class="en" data-i>Simple generator: T · Δt · steps, 3 sliders → script updates instantly · estimated time · Δt verdict</span></h2></div>
+<p class="sub"><span class="ko" data-i>슬라이더 = 표의 한 줄 · 스크립트 = 템플릿 산출 · 판정 = 이번 주 측정(Δt 0.02 통과 · 0.03 실패) 기준</span><span class="en" data-i>Slider = one table row · script = template output · verdict = based on this week's measurements (Δt 0.02 passes · 0.03 fails)</span></p>
+<div class="bd">
+<div class="sim" id="sim-gen">
+<div class="ctl">
+<label><span class="ko" data-i><b>온도 T (LJ) <output data-o="T">1.0</output></b></span><span class="en" data-i><b>Temperature T (LJ) <output data-o="T">1.0</output></b></span><input type="range" min="0.6" max="1.4" value="1.0" step="0.1" data-k="T"></label>
+<label><span class="ko" data-i><b>시간 간격 Δt <output data-o="dt">0.005</output></b></span><span class="en" data-i><b>Timestep Δt <output data-o="dt">0.005</output></b></span><input type="range" min="0.001" max="0.03" value="0.005" step="0.001" data-k="dt"></label>
+<label><span class="ko" data-i><b>스텝 수 <output data-o="steps">1000</output></b></span><span class="en" data-i><b>Steps <output data-o="steps">1000</output></b></span><input type="range" min="200" max="5000" value="1000" step="200" data-k="steps"></label>
+<button type="button" data-act="fail"><span class="ko" data-i>실패 상태 재현 (Δt 0.03)</span><span class="en" data-i>Reproduce failure state (Δt 0.03)</span></button>
+<button type="button" class="alt" data-act="reset"><span class="ko" data-i>초기값 (1.0 · 0.005 · 1000)</span><span class="en" data-i>Initial values (1.0 · 0.005 · 1000)</span></button>
+</div>
+<div class="view">
+<pre class="code" id="gen_code" style="margin:18px 22px 0;min-height:300px"></pre>
+<div class="kpi"><div><span class="ko" data-i>예상 벽시계 <b id="gen_wall"> · </b></span><span class="en" data-i>Estimated wall clock <b id="gen_wall"> · </b></span></div><div><span class="ko" data-i>총 시간 <b id="gen_time"> · </b></span><span class="en" data-i>Total time <b id="gen_time"> · </b></span></div><div><span class="ko" data-i>Δt 판정 <b id="gen_judge"> · </b></span><span class="en" data-i>Δt verdict <b id="gen_judge"> · </b></span></div></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>벽시계 0.36 s / 1,000스텝(500원자 · CPU 1코어 · 측정) · Δt 판정 = Δt 0.005 ~ 0.02 통과 · 0.03 Lost atoms (이번 주 실행)</span><span class="en" data-i>Wall clock 0.36 s / 1,000 steps (500 atoms · CPU 1 core · measured) · Δt verdict = Δt 0.005 ~ 0.02 pass · 0.03 Lost atoms (this week's run)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 22 MAKE P7-3 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>7-3 · 만들어 보기</span><span class="en" data-i>7-3 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="pencil-ruler"></span><h2 class="h"><span class="ko" data-i>만들어 보기 P7-3: 생성기 규칙 1개 추가 · 시드 변경 재시도 · 상한</span><span class="en" data-i>Try it P7-3: add 1 generator rule · seed-change retry · cap</span></h2></div>
+<div class="bd">
+<div class="make">
+<div class="left a" style="--d:1">
+<pre class="code"><span class="c"><span class="ko" data-i># 환경: week07 폴더 · claude · 지시 붙여 넣기</span><span class="en" data-i># Environment: week07 folder · claude · paste the prompt</span></span>
+<span class="c"><span class="ko" data-i># 1. Claude Code 가 @scripts/run_batch.py 읽기</span><span class="en" data-i># 1. Claude Code reads @scripts/run_batch.py</span></span>
+<span class="c"><span class="ko" data-i># 2. 바뀌는 부분만 → out/P7-3_result.md</span><span class="en" data-i># 2. Changed parts only → out/P7-3_result.md</span></span>
+<span class="c"><span class="ko" data-i># 3. scripts/ 그대로 · 적용은 선택(out/ 사본)</span><span class="en" data-i># 3. scripts/ unchanged · applying is optional (copy in out/)</span></span></pre>
+<div class="prompt" data-id="P7-3"><span class="ko" data-i>`@scripts/run_batch.py` 는 실패하면 Δt 를 절반으로 한 번 재시도한다. 규칙을 하나 추가하려 한다: [재시도 뒤에도 실패하면 시드를 바꿔 한 번 더] . ① 바꿔야 할 함수와 줄 ② 추가될 status.csv 의 행 형태(시도 번호 3) ③ 무한 반복을 막는 상한을 어디에 두는지 ④ 이 규칙이 통하는 실패 유형과 통하지 않는 유형(결정론적 실패)을 표로 써서 out/P7-3_result.md 에 저장해라. scripts/ 는 고치지 말고, 코드 전체를 다시 쓰지 말고 바뀌는 부분만 보여라.</span><span class="en" data-i>`@scripts/run_batch.py` retries once with half Δt on failure. I want to add one rule: [if it still fails after the retry, change the seed and try once more]. Write in a table and save to out/P7-3_result.md ① the function and lines to change ② the shape of the extra status.csv row (attempt number 3) ③ where to put the cap that prevents infinite loops ④ the failure types this rule works for and those it does not (deterministic failures). Do not edit scripts/; do not rewrite the whole code, show only the changed parts.</span></div>
+</div>
+<div class="expect a" style="--d:2">
+<h4><span class="tic" data-ico="table"></span><span class="ko" data-i>기대 결과 · 규칙 표 + status 행 형태</span><span class="en" data-i>Expected output · rule table + status row shape</span></h4>
+<table class="t"><thead><tr><th><span class="ko" data-i>시도</span><span class="en" data-i>Attempt</span></th><th><span class="ko" data-i>조치</span><span class="en" data-i>Action</span></th><th><span class="ko" data-i>통하는 실패</span><span class="en" data-i>Failures it fixes</span></th><th><span class="ko" data-i>안 통하는 실패</span><span class="en" data-i>Failures it does not fix</span></th></tr></thead><tbody>
+<tr><td>1</td><td><span class="ko" data-i>원래 Δt</span><span class="en" data-i>Original Δt</span></td><td> · </td><td> · </td></tr>
+<tr><td>2</td><td><span class="ko" data-i>Δt 절반</span><span class="en" data-i>Half Δt</span></td><td><span class="ko" data-i>Lost atoms · 압력 발산</span><span class="en" data-i>Lost atoms · pressure blow-up</span></td><td><span class="ko" data-i>경로 · 문법 · 타입 누락</span><span class="en" data-i>Path · syntax · missing type</span></td></tr>
+<tr class="hl"><td><span class="ko" data-i>3 (추가)</span><span class="en" data-i>3 (added)</span></td><td><span class="ko" data-i>시드 변경</span><span class="en" data-i>Change seed</span></td><td><span class="ko" data-i>패킹 겹침 · 한계선상 실패</span><span class="en" data-i>Packing overlap · borderline failure</span></td><td><span class="ko" data-i>결정론적 실패 · 같은 곳에서 멈춤</span><span class="en" data-i>Deterministic failure · stops at the same place</span></td></tr>
+<tr><td><span class="ko" data-i>상한</span><span class="en" data-i>Cap</span></td><td><span class="ko" data-i>3회 → 사람 확인</span><span class="en" data-i>3 times → human check</span></td><td colspan="2"><span class="ko" data-i>status.csv 에 attempt 1 · 2 · 3 행 + 원인</span><span class="en" data-i>attempt 1 · 2 · 3 rows in status.csv + cause</span></td></tr></tbody></table>
+<pre class="code">T12_s22,1,0.03,lost_atoms,0.11
+T12_s22,2,0.015,lost_atoms,…     <span class="c"><span class="ko" data-i># 가정</span><span class="en" data-i># Assumption</span></span>
+T12_s22,3,0.015,ok,…              <span class="c"># seed 22 → 23</span></pre>
+<p class="cap"><span class="ko" data-i>「바뀌는 부분만」 · run_one 뒤의 재시도 블록에 분기 1개 · 상한은 상수 1곳</span><span class="en" data-i>"Changed parts only" · 1 branch in the retry block after run_one · cap is a constant in 1 place</span></p>
+</div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>재시도 상한이 숫자로 적혀 있는가 · status 행에 시도 3 이 들어가는가</span><span class="en" data-i>Is the retry cap written as a number · does the status row include attempt 3</span></p><p><span class="ko" data-i>「결정론적 실패에는 시드 변경이 소용없다」 가 표에 있는가 (원본 05주차 #18)</span><span class="en" data-i>Does the table say "changing the seed does not help deterministic failures" (original week-05 #18)</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>지시문 원문 week07/prompts.md · P7-3 · 원본 05주차 덱 #18 「재시도 남발 금지」</span><span class="en" data-i>Original prompt week07/prompts.md · P7-3 · original week-05 deck #18 "no retry spam"</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 23 다음 주차로 -->
+<section class="slide v3 accent">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>다음 주차로 · W08 다층 구조와 다중 힘장 스택</span><span class="en" data-i>Next week · W08 multilayer structure and multi-force-field stack</span></p>
+<div class="hrow"><span class="hico" data-ico="arrow-right"></span><h2 class="h"><span class="ko" data-i>오늘의 산출물 3: 입력 6 + 해시 · status.csv · summary.json → W08</span><span class="en" data-i>3 outputs today: 6 inputs + hashes · status.csv · summary.json → W08</span></h2></div>
+<p class="sub"><span class="ko" data-i>표 = 유일한 기준 · 입력 = 산출물 · 실패는 규칙으로 감지 · 재시도는 상한 · 처음 보는 실패만 사람</span><span class="en" data-i>Table = single source of truth · input = output · failures detected by rules · retry has a cap · humans only for first-seen failures</span></p>
+<div class="bd">
+<div class="lines">
+<div class="ln a" style="--d:1"><span class="nn">01</span><div><h4><span class="ko" data-i>산출물</span><span class="en" data-i>Outputs</span></h4><p><span class="file">out/inputs/manifest.json</span> · <span class="file">out/runs/status.csv</span> · <span class="file">out/thermo/summary.json</span> · P7-1 ~ P7-3</p></div></div>
+<div class="ln a" style="--d:2"><span class="nn">02</span><div><h4><span class="ko" data-i>다음 주 W08</span><span class="en" data-i>Next week W08</span></h4><p><span class="ko" data-i>광물 | 물 | 바인더 3층 셀 · 힘장 중립 토폴로지 · 스택 라우팅 · 입력은 오늘 방식으로 생성</span><span class="en" data-i>Mineral | water | binder 3-layer cell · force-field-neutral topology · stack routing · inputs generated the way we did today</span></p></div></div>
+<div class="ln a" style="--d:3"><span class="nn">03</span><div><h4><span class="ko" data-i>못 끝냈다면</span><span class="en" data-i>If unfinished</span></h4><p><span class="file">week07/expected_output/</span> <span class="ko" data-i>의 결과 파일로 W08 진행 가능</span><span class="en" data-i> result files can carry you through W08</span></p></div></div>
+<div class="ln a" style="--d:4"><span class="nn">04</span><div><h4><span class="ko" data-i>퀴즈 · 용어</span><span class="en" data-i>Quiz · key terms</span></h4><p><span class="file">week07/quiz.md</span> <span class="ko" data-i>5문항 ·</span><span class="en" data-i>5 questions ·</span> <span class="file">GLOSSARY.md</span> <span class="ko" data-i>용어 5</span><span class="en" data-i>5 terms</span></p></div></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>도구 주차 끝 · M2 세 번째 주 = 다층 구조</span><span class="en" data-i>Tools week ends · third M2 week = multilayer structure</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<script src="../common/icons.js"></script>
+<script src="../common/deck.js"></script>
+<script>
+function stepOf(root) { var s = parseInt(root.dataset.step || '0', 10); return isNaN(s) ? 0 : s; }
+function icoIn(n, x, y, s, col) { return '<svg x="' + x + '" y="' + y + '" width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" stroke="' + col + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + (IC[n] || '') + '</svg>'; }
+function mono(x, y, s, col, size, anchor) { return '<text x="' + x + '" y="' + y + '" font-family="JetBrains Mono, monospace" font-size="' + (size || 20) + '" fill="' + col + '"' + (anchor ? ' text-anchor="' + anchor + '"' : '') + '>' + s + '</text>'; }
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function win(W, H, title, dark) { return '<rect x="2" y="2" width="' + (W - 4) + '" height="' + (H - 4) + '" rx="16" fill="' + (dark ? '#231F20' : '#FFFFFF') + '" stroke="' + (dark ? '#231F20' : '#E2D8CA') + '" stroke-width="2"/><rect x="2" y="2" width="' + (W - 4) + '" height="40" rx="16" fill="' + (dark ? '#3A322D' : '#EFE7DB') + '"/><rect x="2" y="26" width="' + (W - 4) + '" height="16" fill="' + (dark ? '#3A322D' : '#EFE7DB') + '"/><circle cx="24" cy="22" r="6" fill="#D9534F"/><circle cx="44" cy="22" r="6" fill="#FBB44E"/><circle cx="64" cy="22" r="6" fill="#2E8B57"/><text x="' + (W / 2) + '" y="28" text-anchor="middle" class="cft" fill="' + (dark ? '#CFC5B8' : '#4A4540') + '">' + title + '</text>'; }
+var RUNS = [['T08_s11', 0.8, 11, 0.005, '8db366', 0.35], ['T08_s22', 0.8, 22, 0.005, 'fa0abd', 0.35], ['T10_s11', 1.0, 11, 0.005, 'fd2e8d', 0.36], ['T10_s22', 1.0, 22, 0.005, 'c20153', 0.37], ['T12_s11', 1.2, 11, 0.005, '1c7aa5', 0.37], ['T12_s22', 1.2, 22, 0.03, 'd5b234', 0.11]];
+var TPL = ['units lj', 'lattice fcc 0.8  ·  create_atoms 1 box', 'velocity all create {T} {seed}', 'pair_style lj/cut 2.5', 'fix 1 all nvt temp {T} {T} 0.5', 'timestep {dt}', 'thermo 50', 'run {steps}', 'write_data final_{run_id}.data'];
+
+/* ===== 표지: 상태 칩 6개가 바뀐다 (compact) ===== */
+EMB["cover7"] = function (root, RAF) {
+  var t0 = CLK();
+  function f(now) {
+    var t = ((now - t0) / 1000) % 10, o = '<svg viewBox="0 0 560 560">' + win(560, 560, __L('run_batch.py · 6건','run_batch.py · 6 runs'), true);
+    o += __L('<text x="280" y="80" text-anchor="middle" class="cfw" font-size="20">표 6줄 → 입력 6개 → 실행</text>','<text x="280" y="80" text-anchor="middle" class="cfw" font-size="20">6-row table → 6 inputs → run</text>');
+    RUNS.forEach(function (r, i) { var ts = 1 + i * 1.2, ph = t - ts, st = ph < 0 ? 0 : (ph < 1 ? 1 : (i === 5 ? (ph < 2 ? 3 : (ph < 3 ? 4 : 2)) : 2)); var col = ['#6E655C', '#F99D1C', '#2E8B57', '#D9534F', '#E37F1A'][st], lab = [__L('대기','waiting'), __L('실행 중','running'), __L('완료 ✓','done ✓'), __L('실패 ✗','failed ✗'), __L('재시도 Δt/2','retry Δt/2')][st]; var y = 120 + i * 66; o += '<rect x="30" y="' + y + '" width="500" height="50" rx="12" fill="#3A322D"/>' + mono(48, y + 32, r[0], '#F4EEE6', 20) + '<rect x="330" y="' + (y + 9) + '" width="180" height="32" rx="16" fill="' + col + '"' + (st === 1 ? ' class="pulse"' : '') + '/><text x="420" y="' + (y + 31) + '" text-anchor="middle" class="cfw" font-size="17">' + lab + '</text>'; });
+    var done = RUNS.filter(function (r, i) { return t > 1 + i * 1.2 + 1; }).length; o += '<rect x="30" y="530" width="500" height="10" rx="5" fill="#3A322D"/><rect x="30" y="530" width="' + (500 * Math.min(1, t / 9.4)).toFixed(0) + '" height="10" rx="5" fill="#F99D1C"/>';
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 6장: 템플릿 치환 · 자리표시가 값으로 · 카드가 하나씩 ===== */
+EMB["tpl"] = function (root, RAF) {
+  var W = 1588, H = 560, t0 = CLK();
+  function f(now) {
+    var st = stepOf(root), t = st ? (st - 1) * 2 + 1.9 : ((now - t0) / 1000) % 12, k = Math.min(5, Math.floor(t / 2)), u = (t % 2) / 2, r = RUNS[k], o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    /* 왼쪽: 표 */
+    o += '<rect x="0" y="0" width="420" height="' + H + '" rx="18" fill="#F6F0E7"/><text x="24" y="40" class="cfh" font-size="22">params.csv</text>' + mono(24, 76, 'run_id    T    seed  dt     steps', '#6E655C', 16);
+    RUNS.forEach(function (q, i) { var y = 106 + i * 40, on = i === k; if (on) o += '<rect x="12" y="' + (y - 26) + '" width="396" height="36" rx="8" fill="#FFF1E0" stroke="#F99D1C" stroke-width="2"/>'; o += mono(24, y, q[0] + '  ' + q[1].toFixed(1) + '  ' + String(q[2]).padEnd(4) + '  ' + String(q[3]).padEnd(6) + ' 1000', on ? '#C8610C' : (i < k ? '#231F20' : '#9A9088'), 16); });
+    o += __L('<text x="24" y="380" class="cfs" font-size="18">열 이름 = 자리표시</text><text x="24" y="408" class="cfs" font-size="18">한 줄 = 입력 파일 1개</text><text x="24" y="436" class="cfmu" font-size="17">6번째 줄 Δt 0.03 = 일부러 실패</text>','<text x="24" y="380" class="cfs" font-size="18">column name = placeholder</text><text x="24" y="408" class="cfs" font-size="18">one row = 1 input file</text><text x="24" y="436" class="cfmu" font-size="17">row 6 Δt 0.03 = deliberate failure</text>');
+    /* 가운데: 템플릿 */
+    o += '<g transform="translate(450,0)">' + win(640, H, 'in.lj.template → in.' + r[0], true);
+    var vals = { T: r[1].toFixed(1), seed: String(r[2]), dt: String(r[3]), steps: '1000', run_id: r[0] };
+    TPL.forEach(function (line, i) { var y = 84 + i * 50, filled = u > 0.15 + i * 0.07, s = esc(line).replace(/\{(\w+)\}/g, function (m, key) { return filled ? '<tspan fill="#FBB44E" font-weight="700">' + vals[key] + '</tspan>' : '<tspan fill="#9A9088">{' + key + '}</tspan>'; }); o += mono(26, y, s, '#F4EEE6', 19); });
+    o += '<text x="320" y="540" text-anchor="middle" class="cfw" font-size="17" fill="#CFC5B8">' + (u > 0.8 ? 'str.format → in.' + r[0] + '  #' + r[4] : __L('자리표시 채우는 중 …','filling placeholders …')) + '</text></g>';
+    /* 오른쪽: 카드 */
+    RUNS.forEach(function (q, i) { var y = 20 + i * 90, done = i < k || (i === k && u > 0.8); o += '<rect x="1130" y="' + y + '" width="440" height="76" rx="14" fill="' + (done ? '#FFFFFF' : '#F6F0E7') + '" stroke="' + (done ? (i === 5 ? '#D9534F' : '#F99D1C') : '#E2D8CA') + '" stroke-width="' + (done ? 3 : 2) + '"/>'; if (done) { o += icoIn('file-code', 1148, y + 20, 36, i === 5 ? '#D9534F' : '#C8610C') + mono(1200, y + 32, 'in.' + q[0], '#231F20', 20) + mono(1200, y + 60, 'T ' + q[1].toFixed(1) + ' · seed ' + q[2] + ' · Δt ' + q[3] + '  #' + q[4], i === 5 ? '#D9534F' : '#6E655C', 15); } else o += '<text x="1350" y="' + (y + 46) + '" text-anchor="middle" class="cfmu">' + (i + 1) + ' / 6</text>'; });
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 10장: 배치 큐 상태 전이 ===== */
+EMB["queue"] = function (root, RAF) {
+  var W = 1588, H = 560, t0 = CLK();
+  var SEQ = []; /* 시간표: (시작, 길이) 각 실행 */
+  var acc = 0.6; RUNS.forEach(function (r, i) { SEQ.push([acc, 1.1]); acc += 1.3; }); var retryStart = acc + 0.4;
+  function f(now) {
+    var st = stepOf(root), t = st ? [0.3, 6.0, 8.4, 11.9][st - 1] : ((now - t0) / 1000) % 12, o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    var states = RUNS.map(function (r, i) { var s = SEQ[i]; if (t < s[0]) return 0; if (t < s[0] + s[1]) return 1; return i === 5 ? (t < retryStart ? 3 : (t < retryStart + 1.3 ? 4 : 2)) : 2; });
+    var cols = ['#D3C6B5', '#F99D1C', '#2E8B57', '#D9534F', '#E37F1A'], labs = [__L('대기','waiting'), __L('실행 중','running'), __L('완료 ✓','done ✓'), __L('실패 ✗ lost_atoms','failed ✗ lost_atoms'), __L('재시도 Δt 0.015','retry Δt 0.015')];
+    RUNS.forEach(function (r, i) { var x = 20 + i * 262, s = states[i]; o += '<rect x="' + x + '" y="40" width="242" height="150" rx="16" fill="#FFFFFF" stroke="' + cols[s] + '" stroke-width="3"/>' + mono(x + 18, 76, 'in.' + r[0], '#231F20', 20) + mono(x + 18, 104, 'T ' + r[1].toFixed(1) + ' · Δt ' + (s === 4 || (s === 2 && i === 5 && t >= retryStart) ? '0.015' : r[3]), '#6E655C', 16) + '<rect x="' + (x + 18) + '" y="124" width="206" height="40" rx="20" fill="' + cols[s] + '"' + (s === 1 || s === 4 ? ' class="pulse"' : '') + '/><text x="' + (x + 121) + '" y="151" text-anchor="middle" class="cfw" font-size="17">' + labs[s] + '</text>'; });
+    /* 진행 막대 · 벽시계 */
+    var doneN = states.filter(function (s) { return s === 2; }).length, prog = Math.min(1, t / 12);
+    o += __L('<text x="20" y="246" class="cfh" font-size="20">진행 ','<text x="20" y="246" class="cfh" font-size="20">progress ') + doneN + __L(' / 6 완료</text><rect x="260" y="230" width="1100" height="18" rx="9" fill="#F6F0E7"/><rect x="260" y="230" width="',' / 6 done</text><rect x="260" y="230" width="1100" height="18" rx="9" fill="#F6F0E7"/><rect x="260" y="230" width="') + (1100 * prog).toFixed(0) + '" height="18" rx="9" fill="#F99D1C"/>' + mono(1380, 246, __L('벽시계 ','wall clock ') + (prog * 2.5).toFixed(2) + ' s', '#C8610C', 20);
+    /* 상태 로그 */
+    o += '<rect x="20" y="280" width="1548" height="260" rx="16" fill="#231F20"/>';
+    var lines = [], y = 318;
+    RUNS.forEach(function (r, i) { var s = states[i]; if (s >= 1) lines.push([r[0] + __L('  시도 1  dt ','  attempt 1  dt ') + String(r[3]).padEnd(6) + ' → ' + (s === 1 ? __L('실행 중 …','running …') : (i < 5 ? 'ok          ' + r[5].toFixed(2) + ' s' : 'lost_atoms  0.11 s   ERROR: Lost atoms: original 500 current 494')), (i === 5 && s !== 1) ? '#F28B82' : (s === 1 ? '#FBB44E' : '#8FD3A8')]); if (i === 5 && t >= retryStart) lines.push([__L('T12_s22  시도 2  dt 0.015  → ','T12_s22  attempt 2  dt 0.015  → ') + (s === 4 ? __L('실행 중 …  (Δt 0.03 → 0.015)','running …  (Δt 0.03 → 0.015)') : 'ok          0.54 s   (Δt 0.03 → 0.015)'), s === 4 ? '#FBB44E' : '#8FD3A8']); });
+    lines.slice(-7).forEach(function (l, i) { o += mono(40, y + i * 30, esc(l[0]), l[1], 17); });
+    if (!lines.length) o += mono(40, y, __L('status.csv 에 쓸 행 · 실행이 시작되면 한 줄씩','rows to write to status.csv · one line at a time once running'), '#B8B0A6', 17);
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 12장: 로그 파싱 · 숫자 줄이 표로 날아간다 ===== */
+EMB["parse"] = function (root, RAF) {
+  var W = 1588, H = 560, t0 = CLK();
+  var LOG = ['LAMMPS (22 Jul 2025)', 'Created 500 atoms', 'Neighbor list info ...', 'Setting up Verlet run ...', '   Step   Temp       Press      PotEng     TotEng', '      0   1          -5.4105666 -6.3647465 -4.8677465', '     50   0.53324221 -1.1365105 -5.5985063 -4.8002427', '    100   0.5760279  -1.0032323 -5.5720645 -4.7097507', '    150   0.66406799 -0.91239727 -5.5800222 -4.5859124', __L('    ...   (21행)','    ...   (21 rows)'), '   1000   0.98826999  1.7092224 -5.1196191 -3.6401789', 'Loop time of 0.309252 on 1 procs for 1000 steps', 'Total wall time: 0:00:00'];
+  var DATA = [5, 6, 7, 8, 10];
+  function f(now) {
+    var st = stepOf(root), t = st ? [1.9, 7.5, 11.9][st - 1] : ((now - t0) / 1000) % 12, k = t < 2 ? 0 : (t < 8 ? 1 : 2), u = k === 1 ? (t - 2) / 6 : (k === 2 ? (t - 8) / 4 : t / 2), o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    o += '<g>' + win(760, H, 'log.lammps · T10_s11', true);
+    LOG.forEach(function (l, i) { var y = 74 + i * 36, isH = i === 4, isD = DATA.indexOf(i) >= 0, isE = i === 11, col = '#CFC5B8'; var hi = (k === 0 && isH && u > 0.5) || (k === 1 && isD && u > (DATA.indexOf(i) + 0.5) / 6) || (k === 2 && isE && u > 0.3); if (isH) col = '#FBB44E'; if (isD) col = '#F4EEE6'; if (isE) col = '#8FD3A8'; if (hi) o += '<rect x="14" y="' + (y - 24) + '" width="732" height="32" rx="6" fill="' + (isH ? '#C8610C' : (isE ? '#2E8B57' : '#4F7FB0')) + '" opacity=".35"/>'; o += mono(26, y, esc(l), col, 17); });
+    o += '<text x="380" y="548" text-anchor="middle" class="cfw" font-size="17" fill="#CFC5B8">' + [__L('규칙 ①: 「Step」 으로 시작하는 줄 = 머리줄 → 열 이름','Rule ①: line starting with "Step" = header → column names'), __L('규칙 ②: 숫자만 있는 줄 = 자료 → 열 수가 맞으면 표 행','Rule ②: line with only numbers = data → table row if column count matches'), __L('규칙 ③: 「Loop time」 = 블록 끝 → 뒤 절반 평균 = 요약','Rule ③: "Loop time" = block end → second-half mean = summary')][k] + '</text></g>';
+    /* 오른쪽: 표 */
+    o += '<g transform="translate(800,0)"><rect x="0" y="0" width="788" height="' + H + '" rx="18" fill="#FFFFFF" stroke="#E2D8CA" stroke-width="2"/><text x="24" y="40" class="cfh" font-size="21">T10_s11.csv</text>';
+    var cols = ['step', 'temp', 'press', 'poteng', 'toteng'], xs = [24, 140, 300, 470, 640];
+    if (k >= 1 || (k === 0 && u > 0.5)) { o += '<rect x="12" y="56" width="764" height="36" rx="8" fill="#231F20"/>'; cols.forEach(function (c, j) { o += mono(xs[j], 81, c, '#F4EEE6', 17); }); }
+    var rows = [['0', '1.0000', '-5.4106', '-6.3647', '-4.8677'], ['50', '0.5332', '-1.1365', '-5.5985', '-4.8002'], ['100', '0.5760', '-1.0032', '-5.5721', '-4.7098'], ['150', '0.6641', '-0.9124', '-5.5800', '-4.5859'], ['1000', '0.9883', '1.7092', '-5.1196', '-3.6402']];
+    rows.forEach(function (r, i) { var show = k >= 2 || (k === 1 && u > (i + 1) / 6); if (!show) return; var y = 128 + i * 38; if (i === 4) o += mono(24, y - 24, __L('···  (21행)','···  (21 rows)'), '#6E655C', 15); o += '<line x1="12" y1="' + (y + 12) + '" x2="776" y2="' + (y + 12) + '" stroke="#E2D8CA"/>'; r.forEach(function (v, j) { o += mono(xs[j], y, v, j ? '#4A4540' : '#231F20', 17); }); });
+    if (k === 1) { var i = Math.min(4, Math.floor(u * 6)); var fy = 74 + DATA[i] * 36, ty = 128 + i * 38; o += '<line x1="' + (-50) + '" y1="' + fy + '" x2="' + (24 + 740 * ((u * 6) % 1)) + '" y2="' + (fy + (ty - fy) * ((u * 6) % 1)) + '" stroke="#4F7FB0" stroke-width="3" stroke-dasharray="8 6"/>'; }
+    if (k === 2 && u > 0.5) { o += __L('<rect x="24" y="340" width="740" height="180" rx="14" fill="#FFF1E0"/><text x="44" y="378" class="cfh" font-size="20">summary.json · 뒤 절반(행 11 ~ 21) 평균</text>','<rect x="24" y="340" width="740" height="180" rx="14" fill="#FFF1E0"/><text x="44" y="378" class="cfh" font-size="20">summary.json · mean of second half (rows 11 ~ 21)</text>') + mono(44, 416, '"temp_mean": 1.005,   "press_mean": 1.7146,', '#231F20', 18) + mono(44, 448, '"poteng_mean": -5.114,   "toteng_mean": -3.6096,', '#231F20', 18) + mono(44, 480, '"n": 21,   "step_last": 1000', '#231F20', 18) + __L('<text x="44" y="510" class="cfmu" font-size="16">NVT → E 비보존 · T̄ 와 목표 1.0 비교</text>','<text x="44" y="510" class="cfmu" font-size="16">NVT → E not conserved · compare T̄ with target 1.0</text>'); }
+    o += '</g></svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 17장: 결정 트리 ===== */
+EMB["dtree"] = function (root, RAF) {
+  var W = 1588, H = 560, t0 = CLK();
+  var N = { root: [794, 60, __L('종료 코드 ≠ 0 또는 ERROR 줄?','Exit code ≠ 0 or ERROR line?')], ok: [300, 200, __L('완료 ✓ → status ok','done ✓ → status ok')], sig: [1000, 200, __L('로그 신호 분류','classify log signal')], det: [600, 340, __L('경로 · 문법 · 타입 누락 (결정론적)','path · syntax · missing type (deterministic)')], la: [1000, 340, __L('Lost atoms · nan (한계선상)','Lost atoms · nan (borderline)')], ex: [1380, 340, __L('종료 코드만 · 신호 없음','exit code only · no signal')], human: [600, 480, __L('사람 확인','human check')], retry: [1000, 480, __L('재시도 < 1 ? → Δt 절반 재실행','retry < 1 ? → rerun with half Δt')], human2: [1380, 480, __L('사람 확인','human check')] };
+  var E = [['root', 'ok', __L('아니오','no')], ['root', 'sig', __L('예','yes')], ['sig', 'det', '③'], ['sig', 'la', '① ②'], ['sig', 'ex', '④'], ['det', 'human', ''], ['la', 'retry', ''], ['ex', 'human2', '']];
+  function f(now) {
+    var st = stepOf(root), t = st ? (st - 1) * 3 + 2.9 : ((now - t0) / 1000) % 12, k = Math.floor(t / 3), u = (t % 3) / 3, o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    var onN = [['root'], ['root', 'sig', 'ok'], ['root', 'sig', 'la', 'det', 'ex'], ['root', 'sig', 'la', 'retry', 'human', 'human2']][k], onE = [[], [0, 1], [0, 1, 2, 3, 4], [0, 1, 2, 3, 4, 5, 6, 7]][k];
+    E.forEach(function (e, i) { var a = N[e[0]], b = N[e[1]], on = onE.indexOf(i) >= 0; o += '<line x1="' + a[0] + '" y1="' + (a[1] + 28) + '" x2="' + b[0] + '" y2="' + (b[1] - 28) + '" stroke="' + (on ? '#E37F1A' : '#E2D8CA') + '" stroke-width="' + (on ? 4 : 2) + '"' + (on && k < 3 ? ' class="flow" stroke-dasharray="10 8"' : '') + '/>'; if (e[2]) o += '<text x="' + ((a[0] + b[0]) / 2 + (b[0] > a[0] ? 14 : -14)) + '" y="' + ((a[1] + b[1]) / 2 + 6) + '" text-anchor="' + (b[0] > a[0] ? 'start' : 'end') + '" class="cfm" fill="' + (on ? '#C8610C' : '#9A9088') + '" font-size="18">' + e[2] + '</text>'; });
+    for (var key in N) { var n = N[key], on = onN.indexOf(key) >= 0, leaf = key === 'ok' || key === 'human' || key === 'retry' || key === 'human2', col = key === 'ok' ? '#2E8B57' : (key.indexOf('human') === 0 ? '#D9534F' : (key === 'retry' ? '#E37F1A' : '#231F20')); var w = Math.max(220, n[2].length * 15 + 40); o += '<rect x="' + (n[0] - w / 2) + '" y="' + (n[1] - 28) + '" width="' + w + '" height="56" rx="' + (leaf ? 28 : 12) + '" fill="' + (on ? (leaf ? col : '#FFFFFF') : '#F6F0E7') + '" stroke="' + (on ? col : '#E2D8CA') + '" stroke-width="' + (on ? 3 : 2) + '"' + (on && k === 3 && key === 'retry' ? ' class="fl"' : '') + '/><text x="' + n[0] + '" y="' + (n[1] + 7) + '" text-anchor="middle" class="' + (on && leaf ? 'cfw' : 'cfh') + '" font-size="19"' + (on ? '' : ' fill="#9A9088"') + '>' + n[2] + '</text>'; }
+    o += '<rect x="20" y="20" width="420" height="50" rx="12" fill="#FFF1E0"/><text x="230" y="52" text-anchor="middle" class="cfh" font-size="19">' + [__L('① 종료 코드 · ERROR 줄 우선 확인','① check exit code · ERROR line first'), __L('② 실패면 로그 신호로 분류','② if failed, classify by log signal'), __L('③ 분류마다 다른 가지','③ each class takes a different branch'), __L('④ 조치 3: 완료 · Δt 절반 · 사람 확인','④ 3 actions: done · half Δt · human check')][k] + '</text>';
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 18장: 상태 다이어그램 + 재시도 카운터 ===== */
+EMB["fsm"] = function (root, RAF) {
+  var W = 1588, H = 560, t0 = CLK();
+  var S = { wait: [180, 300, __L('대기','waiting'), '#6E655C'], run: [540, 300, __L('실행','run'), '#F99D1C'], ok: [920, 130, __L('성공 ✓','success ✓'), '#2E8B57'], fail: [920, 440, __L('실패 ✗','failed ✗'), '#D9534F'], retry: [1340, 440, __L('재시도 Δt/2','retry Δt/2'), '#E37F1A'], human: [1340, 130, __L('사람 확인','human check'), '#231F20'] };
+  var T = [['wait', 'run', __L('in 파일 있음','in file present'), 0], ['run', 'ok', __L('종료 0 · 신호 없음','exit 0 · no signal'), 0], ['run', 'fail', 'ERROR · Lost atoms · nan', 0], ['fail', 'retry', 'attempt < 2', 0], ['retry', 'run', __L('Δt 절반 입력','half-Δt input'), 0], ['fail', 'human', __L('attempt = 2 · 결정론적','attempt = 2 · deterministic'), 0]];
+  function f(now) {
+    var st = stepOf(root), t = st ? (st - 1) * 2.4 + 2.3 : ((now - t0) / 1000) % 12, k = Math.min(4, Math.floor(t / 2.4)), o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    var onS = [['wait', 'run'], ['run', 'ok'], ['run', 'fail', 'retry'], ['retry', 'run', 'ok'], ['run', 'fail', 'human']][k], onT = [[0], [1], [2, 3], [4, 1], [2, 5]][k], attempt = k < 2 ? 1 : (k === 2 ? 1 : 2);
+    T.forEach(function (e, i) { var a = S[e[0]], b = S[e[1]], on = onT.indexOf(i) >= 0, dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L, x1 = a[0] + ux * 90, y1 = a[1] + uy * 44, x2 = b[0] - ux * 90, y2 = b[1] - uy * 44; var curve = (e[0] === 'retry' && e[1] === 'run'); var d = curve ? 'M' + x1 + ' ' + (y1 + 30) + ' Q ' + ((x1 + x2) / 2) + ' ' + (y1 + 120) + ' ' + x2 + ' ' + (y2 + 30) : 'M' + x1 + ' ' + y1 + ' L' + x2 + ' ' + y2; o += '<path d="' + d + '" fill="none" stroke="' + (on ? '#E37F1A' : '#D3C6B5') + '" stroke-width="' + (on ? 5 : 2.5) + '"' + (on ? ' class="flow" stroke-dasharray="12 9"' : '') + '/>'; var nx = -uy, ny = ux, mx = curve ? (x1 + x2) / 2 : (x1 + x2) / 2 + nx * 26, my = curve ? y1 + 98 : (y1 + y2) / 2 + ny * 26; o += '<text x="' + mx + '" y="' + my + '" text-anchor="middle" class="cfm" fill="' + (on ? '#C8610C' : '#9A9088') + '" font-size="17">' + e[2] + '</text>'; });
+    for (var key in S) { var s = S[key], on = onS.indexOf(key) >= 0; o += '<rect x="' + (s[0] - 90) + '" y="' + (s[1] - 44) + '" width="180" height="88" rx="18" fill="' + (on ? s[3] : '#F6F0E7') + '" stroke="' + (on ? s[3] : '#E2D8CA') + '" stroke-width="3"' + (on && key === 'run' ? ' class="fl"' : '') + '/><text x="' + s[0] + '" y="' + (s[1] + 8) + '" text-anchor="middle" class="' + (on ? 'cfw' : 'cfh') + '" font-size="22"' + (on ? '' : ' fill="#9A9088"') + '>' + s[2] + '</text>'; }
+    o += __L('<rect x="20" y="20" width="300" height="110" rx="14" fill="#231F20"/><text x="40" y="52" class="cfw" font-size="17" fill="#CFC5B8">재시도 카운터 attempt</text>','<rect x="20" y="20" width="300" height="110" rx="14" fill="#231F20"/><text x="40" y="52" class="cfw" font-size="17" fill="#CFC5B8">retry counter attempt</text>') + mono(40, 108, String(attempt) + __L(' / 상한 2',' / cap 2'), '#FBB44E', 40);
+    o += '<rect x="340" y="20" width="700" height="50" rx="12" fill="#FFF1E0"/><text x="690" y="52" text-anchor="middle" class="cfh" font-size="19">' + [__L('① 입력이 있으면 실행으로','① input present → run'), __L('② 종료 0 · 신호 없음 → 성공 → status ok','② exit 0 · no signal → success → status ok'), __L('③ 실패 → attempt 1 < 2 → 재시도(Δt 절반)','③ failure → attempt 1 < 2 → retry (half Δt)'), __L('④ 재실행 → 성공 (T12_s22 가 이 경로)','④ rerun → success (T12_s22 takes this path)'), __L('⑤ 재실패 또는 결정론적 → 사람 확인 · 추가 실행 없음','⑤ failed again or deterministic → human check · no further runs')][k] + '</text>';
+    
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 21장 조작형: 간단 생성기 ===== */
+(function () {
+  var root = document.getElementById('sim-gen'); if (!root) return;
+  var st = { T: 1.0, dt: 0.005, steps: 1000 };
+  function draw() {
+    var code = ['units lj', 'atom_style atomic', 'lattice fcc 0.8', 'region box block 0 5 0 5 0 5', 'create_box 1 box', 'create_atoms 1 box', 'mass 1 1.0', 'velocity all create <o>' + st.T.toFixed(1) + '</o> 11 dist gaussian', 'pair_style lj/cut 2.5', 'pair_coeff 1 1 1.0 1.0 2.5', 'fix 1 all nvt temp <o>' + st.T.toFixed(1) + '</o> <o>' + st.T.toFixed(1) + '</o> 0.5', 'timestep <o>' + st.dt + '</o>', 'thermo 50', 'run <o>' + st.steps + '</o>'];
+    document.getElementById('gen_code').innerHTML = code.join('\n').replace(/<o>/g, '<span class="o">').replace(/<\/o>/g, '</span>');
+    var wall = 0.36 * st.steps / 1000; document.getElementById('gen_wall').textContent = wall.toFixed(2) + __L(' s (500원자 기준)',' s (for 500 atoms)');
+    document.getElementById('gen_time').textContent = (st.dt * st.steps).toFixed(1) + ' τ (' + st.steps + ' × ' + st.dt + ')';
+    var j = document.getElementById('gen_judge'); if (st.dt <= 0.02) { j.textContent = __L('통과 예상 (측정 0.005 ~ 0.02 ok)','expected pass (measured 0.005 ~ 0.02 ok)'); j.style.color = '#8FD3A8'; } else { j.textContent = __L('실패 예상 · Lost atoms (0.03 측정) → 재시도 규칙','expected failure · Lost atoms (0.03 measured) → retry rule'); j.style.color = '#F28B82'; }
+    ['T', 'dt', 'steps'].forEach(function (k) { root.querySelector('[data-o=' + k + ']').textContent = st[k]; root.querySelector('input[data-k=' + k + ']').value = st[k]; });
+  }
+  root.querySelectorAll('input[type=range]').forEach(function (inp) { inp.addEventListener('input', function () { st[inp.dataset.k] = +inp.value; draw(); }); });
+  root.querySelector('[data-act=fail]').onclick = function () { st.dt = 0.03; st.T = 1.2; draw(); };
+  root.querySelector('[data-act=reset]').onclick = function () { st = { T: 1.0, dt: 0.005, steps: 1000 }; draw(); };
+  draw();
+})();
+</script>
+</body>
+</html>

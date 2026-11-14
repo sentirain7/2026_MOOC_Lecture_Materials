@@ -1,0 +1,4 @@
+# Time-averaged data for fix avg
+# TimeStep v_dens v_v
+7000 0.735503 10405.3
+8000 0.783677 9766.08

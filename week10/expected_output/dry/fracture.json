@@ -1,0 +1,21 @@
+{
+ "tag": "dry",
+ "frame_step": 4000,
+ "slab_top_A": 10.17,
+ "exposure_e": 0.701,
+ "t_res_A": 11.19,
+ "z1_A": 4.0,
+ "e_threshold": 0.5,
+ "mode": "adhesive(계면 박리)",
+ "binder_z_5_95_A": [
+  13.9,
+  46.8
+ ],
+ "gap_binder_below_A": 1.95,
+ "n_binder_within_12A": 299,
+ "grid": [
+  12,
+  12
+ ],
+ "rule": "e > e_th → adhesive · t_res ≥ z1 → cohesive · else thin-layer (paper13 R6 2.3절 축소판)"
+}

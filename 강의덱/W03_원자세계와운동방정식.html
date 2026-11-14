@@ -1,0 +1,895 @@
+<!doctype html>
+<html lang="ko" data-v="3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>W03 원자 세계와 운동방정식 · 미시 원인 · F = ma · 퍼텐셜 · Verlet · Δt</title>
+<link rel="stylesheet" href="../common/deck.css">
+</head>
+<body>
+
+<!-- 1 표지 -->
+<section class="slide v3 cover">
+<div class="stop">
+<div class="ribbon"></div>
+<div class="cover-txt">
+<p class="eb a" style="--d:0"><span class="ko" data-i>건설소재 역설계 도구 개발을 위한 AI와 분자동역학 활용 · WEEK 03 · 모듈 M1 MD 기초 · 차시 3-1 ~ 3-4 · 55분</span><span class="en" data-i>AI and Molecular Dynamics for Inverse Design of Construction Materials · WEEK 03 · Module M1 MD basics · Sessions 3-1 ~ 3-4 · 55 min</span></p>
+<h1 class="cover-h a" style="--d:1"><span class="ko" data-i>원자 세계와 운동방정식</span><span class="en" data-i>The atomic world and equations of motion</span></h1>
+<p class="cover-sub a" style="--d:2"><span class="ko" data-i>재료 거동의 미시 원인 · F = ma · 퍼텐셜 에너지 · velocity-Verlet · 시간 간격 Δt</span><span class="en" data-i>Microscopic cause of material behavior · F = ma · potential energy · velocity-Verlet · timestep Δt</span></p>
+<p class="who a" style="--d:3"><span class="ko" data-i><b>윤태영</b> 연구위원 · 한국건설기술연구원 도로교통연구본부 · 과학기술연합대학원대학교(UST) 교수</span><span class="en" data-i><b>Taeyoung Yun</b> Senior Research Fellow · Department of Highway & Transportation Research, Korea Institute of Civil Engineering and Building Technology (KICT) · Professor, University of Science and Technology (UST)</span></p>
+<div class="rel a" style="--d:4;justify-content:flex-start"><span><span class="ko" data-i>준비물 · Claude Code · mdai 환경</span><span class="en" data-i>Prerequisites · Claude Code · mdai environment</span></span><span><span class="ko" data-i>선수 지식 · 응력–변형률 곡선</span><span class="en" data-i>Background · stress–strain curve</span></span><span><span class="ko" data-i>미분 = 기울기</span><span class="en" data-i>Derivative = slope</span></span></div>
+</div>
+<div class="cover-fig"><div class="emb" data-emb="ljwell" data-dur="12"></div></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 2 오늘 만들 것 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>오늘 만들 것 · 4차시 · 55분</span><span class="en" data-i>What we build today · 4 sessions · 55 min</span></p>
+<div class="hrow"><span class="hico" data-ico="package-check"></span><h2 class="h"><span class="ko" data-i>오늘의 완성물 2개: 시간 간격별 에너지 오차 그래프 · LJ 유체 첫 궤적</span><span class="en" data-i>2 deliverables today: energy-error graph by timestep · first trajectory of LJ fluid</span></h2></div>
+<p class="sub"><span class="ko" data-i>식은 1개 · 조작형 2개 · 노트북 실행 2번 · Claude Code 지시 3개 · LJ = 레너드–존스(Lennard-Jones) 모형</span><span class="en" data-i>1 equation · 2 interactive demos · 2 notebook runs · 3 Claude Code prompts · LJ = Lennard-Jones model</span></p>
+<div class="bd today">
+<div class="goal">
+<div class="it white a" style="--d:1">
+<div class="ih"><span class="icb" data-ico="activity"></span><div><p class="k"><span class="ko" data-i>완성물 ①</span><span class="en" data-i>Deliverable ①</span></p><h4><span class="ko" data-i>Δt ↑ → 에너지 오차 ↑ → 발산</span><span class="en" data-i>Δt ↑ → energy error ↑ → divergence</span></h4></div></div>
+<div class="figw white"><svg viewBox="0 0 760 210"><line x1="60" y1="170" x2="720" y2="170" stroke="#6E655C" stroke-width="3"/><g fill="#4F7FB0"><rect x="110" y="166" width="70" height="4" rx="2"/><rect x="230" y="158" width="70" height="12" rx="2"/><rect x="350" y="130" width="70" height="40" rx="2"/><rect x="470" y="60" width="70" height="110" rx="2"/></g><rect x="590" y="20" width="70" height="150" rx="2" fill="#D9534F"/><g class="cfm" text-anchor="middle" fill="#4A4540"><text x="145" y="198">0.5 fs</text><text x="265" y="198">1</text><text x="385" y="198">2</text><text x="505" y="198">4</text><text x="625" y="198">8 fs</text></g><g class="cfh" text-anchor="middle" font-size="20"><text x="145" y="156">0.4 %</text><text x="265" y="148">1.7 %</text><text x="385" y="120">6.7 %</text><text x="505" y="50">27 %</text><text x="625" y="14" fill="#D9534F"><tspan class="ko" data-i>발산</tspan><tspan class="en" data-i>Divergence</tspan></text></g></svg></div>
+<p><span class="ko" data-i>C–C 결합 · 최대 오차 |ΔE|/E₀ · 22장 조작형 · 노트북 01</span><span class="en" data-i>C–C bond · max error |ΔE|/E₀ · slide 22 interactive · notebook 01</span></p>
+</div>
+<div class="it dark a" style="--d:2">
+<div class="ih"><span class="icb" data-ico="file-spreadsheet"></span><div><p class="k"><span class="ko" data-i>완성물 ②</span><span class="en" data-i>Deliverable ②</span></p><h4><span class="ko" data-i>LJ 유체 64원자 첫 궤적 lj_energy.csv</span><span class="en" data-i>First trajectory of 64-atom LJ fluid lj_energy.csv</span></h4></div></div>
+<div class="cb"><span class="fc dk">N <em>64</em></span><span class="fc dk">L <em>17.47</em> Å</span><span class="fc dk"><span class="ko" data-i><em>1,000</em> 스텝</span><span class="en" data-i><em>1,000</em> steps</span></span><span class="fc dk"><span class="ko" data-i>T 평균 <em>213.9</em> K</span><span class="en" data-i>Mean T <em>213.9</em> K</span></span><span class="fc dk"><span class="ko" data-i>E 드리프트 <em>−1e−5</em></span><span class="en" data-i>E drift <em>−1e−5</em></span></span></div>
+<p><span class="ko" data-i>노트북 02 · W05 통계의 재료</span><span class="en" data-i>Notebook 02 · material for W05 statistics</span></p>
+</div>
+</div>
+<div class="plan">
+<div class="lines">
+<div class="ln a" style="--d:1"><span class="nn">3-1</span><div><h4><span class="ko" data-i>재료 거동의 미시 원인</span><span class="en" data-i>Microscopic cause of material behavior</span></h4><p><span class="ko" data-i>시험체 ↔ 원자 상자 · 우물 애니 · P3-1</span><span class="en" data-i>Specimen ↔ atom box · well animation · P3-1</span></p></div><span class="min"><span class="ko" data-i>13.5분</span><span class="en" data-i>13.5 min</span></span></div>
+<div class="ln a" style="--d:2"><span class="nn">3-2</span><div><h4><span class="ko" data-i>운동방정식 · MD 순환</span><span class="en" data-i>Equations of motion · MD loop</span></h4><p><span class="ko" data-i>힘 = 기울기 · 한 스텝 · 궤적 · 온도 · 시드</span><span class="en" data-i>Force = slope · one step · trajectory · temperature · seed</span></p></div><span class="min"><span class="ko" data-i>13분</span><span class="en" data-i>13 min</span></span></div>
+<div class="ln a" style="--d:3"><span class="nn">3-3</span><div><h4><span class="ko" data-i>퍼텐셜 에너지</span><span class="en" data-i>Potential energy</span></h4><p><span class="ko" data-i>5항 · LJ 곡선 · 결합 vs 비결합 · P3-2</span><span class="en" data-i>5 terms · LJ curve · bonded vs nonbonded · P3-2</span></p></div><span class="min"><span class="ko" data-i>12분</span><span class="en" data-i>12 min</span></span></div>
+<div class="ln a" style="--d:4"><span class="nn">3-4</span><div><h4><span class="ko" data-i>수치적분과 Δt</span><span class="en" data-i>Numerical integration and Δt</span></h4><p><span class="ko" data-i>Verlet 3단계 · 프레임 비유 · Δt 조작형 · 시간 척도 · P3-3</span><span class="en" data-i>Verlet 3 stages · frame analogy · Δt interactive · time scales · P3-3</span></p></div><span class="min"><span class="ko" data-i>16.5분</span><span class="en" data-i>16.5 min</span></span></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>준비물 <b>Claude Code · mdai</b> · 선수 지식 = 응력–변형률 · 미분 = 기울기</span><span class="en" data-i>Prerequisites <b>Claude Code · mdai</b> · background = stress–strain · derivative = slope</span></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>계획서 50분 · 원본 02주차 2-1 ~ 2-3 · 1차시 신설 · 수치 = 탄소 LJ(ε 0.109 · σ 3.40) · C–C 결합(K 478.4 · r₀ 1.387 · 원본 02#16 노트 값)</span><span class="en" data-i>Plan 50 min · original week-02 2-1 ~ 2-3 · session 1 new · values = carbon LJ (ε 0.109 · σ 3.40) · C–C bond (K 478.4 · r₀ 1.387 · original 02#16 note values)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 3 차시 3-1 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 3-1 · 13.5분 · 영상 1편</span><span class="en" data-i>Session 3-1 · 13.5 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="microscope"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">1</p><p class="hubt"><span class="ko" data-i>재료 거동의 미시 원인</span><span class="en" data-i>Microscopic cause of material behavior</span></p><p class="hubs"><span class="ko" data-i>재료역학의 언어 → 원자의 언어</span><span class="en" data-i>Language of mechanics of materials → language of atoms</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>내 재료의 거시 물성 ↔ 미시 원인 표</span><span class="en" data-i>Table: macroscopic properties of my material ↔ microscopic causes</span></h4></div></div><p><span class="ko" data-i>프롬프트 P3-1 로 물성 3개의 원인 · MD 대응량 · 성격(정량/경향) 표</span><span class="en" data-i>Prompt P3-1 → table of cause · MD counterpart · nature (quantitative/trend) for 3 properties</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>재료역학 → 원자 언어</span><span class="en" data-i>Mechanics of materials → atomic language</span></h4></div></div><p><span class="ko" data-i>시험체 측정량 → 원자 사이 힘 · 에너지로 재표현 · 수치는 W09 · W10</span><span class="en" data-i>Re-express specimen measurements as forces · energies between atoms · values in W09 · W10</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 4 FIG 시험체 ↔ 원자 상자 (표 + 맥동 선) -->
+<section class="slide v3" data-min="2.5">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>3-1 · 왜</span><span class="en" data-i>3-1 · Why</span></p>
+<div class="hrow"><span class="hico" data-ico="scale"></span><h2 class="h"><span class="ko" data-i>시험체의 물성 5 = 원자 상호작용의 평균 · MD = 그 상호작용의 직접 계산</span><span class="en" data-i>5 specimen properties = average of atomic interactions · MD = direct calculation of those interactions</span></h2></div>
+<p class="sub"><span class="ko" data-i>왼쪽은 재는 양, 오른쪽은 그 양을 만드는 원자 · 대응은 정성적 · 숫자는 W09 · W10</span><span class="en" data-i>Left = quantity measured, right = atoms producing it · mapping is qualitative · numbers in W09 · W10</span></p>
+<div class="bd">
+<div class="w03-link">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="ruler"></span><div><p class="k">mm ~ cm</p><h4><span class="ko" data-i>시험체</span><span class="en" data-i>Specimen</span></h4></div></div>
+<div class="figw white"><svg viewBox="0 0 260 220"><rect x="90" y="40" width="80" height="140" rx="8" fill="#6E655C"/><path d="M130 10 L130 40 M130 180 L130 210" stroke="#D9534F" stroke-width="6"/><path d="M118 18 L130 4 L142 18 Z M118 202 L130 216 L142 202 Z" fill="#D9534F"/><text x="200" y="115" class="cfs">σ · ε</text></svg></div>
+<p><span class="ko" data-i>하중 · 온도 · 물 → σ · ε · 점도 · 파괴 · <b>원인 관측 불가</b></span><span class="en" data-i>Load · temperature · water → σ · ε · viscosity · fracture · <b>cause not observable</b></span></p></div>
+<svg class="w03-conn" viewBox="0 0 60 420" preserveAspectRatio="none"><g stroke-width="3"><line class="tl" x1="0" y1="60" x2="60" y2="60"/><line class="tl" x1="0" y1="135" x2="60" y2="135" style="animation-delay:.3s"/><line class="tl" x1="0" y1="210" x2="60" y2="210" style="animation-delay:.6s"/><line class="tl" x1="0" y1="285" x2="60" y2="285" style="animation-delay:.9s"/><line class="tl" x1="0" y1="360" x2="60" y2="360" style="animation-delay:1.2s"/></g></svg>
+<table class="t a" style="--d:2"><thead><tr><th><span class="ko" data-i>거시 물성</span><span class="en" data-i>Macroscopic property</span></th><th><span class="ko" data-i>미시 원인</span><span class="en" data-i>Microscopic cause</span></th><th><span class="ko" data-i>MD 산출량 · 주차</span><span class="en" data-i>MD output · week</span></th></tr></thead><tbody>
+<tr><td><span class="ko" data-i>강성 (σ–ε 기울기)</span><span class="en" data-i>Stiffness (σ–ε slope)</span></td><td><span class="ko" data-i>결합 · 응집력의 세기</span><span class="en" data-i>Strength of bonds · cohesion</span></td><td class="mono"><span class="ko" data-i>퍼텐셜 곡률 · W09</span><span class="en" data-i>Potential curvature · W09</span></td></tr>
+<tr><td><span class="ko" data-i>점도</span><span class="en" data-i>Viscosity</span></td><td><span class="ko" data-i>분자 자리바꿈 속도</span><span class="en" data-i>Molecular rearrangement rate</span></td><td class="mono"><span class="ko" data-i>응력 자기상관 · W09</span><span class="en" data-i>Stress autocorrelation · W09</span></td></tr>
+<tr><td><span class="ko" data-i>유리전이 Tg</span><span class="en" data-i>Glass transition Tg</span></td><td><span class="ko" data-i>분자 이동 정지 · 자유 부피</span><span class="en" data-i>Molecular motion freezes · free volume</span></td><td class="mono"><span class="ko" data-i>부피–온도 꺾임 · W09</span><span class="en" data-i>Volume–temperature kink · W09</span></td></tr>
+<tr><td><span class="ko" data-i>부착 (계면)</span><span class="en" data-i>Adhesion (interface)</span></td><td><span class="ko" data-i>이종 재료 원자 간 인력</span><span class="en" data-i>Attraction between atoms of dissimilar materials</span></td><td class="mono"><span class="ko" data-i>계면 분리일 · W10</span><span class="en" data-i>Interfacial work of separation · W10</span></td></tr>
+<tr><td><span class="ko" data-i>강도 (최대 σ)</span><span class="en" data-i>Strength (peak σ)</span></td><td><span class="ko" data-i>결합 파단 · 분자 미끄러짐</span><span class="en" data-i>Bond rupture · molecular slip</span></td><td class="mono"><span class="ko" data-i>σ–ε 최대점 · W10</span><span class="en" data-i>σ–ε peak · W10</span></td></tr></tbody></table>
+<svg class="w03-conn" viewBox="0 0 60 420" preserveAspectRatio="none"><g stroke-width="3"><line class="tl" x1="0" y1="60" x2="60" y2="60" style="animation-delay:.15s"/><line class="tl" x1="0" y1="135" x2="60" y2="135" style="animation-delay:.45s"/><line class="tl" x1="0" y1="210" x2="60" y2="210" style="animation-delay:.75s"/><line class="tl" x1="0" y1="285" x2="60" y2="285" style="animation-delay:1.05s"/><line class="tl" x1="0" y1="360" x2="60" y2="360" style="animation-delay:1.35s"/></g></svg>
+<div class="it hot a" style="--d:3"><div class="ih"><span class="icb" data-ico="atom"></span><div><p class="k">nm</p><h4><span class="ko" data-i>원자 상자</span><span class="en" data-i>Atom box</span></h4></div></div>
+<div class="figw white"><svg viewBox="0 0 260 220"><rect x="30" y="30" width="200" height="160" fill="none" stroke="#F99D1C" stroke-width="3" stroke-dasharray="8 6"/><g fill="#4F7FB0"><circle cx="70" cy="70" r="10"/><circle cx="130" cy="90" r="10"/><circle cx="200" cy="60" r="10"/><circle cx="90" cy="160" r="10"/><circle cx="170" cy="170" r="10"/><circle cx="150" cy="130" r="10"/></g><g stroke="#6E655C" stroke-width="3"><line x1="70" y1="70" x2="130" y2="90"/><line x1="130" y1="90" x2="150" y2="130"/><line x1="170" y1="170" x2="150" y2="130"/></g></svg></div>
+<p><span class="ko" data-i>위치 · 힘 · 에너지 → 시간 평균 · <b>원인을 직접 계산</b></span><span class="en" data-i>Position · force · energy → time average · <b>compute the cause directly</b></span></p></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>신설 · 정성 대응 · 수치 산출은 W09 · W10</span><span class="en" data-i>New · qualitative mapping · numbers derived in W09 · W10</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 5 ANIM 당기면 우물에서 -->
+<section class="slide v3" data-min="2.5" data-src="02주차#15">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>3-1 · 무엇</span><span class="en" data-i>3-1 · What</span></p>
+<div class="hrow"><span class="hico" data-ico="move-horizontal"></span><h2 class="h"><span class="ko" data-i>응력–변형률 곡선 = 원자쌍 퍼텐셜 우물: 기울기 = 강성 · 우물 탈출 = 파괴</span><span class="en" data-i>Stress–strain curve = atom-pair potential well: slope = stiffness · escape from well = fracture</span></h2></div>
+<p class="sub"><span class="ko" data-i>왼쪽 점 상승 ↔ 오른쪽 구슬의 우물 벽 상승 · 화살표 = 복원력 · 우물 밖 = 힘 소멸</span><span class="en" data-i>Left dot rising ↔ ball on right climbs the well wall · arrow = restoring force · outside well = force vanishes</span></p>
+<div class="bd"><div class="emb" data-emb="pull" data-dur="12" data-steps="3" data-labels="① 평형 r_min|② 탄성 · 복원력|③ 파괴 · 우물 탈출" data-labels-en="① Equilibrium r_min|② Elastic · restoring force|③ Fracture · leaving the well"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 02주차 덱 #15 · 탄소 원자쌍 LJ ε 0.109 kcal/mol · σ 3.40 Å · r_min 3.82 Å · 곡선 모양만 대응</span><span class="en" data-i>Original week-02 deck #15 · carbon atom-pair LJ ε 0.109 kcal/mol · σ 3.40 Å · r_min 3.82 Å · curve shape only</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 6 DEF 6 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>용어 정의</span><span class="en" data-i>Key terms</span></p>
+<div class="hrow"><span class="hico" data-ico="book-marked"></span><h2 class="h"><span class="ko" data-i>새 용어 6: 원자 · 분자 · 화학 결합 · 퍼텐셜 에너지 · 궤적 · 시간 간격</span><span class="en" data-i>6 new terms: atom · molecule · chemical bond · potential energy · trajectory · timestep</span></h2></div>
+<p class="sub"><span class="ko" data-i>영어 병기 · 한 줄 정의 · 다시 나오는 곳은 카드 아래</span><span class="en" data-i>English given · one-line definition · reappears below each card</span></p>
+<div class="bd">
+<div class="defs icon w03-def6">
+<div class="defcard icon a" style="--d:1"><span class="lic" data-ico="atom"></span><p class="term"><span class="ko" data-i>원자<em>atom</em></span><span class="en" data-i>Atom<em>atom</em></span></p><p class="def"><span class="ko" data-i>질량 m · 전하 q 를 가진 점 · 전자는 다루지 않고 힘장 식으로 대신</span><span class="en" data-i>Point with mass m · charge q · electrons not treated, replaced by force-field formulas</span></p><p class="again">W04</p></div>
+<div class="defcard icon a" style="--d:1"><span class="lic" data-ico="network"></span><p class="term"><span class="ko" data-i>분자<em>molecule</em></span><span class="en" data-i>Molecule<em>molecule</em></span></p><p class="def"><span class="ko" data-i>결합으로 묶인 원자 묶음 · 바인더 분자 1개 = 원자 수십~백여 개</span><span class="en" data-i>Group of atoms linked by bonds · 1 binder molecule = tens to over a hundred atoms</span></p><p class="again">W06</p></div>
+<div class="defcard icon a" style="--d:2"><span class="lic" data-ico="link"></span><p class="term"><span class="ko" data-i>화학 결합<em>chemical bond</em></span><span class="en" data-i>Chemical bond<em>chemical bond</em></span></p><p class="def"><span class="ko" data-i>전자를 공유해 묶인 원자쌍 · 힘장에서는 평형 길이 r₀ 의 용수철 항</span><span class="en" data-i>Atom pair held by shared electrons · in a force field a spring term with equilibrium length r₀</span></p><p class="again">W04</p></div>
+<div class="defcard icon a" style="--d:2"><span class="lic" data-ico="spline"></span><p class="term"><span class="ko" data-i>퍼텐셜 에너지<em>potential energy</em></span><span class="en" data-i>Potential energy<em>potential energy</em></span></p><p class="def"><span class="ko" data-i>원자 배치만으로 정해지는 에너지 U · 미분하면 힘 F = −∇U</span><span class="en" data-i>Energy U fixed by atom arrangement alone · derivative gives force F = −∇U</span></p><p class="again">3-3 · W04</p></div>
+<div class="defcard icon a" style="--d:3"><span class="lic" data-ico="route"></span><p class="term"><span class="ko" data-i>궤적<em>trajectory</em></span><span class="en" data-i>Trajectory<em>trajectory</em></span></p><p class="def"><span class="ko" data-i>스텝마다 저장한 좌표 · 속도(프레임)의 기록 · 물성 = 그 시간 평균</span><span class="en" data-i>Record of coordinates · velocities (frames) saved every step · property = its time average</span></p><p class="again">W05 · W09</p></div>
+<div class="defcard icon a" style="--d:3"><span class="lic" data-ico="timer"></span><p class="term"><span class="ko" data-i>시간 간격<em>timestep · Δt</em></span><span class="en" data-i>Timestep<em>timestep · Δt</em></span></p><p class="def"><span class="ko" data-i>적분이 한 번 전진하는 시간 · 보통 1 fs · 기록 간격과 구분</span><span class="en" data-i>Time advanced by one integration step · usually 1 fs · distinct from output interval</span></p><p class="again">3-4 · W06</p></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>정의 문구 = 저장소 GLOSSARY.md</span><span class="en" data-i>Definition wording = repository GLOSSARY.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 7 MAKE P3-1 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>3-1 · 만들어 보기</span><span class="en" data-i>3-1 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="pencil-ruler"></span><h2 class="h"><span class="ko" data-i>만들어 보기 P3-1: 내 재료의 거시 물성 3 → 미시 원인 · MD 산출량 표</span><span class="en" data-i>Try it P3-1: 3 macroscopic properties of my material → table of microscopic causes · MD outputs</span></h2></div>
+<div class="bd">
+<div class="make">
+<div class="left a" style="--d:1">
+<pre class="code"><span class="c"><span class="ko" data-i># 환경: Claude Code · week03 폴더에서 claude</span><span class="en" data-i># Setup: Claude Code · claude in week03 folder</span></span>
+<span class="c"><span class="ko" data-i># 1. 「복사」 → 붙여 넣기 → [재료] · [물성 3개] 수정</span><span class="en" data-i># 1. "Copy" → paste → edit [material] · [3 properties]</span></span>
+<span class="c"><span class="ko" data-i># 2. 결과 → out/P3-1_result.md (Claude Code 저장)</span><span class="en" data-i># 2. Result → out/P3-1_result.md (saved by Claude Code)</span></span>
+<span class="c"><span class="ko" data-i># 3. 4장의 표와 비교 · 빠진 열 → 같은 대화에서 수정</span><span class="en" data-i># 3. Compare with the table on slide 4 · missing column → fix in the same chat</span></span></pre>
+<div class="prompt" data-id="P3-1"><span class="pid">P3-1</span><span class="ko" data-i>나는 [SBS 개질 아스팔트 바인더]를 연구하고, 중요한 거시 물성은 [복소 전단 탄성률 G* · 저온 균열 저항 · 골재 부착성] 이다. 물성마다 표 한 줄: ① 시험 방법과 단위 ② 원자 · 분자 수준의 원인(결합 · 분자 간 인력 · 분자 이동 등의 단어로) ③ 분자동역학으로 계산할 수 있는 대응량 ④ 그 대응량이 정량적 예측인지 정성적 경향인지. 근거가 약한 칸은 「확인 필요」로 표시하고 지어내지 마라. 표는 out/P3-1_result.md 로 저장해라.</span><span class="en" data-i>I study [SBS-modified asphalt binder], and the important macroscopic properties are [complex shear modulus G* · low-temperature cracking resistance · aggregate adhesion]. One table row per property: ① test method and unit ② cause at atomic · molecular level (in words like bond · intermolecular attraction · molecular motion) ③ counterpart quantity computable by molecular dynamics ④ whether that quantity is a quantitative prediction or a qualitative trend. Mark weakly supported cells as "needs check" and do not invent. Save the table as out/P3-1_result.md.</span></div>
+</div>
+<div class="expect a" style="--d:2">
+<h4><span class="tic" data-ico="table"></span><span class="ko" data-i>기대 결과 · 표 3행 × 4열 (값은 예시)</span><span class="en" data-i>Expected output · table 3 rows × 4 columns (values are examples)</span></h4>
+<table class="t"><thead><tr><th><span class="ko" data-i>물성 · 시험 · 단위</span><span class="en" data-i>Property · test · unit</span></th><th><span class="ko" data-i>미시 원인</span><span class="en" data-i>Microscopic cause</span></th><th><span class="ko" data-i>MD 대응량</span><span class="en" data-i>MD counterpart</span></th><th><span class="ko" data-i>성격</span><span class="en" data-i>Nature</span></th></tr></thead><tbody>
+<tr><td>G* · DSR · Pa</td><td><span class="ko" data-i>분자 간 인력 · 자리바꿈 속도</span><span class="en" data-i>Intermolecular attraction · rearrangement rate</span></td><td><span class="ko" data-i>점도 · 응력 상관</span><span class="en" data-i>Viscosity · stress correlation</span></td><td><span class="ko" data-i>경향</span><span class="en" data-i>Trend</span></td></tr>
+<tr><td><span class="ko" data-i>저온 균열 · BBR · MPa</span><span class="en" data-i>Low-temperature cracking · BBR · MPa</span></td><td><span class="ko" data-i>분자 이동 정지(Tg) · 자유 부피</span><span class="en" data-i>Molecular motion freezes (Tg) · free volume</span></td><td><span class="ko" data-i>부피–온도 꺾임 Tg</span><span class="en" data-i>Volume–temperature kink Tg</span></td><td><span class="ko" data-i>경향</span><span class="en" data-i>Trend</span></td></tr>
+<tr class="hl"><td><span class="ko" data-i>골재 부착 · 인장 · mJ/m²</span><span class="en" data-i>Aggregate adhesion · tension · mJ/m²</span></td><td><span class="ko" data-i>이종 원자 간 인력 · 물의 끼어듦</span><span class="en" data-i>Attraction between dissimilar atoms · water intrusion</span></td><td><span class="ko" data-i>계면 분리일</span><span class="en" data-i>Interfacial work of separation</span></td><td><span class="ko" data-i>확인 필요 (W10)</span><span class="en" data-i>Needs check (W10)</span></td></tr></tbody></table>
+<div class="foot"><span class="ko" data-i>「확인 필요」 1칸 허용 · <b>W10 계산으로 기입</b></span><span class="en" data-i>1 "needs check" cell allowed · <b>fill in with W10 calculation</b></span></div>
+<p class="cap"><span class="ko" data-i>원인 열은 원자 언어 · 성격 열은 정량/경향 구분</span><span class="en" data-i>Cause column in atomic language · nature column separates quantitative/trend</span></p>
+</div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>원인 열에 「결합 · 인력 · 이동」 같은 원자 · 분자 단어가 있는가</span><span class="en" data-i>Does the cause column have atom · molecule words like "bond · attraction · motion"?</span></p><p><span class="ko" data-i>「정량」만 세 개면 의심 · 이 강좌의 대응은 대부분 경향</span><span class="en" data-i>Suspicious if all three are "quantitative" · most mappings in this course are trends</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>지시문 원문 week03/prompts.md · P3-1 · 환경 repo/docs/claude_code_quickstart.md · prompt_setup.md</span><span class="en" data-i>Prompt source week03/prompts.md · P3-1 · setup repo/docs/claude_code_quickstart.md · prompt_setup.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 8 차시 3-2 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 3-2 · 13분 · 영상 1편</span><span class="en" data-i>Session 3-2 · 13 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="function-square"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">2</p><p class="hubt"><span class="ko" data-i>운동방정식과 MD 순환</span><span class="en" data-i>Equations of motion and the MD loop</span></p><p class="hubs"><span class="ko" data-i>원자마다 힘 → 가속도 · Δt 단위 적분</span><span class="en" data-i>Force per atom → acceleration · integrate in Δt units</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>탄소 원자쌍 한 스텝의 숫자</span><span class="en" data-i>Numbers for one step of a carbon atom pair</span></h4></div></div><p><span class="ko" data-i>U −0.102 · F −0.0606 · a −2.11e−6 · r 4.00 → 4.01 Å · 노트북 01 셀 1~2 와 같은 값</span><span class="en" data-i>U −0.102 · F −0.0606 · a −2.11e−6 · r 4.00 → 4.01 Å · same values as notebook 01 cells 1~2</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>MD 의 정의</span><span class="en" data-i>Definition of MD</span></h4></div></div><p><span class="ko" data-i>힘의 원천(퍼텐셜)은 3-3 · 적분 방법(Verlet · Δt)은 3-4 · 평형화 · 통계는 W05</span><span class="en" data-i>Source of force (potential) in 3-3 · integration method (Verlet · Δt) in 3-4 · equilibration · statistics in W05</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 9 EQ F = ma -->
+<section class="slide v3" data-src="02주차#6">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>3-2 · 무엇 · 식 1개</span><span class="en" data-i>3-2 · What · 1 equation</span></p>
+<div class="hrow"><span class="hico" data-ico="sigma"></span><h2 class="h"><span class="ko" data-i>힘 = 에너지 곡선의 기울기</span><span class="en" data-i>Force = slope of the energy curve</span></h2></div>
+<p class="sub"><span class="ko" data-i>이번 주 식 1개 · 곡선이 내려가는 쪽으로 원자가 밀림 · 원자마다 힘 → 가속도 → 다음 위치 · 곡선의 내용은 3-3, 전진 방법은 3-4</span><span class="en" data-i>1 equation this week · atoms are pushed toward the downhill side of the curve · force per atom → acceleration → next position · curve content in 3-3, stepping method in 3-4</span></p>
+<div class="bd">
+<div class="row">
+<div class="col" style="width:700px;flex:none">
+<div class="eqbox w03-eq a" style="--d:1"><p class="eq"><span class="ko" data-i>힘 = −(에너지 곡선의 기울기)<br></span><span class="en" data-i>Force = −(slope of energy curve)<br></span><span class="tb"><span class="ko" data-i>각 원자 · 매 스텝 · 힘 ÷ 질량 = 가속도</span><span class="en" data-i>Each atom · every step · force ÷ mass = acceleration</span></span></p></div>
+<table class="t eqt a" style="--d:2"><thead><tr><th><span class="ko" data-i>말로 읽기</span><span class="en" data-i>Read in words</span></th><th><span class="ko" data-i>숫자로 한 번</span><span class="en" data-i>One example with numbers</span></th></tr></thead><tbody>
+<tr><td><span class="ko" data-i>내리막 쪽으로 밀림 · 바닥에서 힘 0</span><span class="en" data-i>Pushed downhill · force 0 at the bottom</span></td><td><span class="ko" data-i>탄소 원자쌍 4.00 Å → 힘 −0.0606 kcal/mol·Å</span><span class="en" data-i>Carbon atom pair 4.00 Å → force −0.0606 kcal/mol·Å</span></td></tr>
+<tr><td><span class="ko" data-i>기울기 음 → 바깥(반발) · 양 → 안쪽(인력)</span><span class="en" data-i>Slope negative → outward (repulsion) · positive → inward (attraction)</span></td><td><span class="ko" data-i>음수 = 인력(안쪽) · 다음 장에서 한 스텝 전진</span><span class="en" data-i>Negative = attraction (inward) · advance one step on the next slide</span></td></tr></tbody></table>
+<div class="it dark a" style="--d:4"><p><span class="ko" data-i>원자 10만 개 = 연립 방정식 10만 개 · F 가 모든 위치에 의존 → <b>닫힌 해 없음 → Δt 로 수치 적분</b></span><span class="en" data-i>100,000 atoms = 100,000 coupled equations · F depends on all positions → <b>no closed-form solution → numerical integration in Δt</b></span></p></div>
+</div>
+<div class="figw white fill a" style="--d:2"><svg viewBox="0 0 840 560" class="cfig">
+<line x1="90" y1="380" x2="800" y2="380" stroke="#6E655C" stroke-width="2"/><line x1="90" y1="50" x2="90" y2="520" stroke="#6E655C" stroke-width="2"/>
+<path d="M150 52 C 172 300, 230 470, 290 508 S 420 490, 800 395" fill="none" stroke="#4F7FB0" stroke-width="5"/>
+<text x="110" y="70" class="cfs">U (kcal/mol)</text><text x="790" y="420" text-anchor="end" class="cfs">r (Å)</text>
+<circle cx="205" cy="340" r="14" fill="#F99D1C" stroke="#E37F1A" stroke-width="3"/><circle class="pulse" cx="205" cy="340" r="14" fill="#F99D1C" opacity=".4"/><line x1="225" y1="300" x2="320" y2="300" stroke="#D9534F" stroke-width="6" stroke-linecap="round"/><path d="M310 288 L332 300 L310 312 Z" fill="#D9534F"/><text x="345" y="307" class="cfh" fill="#D9534F" font-size="22"><tspan class="ko" data-i>기울기 음 → 힘 바깥 (반발)</tspan><tspan class="en" data-i>Slope negative → force outward (repulsion)</tspan></text>
+<circle cx="520" cy="480" r="14" fill="#F99D1C" stroke="#E37F1A" stroke-width="3"/><circle class="pulse" cx="520" cy="480" r="14" fill="#F99D1C" opacity=".4"/><line x1="500" y1="440" x2="410" y2="440" stroke="#D9534F" stroke-width="6" stroke-linecap="round"/><path d="M420 428 L398 440 L420 452 Z" fill="#D9534F"/><text x="540" y="447" class="cfh" fill="#D9534F" font-size="22"><tspan class="ko" data-i>기울기 양 → 힘 안쪽 (인력)</tspan><tspan class="en" data-i>Slope positive → force inward (attraction)</tspan></text>
+<circle cx="295" cy="508" r="14" fill="#2E8B57"/><text x="295" y="545" text-anchor="middle" class="cfh" fill="#2E8B57" font-size="22"><tspan class="ko" data-i>기울기 0 → 힘 0 · 평형 r_min</tspan><tspan class="en" data-i>Slope 0 → force 0 · equilibrium r_min</tspan></text>
+</svg></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 02주차 덱 #6 · 운동방정식 전체 · 기호표 · 단위 = week03/docs/motion_notes.md 「덱에서 옮긴 식」 · notebooks/01_lj_pair_verlet.ipynb</span><span class="en" data-i>Original week-02 deck #6 · full equations of motion · symbol table · units = week03/docs/motion_notes.md "Equations moved from deck" · notebooks/01_lj_pair_verlet.ipynb</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 10 ANIM MD 순환 · 실시간 에너지 -->
+<section class="slide v3" data-min="2" data-src="02주차#7">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>3-2 · 어떻게</span><span class="en" data-i>3-2 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="refresh-cw"></span><h2 class="h"><span class="ko" data-i>MD 순환 4단계: 에너지 → 힘 → 한 걸음 전진 → 기록</span><span class="en" data-i>MD loop, 4 steps: energy → force → advance one step → record</span></h2></div>
+<p class="sub"><span class="ko" data-i>반복 10⁶회 · 위 띠 네 칸 순차 표시 · 상자의 꼬리 = 최근 궤적 · 오른쪽 K · U · E = 스텝마다 갱신 · <b>E 는 수평(보존)</b></span><span class="en" data-i>Repeat 10⁶ times · four cells of top band shown in sequence · tail in box = recent trajectory · K · U · E at right update every step · <b>E stays flat (conserved)</b></span></p>
+<div class="bd"><div class="emb" data-emb="cycle4" data-dur="12" data-steps="4" data-labels="① 에너지|② 힘 = −기울기|③ 한 걸음 전진|④ 기록 → ①" data-labels-en="① Energy|② Force = −slope|③ Advance one step|④ Record → ①"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 02주차 덱 #7 · 100만 스텝 × 1 fs = 1 ns · 힘 계산이 비용의 대부분(W04 이웃 목록) · 상자 = 2D LJ 환산단위</span><span class="en" data-i>Original week-02 deck #7 · 1,000,000 steps × 1 fs = 1 ns · force calculation is most of the cost (W04 neighbor list) · box = 2D LJ reduced units</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 11 ANIM 한 스텝 수치 -->
+<section class="slide v3" data-min="2" data-src="02주차#8">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>3-2 · 수치 예시</span><span class="en" data-i>3-2 · Numeric example</span></p>
+<div class="hrow"><span class="hico" data-ico="calculator"></span><h2 class="h"><span class="ko" data-i>탄소 원자쌍 한 스텝: 숫자로 한 번</span><span class="en" data-i>One step of a carbon atom pair: one example with numbers</span></h2></div>
+<p class="sub"><span class="ko" data-i>U −0.102 · F −0.0606 · r 4.00 → 4.01 Å(Δt 1 fs) · 이동 0.01 Å 은 거의 전부 열운동 · 힘 항 = 네 자리 작음</span><span class="en" data-i>U −0.102 · F −0.0606 · r 4.00 → 4.01 Å (Δt 1 fs) · the 0.01 Å move is almost all thermal motion · force term = four digits smaller</span></p>
+<div class="bd"><div class="emb" data-emb="onestep" data-dur="12" data-steps="4" data-labels="① 에너지|② 힘 = −기울기|③ 가속도 = 힘 ÷ 질량|④ 새 위치" data-labels-en="① Energy|② Force = −slope|③ Acceleration = force ÷ mass|④ New position"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 02주차 덱 #8 · 환산 1 (kcal/mol/Å)/(g/mol) = 4.184 × 10⁻⁴ Å/fs² · 같은 숫자: notebooks/01_lj_pair_verlet.ipynb 셀 1~3</span><span class="en" data-i>Original week-02 deck #8 · conversion 1 (kcal/mol/Å)/(g/mol) = 4.184 × 10⁻⁴ Å/fs² · same numbers: notebooks/01_lj_pair_verlet.ipynb cells 1~3</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 12 ANIM 궤적 · 시간 평균 (실시간 그리기) -->
+<section class="slide v3" data-min="2" data-src="02주차#9,02주차#10">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>3-2 · 무엇</span><span class="en" data-i>3-2 · What</span></p>
+<div class="hrow"><span class="hico" data-ico="line-chart"></span><h2 class="h"><span class="ko" data-i>궤적의 시간 평균 = 물성 · 순간값 ≠ 물성</span><span class="en" data-i>Time average of trajectory = property · instantaneous value ≠ property</span></h2></div>
+<p class="sub"><span class="ko" data-i>비유 = 사진 1장 아닌 동영상 전체의 평균 · 온도 1,001점 · 한 스텝의 온도(순간값) = 190 ~ 241 K 요동 · 보고하는 것은 <b>평균 214 K</b> · 「언제부터 · 얼마나」 = W05</span><span class="en" data-i>Analogy = average of the whole video, not of 1 photo · 1,001 temperature points · temperature at one step (instantaneous) fluctuates 190 ~ 241 K · report the <b>average 214 K</b> · "from when · how long" = W05</span></p>
+<div class="bd">
+<div class="row">
+<div class="figw white fill"><div class="emb" data-emb="tseries" data-dur="12"></div></div>
+<div class="col" style="width:470px;flex:none">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="equal"></span><div><p class="k"><span class="ko" data-i>직접 평균</span><span class="en" data-i>Direct average</span></p><h4><span class="ko" data-i>온도 · 압력 · 에너지 · 밀도 · CED</span><span class="en" data-i>Temperature · pressure · energy · density · CED</span></h4></div></div></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="activity"></span><div><p class="k"><span class="ko" data-i>요동 · 상관</span><span class="en" data-i>Fluctuation · correlation</span></p><h4><span class="ko" data-i>점도 · 확산 계수 · 탄성계수</span><span class="en" data-i>Viscosity · diffusion coefficient · elastic modulus</span></h4></div></div></div>
+<div class="it dark a" style="--d:3"><div class="ih"><span class="icb" data-ico="shield-check"></span><div><p class="k"><span class="ko" data-i>조건</span><span class="en" data-i>Conditions</span></p><h4><span class="ko" data-i>평형 상태 · 충분히 긴 궤적</span><span class="en" data-i>Equilibrium state · sufficiently long trajectory</span></h4></div></div><p><span class="ko" data-i>Tg 아래 유리 상태 = 평균이 수렴하지 않는 사례 (W05 · W09)</span><span class="en" data-i>Glassy state below Tg = a case where the average does not converge (W05 · W09)</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 02주차 덱 #9 · #10 · 데이터 week03/expected_output/lj_energy.csv (노트북 02 결과 · 1,001행)</span><span class="en" data-i>Original week-02 deck #9 · #10 · data week03/expected_output/lj_energy.csv (notebook 02 result · 1,001 rows)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 13 ANIM 온도 = 속도 분포 -->
+<section class="slide v3" data-min="2" data-src="02주차#11">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>3-2 · 확인</span><span class="en" data-i>3-2 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="thermometer"></span><h2 class="h"><span class="ko" data-i>온도 = 원자 속도 분포의 폭</span><span class="en" data-i>Temperature = width of atomic velocity distribution</span></h2></div>
+<p class="sub"><span class="ko" data-i>빨리 흔들릴수록 고온 · 주황 화살표 = 속도 벡터 · 오른쪽 히스토그램 누적 → 빨간 곡선(초기 속도 분포 · 맥스웰–볼츠만 Maxwell–Boltzmann)에 수렴 · T₀ ↑ → 분포 폭 ↑</span><span class="en" data-i>Faster shaking = hotter · orange arrow = velocity vector · right histogram accumulates → converges to red curve (initial velocity distribution · Maxwell–Boltzmann) · T₀ ↑ → wider distribution</span></p>
+<div class="bd"><div class="emb" data-emb="vhist" data-dur="12" data-steps="3" data-labels="① T₀ 0.3 (좁다)|② T₀ 0.6|③ T₀ 1.2 (넓다)" data-labels-en="① T₀ 0.3 (narrow)|② T₀ 0.6|③ T₀ 1.2 (wide)"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 02주차 덱 #11 · 초기 조건 규칙 3: 중심 운동량 0 · 시드 기록 · 초기 겹침 제거(최소화) · 상자 = 2D LJ 환산단위</span><span class="en" data-i>Original week-02 deck #11 · 3 initial-condition rules: center momentum 0 · record seed · remove initial overlaps (minimization) · box = 2D LJ reduced units</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 14 TWEAK 시드 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>3-2 · 바꿔 보기</span><span class="en" data-i>3-2 · Try changing</span></p>
+<div class="hrow"><span class="hico" data-ico="dices"></span><h2 class="h"><span class="ko" data-i>초기 속도 시드 교체: 궤적 · 온도 다름 · 에너지 보존 같음</span><span class="en" data-i>Swap initial velocity seed: trajectory · temperature differ · energy conservation same</span></h2></div>
+<p class="sub"><span class="ko" data-i>같은 격자 배치 · 속도 표본만 차이 · 64원자 작은 계: 시드 하나로 온도 30 K 차이</span><span class="en" data-i>Same lattice arrangement · only velocity sample differs · small 64-atom system: one seed gives 30 K temperature difference</span></p>
+<div class="bd">
+<div class="tweak">
+<div class="pane before a" style="--d:1"><h3><span class="tic" data-ico="dices"></span><span class="ko" data-i>전 · seed = 1 (노트북 02 기본)</span><span class="en" data-i>Before · seed = 1 (notebook 02 default)</span></h3>
+<pre class="code">lj_fluid(T0=300, <span class="k">seed=1</span>, steps=1000)</pre>
+<div class="figw white"><svg viewBox="0 0 700 272"><line x1="60" y1="220" x2="680" y2="220" stroke="#6E655C" stroke-width="2"/><line x1="60" y1="220" x2="60" y2="30" stroke="#6E655C" stroke-width="2"/><path d="M60 80 C 130 100, 200 140, 280 160 S 460 180, 540 195 S 660 172, 680 182" fill="none" stroke="#4F7FB0" stroke-width="4"/><text x="70" y="66" class="cfh" fill="#4F7FB0" font-size="22"><tspan class="ko" data-i>시작 240.5 K</tspan><tspan class="en" data-i>Start 240.5 K</tspan></text><text x="680" y="165" text-anchor="end" class="cfh" fill="#4F7FB0" font-size="22"><tspan class="ko" data-i>후반 평균 210.4 K</tspan><tspan class="en" data-i>Late average 210.4 K</tspan></text><line x1="60" y1="240" x2="680" y2="240" stroke="#2E8B57" stroke-width="3" stroke-dasharray="8 6"/><text x="370" y="266" text-anchor="middle" class="cfmu"><tspan class="ko" data-i>E 드리프트 −1 × 10⁻⁵ · 수평 = 보존</tspan><tspan class="en" data-i>E drift −1 × 10⁻⁵ · flat = conserved</tspan></text></svg></div>
+<p class="cap"><span class="ko" data-i>시작 온도 · 후반 평균 · 궤적 · 시드 1 의 값</span><span class="en" data-i>Start temperature · late average · trajectory · values for seed 1</span></p></div>
+<div class="pane after a" style="--d:2"><h3><span class="tic" data-ico="dices"></span><span class="ko" data-i>후 · seed = 2</span><span class="en" data-i>After · seed = 2</span></h3>
+<pre class="code">lj_fluid(T0=300, <span class="k">seed=2</span>, steps=1000)</pre>
+<div class="figw white"><svg viewBox="0 0 700 272"><line x1="60" y1="220" x2="680" y2="220" stroke="#6E655C" stroke-width="2"/><line x1="60" y1="220" x2="60" y2="30" stroke="#6E655C" stroke-width="2"/><path d="M60 45 C 140 60, 210 95, 300 115 S 480 125, 560 135 S 660 122, 680 130" fill="none" stroke="#E37F1A" stroke-width="4"/><text x="70" y="36" class="cfh" fill="#C8610C" font-size="22"><tspan class="ko" data-i>시작 270.1 K</tspan><tspan class="en" data-i>Start 270.1 K</tspan></text><text x="680" y="112" text-anchor="end" class="cfh" fill="#C8610C" font-size="22"><tspan class="ko" data-i>후반 평균 239.6 K</tspan><tspan class="en" data-i>Late average 239.6 K</tspan></text><line x1="60" y1="240" x2="680" y2="240" stroke="#2E8B57" stroke-width="3" stroke-dasharray="8 6"/><text x="370" y="266" text-anchor="middle" class="cfmu"><tspan class="ko" data-i>E 드리프트 ~10⁻⁵ · 보존 · 적분은 정상</tspan><tspan class="en" data-i>E drift ~10⁻⁵ · conserved · integration is fine</tspan></text></svg></div>
+<p class="cap"><span class="ko" data-i>온도 30 K 차이 · E 는 둘 다 수평 · 시드는 결과의 일부</span><span class="en" data-i>30 K temperature difference · E flat in both · seed is part of the result</span></p></div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>Claude Code 지시: 노트북 02 의 seed 만 2 로 바꿔 재실행 · 시작 온도 · 후반 평균이 바뀌는지, E 는 수평인지</span><span class="en" data-i>Claude Code prompt: change only seed to 2 in notebook 02 and rerun · check whether start temperature · late average change and whether E is flat</span></p><p><span class="ko" data-i>시드 기록 필수 · 시드 3개 평균으로 보고 (W05)</span><span class="en" data-i>Seed record required · report as average over 3 seeds (W05)</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>수치 = week03/scripts/lj_verlet.py lj_fluid(seed=1 · 2) · 후반 500스텝 평균</span><span class="en" data-i>Values = week03/scripts/lj_verlet.py lj_fluid(seed=1 · 2) · average of last 500 steps</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 15 차시 3-3 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 3-3 · 12분 · 영상 1편</span><span class="en" data-i>Session 3-3 · 12 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="spline"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">3</p><p class="hubt"><span class="ko" data-i>퍼텐셜 에너지</span><span class="en" data-i>Potential energy</span></p><p class="hubs"><span class="ko" data-i>U = 결합 3항 + 비결합 2항 · 모양과 응집</span><span class="en" data-i>U = 3 bonded terms + 2 nonbonded terms · shape and cohesion</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>내 분자의 결합 · 각 · 이면각 · 쌍 수</span><span class="en" data-i>Bonds · angles · dihedrals · pair counts of my molecule</span></h4></div></div><p><span class="ko" data-i>프롬프트 P3-2 로 SMILES 하나에서 N · N² 비례를 숫자로 확인</span><span class="en" data-i>Prompt P3-2 checks N · N² scaling numerically from one SMILES</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>MD 순환 ① U 의 내용</span><span class="en" data-i>MD loop ① content of U</span></h4></div></div><p><span class="ko" data-i>5항의 그림만 · 상수 k · ε · σ · q 의 출처는 W04 힘장</span><span class="en" data-i>Pictures of the 5 terms only · origin of constants k · ε · σ · q in W04 force field</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 16 FIG U 5항 -->
+<section class="slide v3" data-min="2.5" data-src="02주차#13,02주차#14">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>3-3 · 무엇 · 비유</span><span class="en" data-i>3-3 · What · Analogy</span></p>
+<div class="hrow"><span class="hico" data-ico="layers"></span><h2 class="h"><span class="ko" data-i>에너지 = 공과 용수철 모형: 용수철 3종(모양) + 끌림 2종(응집)</span><span class="en" data-i>Energy = balls-and-springs model: 3 kinds of spring (shape) + 2 kinds of attraction (cohesion)</span></h2></div>
+<p class="sub"><span class="ko" data-i>비유 = 공(원자) + 용수철(결합) + 자석(분자 사이 끌림) · 식 = docs · 상수 = W04</span><span class="en" data-i>Analogy = balls (atoms) + springs (bonds) + magnets (attraction between molecules) · formulas = docs · constants = W04</span></p>
+<div class="bd">
+<div class="grid c5 w03-fig5">
+<div class="it warm a" style="--d:1"><p class="k"><span class="ko" data-i>① 결합 신축</span><span class="en" data-i>① Bond stretching</span></p><div class="figw white"><svg viewBox="0 0 260 120"><circle cx="40" cy="60" r="16" fill="#4F7FB0"/><circle cx="220" cy="60" r="16" fill="#4F7FB0"/><path d="M56 60 l12 -16 l14 32 l14 -32 l14 32 l14 -32 l14 32 l14 -32 l14 32 l14 -32 l14 32 l12 -16" fill="none" stroke="#E37F1A" stroke-width="4"/></svg></div><h4><span class="ko" data-i>늘이면 되돌아옴</span><span class="en" data-i>Stretch it and it pulls back</span></h4><p><span class="ko" data-i>결합 길이 구속 · <b>가장 빠른 진동 → Δt 상한</b></span><span class="en" data-i>Bond length restraint · <b>fastest vibration → upper limit of Δt</b></span></p></div>
+<div class="it warm a" style="--d:1"><p class="k"><span class="ko" data-i>② 결합각</span><span class="en" data-i>② Bond angle</span></p><div class="figw white"><svg viewBox="0 0 260 120"><g stroke="#6E655C" stroke-width="5"><line x1="130" y1="95" x2="50" y2="35"/><line x1="130" y1="95" x2="210" y2="35"/></g><path d="M100 72 A 38 38 0 0 1 160 72" fill="none" stroke="#E37F1A" stroke-width="4"/><circle cx="130" cy="95" r="14" fill="#4F7FB0"/><circle cx="50" cy="35" r="14" fill="#4F7FB0"/><circle cx="210" cy="35" r="14" fill="#4F7FB0"/><text x="130" y="62" text-anchor="middle" class="cfq" font-size="20">θ</text></svg></div><h4><span class="ko" data-i>굽히면 되돌아옴</span><span class="en" data-i>Bend it and it pulls back</span></h4><p><span class="ko" data-i>국소 기하 · 고리 평면성</span><span class="en" data-i>Local geometry · ring planarity</span></p></div>
+<div class="it warm a" style="--d:2"><p class="k"><span class="ko" data-i>③ 이면각</span><span class="en" data-i>③ Dihedral</span></p><div class="figw white"><svg viewBox="0 0 260 120"><g stroke="#6E655C" stroke-width="5"><line x1="30" y1="95" x2="90" y2="50"/><line x1="90" y1="50" x2="170" y2="50"/><line x1="170" y1="50" x2="230" y2="15"/></g><g fill="#4F7FB0"><circle cx="30" cy="95" r="13"/><circle cx="90" cy="50" r="13"/><circle cx="170" cy="50" r="13"/><circle cx="230" cy="15" r="13"/></g><path d="M190 70 A 40 40 0 0 1 228 92" fill="none" stroke="#E37F1A" stroke-width="4"/><text x="236" y="112" class="cfq" font-size="20">φ</text></svg></div><h4><span class="ko" data-i>비틀면 걸리는 장벽</span><span class="en" data-i>Twist it and a barrier resists</span></h4><p><span class="ko" data-i>회전 장벽 · 사슬 유연성</span><span class="en" data-i>Rotation barrier · chain flexibility</span></p></div>
+<div class="it white a" style="--d:2"><p class="k"><span class="ko" data-i>④ 반데르발스</span><span class="en" data-i>④ van der Waals</span></p><div class="figw"><svg viewBox="0 0 260 120"><circle cx="90" cy="60" r="44" fill="#DCE7EC"/><circle cx="170" cy="60" r="44" fill="#DCE7EC"/><circle cx="90" cy="60" r="14" fill="#4F7FB0"/><circle cx="170" cy="60" r="14" fill="#4F7FB0"/></svg></div><h4><span class="ko" data-i>가까우면 밀고 멀면 당김</span><span class="en" data-i>Push when close, pull when far</span></h4><p><span class="ko" data-i>밀도 · CED · <b>12 Å 절단</b> (W04)</span><span class="en" data-i>Density · CED · <b>12 Å cutoff</b> (W04)</span></p></div>
+<div class="it white a" style="--d:3"><p class="k"><span class="ko" data-i>⑤ 정전기</span><span class="en" data-i>⑤ Electrostatic</span></p><div class="figw"><svg viewBox="0 0 260 120"><circle cx="80" cy="60" r="28" fill="#D9534F"/><text x="80" y="70" text-anchor="middle" class="cfw" font-size="28">+</text><circle cx="180" cy="60" r="28" fill="#4F7FB0"/><text x="180" y="70" text-anchor="middle" class="cfw" font-size="28">−</text><line class="tl" x1="108" y1="60" x2="152" y2="60" stroke-width="4"/></svg></div><h4><span class="ko" data-i>반대 부호 끌림</span><span class="en" data-i>Opposite signs attract</span></h4><p><span class="ko" data-i>극성 · 적층 · 계면 · 장거리(PPPM)</span><span class="en" data-i>Polarity · stacking · interface · long range (PPPM)</span></p></div>
+</div>
+<div class="foot a" style="--d:3"><span class="ko" data-i>결합 항 = 같은 분자 안 · 토폴로지로 미리 정함 · 비용 = 원자 수만큼 &nbsp;/&nbsp; 비결합 항 = 12 Å 안 모든 쌍 · <b>비용 = 원자 수 제곱만큼</b> · 1-2 · 1-3 쌍 제외</span><span class="en" data-i>Bonded terms = within same molecule · fixed beforehand by topology · cost = proportional to number of atoms &nbsp;/&nbsp; nonbonded terms = all pairs within 12 Å · <b>cost = proportional to atoms squared</b> · 1-2 · 1-3 pairs excluded</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 02주차 덱 #13 · #14 · GAFF2 형태 · 항별 식 = week03/docs/motion_notes.md 「덱에서 옮긴 식」</span><span class="en" data-i>Original week-02 deck #13 · #14 · GAFF2 form · per-term formulas = week03/docs/motion_notes.md "Equations moved from deck"</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 17 ANIM LJ 곡선 3구간 -->
+<section class="slide v3" data-min="3" data-src="02주차#15">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>3-3 · 어떻게</span><span class="en" data-i>3-3 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="spline"></span><h2 class="h"><span class="ko" data-i>LJ 곡선 3구간: 반발 벽 · 우물 바닥 · 꼬리와 절단</span><span class="en" data-i>LJ curve, 3 regions: repulsive wall · well bottom · tail and cutoff</span></h2></div>
+<p class="sub"><span class="ko" data-i>우물 바닥 3.82 Å · 12 Å 에서 절단 · 구슬 = 구간 안 왕복 · 화살표 길이 = 힘의 크기 · 왼쪽 벽에서 폭발, 바닥에서 0, 꼬리에서 거의 0</span><span class="en" data-i>Well bottom 3.82 Å · cutoff at 12 Å · ball = oscillation within region · arrow length = force magnitude · explodes at left wall, 0 at bottom, nearly 0 in tail</span></p>
+<div class="bd"><div class="emb" data-emb="ljwellbig" data-dur="12" data-steps="3" data-labels="① 반발 벽|② 우물 바닥|③ 꼬리 · 절단" data-labels-en="① Repulsive wall|② Well bottom|③ Tail · cutoff"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 02주차 덱 #15 · ε 0.109 kcal/mol · σ 3.40 Å · 12 Å 에서 U = −2.3 × 10⁻⁴ (ε 의 0.2 %) · 쿨롱 r⁻¹ 은 절단 불가 → W04 PPPM</span><span class="en" data-i>Original week-02 deck #15 · ε 0.109 kcal/mol · σ 3.40 Å · U = −2.3 × 10⁻⁴ at 12 Å (0.2 % of ε) · Coulomb r⁻¹ cannot be cut off → W04 PPPM</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 18 FIG 결합 vs 비결합 (표 + 맥동 쌍) -->
+<section class="slide v3" data-min="2.5" data-src="02주차#16">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>3-3 · 확인</span><span class="en" data-i>3-3 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="git-compare"></span><h2 class="h"><span class="ko" data-i>결합 항 = 강하고 적음 · 비결합 항 = 약하고 많음</span><span class="en" data-i>Bonded terms = strong and few · nonbonded terms = weak and many</span></h2></div>
+<p class="sub"><span class="ko" data-i>결합 항 → Δt 결정(빠른 진동) · 비결합 항 → 계산 시간 결정(쌍 수) · 같은 분자 안 1-2 · 1-3 쌍은 비결합에서 제외</span><span class="en" data-i>Bonded terms → set Δt (fast vibration) · nonbonded terms → set compute time (pair count) · 1-2 · 1-3 pairs within the same molecule excluded from nonbonded</span></p>
+<div class="bd">
+<div class="row">
+<div class="it warm a fill" style="--d:1"><div class="ih"><span class="icb" data-ico="link"></span><div><p class="k"><span class="ko" data-i>결합 항 · 분자 1개의 모양</span><span class="en" data-i>Bonded terms · shape of 1 molecule</span></p><h4><span class="ko" data-i>결합 · 각 · 이면각 ≈ 원자 수</span><span class="en" data-i>Bonds · angles · dihedrals ≈ number of atoms</span></h4></div></div>
+<div class="figw white"><svg viewBox="0 0 700 170"><g stroke="#6E655C" stroke-width="6"><line x1="60" y1="120" x2="160" y2="50"/><line x1="160" y1="50" x2="260" y2="120"/><line x1="260" y1="120" x2="360" y2="50"/><line x1="360" y1="50" x2="460" y2="120"/><line x1="460" y1="120" x2="560" y2="50"/><line x1="560" y1="50" x2="640" y2="120"/></g><g fill="#4F7FB0"><circle cx="60" cy="120" r="16"/><circle cx="160" cy="50" r="16"/><circle cx="260" cy="120" r="16"/><circle cx="360" cy="50" r="16"/><circle cx="460" cy="120" r="16"/><circle cx="560" cy="50" r="16"/><circle cx="640" cy="120" r="16"/></g></svg></div>
+<p><span class="ko" data-i>세기 강함 · 수 적음 · C–C 0.1 Å 신장 ≈ 478.4 × 0.1² ≈ <b>4.8 kcal/mol</b> · 가장 빠른 진동 C–H ≈ 10 fs → Δt 1 fs</span><span class="en" data-i>Strong · few · C–C 0.1 Å stretch ≈ 478.4 × 0.1² ≈ <b>4.8 kcal/mol</b> · fastest vibration C–H ≈ 10 fs → Δt 1 fs</span></p></div>
+<div class="it white a fill" style="--d:2"><div class="ih"><span class="icb" data-ico="network"></span><div><p class="k"><span class="ko" data-i>비결합 항 · 분자들이 뭉치는 힘</span><span class="en" data-i>Nonbonded terms · forces that make molecules cluster</span></p><h4><span class="ko" data-i>쌍 수 = 원자 수 제곱</span><span class="en" data-i>Pair count = atoms squared</span></h4></div></div>
+<div class="figw"><svg viewBox="0 0 700 170" id="w03-pairs"></svg></div>
+<p><span class="ko" data-i>쌍 하나는 약함(ε ≈ 0.1 kcal/mol) · 수가 압도 · 밀도 · CED · 점도 · 부착 지배 · <b>컷오프 12 Å · 이웃 목록 · PPPM</b> (W04)</span><span class="en" data-i>One pair is weak (ε ≈ 0.1 kcal/mol) · the number dominates · density · CED · viscosity · adhesion governed · <b>cutoff 12 Å · neighbor list · PPPM</b> (W04)</span></p></div>
+</div>
+<table class="t a" style="--d:3"><thead><tr><th><span class="ko" data-i>항목</span><span class="en" data-i>Item</span></th><th><span class="ko" data-i>결합 항</span><span class="en" data-i>Bonded terms</span></th><th><span class="ko" data-i>비결합 항</span><span class="en" data-i>Nonbonded terms</span></th></tr></thead><tbody>
+<tr><td><span class="ko" data-i>쌍의 수</span><span class="en" data-i>Number of pairs</span></td><td><span class="ko" data-i>원자 수 · 고정</span><span class="en" data-i>Number of atoms · fixed</span></td><td><span class="ko" data-i>제곱의 절반 → 컷오프 안만</span><span class="en" data-i>Half of square → only within cutoff</span></td></tr>
+<tr><td><span class="ko" data-i>세기 · 역할</span><span class="en" data-i>Strength · role</span></td><td><span class="ko" data-i>강함 · 분자 모양 · Δt 상한</span><span class="en" data-i>Strong · molecular shape · upper limit of Δt</span></td><td><span class="ko" data-i>약함 · 응집 · 밀도 · 부착</span><span class="en" data-i>Weak · cohesion · density · adhesion</span></td></tr>
+<tr><td><span class="ko" data-i>계산 비용</span><span class="en" data-i>Computational cost</span></td><td><span class="ko" data-i>원자 수</span><span class="en" data-i>Number of atoms</span></td><td><span class="ko" data-i>제곱만큼 → 계산 시간 대부분</span><span class="en" data-i>Squared → most of compute time</span></td></tr></tbody></table>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 02주차 덱 #16 · K 478.4 · ε 0.086 = 원본 노트 값(GAFF 1세대 · W04 결정 16)</span><span class="en" data-i>Original week-02 deck #16 · K 478.4 · ε 0.086 = original note values (GAFF gen. 1 · W04 decision 16)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 19 MAKE P3-2 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>3-3 · 만들어 보기</span><span class="en" data-i>3-3 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="hash"></span><h2 class="h"><span class="ko" data-i>만들어 보기 P3-2: 내 분자 SMILES → 원자 · 결합 · 각 · 이면각 · 비결합 쌍 수</span><span class="en" data-i>Try it P3-2: my molecule SMILES → numbers of atoms · bonds · angles · dihedrals · nonbonded pairs</span></h2></div>
+<div class="bd">
+<div class="make">
+<div class="left a" style="--d:1">
+<pre class="code"><span class="c"><span class="ko" data-i># 환경: Claude Code · week03 폴더 · 새 대화(/clear)</span><span class="en" data-i># Setup: Claude Code · week03 folder · new chat (/clear)</span></span>
+<span class="c"><span class="ko" data-i># 1. 「복사」 → 붙여 넣기 → [SMILES] 수정</span><span class="en" data-i># 1. "Copy" → paste → edit [SMILES]</span></span>
+<span class="c"><span class="ko" data-i># 2. 결과 → out/P3-2_result.md (Claude Code 저장)</span><span class="en" data-i># 2. Result → out/P3-2_result.md (saved by Claude Code)</span></span>
+<span class="c"><span class="ko" data-i># 3. 톨루엔(Cc1ccccc1)으로 먼저 → 15 · 15 · 24 · 30</span><span class="en" data-i># 3. Start with toluene (Cc1ccccc1) → 15 · 15 · 24 · 30</span></span></pre>
+<div class="prompt" data-id="P3-2"><span class="pid">P3-2</span><span class="ko" data-i>SMILES [Cc1ccccc1] 분자에 대해 수소를 포함한 원자 수 N, 결합 수, 결합각(연속한 원자 3개) 수, 이면각(연속한 원자 4개) 수, 비결합 원자쌍 수 N(N−1)/2 를 세어 표로 적어라. 각 수가 N 에 어떻게 비례하는지(N 또는 N²) 한 줄씩 적고, 가장 빠른 진동이 어느 결합(C–H)인지와 그 주기가 약 10 fs 라는 점을 근거와 함께 적어라. 세는 과정은 간단히 보여라. 센 수는 RDKit(mdai 환경)로 다시 세어 대조하고, 그 코드는 out/ 아래 새 파일로 만들어 내 승인 후 실행해라.</span><span class="en" data-i>For the molecule with SMILES [Cc1ccccc1], count the number of atoms N including hydrogens, bonds, bond angles (3 consecutive atoms), dihedrals (4 consecutive atoms), and nonbonded atom pairs N(N−1)/2, and write them in a table. Write in one line each how each count scales with N (N or N²), and state which bond (C–H) has the fastest vibration and that its period is about 10 fs, with the basis. Show the counting process briefly. Recount the numbers with RDKit (mdai environment) to cross-check, create that code as a new file under out/, and run it after my approval.</span></div>
+</div>
+<div class="expect a" style="--d:2">
+<h4><span class="tic" data-ico="table"></span><span class="ko" data-i>기대 결과 · 톨루엔 C₇H₈</span><span class="en" data-i>Expected output · toluene C₇H₈</span></h4>
+<table class="t"><thead><tr><th><span class="ko" data-i>항목</span><span class="en" data-i>Item</span></th><th><span class="ko" data-i>수</span><span class="en" data-i>Count</span></th><th><span class="ko" data-i>N 과의 관계</span><span class="en" data-i>Relation to N</span></th></tr></thead><tbody>
+<tr><td><span class="ko" data-i>원자 N (H 포함)</span><span class="en" data-i>Atoms N (incl. H)</span></td><td class="mono">15</td><td> · </td></tr>
+<tr><td><span class="ko" data-i>결합</span><span class="en" data-i>Bonds</span></td><td class="mono">15</td><td>≈ N</td></tr>
+<tr><td><span class="ko" data-i>결합각</span><span class="en" data-i>Bond angles</span></td><td class="mono">24</td><td>≈ N</td></tr>
+<tr><td><span class="ko" data-i>이면각</span><span class="en" data-i>Dihedrals</span></td><td class="mono">30</td><td>≈ N</td></tr>
+<tr class="hl"><td><span class="ko" data-i>비결합 쌍 N(N−1)/2</span><span class="en" data-i>Nonbonded pairs N(N−1)/2</span></td><td class="mono">105</td><td>∝ N²</td></tr></tbody></table>
+<div class="cb"><span class="fc or"><span class="ko" data-i>결합 항 <em>69</em> ≈ 4.6 N</span><span class="en" data-i>Bonded terms <em>69</em> ≈ 4.6 N</span></span><span class="x">vs</span><span class="fc bl"><span class="ko" data-i>비결합 쌍 <em>105</em></span><span class="en" data-i>Nonbonded pairs <em>105</em></span></span><span class="x">→</span><span class="fc dk"><span class="ko" data-i>분자 수백 개면 쌍 수백만</span><span class="en" data-i>With hundreds of molecules, pairs reach millions</span></span></div>
+<p class="cap"><span class="ko" data-i>가장 빠른 진동 = C–H 신축 · 주기 ≈ 10 fs → Δt 1 fs · 내 분자로 교체 → 수만 변경 · 비례(N · N²) 동일</span><span class="en" data-i>Fastest vibration = C–H stretch · period ≈ 10 fs → Δt 1 fs · swap in my molecule → only the counts change · scaling (N · N²) same</span></p>
+</div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>결합 · 각 · 이면각 수가 원자 수의 1~2배 안이고, 쌍 수가 그 10배 이상인가</span><span class="en" data-i>Are the bond · angle · dihedral counts within 1~2× the atom count, and the pair count 10× or more of that?</span></p><p><span class="ko" data-i>가장 빠른 진동이 X–H 결합으로 적혔는가 · 아니면 Δt 상한 근거가 틀린 것</span><span class="en" data-i>Is the fastest vibration written as an X–H bond? · if not, the basis for the Δt limit is wrong</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>지시문 원문 week03/prompts.md · P3-2 · 톨루엔 수치 = week06/expected_output/toluene_box.data</span><span class="en" data-i>Prompt source week03/prompts.md · P3-2 · toluene values = week06/expected_output/toluene_box.data</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 20 차시 3-4 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 3-4 · 16.5분 · 영상 1편</span><span class="en" data-i>Session 3-4 · 16.5 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="timer"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">4</p><p class="hubt"><span class="ko" data-i>수치적분과 시간 간격</span><span class="en" data-i>Numerical integration and timestep</span></p><p class="hubs"><span class="ko" data-i>Verlet 3단계 · 시간 간격 규칙 · 발산</span><span class="en" data-i>Verlet 3 stages · timestep rule · divergence</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>Δt 스윕 그래프 · P3-3</span><span class="en" data-i>Δt sweep graph · P3-3</span></h4></div></div><p><span class="ko" data-i>조작형(23장)과 노트북 01 로 0.5 → 8 fs 에서 오차 0.4 % → 발산 직접 확인</span><span class="en" data-i>With the interactive (slide 23) and notebook 01, see directly error 0.4 % → divergence from 0.5 → 8 fs</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>MD 순환 ③ 적분</span><span class="en" data-i>MD loop ③ integration</span></h4></div></div><p><span class="ko" data-i>한 스텝 3단계 · Δt = 가장 빠른 진동 주기의 1/10 · 온도 조절은 W05</span><span class="en" data-i>One step in 3 stages · Δt = 1/10 of fastest vibration period · temperature control in W05</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 21 ANIM Verlet 3단계 -->
+<section class="slide v3" data-min="2" data-src="02주차#18,02주차#19,02주차#20">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>3-4 · 어떻게</span><span class="en" data-i>3-4 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="list-ordered"></span><h2 class="h"><span class="ko" data-i>한 스텝 3단계(velocity-Verlet): 힘 계산 → 속도 반 걸음 → 위치 한 걸음</span><span class="en" data-i>One step in 3 stages (velocity-Verlet): compute force → half-step velocity → full-step position</span></h2></div>
+<p class="sub"><span class="ko" data-i>다시 ① 에서 새 위치의 힘으로 속도 나머지 반 걸음 · 시간 대칭 · 드리프트 작음 · 힘 계산 1회/스텝</span><span class="en" data-i>Back to ① with force at new position for the other half-step of velocity · time symmetric · small drift · 1 force calculation/step</span></p>
+<div class="bd"><div class="emb" data-emb="verlet3" data-dur="9" data-steps="3" data-labels="① 힘 계산|② 속도 반 걸음|③ 위치 한 걸음" data-labels-en="① Force calculation|② Half-step velocity|③ Full-step position"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 02주차 덱 #18 ~ #20 · 숫자 = notebooks/01_lj_pair_verlet.ipynb 셀 2 · 7단계 전체 표 = week03/docs/motion_notes.md</span><span class="en" data-i>Original week-02 deck #18 ~ #20 · numbers = notebooks/01_lj_pair_verlet.ipynb cell 2 · full 7-stage table = week03/docs/motion_notes.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 22 FIG 비유 · 영화 프레임 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>3-4 · 비유</span><span class="en" data-i>3-4 · Analogy</span></p>
+<div class="hrow"><span class="hico" data-ico="video"></span><h2 class="h"><span class="ko" data-i>시간 간격 = 영화 프레임 간격: 너무 길면 공이 벽을 통과</span><span class="en" data-i>Timestep = movie frame interval: too long and the ball passes through the wall</span></h2></div>
+<p class="sub"><span class="ko" data-i>프레임 사이의 일 = 계산 밖 · 촘촘하면 충돌 포착 · 성기면 벽 너머로 건너뜀 → MD 발산과 같은 모양</span><span class="en" data-i>What happens between frames = outside the calculation · dense frames catch the collision · sparse frames jump past the wall → same shape as MD divergence</span></p>
+<div class="bd">
+<div class="row">
+<div class="figw white fill a" style="--d:1"><svg viewBox="0 0 1000 520" class="cfig">
+<g fill="#F6F0E7" stroke="#E2D8CA" stroke-width="2"><rect x="30" y="40" width="940" height="200" rx="14"/><rect x="30" y="290" width="940" height="200" rx="14"/></g>
+<g fill="#E2D8CA"><rect x="60" y="50" width="22" height="12" rx="3"/><rect x="160" y="50" width="22" height="12" rx="3"/><rect x="260" y="50" width="22" height="12" rx="3"/><rect x="360" y="50" width="22" height="12" rx="3"/><rect x="460" y="50" width="22" height="12" rx="3"/><rect x="560" y="50" width="22" height="12" rx="3"/><rect x="660" y="50" width="22" height="12" rx="3"/><rect x="860" y="50" width="22" height="12" rx="3"/><rect x="60" y="300" width="22" height="12" rx="3"/><rect x="360" y="300" width="22" height="12" rx="3"/><rect x="660" y="300" width="22" height="12" rx="3"/><rect x="860" y="300" width="22" height="12" rx="3"/></g>
+<text x="50" y="98" class="cfh" fill="#2E8B57" font-size="22"><tspan class="ko" data-i>촘촘한 프레임 (짧은 시간 간격)</tspan><tspan class="en" data-i>Dense frames (short timestep)</tspan></text>
+<text x="50" y="348" class="cfh" fill="#D9534F" font-size="22"><tspan class="ko" data-i>성긴 프레임 (긴 시간 간격)</tspan><tspan class="en" data-i>Sparse frames (long timestep)</tspan></text>
+<rect x="760" y="70" width="26" height="160" rx="4" fill="#6E655C"/><rect x="760" y="320" width="26" height="160" rx="4" fill="#6E655C"/>
+<text x="773" y="258" text-anchor="middle" class="cfmu"><tspan class="ko" data-i>벽</tspan><tspan class="en" data-i>Wall</tspan></text><text x="773" y="508" text-anchor="middle" class="cfmu"><tspan class="ko" data-i>벽</tspan><tspan class="en" data-i>Wall</tspan></text>
+<g fill="#4F7FB0"><circle cx="130" cy="150" r="18" opacity=".3"/><circle cx="250" cy="150" r="18" opacity=".4"/><circle cx="370" cy="150" r="18" opacity=".5"/><circle cx="490" cy="150" r="18" opacity=".6"/><circle cx="610" cy="150" r="18" opacity=".75"/><circle cx="738" cy="150" r="18"/></g>
+<g fill="#2E8B57"><circle cx="640" cy="200" r="14" opacity=".8"/><circle cx="520" cy="200" r="14" opacity=".6"/></g>
+<path d="M150 150 H 712" stroke="#4F7FB0" stroke-width="3" stroke-dasharray="8 8" fill="none"/><path d="M738 172 Q 720 200 660 200" stroke="#2E8B57" stroke-width="4" fill="none"/><path d="M548 200 h-12" stroke="#2E8B57" stroke-width="4"/><path d="M540 190 L520 200 L540 210 Z" fill="#2E8B57"/>
+<text x="850" y="158" text-anchor="middle" class="cfh" fill="#2E8B57" font-size="22"><tspan class="ko" data-i>충돌 포착</tspan><tspan class="en" data-i>Collision caught</tspan></text><text x="850" y="190" text-anchor="middle" class="cfmu"><tspan class="ko" data-i>튕겨 나옴</tspan><tspan class="en" data-i>Bounces back</tspan></text>
+<g fill="#4F7FB0"><circle cx="130" cy="400" r="18" opacity=".4"/><circle cx="560" cy="400" r="18" opacity=".7"/></g><circle cx="900" cy="400" r="18" fill="#D9534F"/>
+<path class="flow" d="M580 400 H 878" stroke="#D9534F" stroke-width="4" stroke-dasharray="12 10" fill="none"/>
+<text x="900" y="448" text-anchor="middle" class="cfh" fill="#D9534F" font-size="22"><tspan class="ko" data-i>벽 뒤?</tspan><tspan class="en" data-i>Behind wall?</tspan></text><text x="560" y="448" text-anchor="middle" class="cfmu"><tspan class="ko" data-i>다음 프레임</tspan><tspan class="en" data-i>Next frame</tspan></text><text x="130" y="448" text-anchor="middle" class="cfmu"><tspan class="ko" data-i>프레임 ①</tspan><tspan class="en" data-i>Frame ①</tspan></text>
+<g stroke="#D9534F" stroke-width="5" stroke-linecap="round"><line x1="755" y1="365" x2="791" y2="401"/><line x1="791" y1="365" x2="755" y2="401"/></g>
+</svg></div>
+<div class="col" style="width:470px;flex:none">
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="video"></span><div><p class="k"><span class="ko" data-i>촘촘한 프레임</span><span class="en" data-i>Dense frames</span></p><h4><span class="ko" data-i>충돌 순간 포착 · 정상 반사</span><span class="en" data-i>Collision moment caught · normal reflection</span></h4></div></div><p><span class="ko" data-i>시간 간격 1 fs · 가장 빠른 진동 한 번에 프레임 10장</span><span class="en" data-i>Timestep 1 fs · 10 frames per fastest vibration</span></p></div>
+<div class="it a" style="--d:3"><div class="ih"><span class="icb" data-ico="triangle-alert"></span><div><p class="k"><span class="ko" data-i>성긴 프레임</span><span class="en" data-i>Sparse frames</span></p><h4><span class="ko" data-i>벽 앞 → 벽 뒤 · 충돌 누락</span><span class="en" data-i>Before wall → behind wall · collision missed</span></h4></div></div><p><span class="ko" data-i>원자가 반발 벽 안으로 파고듦 → 큰 힘 → 에너지 폭주 · 발산(8 fs)</span><span class="en" data-i>Atom digs into repulsive wall → large force → energy blow-up · divergence (8 fs)</span></p></div>
+<div class="it dark a" style="--d:4"><div class="ih"><span class="icb" data-ico="ruler"></span><div><p class="k"><span class="ko" data-i>규칙</span><span class="en" data-i>Rule</span></p><h4><span class="ko" data-i>가장 빠른 움직임의 1/10</span><span class="en" data-i>1/10 of the fastest motion</span></h4></div></div><p><span class="ko" data-i>C–H 진동 약 10 fs → 1 fs · 다음 장 조작형에서 확인</span><span class="en" data-i>C–H vibration about 10 fs → 1 fs · check in the next slide's interactive</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>비유 그림(계산값 아님) · 수치 = 다음 장 조작형 · scripts/lj_verlet.py dt_sweep</span><span class="en" data-i>Analogy figure (not calculated) · values = next slide's interactive · scripts/lj_verlet.py dt_sweep</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 22 SIM Δt -->
+<section class="slide v3" data-src="02주차#21">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>3-4 · 확인 · 조작형</span><span class="en" data-i>3-4 · Check · interactive</span></p>
+<div class="hrow"><span class="hico" data-ico="sliders-horizontal"></span><h2 class="h"><span class="ko" data-i>시간 간격이 클수록 에너지 오차 증가: C–C 결합 진동</span><span class="en" data-i>Larger timestep, larger energy error: C–C bond vibration</span></h2></div>
+<p class="sub"><span class="ko" data-i>주기 24 fs · Δt 슬라이더 ↑ → 결합 길이 곡선 거칠어짐 · E/E₀ 가 E₀ 선 이탈 · 8 fs 에서 폭주</span><span class="en" data-i>Period 24 fs · Δt slider ↑ → bond-length curve gets rough · E/E₀ leaves E₀ line · blows up at 8 fs</span></p>
+<div class="bd">
+<div class="sim" id="sim-dt">
+<div class="ctl">
+<label><span class="ko" data-i><b>시간 간격 Δt (fs) <output data-o="dt">1</output></b></span><span class="en" data-i><b>Timestep Δt (fs) <output data-o="dt">1</output></b></span><input type="range" min="0.25" max="10" value="1" step="0.25" data-k="dt"></label>
+<label><span class="ko" data-i><b>초기 신장 r − r₀ (Å) <output data-o="x0">0.10</output></b></span><span class="en" data-i><b>Initial stretch r − r₀ (Å) <output data-o="x0">0.10</output></b></span><input type="range" min="0.02" max="0.20" value="0.10" step="0.01" data-k="x0"></label>
+<label><span class="ko" data-i><b>총 시간 (fs) <output data-o="tmax">300</output></b></span><span class="en" data-i><b>Total time (fs) <output data-o="tmax">300</output></b></span><input type="range" min="100" max="1000" value="300" step="50" data-k="tmax"></label>
+<button type="button" data-act="fail"><span class="ko" data-i>실패 상태 재현 (Δt = 8 fs)</span><span class="en" data-i>Reproduce failure state (Δt = 8 fs)</span></button>
+<button type="button" class="alt" data-act="reset"><span class="ko" data-i>초기값 (Δt = 1 fs)</span><span class="en" data-i>Initial values (Δt = 1 fs)</span></button>
+</div>
+<div class="view"><svg viewBox="0 0 1160 420" aria-label="결합 길이와 에너지 시계열"></svg>
+<div class="kpi"><div><span class="ko" data-i>이론 진동 주기 <b data-o="T"> · </b></span><span class="en" data-i>Theoretical vibration period <b data-o="T"> · </b></span></div><div><span class="ko" data-i>최대 에너지 오차 <b data-o="err"> · </b></span><span class="en" data-i>Max energy error <b data-o="err"> · </b></span></div><div><span class="ko" data-i>판정 <b data-o="verdict"> · </b></span><span class="en" data-i>Verdict <b data-o="verdict"> · </b></span></div></div></div>
+</div>
+<div class="foot a" style="--d:1"><span class="ko" data-i>안정 한계 = 이 결합은 Δt 7.7 fs 미만 · 정확도까지 보면 <b>주기의 1/10 (약 2 fs)</b> · C–H(10 fs 주기)는 1 fs</span><span class="en" data-i>Stability limit = this bond needs Δt below 7.7 fs · including accuracy, <b>1/10 of period (about 2 fs)</b> · C–H (10 fs period) gets 1 fs</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>모델: 방향족 C–C 결합 K 478.4 kcal/mol·Å² · r₀ 1.387 Å · μ 6.0055 (원본 02#16 노트 값) · 같은 계산: week03/live/verlet_dt.ipynb</span><span class="en" data-i>Model: aromatic C–C bond K 478.4 kcal/mol·Å² · r₀ 1.387 Å · μ 6.0055 (original 02#16 note values) · same calculation: week03/live/verlet_dt.ipynb</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 23 TWEAK Δt 1 ↔ 8 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>3-4 · 바꿔 보기</span><span class="en" data-i>3-4 · Try changing</span></p>
+<div class="hrow"><span class="hico" data-ico="git-compare"></span><h2 class="h"><span class="ko" data-i>시간 간격 규칙: 가장 빠른 진동 주기의 1/10</span><span class="en" data-i>Timestep rule: 1/10 of fastest vibration period</span></h2></div>
+<p class="sub"><span class="ko" data-i>Δt 1 fs ↔ 8 fs · 오차 1.7 % ↔ 발산 · 같은 결합 · 같은 초기 신장 · 바뀐 것은 Δt 하나 · 힘 방향 전환 지점을 건너뜀 → 매 스텝 에너지 유입</span><span class="en" data-i>Δt 1 fs ↔ 8 fs · error 1.7 % ↔ divergence · same bond · same initial stretch · only Δt changed · skips the force-reversal point → energy enters every step</span></p>
+<div class="bd">
+<div class="tweak">
+<div class="pane before a" style="--d:1"><h3><span class="tic" data-ico="check"></span><span class="ko" data-i>전 · Δt = 1 fs (주기의 1/24)</span><span class="en" data-i>Before · Δt = 1 fs (1/24 of period)</span></h3>
+<div class="figw white"><svg viewBox="0 0 800 300"><line x1="60" y1="120" x2="740" y2="120" stroke="#E2D8CA"/><path id="tw1" d="" fill="none" stroke="#4F7FB0" stroke-width="3"/><text x="66" y="40" class="cfs">r − r₀</text><line x1="60" y1="240" x2="740" y2="240" stroke="#2E8B57" stroke-width="3" stroke-dasharray="10 8"/><text x="740" y="230" text-anchor="end" class="cfm" fill="#2E8B57">E₀</text><path id="tw1e" d="" fill="none" stroke="#E37F1A" stroke-width="3"/><text x="66" y="200" class="cfs">E / E₀</text></svg></div>
+<div class="n md nosum w03-blue"><span class="ko" data-i>최대 오차 1.7 % · 안전</span><span class="en" data-i>Max error 1.7 % · safe</span></div>
+<p class="cap"><span class="ko" data-i>결합 길이는 ±0.1 Å 진동 · E 는 E₀ 주위 요동</span><span class="en" data-i>Bond length oscillates ±0.1 Å · E fluctuates around E₀</span></p></div>
+<div class="pane after a" style="--d:2"><h3><span class="tic" data-ico="triangle-alert"></span><span class="ko" data-i>후 · Δt = 8 fs (안정 한계 초과)</span><span class="en" data-i>After · Δt = 8 fs (above stability limit)</span></h3>
+<div class="figw white"><svg viewBox="0 0 800 300"><line x1="60" y1="120" x2="740" y2="120" stroke="#E2D8CA"/><path id="tw8" d="" fill="none" stroke="#D9534F" stroke-width="3"/><text x="66" y="40" class="cfs">r − r₀</text><line x1="60" y1="240" x2="740" y2="240" stroke="#2E8B57" stroke-width="3" stroke-dasharray="10 8"/><text x="740" y="230" text-anchor="end" class="cfm" fill="#2E8B57">E₀</text><path id="tw8e" d="" fill="none" stroke="#D9534F" stroke-width="3"/><text x="66" y="200" class="cfs">E / E₀</text></svg></div>
+<div class="n md nosum w03-red"><span class="ko" data-i>발산 · 에너지 폭주 · 온도 급상승</span><span class="en" data-i>Divergence · energy blow-up · temperature surge</span></div>
+<p class="cap"><span class="ko" data-i>W05 실패 사례 ② 와 같은 모양</span><span class="en" data-i>Same shape as W05 failure case ②</span></p></div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>조작형에서 Δt 를 0.5 · 1 · 2 · 4 · 8 로 · 0.4 · 1.7 · 6.7 · 27 % · 발산 인지</span><span class="en" data-i>In the interactive set Δt to 0.5 · 1 · 2 · 4 · 8 → 0.4 · 1.7 · 6.7 · 27 % · recognize divergence</span></p><p><span class="ko" data-i>실제 분자는 C–H(10 fs) 때문에 1 fs · 2 fs 는 X–H 구속(SHAKE) 병행 (W05 · W06)</span><span class="en" data-i>Real molecules use 1 fs because of C–H (10 fs) · 2 fs with X–H constraint (SHAKE) (W05 · W06)</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 02주차 덱 #21 (0.5 안전 · 1~2 표준 · 4 이상 위험) · 수치 = scripts/lj_verlet.py dt_sweep</span><span class="en" data-i>Original week-02 deck #21 (0.5 safe · 1~2 standard · 4 or more risky) · values = scripts/lj_verlet.py dt_sweep</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 24 FIG 시간 척도 3 -->
+<section class="slide v3" data-src="02주차#21">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>3-4 · 무엇</span><span class="en" data-i>3-4 · What</span></p>
+<div class="hrow"><span class="hico" data-ico="hourglass"></span><h2 class="h"><span class="ko" data-i>시간 척도 3종: 적분 간격 · 기록 간격 · 총 시간</span><span class="en" data-i>3 time scales: integration interval · output interval · total time</span></h2></div>
+<p class="sub"><span class="ko" data-i>1 fs · 2 ps · 5 ns · 세 막대 = 같은 단위(시간) · 기준은 각각 다름 · 물리 · 통계 · 예산 · 오늘 정한 것은 가장 왼쪽뿐</span><span class="en" data-i>1 fs · 2 ps · 5 ns · three bars = same unit (time) · each with a different criterion · physics · statistics · budget · only the leftmost is set today</span></p>
+<div class="bd">
+<div class="figw white"><svg viewBox="0 0 1588 230" class="cfig">
+<line x1="120" y1="150" x2="1480" y2="150" stroke="#6E655C" stroke-width="3"/>
+<g class="cfm" text-anchor="middle" fill="#4A4540"><text x="120" y="190">1 fs</text><text x="347" y="190">10 fs</text><text x="573" y="190">100 fs</text><text x="800" y="190">1 ps</text><text x="1027" y="190">10 ps</text><text x="1253" y="190">100 ps</text><text x="1480" y="190">1 ns</text></g>
+<text x="800" y="224" text-anchor="middle" class="cfmu"><tspan class="ko" data-i>시간 (로그) · 1 fs = 10⁻¹⁵ s · 1 ps = 1,000 fs · 1 ns = 10⁶ fs</tspan><tspan class="en" data-i>Time (log) · 1 fs = 10⁻¹⁵ s · 1 ps = 1,000 fs · 1 ns = 10⁶ fs</tspan></text>
+<rect x="100" y="60" width="300" height="56" rx="10" fill="#D9534F"/><text x="250" y="96" text-anchor="middle" class="cfw" font-size="22"><tspan class="ko" data-i>적분 간격 Δt 0.5 ~ 2 fs</tspan><tspan class="en" data-i>Integration interval Δt 0.5 ~ 2 fs</tspan></text>
+<rect x="573" y="60" width="454" height="56" rx="10" fill="#E37F1A"/><text x="800" y="96" text-anchor="middle" class="cfw" font-size="22"><tspan class="ko" data-i>기록 간격 0.1 ~ 10 ps</tspan><tspan class="en" data-i>Output interval 0.1 ~ 10 ps</tspan></text>
+<rect x="1253" y="60" width="240" height="56" rx="10" fill="#2E8B57"/><text x="1373" y="96" text-anchor="middle" class="cfw" font-size="22"><tspan class="ko" data-i>총 시간 ns</tspan><tspan class="en" data-i>Total time ns</tspan></text>
+<line class="flow" x1="400" y1="88" x2="573" y2="88" stroke="#D3C6B5" stroke-width="3" stroke-dasharray="10 8"/><line class="flow" x1="1027" y1="88" x2="1253" y2="88" stroke="#D3C6B5" stroke-width="3" stroke-dasharray="10 8"/>
+</svg></div>
+<div class="grid c3 tight">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="timer"></span><div><p class="k"><span class="ko" data-i>적분 간격 Δt</span><span class="en" data-i>Integration interval Δt</span></p><h4><span class="ko" data-i>기준 = 물리 정확도</span><span class="en" data-i>Criterion = physical accuracy</span></h4></div></div><p><span class="ko" data-i>C–H 10 fs 의 1/10 → 1 fs · 오늘(3-4)</span><span class="en" data-i>1/10 of C–H 10 fs → 1 fs · today (3-4)</span></p></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="save"></span><div><p class="k"><span class="ko" data-i>기록 간격</span><span class="en" data-i>Output interval</span></p><h4><span class="ko" data-i>기준 = 용량 · 통계</span><span class="en" data-i>Criterion = storage · statistics</span></h4></div></div><p><span class="ko" data-i>촘촘해도 정보량 불변(상관 시간) · W05</span><span class="en" data-i>Denser output leaves information unchanged (correlation time) · W05</span></p></div>
+<div class="it a" style="--d:3"><div class="ih"><span class="icb" data-ico="hourglass"></span><div><p class="k"><span class="ko" data-i>총 시간</span><span class="en" data-i>Total time</span></p><h4><span class="ko" data-i>기준 = 물성별 필요량</span><span class="en" data-i>Criterion = need per property</span></h4></div></div><p><span class="ko" data-i>밀도 1 ns · 점도 10 ns · W06 · W09</span><span class="en" data-i>Density 1 ns · viscosity 10 ns · W06 · W09</span></p></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>예: Δt 1 fs × 500만 스텝 = 5 ns · 2 ps 마다 기록 → 2,500 프레임 · 스텝 수 = <b>계산 비용</b> · 프레임 수 = <b>저장 용량</b> · Δt 가 고정이니 필요한 ns 가 곧 계산 시간 예산</span><span class="en" data-i>Example: Δt 1 fs × 5,000,000 steps = 5 ns · record every 2 ps → 2,500 frames · step count = <b>compute cost</b> · frame count = <b>storage size</b> · with Δt fixed, the needed ns is the compute-time budget</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 02주차 덱 #21</span><span class="en" data-i>Original week-02 deck #21</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 25 MAKE P3-3 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>3-4 · 만들어 보기</span><span class="en" data-i>3-4 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="play"></span><h2 class="h"><span class="ko" data-i>만들어 보기 P3-3: lj_verlet.py → 질량을 수소로 바꾸면 시간 간격 상한은?</span><span class="en" data-i>Try it P3-3: lj_verlet.py → what is the timestep limit if the mass is changed to hydrogen?</span></h2></div>
+<div class="bd">
+<div class="make">
+<div class="left a" style="--d:1">
+<pre class="code"><span class="c"><span class="ko" data-i># 환경: Claude Code · week03 폴더에서 claude</span><span class="en" data-i># Setup: Claude Code · claude in week03 folder</span></span>
+<span class="c"><span class="ko" data-i># 지시 → 승인 → Claude Code 가 실행하는 명령</span><span class="en" data-i># Prompt → approve → command Claude Code runs</span></span>
+python3 scripts/lj_verlet.py
+<span class="c"><span class="ko" data-i># → out/dt_sweep.json · lj_pair_step.json 등 5개</span><span class="en" data-i># → 5 files including out/dt_sweep.json · lj_pair_step.json</span></span></pre>
+<div class="prompt" data-id="P3-3"><span class="pid">P3-3</span><span class="ko" data-i>@scripts/lj_verlet.py 를 실행하고 생긴 out/dt_sweep.json 을 읽어라. bond_sweep() 결과(C–C 결합 · K 478.4 kcal/mol·Å² · 환산질량 6.0055 g/mol · 주기 24.3 fs · Δt 8 fs 발산)를 확인한 뒤, 이 결합을 C–H 로 바꿔 환산질량을 [1.008 × 12.011 / 13.019] 로 두면 ① 진동 주기 ② velocity-Verlet 안정 한계 Δt(ωΔt &lt; 2) ③ 정확도 기준 Δt(주기의 1/10)가 각각 어떻게 바뀌는지 식과 함께 표로 적어라. 그리고 bond_sweep 의 mu 인수만 바꿔 다시 실행하는 한 줄 명령을 적고, 내 승인 후 실행해 표와 비교해라. K 값과 scripts/ 는 바꾸지 마라. out/lj_pair_step.json 은 expected_output/ 과 비교해라.</span><span class="en" data-i>Run @scripts/lj_verlet.py and read the resulting out/dt_sweep.json. After checking the bond_sweep() result (C–C bond · K 478.4 kcal/mol·Å² · reduced mass 6.0055 g/mol · period 24.3 fs · diverges at Δt 8 fs), change this bond to C–H with reduced mass [1.008 × 12.011 / 13.019] and tabulate with formulas how ① vibration period ② velocity-Verlet stability limit Δt (ωΔt &lt; 2) ③ accuracy-criterion Δt (1/10 of period) each change. Then write a one-line command that reruns bond_sweep changing only the mu argument, run it after my approval, and compare with the table. Do not change the K value or scripts/. Compare out/lj_pair_step.json with expected_output/.</span></div>
+</div>
+<div class="expect a" style="--d:2">
+<h4><span class="tic" data-ico="table"></span><span class="ko" data-i>기대 결과 · 표 + 재실행 명령</span><span class="en" data-i>Expected output · table + rerun command</span></h4>
+<table class="t"><thead><tr><th><span class="ko" data-i>결합 · μ (g/mol)</span><span class="en" data-i>Bond · μ (g/mol)</span></th><th><span class="ko" data-i>주기 (fs)</span><span class="en" data-i>Period (fs)</span></th><th><span class="ko" data-i>안정 한계 Δt</span><span class="en" data-i>Stability limit Δt</span></th><th><span class="ko" data-i>1/10 규칙 Δt</span><span class="en" data-i>1/10 rule Δt</span></th></tr></thead><tbody>
+<tr><td>C–C · 6.0055</td><td class="mono">24.3</td><td class="mono">7.75 fs</td><td class="mono">2.4 fs</td></tr>
+<tr class="hl"><td><span class="ko" data-i>C–H · 0.930 (가정)</span><span class="en" data-i>C–H · 0.930 (assumed)</span></td><td class="mono">≈ 9.6</td><td class="mono">≈ 3.0 fs</td><td class="mono">≈ 1.0 fs</td></tr></tbody></table>
+<pre class="code"><span class="c"><span class="ko" data-i># week03/scripts 폴더에서</span><span class="en" data-i># In the week03/scripts folder</span></span>
+python3 -c "from lj_verlet import *; print(bond_sweep(mu=0.930))"</pre>
+<div class="foot"><span class="ko" data-i>질량 6.0055 → 0.930 · 주기 = 질량 비의 제곱근 0.39배 → 24.3 × 0.39 ≈ 9.6 fs · <b>가벼운 수소 → Δt 상한 1 fs</b></span><span class="en" data-i>Mass 6.0055 → 0.930 · period = square root of mass ratio 0.39× → 24.3 × 0.39 ≈ 9.6 fs · <b>light hydrogen → Δt limit 1 fs</b></span></div>
+<p class="cap"><span class="ko" data-i>K 는 그대로(같은 용수철) · μ 만 바뀜 = 질량 효과만 분리한 사고 실험 · 실제 C–H 의 K 는 별도 값(W04 ca–ha 360.69) → 「가정」 표시 유지</span><span class="en" data-i>K unchanged (same spring) · only μ changes = thought experiment isolating the mass effect · real C–H K is a separate value (W04 ca–ha 360.69) → keep "assumed" mark</span></p>
+</div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>out/lj_pair_step.json 의 U −0.1024 · F −0.0606 · a −2.111e−06 이 11장 숫자와 같은가</span><span class="en" data-i>Are U −0.1024 · F −0.0606 · a −2.111e−06 in out/lj_pair_step.json the same as the numbers on slide 11?</span></p><p><span class="ko" data-i>결과에 질량 제곱근 비례 관계와 재실행 명령 한 줄이 있는가 · K 를 바꾸지 않았는가</span><span class="en" data-i>Does the result contain the square-root mass scaling and a one-line rerun command? · was K left unchanged?</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>지시문 원문 week03/prompts.md · P3-3 · week03/notebooks/01 · 02 · expected_output/</span><span class="en" data-i>Prompt source week03/prompts.md · P3-3 · week03/notebooks/01 · 02 · expected_output/</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 26 다음 주차로 -->
+<section class="slide v3 accent">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>다음 주차로 · W04 힘장</span><span class="en" data-i>Next: W04 force field</span></p>
+<div class="hrow"><span class="hico" data-ico="arrow-right"></span><h2 class="h"><span class="ko" data-i>오늘의 산출물 3: 시간 간격 스윕 · lj_energy.csv · 미시 원인 표 → W04 입력</span><span class="en" data-i>Today's deliverables 3: timestep sweep · lj_energy.csv · microscopic-cause table → W04 input</span></h2></div>
+<p class="sub"><span class="ko" data-i>MD = 퍼텐셜 → 힘(기울기) → Δt 적분 → 궤적 → 시간 평균 · 결합 항 → Δt 결정 · 비결합 항 → 비용 결정 · Δt = 가장 빠른 진동의 1/10</span><span class="en" data-i>MD = potential → force (slope) → Δt integration → trajectory → time average · bonded terms → set Δt · nonbonded terms → set cost · Δt = 1/10 of fastest vibration</span></p>
+<div class="bd">
+<div class="lines">
+<div class="ln a" style="--d:1"><span class="nn">01</span><div><h4><span class="ko" data-i>산출물</span><span class="en" data-i>Deliverables</span></h4><p><span class="file">out/dt_sweep.json</span> · <span class="file">lj_energy.csv</span> · <span class="file">P3-1 · P3-2 · P3-3_result.md</span></p></div></div>
+<div class="ln a" style="--d:2"><span class="nn">02</span><div><h4><span class="ko" data-i>다음 주 W04 힘장</span><span class="en" data-i>Next week W04 force field</span></h4><p><span class="ko" data-i>같은 LJ 유체에 컷오프 · 주기경계 · 전하 · 5항 상수 k · ε · σ · q 가 어디서 오는가</span><span class="en" data-i>For the same LJ fluid: where do cutoff · periodic boundary · charge · 5-term constants k · ε · σ · q come from</span></p></div></div>
+<div class="ln a" style="--d:3"><span class="nn">03</span><div><h4><span class="ko" data-i>못 끝냈다면</span><span class="en" data-i>If unfinished</span></h4><p><span class="file">week03/expected_output/</span> <span class="ko" data-i>의 결과 파일로 W04 진행 가능 · W04 = 같은 LJ 유체를 다시 제작</span><span class="en" data-i>result file lets you proceed to W04 · W04 = rebuild the same LJ fluid</span></p></div></div>
+<div class="ln a" style="--d:4"><span class="nn">04</span><div><h4><span class="ko" data-i>퀴즈 · 용어</span><span class="en" data-i>Quiz · terms</span></h4><p><span class="file">week03/quiz.md</span> <span class="ko" data-i>· 용어 6:</span><span class="en" data-i>· 6 terms:</span> <span class="file">GLOSSARY.md</span> <span class="ko" data-i>· 식의 유도: 노트북 01</span><span class="en" data-i>· Derivation of equations: notebook 01</span></p></div></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>M1 두 번째 주 = 힘장 · 세 번째 주 = 앙상블 · 평형화</span><span class="en" data-i>M1 second week = force field · third week = ensemble · equilibration</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<script src="../common/icons.js"></script>
+<script src="../common/deck.js"></script>
+<script>
+/* ===== W03 v3 EMB · 참조 덱 방식: 시간 t 의 함수로 SVG 문자열 · 구슬 + 힘 화살표 · 실시간 차트 · 수식 칸 + 숫자 카드 ===== */
+function stepOf(root) { var s = parseInt(root.dataset.step || '0', 10); return isNaN(s) ? 0 : s; }
+var EPS = 0.109, SIG = 3.40, MC = 12.011, CONV = 4.184e-4;
+function ULJ(r) { return 4 * EPS * (Math.pow(SIG / r, 12) - Math.pow(SIG / r, 6)); }
+function FLJ(r) { return 24 * EPS / r * (2 * Math.pow(SIG / r, 12) - Math.pow(SIG / r, 6)); }
+
+/* LJ 곡선 (문자열) · 좌표 함수 반환 */
+function ljAxes(X0, X1, Y0, Y1, r1) {
+  var r0 = 3.0, umin = -0.13, umax = 0.15;
+  var X = function (r) { return X0 + (r - r0) / (r1 - r0) * (X1 - X0); }, Y = function (u) { return Y0 - (Math.min(umax, u) - umin) / (umax - umin) * (Y0 - Y1); };
+  var d = ''; for (var i = 0; i <= 240; i++) { var r = r0 + (r1 - r0) * i / 240; d += (i ? 'L' : 'M') + X(r).toFixed(1) + ' ' + Y(ULJ(r)).toFixed(1); }
+  var rmin = Math.pow(2, 1 / 6) * SIG, ticks = r1 > 9 ? [4, 6, 8, 10, 12] : [4, 5, 6, 7, 8], o = '';
+  o += '<line x1="' + X0 + '" y1="' + Y(0) + '" x2="' + X1 + '" y2="' + Y(0) + '" stroke="#6E655C" stroke-width="2"/><line x1="' + X0 + '" y1="' + Y1 + '" x2="' + X0 + '" y2="' + Y0 + '" stroke="#6E655C" stroke-width="2"/>';
+  o += '<path d="' + d + '" fill="none" stroke="#4F7FB0" stroke-width="4"/>';
+  o += '<line x1="' + X(rmin).toFixed(1) + '" y1="' + Y(0) + '" x2="' + X(rmin).toFixed(1) + '" y2="' + Y(-EPS).toFixed(1) + '" stroke="#F99D1C" stroke-width="2" stroke-dasharray="6 6"/>';
+  o += '<text x="' + (X(rmin) + 12).toFixed(1) + '" y="' + (Y(0) + 30).toFixed(1) + '" class="cfh" fill="#C8610C" font-size="20">r_min 3.82 Å · −ε</text>';
+  o += '<text x="' + (X(SIG) - 6).toFixed(1) + '" y="' + (Y(0) - 10) + '" text-anchor="end" class="cfs">σ 3.40</text>';
+  ticks.forEach(function (r) { o += '<text x="' + X(r).toFixed(1) + '" y="' + (Y0 + 30) + '" text-anchor="middle" class="cfm" fill="#4A4540">' + r + '</text>'; });
+  o += '<text x="' + ((X0 + X1) / 2) + '" y="' + (Y0 + 62) + __L('" text-anchor="middle" class="cfs">거리 r (Å)</text><text x="','" text-anchor="middle" class="cfs">Distance r (Å)</text><text x="') + (X0 + 60) + '" y="' + (Y1 + 4) + '" class="cfs">U (kcal/mol)</text>';
+  return { X: X, Y: Y, svg: o };
+}
+/* 구슬 + 힘 화살표 + 맥동 고리 */
+function marble(G, r, scale, maxlen) {
+  var Fv = FLJ(r), x = G.X(r), y = G.Y(ULJ(r)), len = Math.max(-maxlen, Math.min(maxlen, Fv * scale)), ay = Math.max(G.Y(0.15) + 26, y - 40), o = '';
+  if (Math.abs(len) > 4) o += '<line x1="' + x.toFixed(1) + '" y1="' + ay.toFixed(1) + '" x2="' + (x + len).toFixed(1) + '" y2="' + ay.toFixed(1) + '" stroke="#D9534F" stroke-width="5" stroke-linecap="round"/><path d="M' + (x + len).toFixed(1) + ' ' + ay.toFixed(1) + ' l' + (len > 0 ? -14 : 14) + ' -8 v16 z" fill="#D9534F"/>';
+  o += '<circle class="pulse" cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="16" fill="#F99D1C" opacity=".35"/><circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="15" fill="#F99D1C" stroke="#E37F1A" stroke-width="3"/>';
+  o += '<text x="' + (x + (len >= 0 ? len + 12 : len - 12)).toFixed(1) + '" y="' + (ay + 8).toFixed(1) + '" text-anchor="' + (len >= 0 ? 'start' : 'end') + '" class="cfh" fill="#D9534F" font-size="21">F ' + (Math.abs(Fv) < 0.001 ? Fv.toExponential(1) : Fv.toFixed(3)) + (Fv < 0 ? __L(' 인력',' attraction') : __L(' 반발',' repulsion')) + '</text>';
+  return o;
+}
+
+/* 1장 표지: 우물 위를 왕복하는 구슬 */
+EMB["ljwell"] = function (root, RAF) {
+  var G = ljAxes(70, 520, 470, 90, 9.0), t0 = CLK();
+  function f(now) {
+    var t = ((now - t0) / 1000) % 12, u = 0.5 - 0.5 * Math.cos(2 * Math.PI * t / 12), r = 3.55 + (5.6 - 3.55) * u;
+    root.innerHTML = __L('<svg viewBox="0 0 560 560" class="cfig"><text x="280" y="44" text-anchor="middle" class="cfh" font-size="22">탄소 원자쌍 LJ 우물 · 기울기 = 힘</text>','<svg viewBox="0 0 560 560" class="cfig"><text x="280" y="44" text-anchor="middle" class="cfh" font-size="22">Carbon atom-pair LJ well · slope = force</text>') + G.svg + marble(G, r, 2600, 140) + '</svg>'; RAF(f);
+  }
+  RAF(f);
+};
+
+/* 5장: 당기면 우물에서 · 왼쪽 σ–ε · 오른쪽 우물 */
+EMB["pull"] = function (root, RAF) {
+  var W = 1588, H = 560, sx0 = 110, sx1 = 640, sy0 = 440, sy1 = 110, t0 = CLK();
+  function sig(e) { return e < 0.5 ? 1.6 * e * (1 - 0.3 * e) : 0.68 - 0.9 * (e - 0.5) * (e - 0.5); }
+  var sd = ''; for (var i = 0; i <= 100; i++) { var e = i / 100 * 1.1; sd += (i ? 'L' : 'M') + (sx0 + e / 1.1 * (sx1 - sx0)).toFixed(1) + ' ' + (sy0 - Math.max(0, sig(e)) / 0.7 * (sy0 - sy1)).toFixed(1); }
+  var G = ljAxes(790, 1540, 440, 110, 9.0);
+  var msgs = [[__L('① 평형: 하중 0 · 우물 바닥 r_min','① Equilibrium: load 0 · well bottom r_min'), __L('힘 0 · 가장 안정','Force 0 · most stable')], [__L('② 탄성: 당기면 복원력 · 기울기 = 강성','② Elastic: pull → restoring force · slope = stiffness'), __L('우물 곡률 ↑ → 강성 ↑','Well curvature ↑ → stiffness ↑')], [__L('③ 파괴: 우물 이탈 → 힘 감소','③ Fracture: leave well → force decreases'), __L('되돌아오지 못함 = 강도 · 우물 깊이 ε = 응집','Cannot return = strength · well depth ε = cohesion')]];
+  function f(now) {
+    var st = stepOf(root), t = st ? (st - 1) * 4 + 3.5 : ((now - t0) / 1000) % 12, k = Math.min(2, Math.floor(t / 4)), u = (t % 4) / 4;
+    var e = k === 0 ? 0.03 * u : (k === 1 ? 0.05 + 0.4 * u : 0.5 + 0.55 * u), r = 3.82 + e * 2.6;
+    var o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    o += __L('<rect x="30" y="20" width="700" height="520" rx="18" fill="#FFFFFF" stroke="#E2D8CA" stroke-width="2"/><text x="380" y="60" text-anchor="middle" class="cfh">시험체 · 응력–변형률</text>','<rect x="30" y="20" width="700" height="520" rx="18" fill="#FFFFFF" stroke="#E2D8CA" stroke-width="2"/><text x="380" y="60" text-anchor="middle" class="cfh">Specimen · stress–strain</text>');
+    o += '<line x1="' + sx0 + '" y1="' + sy0 + '" x2="' + sx1 + '" y2="' + sy0 + '" stroke="#6E655C" stroke-width="2"/><line x1="' + sx0 + '" y1="' + sy0 + '" x2="' + sx0 + '" y2="' + sy1 + __L('" stroke="#6E655C" stroke-width="2"/><text x="375" y="480" text-anchor="middle" class="cfs">변형률 ε</text><text x="80" y="100" class="cfs">σ</text>','" stroke="#6E655C" stroke-width="2"/><text x="375" y="480" text-anchor="middle" class="cfs">Strain ε</text><text x="80" y="100" class="cfs">σ</text>');
+    o += '<path d="' + sd + '" fill="none" stroke="#4F7FB0" stroke-width="4"/>';
+    var px = sx0 + e / 1.1 * (sx1 - sx0), py = sy0 - Math.max(0, sig(e)) / 0.7 * (sy0 - sy1);
+    o += '<circle class="pulse" cx="' + px.toFixed(1) + '" cy="' + py.toFixed(1) + '" r="14" fill="#E37F1A" opacity=".35"/><circle cx="' + px.toFixed(1) + '" cy="' + py.toFixed(1) + '" r="13" fill="#E37F1A"/>';
+    o += '<rect x="60" y="490" width="640" height="40" rx="10" fill="#FFF1E0"/><text x="380" y="517" text-anchor="middle" class="cfh" fill="#C8610C" font-size="21">' + msgs[k][0] + '</text>';
+    o += __L('<rect x="760" y="20" width="800" height="520" rx="18" fill="#FFFFFF" stroke="#E2D8CA" stroke-width="2"/><text x="1160" y="60" text-anchor="middle" class="cfh">원자쌍 · 퍼텐셜 U(r) (탄소 LJ)</text>','<rect x="760" y="20" width="800" height="520" rx="18" fill="#FFFFFF" stroke="#E2D8CA" stroke-width="2"/><text x="1160" y="60" text-anchor="middle" class="cfh">Atom pair · potential U(r) (carbon LJ)</text>');
+    o += G.svg + marble(G, r, 2600, 150);
+    o += '<rect x="790" y="490" width="740" height="40" rx="10" fill="#FFF1E0"/><text x="1160" y="517" text-anchor="middle" class="cfh" fill="#C8610C" font-size="21">' + msgs[k][1] + ' · r = ' + r.toFixed(2) + ' Å</text>';
+    o += '<line class="tl" x1="730" y1="280" x2="760" y2="280" stroke-width="4"/></svg>';
+    root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* 17장: LJ 곡선 3구간 */
+EMB["ljwellbig"] = function (root, RAF) {
+  var G = ljAxes(90, 1040, 450, 90, 13), t0 = CLK();
+  var T = [[__L('① 반발 벽 · r < σ','① Repulsive wall · r < σ'), __L('(σ/r)¹² 항 · 급격히 증가','(σ/r)¹² term · rises steeply'), __L('두 원자가 겹치면 힘이 폭발','Force explodes if two atoms overlap'), __L('초기 겹침 → 첫 스텝 발산 (W05)','Initial overlap → divergence at first step (W05)'), __L('해결: 에너지 최소화 먼저','Fix: minimize energy first')], [__L('② 우물 바닥 · r_min 3.82 Å','② Well bottom · r_min 3.82 Å'), 'r_min = 2^(1/6) σ · U = −ε = −0.109', __L('기울기 0 → 힘 0 → 평형 거리','Slope 0 → force 0 → equilibrium distance'), __L('우물 깊이 ε = 응집의 세기','Well depth ε = strength of cohesion'), __L('우물 곡률 = 강성에 대응','Well curvature = corresponds to stiffness')], [__L('③ 꼬리 · r⁻⁶ 인력','③ Tail · r⁻⁶ attraction'), __L('12 Å 에서 U = −2.3 × 10⁻⁴','U = −2.3 × 10⁻⁴ at 12 Å'), __L('= ε 의 0.2 % → 절단 가능','= 0.2 % of ε → can be cut off'), __L('절단 밖은 꼬리 보정으로 (W04)','Beyond cutoff use tail correction (W04)'), __L('쿨롱 r⁻¹ 은 느려서 절단 불가 → PPPM','Coulomb r⁻¹ is slow, cannot be cut off → PPPM')]];
+  var ranges = [[3.1, 3.4], [3.6, 4.1], [6.0, 12.5]], cols = ['#D9534F', '#2E8B57', '#4F7FB0'];
+  function f(now) {
+    var st = stepOf(root), t = st ? (st - 1) * 4 + 2 : ((now - t0) / 1000) % 12, k = Math.min(2, Math.floor(t / 4)), u = (t % 4) / 4;
+    var rg = ranges[k], r = rg[0] + (rg[1] - rg[0]) * (0.5 - 0.5 * Math.cos(2 * Math.PI * u));
+    var o = '<svg viewBox="0 0 1588 560" class="cfig">';
+    o += '<rect x="' + (G.X(rg[0]) - 10).toFixed(1) + '" y="90" width="' + (G.X(rg[1]) - G.X(rg[0]) + 20).toFixed(1) + '" height="360" fill="' + cols[k] + '" opacity=".10"/>';
+    o += G.svg + marble(G, r, 2600, 160);
+    o += '<rect x="1100" y="40" width="460" height="480" rx="18" fill="#FFFFFF" stroke="#E2D8CA" stroke-width="2"/><rect x="1100" y="40" width="460" height="70" rx="18" fill="' + cols[k] + '"/><rect x="1100" y="90" width="460" height="20" fill="' + cols[k] + '"/>';
+    o += '<text x="1130" y="86" class="cfw" font-size="26">' + T[k][0] + '</text>';
+    for (var i = 1; i < 5; i++) o += '<text x="1130" y="' + (160 + (i - 1) * 56) + '" class="cfs" font-size="22">' + T[k][i] + '</text>';
+    o += '<text x="1130" y="480" class="cfm" font-size="20">r = ' + r.toFixed(2) + ' Å · U = ' + ULJ(r).toFixed(4) + '</text></svg>';
+    root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 2D LJ 엔진 (환산단위) ===== */
+function LJ2D(N, L, T0, seed) {
+  var rc = 2.5, rc2 = rc * rc, dt = 0.005, dof = 2 * N - 2, s6c = 1 / Math.pow(rc2, 3), ecut = 4 * (s6c * s6c - s6c);
+  var x = new Float64Array(N), y = new Float64Array(N), vx = new Float64Array(N), vy = new Float64Array(N), fx = new Float64Array(N), fy = new Float64Array(N);
+  seed = seed || 7; function rnd() { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; }
+  var nc = Math.ceil(Math.sqrt(N)), sp = Math.min(L / nc, 1.25), off = (L - sp * (nc - 1)) / 2;
+  for (var i = 0; i < N; i++) { x[i] = off + sp * (i % nc) + (rnd() - 0.5) * 0.12; y[i] = off + sp * Math.floor(i / nc) + (rnd() - 0.5) * 0.12; vx[i] = rnd() - 0.5; vy[i] = rnd() - 0.5; }
+  var cx = 0, cy = 0; for (i = 0; i < N; i++) { cx += vx[i]; cy += vy[i]; } cx /= N; cy /= N;
+  var k0 = 0; for (i = 0; i < N; i++) { vx[i] -= cx; vy[i] -= cy; k0 += 0.5 * (vx[i] * vx[i] + vy[i] * vy[i]); }
+  var sc = Math.sqrt(T0 * dof / (2 * k0)); for (i = 0; i < N; i++) { vx[i] *= sc; vy[i] *= sc; }
+  var S = { N: N, L: L, x: x, y: y, vx: vx, vy: vy, fx: fx, fy: fy, pe: 0, dof: dof };
+  function forces() { S.pe = 0; for (var i = 0; i < N; i++) { fx[i] = 0; fy[i] = 0; } for (i = 0; i < N - 1; i++) for (var j = i + 1; j < N; j++) { var dx = x[i] - x[j], dy = y[i] - y[j]; dx -= L * Math.round(dx / L); dy -= L * Math.round(dy / L); var r2 = dx * dx + dy * dy; if (r2 < rc2 && r2 > 0.04) { var inv = 1 / r2, s6 = inv * inv * inv, fr = 24 * (2 * s6 * s6 - s6) * inv; fx[i] += fr * dx; fy[i] += fr * dy; fx[j] -= fr * dx; fy[j] -= fr * dy; S.pe += 4 * (s6 * s6 - s6) - ecut; } } }
+  forces();
+  S.kin = function () { var k = 0; for (var i = 0; i < N; i++) k += 0.5 * (vx[i] * vx[i] + vy[i] * vy[i]); return k; };
+  S.step = function () { for (var i = 0; i < N; i++) { vx[i] += 0.5 * dt * fx[i]; vy[i] += 0.5 * dt * fy[i]; x[i] += dt * vx[i]; y[i] += dt * vy[i]; x[i] -= L * Math.floor(x[i] / L); y[i] -= L * Math.floor(y[i] / L); } forces(); for (i = 0; i < N; i++) { vx[i] += 0.5 * dt * fx[i]; vy[i] += 0.5 * dt * fy[i]; } };
+  return S;
+}
+
+/* 10장: MD 순환 · 띠 4칸 + 꼬리 있는 상자 + 실시간 K · U · E */
+EMB["cycle4"] = function (root, RAF) {
+  var S = LJ2D(8, 7, 0.6, 7), ox = 40, oy = 540, side = 440, px = side / S.L, tails = [], hist = [], steps = 0, t0 = CLK();
+  for (var i = 0; i < S.N; i++) tails.push([]);
+  var names = [__L('① 에너지','① Energy'), __L('② 힘 = −기울기','② Force = −slope'), __L('③ 한 걸음 전진','③ Advance one step'), __L('④ 기록','④ Record')], cols = ['#4F7FB0', '#D9534F', '#E37F1A', '#2E8B57'];
+  var desc = [__L('원자 좌표만의 함수 · 5항의 합 (3-3)','Function of atom coordinates only · sum of 5 terms (3-3)'), __L('좌표별 기울기 → 모든 원자의 힘 · 비용의 대부분','Slope per coordinate → force on every atom · most of the cost'), __L('힘 ÷ 질량 = 가속도 → Δt = 1 fs 전진 (3-4)','Force ÷ mass = acceleration → advance Δt = 1 fs (3-4)'), __L('r · v · E 를 프레임으로 저장 → ① 로 · 100만 회 × 1 fs = 1 ns','Save r · v · E as a frame → back to ① · 1,000,000 times × 1 fs = 1 ns')];
+  function f(now) {
+    var st = stepOf(root), t = st ? (st - 1) * 3 + 1.5 : ((now - t0) / 1000) % 12, k = Math.floor(t / 3), u = (t % 3) / 3;
+    if (!st || st >= 3) { S.step(); steps++; for (var i = 0; i < S.N; i++) { var tl = tails[i], X = ox + S.x[i] * px, Y = oy - S.y[i] * px; if (tl.length && (Math.abs(tl[tl.length - 1][0] - X) > side / 2 || Math.abs(tl[tl.length - 1][1] - Y) > side / 2)) tl.length = 0; tl.push([X, Y]); if (tl.length > 28) tl.shift(); } var K = S.kin(); hist.push([K, S.pe, K + S.pe]); if (hist.length > 220) hist.shift(); }
+    var o = '<svg viewBox="0 0 1588 560" class="cfig">';
+    for (i = 0; i < 4; i++) { var bx = 40 + i * 390, on = i === k; o += '<rect x="' + bx + '" y="10" width="370" height="54" rx="12" fill="' + (on ? cols[i] : '#F6F0E7') + '" stroke="' + (on ? cols[i] : '#E2D8CA') + '" stroke-width="2"/><text x="' + (bx + 185) + '" y="45" text-anchor="middle" class="' + (on ? 'cfw' : 'cfs') + '" font-size="23"' + (on ? '' : ' fill="#6E655C"') + '>' + names[i] + '</text>'; if (i < 3) o += '<circle cx="' + (bx + 380) + '" cy="37" r="6" fill="' + (i < k ? '#F99D1C' : '#E2D8CA') + '"/>'; }
+    var dx = 40 + k * 390 + 20 + u * 330; o += '<circle class="pulse" cx="' + dx.toFixed(1) + '" cy="72" r="7" fill="#C8610C"/>';
+    o += '<rect x="' + ox + '" y="' + (oy - side) + '" width="' + side + '" height="' + side + '" fill="#FFFFFF" stroke="#F99D1C" stroke-width="3" stroke-dasharray="10 8"/>';
+    for (i = 0; i < S.N; i++) { var tl = tails[i]; if (tl.length > 1) { var d = ''; tl.forEach(function (p, j) { d += (j ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }); o += '<path d="' + d + '" fill="none" stroke="' + (i ? '#4F7FB0' : '#E37F1A') + '" stroke-width="3" opacity=".35"/>'; } }
+    for (i = 0; i < S.N; i++) { var X = ox + S.x[i] * px, Y = oy - S.y[i] * px; if (k === 1) { var fm = Math.hypot(S.fx[i], S.fy[i]) || 1e-9, len = Math.min(70, 6 + fm * 5); o += '<line x1="' + X.toFixed(1) + '" y1="' + Y.toFixed(1) + '" x2="' + (X + S.fx[i] / fm * len).toFixed(1) + '" y2="' + (Y - S.fy[i] / fm * len).toFixed(1) + '" stroke="#D9534F" stroke-width="4" stroke-linecap="round"/>'; } o += '<circle cx="' + X.toFixed(1) + '" cy="' + Y.toFixed(1) + '" r="13" fill="' + (i ? '#4F7FB0' : '#E37F1A') + '" stroke="#FFFDF9" stroke-width="2"/>'; }
+    o += '<rect x="' + (ox + side - 150) + '" y="' + (oy - side + 10) + '" width="140" height="36" rx="8" fill="#231F20"/><text x="' + (ox + side - 80) + '" y="' + (oy - side + 35) + __L('" text-anchor="middle" class="cfw" font-size="20">스텝 ','" text-anchor="middle" class="cfw" font-size="20">Step ') + steps + '</text>';
+    o += '<rect x="520" y="100" width="1040" height="90" rx="14" fill="' + cols[k] + '"/><text x="548" y="140" class="cfw" font-size="26">' + names[k] + '</text><text x="548" y="176" class="cfw" font-size="21" opacity=".92">' + desc[k] + '</text>';
+    var gx0 = 560, gx1 = 1540, gy0 = 520, gy1 = 230;
+    o += __L('<rect x="520" y="210" width="1040" height="330" rx="14" fill="#FFFFFF" stroke="#E2D8CA" stroke-width="2"/><text x="548" y="246" class="cft" font-size="20">에너지 시계열 (환산단위 · 스텝마다 갱신)</text>','<rect x="520" y="210" width="1040" height="330" rx="14" fill="#FFFFFF" stroke="#E2D8CA" stroke-width="2"/><text x="548" y="246" class="cft" font-size="20">Energy time series (reduced units · updated every step)</text>');
+    if (hist.length > 2) {
+      var mn = Infinity, mx = -Infinity; hist.forEach(function (h) { h.forEach(function (v) { mn = Math.min(mn, v); mx = Math.max(mx, v); }); }); var pad = (mx - mn) * 0.1 + 1e-6; mn -= pad; mx += pad;
+      var Yv = function (v) { return gy0 - (v - mn) / (mx - mn) * (gy0 - gy1 - 30); };
+      [[0, '#E37F1A', __L('K 운동','K kinetic')], [1, '#4F7FB0', __L('U 퍼텐셜','U potential')], [2, '#2E8B57', 'E = K + U']].forEach(function (s) { var d = ''; hist.forEach(function (h, j) { d += (j ? 'L' : 'M') + (gx0 + j / 219 * (gx1 - gx0)).toFixed(1) + ' ' + Yv(h[s[0]]).toFixed(1); }); o += '<path d="' + d + '" fill="none" stroke="' + s[1] + '" stroke-width="' + (s[0] === 2 ? 4 : 2.5) + '"/>'; var last = hist[hist.length - 1][s[0]]; o += '<text x="' + (gx0 + (hist.length - 1) / 219 * (gx1 - gx0) + 10).toFixed(1) + '" y="' + (Yv(last) + 7).toFixed(1) + '" class="cfm" fill="' + s[1] + '" font-size="19">' + s[2] + ' ' + last.toFixed(2) + '</text>'; });
+    }
+    o += __L('<text x="1540" y="536" text-anchor="end" class="cfmu">E 가 수평 = 보존 · K 와 U 는 서로 바꿔 가며 요동</text></svg>','<text x="1540" y="536" text-anchor="end" class="cfmu">E flat = conserved · K and U fluctuate, trading off</text></svg>');
+    root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* 11장: 한 스텝 · 수식 칸 + 숫자 카드가 차례로 채워진다 */
+EMB["onestep"] = function (root, RAF) {
+  var r = 4.0, v = 0.0100, dt = 1.0, U = ULJ(r), F = FLJ(r), a = F / MC * CONV, r1 = r + v * dt + 0.5 * a * dt * dt, t0 = CLK();
+  var rows = [[__L('① 에너지','① Energy'), __L('거리 4.00 Å 에서 LJ 곡선의 값','Value of LJ curve at distance 4.00 Å'), U.toFixed(4) + ' kcal/mol', __L('우물 안쪽 · 음수','Inside the well · negative')], [__L('② 힘','② Force'), __L('그 자리 곡선 기울기의 반대 부호','Opposite sign of curve slope at that point'), F.toFixed(4) + ' kcal/mol·Å', __L('음수 = 인력 (안쪽)','Negative = attraction (inward)')], [__L('③ 가속도','③ Acceleration'), __L('힘 ÷ 질량 · 단위 환산 4.184 × 10⁻⁴','Force ÷ mass · unit conversion 4.184 × 10⁻⁴'), a.toExponential(3) + ' Å/fs²', 'm = 12.011 g/mol'], [__L('④ 새 위치','④ New position'), __L('속도로 이동 + 힘으로 조금 더','Move by velocity + a little more by force'), r.toFixed(4) + ' → ' + r1.toFixed(4) + ' Å', __L('열운동 항 0.01 ≫ 힘 항 10⁻⁶','Thermal-motion term 0.01 ≫ force term 10⁻⁶')]];
+  var cols = ['#4F7FB0', '#D9534F', '#E37F1A', '#2E8B57'];
+  function f(now) {
+    var st = stepOf(root), t = st ? (st - 1) * 3 + 2.9 : ((now - t0) / 1000) % 12, k = Math.floor(t / 3), u = (t % 3) / 3;
+    var o = '<svg viewBox="0 0 1588 560" class="cfig">';
+    var cxL = 150, cy = 92, scale = 150;
+    o += __L('<rect x="30" y="20" width="1000" height="170" rx="16" fill="#FFFFFF" stroke="#E2D8CA" stroke-width="2"/><text x="530" y="182" text-anchor="middle" class="cfmu" font-size="19">탄소 원자쌍 · r = 4.00 Å · v = 0.0100 Å/fs · Δt = 1 fs · m = 12.011 g/mol</text>','<rect x="30" y="20" width="1000" height="170" rx="16" fill="#FFFFFF" stroke="#E2D8CA" stroke-width="2"/><text x="530" y="182" text-anchor="middle" class="cfmu" font-size="19">Carbon atom pair · r = 4.00 Å · v = 0.0100 Å/fs · Δt = 1 fs · m = 12.011 g/mol</text>');
+    o += '<circle cx="' + cxL + '" cy="' + cy + '" r="24" fill="#6E655C"/><text x="' + cxL + '" y="' + (cy + 54) + __L('" text-anchor="middle" class="cfmu">고정 원자</text>','" text-anchor="middle" class="cfmu">Fixed atom</text>');
+    var rr = k >= 3 ? r + (r1 - r) * Math.min(1, u) * 40 : r, mx = cxL + rr * scale;
+    o += '<line x1="' + cxL + '" y1="' + (cy - 40) + '" x2="' + (cxL + (r + (r1 - r) * 40) * scale).toFixed(1) + '" y2="' + (cy - 40) + '" stroke="#4F7FB0" stroke-width="2" stroke-dasharray="6 6"/>';
+    if (k >= 3) o += '<circle cx="' + (cxL + (r + (r1 - r) * 40) * scale).toFixed(1) + '" cy="' + cy + '" r="24" fill="none" stroke="#E37F1A" stroke-width="3" stroke-dasharray="6 6"/>';
+    if (k >= 1) o += '<line x1="' + mx.toFixed(1) + '" y1="' + cy + '" x2="' + (mx - 100).toFixed(1) + '" y2="' + cy + '" stroke="#D9534F" stroke-width="6" stroke-linecap="round"/><path d="M' + (mx - 100).toFixed(1) + ' ' + cy + ' l14 -8 v16 z" fill="#D9534F"/><text x="' + (mx - 50).toFixed(1) + '" y="' + (cy + 54) + __L('" text-anchor="middle" class="cfh" fill="#D9534F" font-size="20">F −0.0606 · 인력</text>','" text-anchor="middle" class="cfh" fill="#D9534F" font-size="20">F −0.0606 · attraction</text>');
+    o += '<circle class="pulse" cx="' + mx.toFixed(1) + '" cy="' + cy + '" r="24" fill="#F99D1C" opacity=".35"/><circle cx="' + mx.toFixed(1) + '" cy="' + cy + '" r="24" fill="#F99D1C" stroke="#E37F1A" stroke-width="3"/>';
+    o += '<text x="' + (cxL + r * scale / 2) + '" y="' + (cy - 50) + '" text-anchor="middle" class="cfh" fill="#4F7FB0" font-size="22">' + (k >= 3 ? __L('r 4.0000 → 4.0100 Å (그림은 40배 과장)','r 4.0000 → 4.0100 Å (figure exaggerated 40×)') : 'r = 4.00 Å') + '</text>';
+    o += __L('<rect x="1060" y="20" width="500" height="170" rx="16" fill="#231F20"/><text x="1310" y="58" text-anchor="middle" class="cfw" font-size="22" fill="#FBB44E">읽기</text>','<rect x="1060" y="20" width="500" height="170" rx="16" fill="#231F20"/><text x="1310" y="58" text-anchor="middle" class="cfw" font-size="22" fill="#FBB44E">Reading</text>');
+    [__L('한 스텝 이동 ≈ 0.01 Å · 열운동이 거의 전부','Move per step ≈ 0.01 Å · almost all thermal motion'), __L('힘에 의한 이동 ≈ 10⁻⁶ Å · 네 자리 작음','Move due to force ≈ 10⁻⁶ Å · four digits smaller'), __L('Δt 가 크면 힘이 바뀌기 전에 과이동 → 발산 (3-4)','Large Δt → overshoots before force changes → divergence (3-4)')].forEach(function (s, i) { o += '<text x="1310" y="' + (98 + i * 36) + '" text-anchor="middle" class="cfw" font-size="20" font-weight="500">' + s + '</text>'; });
+    rows.forEach(function (rw, i) { var y = 215 + i * 86, on = i <= k, cur = i === k; o += '<g opacity="' + (on ? 1 : 0.35) + '"><rect x="30" y="' + y + '" width="1000" height="72" rx="14" fill="' + (cur ? '#FFF1E0' : '#F6F0E7') + '" stroke="' + (cur ? '#F99D1C' : '#E2D8CA') + '" stroke-width="' + (cur ? 3 : 1) + '"/><rect x="30" y="' + y + '" width="12" height="72" rx="6" fill="' + cols[i] + '"/><text x="64" y="' + (y + 45) + '" class="cfh" font-size="24">' + rw[0] + '</text><text x="250" y="' + (y + 45) + '" class="cfs" fill="#231F20" font-size="22" font-weight="500">' + rw[1] + '</text>'; o += '<rect x="1060" y="' + y + '" width="500" height="72" rx="14" fill="' + (on ? cols[i] : '#F6F0E7') + '"/><text x="1084" y="' + (y + 45) + '" class="' + (on ? 'cfw' : 'cfmu') + '" font-size="26" font-family="JetBrains Mono">' + (on ? rw[2] : '·') + '</text>' + (on ? '<text x="1540" y="' + (y + 45) + '" text-anchor="end" class="cfw" font-size="18" opacity=".85">' + rw[3] + '</text>' : '') + '</g>'; });
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* 12장: 온도 시계열이 실시간으로 그려진다 + 평균선 + 히스토그램 */
+var TSER = [240.5,240.5,240.5,240.5,240.6,240.6,240.6,240.6,240.6,240.6,240.6,240.6,240.6,240.6,240.6,240.6,240.7,240.7,240.7,240.7,240.7,240.7,240.7,240.8,240.8,240.8,240.8,240.8,240.8,240.9,240.9,240.9,240.9,240.9,240.9,240.9,240.9,241.0,241.0,241.0,241.0,241.0,241.0,241.0,241.0,241.0,240.9,240.9,240.9,240.9,240.9,240.8,240.8,240.8,240.7,240.7,240.6,240.5,240.4,240.4,240.3,240.2,240.1,240.0,239.8,239.7,239.6,239.4,239.2,239.1,238.9,238.7,238.5,238.2,238.0,237.7,237.5,237.2,236.9,236.5,236.2,235.8,235.5,235.1,234.7,234.2,233.8,233.3,232.8,232.3,231.7,231.2,230.6,230.0,229.4,228.7,228.1,227.4,226.7,225.9,225.2,224.4,223.7,222.9,222.1,221.3,220.4,219.6,218.8,217.9,217.1,216.2,215.4,214.6,213.7,212.9,212.1,211.3,210.5,209.8,209.0,208.3,207.6,206.9,206.3,205.7,205.1,204.6,204.1,203.6,203.1,202.7,202.3,202.0,201.7,201.4,201.1,200.9,200.7,200.5,200.4,200.2,200.1,200.1,200.0,199.9,199.9,199.9,199.9,199.9,199.9,199.9,200.0,200.0,200.1,200.1,200.2,200.2,200.3,200.4,200.5,200.6,200.7,200.7,200.8,200.9,201.1,201.2,201.3,201.4,201.6,201.8,201.9,202.1,202.3,202.4,202.6,202.8,203.1,203.3,203.5,203.8,204.0,204.3,204.6,204.8,205.1,205.4,205.7,206.1,206.4,206.7,207.0,207.3,207.6,208.0,208.3,208.6,208.9,209.2,209.6,209.9,210.2,210.4,210.7,211.0,211.3,211.5,211.7,212.0,212.2,212.4,212.6,212.7,212.9,213.0,213.1,213.2,213.3,213.3,213.4,213.4,213.4,213.4,213.4,213.4,213.4,213.3,213.3,213.2,213.1,213.0,213.0,212.9,212.8,212.7,212.6,212.5,212.4,212.4,212.3,212.2,212.2,212.2,212.1,212.1,212.1,212.1,212.1,212.1,212.1,212.1,212.2,212.2,212.2,212.3,212.3,212.3,212.4,212.4,212.5,212.5,212.5,212.6,212.6,212.6,212.6,212.7,212.7,212.7,212.7,212.7,212.6,212.6,212.6,212.6,212.5,212.5,212.5,212.4,212.4,212.4,212.3,212.3,212.2,212.2,212.2,212.1,212.1,212.1,212.0,212.0,211.9,211.9,211.9,211.9,211.8,211.8,211.8,211.8,211.8,211.8,211.8,211.8,211.8,211.8,211.7,211.7,211.7,211.7,211.7,211.7,211.7,211.7,211.7,211.7,211.7,211.7,211.7,211.7,211.7,211.6,211.6,211.6,211.6,211.6,211.6,211.5,211.5,211.5,211.5,211.5,211.5,211.5,211.5,211.5,211.6,211.6,211.6,211.7,211.8,211.8,211.9,212.0,212.2,212.3,212.5,212.7,212.9,213.1,213.3,213.6,213.8,214.1,214.4,214.7,215.1,215.4,215.8,216.1,216.5,216.9,217.3,217.7,218.0,218.4,218.8,219.2,219.6,219.9,220.3,220.7,221.0,221.4,221.7,222.0,222.3,222.6,222.8,223.1,223.3,223.5,223.8,223.9,224.1,224.2,224.4,224.5,224.6,224.7,224.7,224.8,224.8,224.8,224.8,224.8,224.7,224.7,224.6,224.6,224.5,224.4,224.3,224.2,224.1,224.0,223.9,223.7,223.6,223.5,223.4,223.3,223.2,223.0,222.9,222.8,222.7,222.6,222.4,222.3,222.2,222.0,221.9,221.7,221.6,221.4,221.2,221.0,220.7,220.5,220.2,219.9,219.6,219.3,218.9,218.6,218.2,217.8,217.3,216.9,216.4,215.9,215.4,214.9,214.4,213.9,213.3,212.8,212.2,211.7,211.1,210.6,210.0,209.5,209.0,208.5,208.0,207.6,207.1,206.7,206.3,206.0,205.7,205.4,205.1,204.9,204.7,204.6,204.5,204.4,204.4,204.4,204.4,204.5,204.6,204.7,204.8,205.0,205.2,205.4,205.7,205.9,206.2,206.5,206.8,207.2,207.5,207.8,208.2,208.6,209.0,209.4,209.8,210.2,210.6,211.0,211.4,211.9,212.3,212.7,213.2,213.6,214.0,214.5,214.9,215.3,215.8,216.2,216.6,217.0,217.4,217.8,218.2,218.5,218.9,219.2,219.6,219.9,220.2,220.4,220.7,221.0,221.2,221.4,221.6,221.8,221.9,222.1,222.2,222.2,222.3,222.3,222.4,222.4,222.3,222.3,222.2,222.1,221.9,221.8,221.6,221.4,221.1,220.8,220.5,220.2,219.8,219.4,219.0,218.6,218.1,217.6,217.0,216.4,215.8,215.2,214.5,213.8,213.1,212.3,211.5,210.7,209.8,209.0,208.1,207.2,206.3,205.4,204.5,203.5,202.6,201.7,200.7,199.8,198.9,198.0,197.1,196.3,195.5,194.7,193.9,193.2,192.6,191.9,191.4,190.8,190.4,189.9,189.5,189.2,188.9,188.6,188.4,188.2,188.1,187.9,187.8,187.8,187.7,187.7,187.7,187.7,187.7,187.8,187.8,187.9,188.0,188.1,188.2,188.3,188.4,188.6,188.8,188.9,189.2,189.4,189.6,189.9,190.2,190.5,190.8,191.2,191.5,191.9,192.3,192.8,193.2,193.7,194.2,194.7,195.2,195.7,196.2,196.8,197.3,197.9,198.4,198.9,199.5,200.0,200.5,201.0,201.5,202.0,202.5,203.0,203.5,203.9,204.4,204.8,205.2,205.7,206.1,206.5,206.9,207.2,207.6,208.0,208.4,208.7,209.1,209.5,209.8,210.2,210.5,210.8,211.2,211.5,211.8,212.2,212.5,212.8,213.1,213.4,213.6,213.9,214.1,214.4,214.6,214.8,215.0,215.2,215.3,215.4,215.6,215.6,215.7,215.8,215.8,215.8,215.8,215.8,215.7,215.6,215.5,215.4,215.3,215.1,214.9,214.7,214.5,214.3,214.1,213.8,213.6,213.3,213.0,212.7,212.4,212.1,211.8,211.5,211.2,210.9,210.6,210.3,210.0,209.7,209.4,209.1,208.9,208.7,208.4,208.2,208.1,207.9,207.7,207.6,207.5,207.4,207.4,207.3,207.3,207.3,207.3,207.3,207.4,207.4,207.5,207.6,207.6,207.7,207.8,207.9,208.0,208.1,208.2,208.3,208.4,208.5,208.6,208.7,208.8,208.9,209.0,209.1,209.1,209.2,209.2,209.3,209.4,209.4,209.5,209.5,209.6,209.6,209.6,209.7,209.7,209.8,209.8,209.9,209.9,210.0,210.0,210.1,210.1,210.2,210.3,210.3,210.4,210.5,210.6,210.7,210.8,210.9,211.0,211.1,211.2,211.3,211.5,211.6,211.7,211.9,212.0,212.1,212.3,212.4,212.5,212.7,212.8,212.9,213.1,213.2,213.3,213.4,213.6,213.7,213.8,213.9,214.0,214.1,214.1,214.2,214.2,214.3,214.3,214.4,214.4,214.4,214.4,214.5,214.5,214.5,214.5,214.5,214.5,214.5,214.5,214.5,214.5,214.5,214.5,214.5,214.6,214.6,214.7,214.7,214.8,214.9,215.0,215.1,215.2,215.3,215.4,215.6,215.7,215.8,216.0,216.1,216.2,216.4,216.5,216.6,216.7,216.8,216.9,217.0,217.1,217.1,217.2,217.2,217.2,217.2,217.2,217.2,217.2,217.1,217.1,217.0,217.0,216.9,216.8,216.7,216.6,216.6,216.5,216.4,216.3,216.2,216.1,216.0,215.9,215.8,215.8,215.7,215.6,215.5,215.5,215.4,215.4,215.3,215.3,215.2,215.2,215.2,215.2,215.2,215.2,215.1,215.1,215.1,215.1,215.2,215.2,215.2,215.2,215.2,215.2,215.2,215.3,215.3,215.3,215.3,215.4,215.4,215.4,215.5,215.5,215.5,215.6,215.6,215.7,215.7,215.7,215.8,215.8,215.9,215.9,216.0,216.0,216.1,216.1,216.2,216.2,216.2,216.3,216.3,216.4,216.4,216.5,216.5,216.6,216.6,216.7,216.7,216.7,216.8,216.8,216.8,216.8,216.8,216.8,216.8,216.7,216.7,216.6,216.5,216.4,216.3,216.2,216.0,215.9,215.7,215.5,215.2,215.0,214.7,214.4,214.1,213.8,213.4,213.0,212.6,212.2,211.8,211.4,211.0,210.6,210.2,209.8,209.3,209.0,208.6,208.3,208.0,207.7,207.4,207.2,207.1,207.0,206.9,206.8,206.9,206.9,207.0,207.1,207.3,207.5,207.7,208.0];
+EMB["tseries"] = function (root, RAF) {
+  var W = 1080, H = 560, X0 = 90, X1 = 740, Y0 = 440, Y1 = 60, Tmin = 185, Tmax = 245, n = TSER.length, t0 = CLK();
+  function X(i) { return X0 + i / (n - 1) * (X1 - X0); } function Y(T) { return Y0 - (T - Tmin) / (Tmax - Tmin) * (Y0 - Y1); }
+  function f(now) {
+    var t = ((now - t0) / 1000) % 12, m = Math.max(2, Math.min(n, Math.floor(t / 10 * n) + 1));
+    var o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    o += '<rect x="' + X0 + '" y="' + Y1 + '" width="' + (X(130) - X0).toFixed(1) + '" height="' + (Y0 - Y1) + '" fill="#6E655C" opacity=".10"/>';
+    o += '<line x1="' + X0 + '" y1="' + Y0 + '" x2="' + X1 + '" y2="' + Y0 + '" stroke="#6E655C" stroke-width="2"/><line x1="' + X0 + '" y1="' + Y0 + '" x2="' + X0 + '" y2="' + Y1 + '" stroke="#6E655C" stroke-width="2"/>';
+    [190, 210, 230].forEach(function (T) { o += '<text x="' + (X0 - 10) + '" y="' + (Y(T) + 7).toFixed(1) + '" text-anchor="end" class="cfm" fill="#4A4540">' + T + '</text><line x1="' + X0 + '" y1="' + Y(T).toFixed(1) + '" x2="' + X1 + '" y2="' + Y(T).toFixed(1) + '" stroke="#E2D8CA"/>'; });
+    [0, 250, 500, 750, 1000].forEach(function (s) { o += '<text x="' + X(s).toFixed(1) + '" y="' + (Y0 + 32) + '" text-anchor="middle" class="cfm" fill="#4A4540">' + s + '</text>'; });
+    o += '<text x="' + ((X0 + X1) / 2) + '" y="' + (Y0 + 66) + __L('" text-anchor="middle" class="cfs">스텝 (= fs) · 64원자 NVE</text><text x="','" text-anchor="middle" class="cfs">Step (= fs) · 64-atom NVE</text><text x="') + (X0 + 10) + '" y="' + (Y1 - 14) + __L('" class="cfs">T (K) 순간값</text>','" class="cfs">T (K) instantaneous</text>');
+    var d = '', sum = 0, cnt = 0, bins = []; for (var b = 0; b < 12; b++) bins.push(0);
+    for (var i = 0; i < m; i++) { d += (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(TSER[i]).toFixed(1); if (i >= 130) { sum += TSER[i]; cnt++; var bi = Math.max(0, Math.min(11, Math.floor((TSER[i] - Tmin) / (Tmax - Tmin) * 12))); bins[bi]++; } }
+    o += '<path d="' + d + '" fill="none" stroke="#4F7FB0" stroke-width="2"/>';
+    var last = TSER[m - 1]; o += '<circle class="pulse" cx="' + X(m - 1).toFixed(1) + '" cy="' + Y(last).toFixed(1) + '" r="8" fill="#4F7FB0" opacity=".5"/><circle cx="' + X(m - 1).toFixed(1) + '" cy="' + Y(last).toFixed(1) + '" r="7" fill="#4F7FB0"/>';
+    o += '<text x="' + (X(130) + 8).toFixed(1) + '" y="' + (Y0 - 10) + __L('" class="cfmu" font-size="17">초기 구간 · 평균에서 제외 (W05 t_eq)</text>','" class="cfmu" font-size="17">Initial segment · excluded from average (W05 t_eq)</text>');
+    if (cnt > 0) { var mean = sum / cnt; o += '<line x1="' + X(130).toFixed(1) + '" y1="' + Y(mean).toFixed(1) + '" x2="' + X(m - 1).toFixed(1) + '" y2="' + Y(mean).toFixed(1) + '" stroke="#2E8B57" stroke-width="3" stroke-dasharray="12 8"/><text x="' + (X1 - 6) + '" y="' + (Y(mean) - 10).toFixed(1) + __L('" text-anchor="end" class="cfh" fill="#2E8B57" font-size="22">시간 평균 ⟨T⟩ = ','" text-anchor="end" class="cfh" fill="#2E8B57" font-size="22">Time average ⟨T⟩ = ') + mean.toFixed(1) + ' K · ' + cnt + __L('점</text>','points</text>'); }
+    var hx0 = 800, hw = 250, mxb = Math.max.apply(null, bins) || 1;
+    o += '<text x="' + (hx0 + hw / 2) + '" y="' + (Y1 - 14) + __L('" text-anchor="middle" class="cfs">순간값의 분포 (가로 = 빈도)</text><line x1="','" text-anchor="middle" class="cfs">Distribution of instantaneous values (horizontal = frequency)</text><line x1="') + hx0 + '" y1="' + Y1 + '" x2="' + hx0 + '" y2="' + Y0 + '" stroke="#6E655C" stroke-width="2"/>';
+    bins.forEach(function (c, b) { var yT = Tmin + (b + 1) / 12 * (Tmax - Tmin), h = (Y0 - Y1) / 12; o += '<rect x="' + hx0 + '" y="' + (Y(yT) + 2).toFixed(1) + '" width="' + (c / mxb * hw).toFixed(1) + '" height="' + (h - 4).toFixed(1) + '" rx="4" fill="#4F7FB0" opacity=".75"/>'; });
+    o += '<text x="' + (hx0 + hw / 2) + '" y="' + (Y0 + 32) + __L('" text-anchor="middle" class="cfmu">폭 ≈ 요동 · 중심 ≈ 평균</text></svg>','" text-anchor="middle" class="cfmu">Width ≈ fluctuation · center ≈ average</text></svg>');
+    root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* 13장: 온도 = 속도 분포 (상자 + 누적 히스토그램 + MB 곡선) */
+EMB["vhist"] = function (root, RAF) {
+  var Ts = [0.3, 0.6, 1.2], sims = Ts.map(function (T) { return LJ2D(8, 7, T, 7); }), ox = 40, oy = 540, side = 440, px = side / 7;
+  var HX0 = 600, HX1 = 1540, HY0 = 460, HY1 = 90, hist = [[], [], []], NB = 24, VMAX = 3.2, cur = -1, t0 = CLK();
+  function f(now) {
+    var st = stepOf(root), t = st ? (st - 1) * 4 + 2 : ((now - t0) / 1000) % 12, k = Math.min(2, Math.floor(t / 4));
+    if (k !== cur) { cur = k; hist[k] = []; for (var b = 0; b < NB; b++) hist[k].push(0); }
+    var S = sims[k]; for (var s = 0; s < 4; s++) S.step();
+    var o = '<svg viewBox="0 0 1588 560" class="cfig">';
+    o += '<rect x="' + ox + '" y="' + (oy - side) + '" width="' + side + '" height="' + side + '" fill="#FFFFFF" stroke="#F99D1C" stroke-width="3" stroke-dasharray="10 8"/><text x="' + (ox + side / 2) + '" y="' + (oy - side - 16) + '" text-anchor="middle" class="cfh" font-size="21">2D LJ · N 8 · T₀ ' + Ts[k].toFixed(1) + __L(' · 주황 = 속도 벡터</text>',' · orange = velocity vector</text>');
+    for (var i = 0; i < 8; i++) { var X = ox + S.x[i] * px, Y = oy - S.y[i] * px; o += '<line x1="' + X.toFixed(1) + '" y1="' + Y.toFixed(1) + '" x2="' + (X + S.vx[i] * 30).toFixed(1) + '" y2="' + (Y - S.vy[i] * 30).toFixed(1) + '" stroke="#E37F1A" stroke-width="4" stroke-linecap="round"/><circle cx="' + X.toFixed(1) + '" cy="' + Y.toFixed(1) + '" r="13" fill="#4F7FB0"/>'; var sp = Math.hypot(S.vx[i], S.vy[i]); hist[k][Math.min(NB - 1, Math.floor(sp / VMAX * NB))]++; }
+    o += '<line x1="' + HX0 + '" y1="' + HY0 + '" x2="' + HX1 + '" y2="' + HY0 + '" stroke="#6E655C" stroke-width="2"/><line x1="' + HX0 + '" y1="' + HY0 + '" x2="' + HX0 + '" y2="' + HY1 + '" stroke="#6E655C" stroke-width="2"/><text x="' + ((HX0 + HX1) / 2) + '" y="' + (HY0 + 44) + __L('" text-anchor="middle" class="cfs">속도 크기 |v| (환산단위) · 누적 히스토그램</text><text x="','" text-anchor="middle" class="cfs">Speed |v| (reduced units) · cumulative histogram</text><text x="') + (HX0 + 10) + '" y="' + (HY1 - 12) + __L('" class="cfs">빈도</text>','" class="cfs">Frequency</text>');
+    var mx = Math.max.apply(null, hist[k]) || 1, bw = (HX1 - HX0) / NB, colr = ['#4F7FB0', '#E37F1A', '#D9534F'][k];
+    hist[k].forEach(function (h, b) { o += '<rect x="' + (HX0 + b * bw + 2).toFixed(1) + '" y="' + (HY0 - h / mx * (HY0 - HY1 - 40)).toFixed(1) + '" width="' + (bw - 4).toFixed(1) + '" height="' + (h / mx * (HY0 - HY1 - 40)).toFixed(1) + '" rx="4" fill="' + colr + '" opacity=".8"/>'; });
+    var T = S.kin() * 2 / S.dof, d = ''; for (var j = 0; j <= 60; j++) { var vv = j / 60 * VMAX, p = vv * Math.exp(-vv * vv / (2 * T)); d += (j ? 'L' : 'M') + (HX0 + j / 60 * (HX1 - HX0)).toFixed(1) + ' ' + (HY0 - p / (Math.sqrt(T) * Math.exp(-0.5)) * (HY0 - HY1 - 40)).toFixed(1); }
+    o += '<path d="' + d + '" fill="none" stroke="#D9534F" stroke-width="4"/>';
+    o += '<text x="' + (HX1 - 10) + '" y="' + (HY1 + 30) + '" text-anchor="end" class="cfh" font-size="26">T₀ = ' + Ts[k].toFixed(1) + __L(' → 분포 폭 ∝ √T</text><text x="',' → distribution width ∝ √T</text><text x="') + (HX1 - 10) + '" y="' + (HY1 + 64) + __L('" text-anchor="end" class="cfmu">빨간 곡선 = Maxwell–Boltzmann 2D · T = 2K/N_f k_B = ','" text-anchor="end" class="cfmu">Red curve = Maxwell–Boltzmann 2D · T = 2K/N_f k_B = ') + T.toFixed(2) + '</text></svg>';
+    root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* 21장: velocity-Verlet 3단계 · 단계 칸 + 숫자 + 시간축 커서 */
+EMB["verlet3"] = function (root, RAF) {
+  var r = 4.0, v = 0.01, dt = 1.0, a0 = FLJ(r) / MC * CONV, vh = v + 0.5 * a0 * dt, r1 = r + vh * dt, a1 = FLJ(r1) / MC * CONV, v1 = vh + 0.5 * a1 * dt, t0 = CLK();
+  var steps = [[__L('① 힘 계산','① Compute force'), __L('현재 위치에서 에너지 곡선의 기울기','Slope of energy curve at current position'), 'F −0.0606 · a ' + a0.toExponential(3)], [__L('② 속도 반 걸음','② Half-step velocity'), __L('힘으로 속도를 시간 간격의 절반만큼 갱신','Update velocity by half the timestep using force'), 'v½ = ' + vh.toFixed(8)], [__L('③ 위치 한 걸음','③ Full-step position'), __L('갱신한 속도로 시간 간격만큼 이동','Move by timestep with updated velocity'), 'r = ' + r1.toFixed(8)]];
+  var pos = [1200, 1350, 1500], ys = [150, 118, 150], cols = ['#D9534F', '#4F7FB0', '#E37F1A'];
+  function f(now) {
+    var st = stepOf(root), t = st ? (st - 1) * 3 + 2.9 : ((now - t0) / 1000) % 9, k = Math.min(2, Math.floor(t / 3));
+    var o = '<svg viewBox="0 0 1588 560" class="cfig">';
+    steps.forEach(function (s, i) { var y = 14 + i * 112, on = i <= k, cur = i === k; o += '<g opacity="' + (on ? 1 : 0.35) + '"><rect x="30" y="' + y + '" width="1080" height="96" rx="14" fill="' + (cur ? '#FFF1E0' : '#F6F0E7') + '" stroke="' + (cur ? '#F99D1C' : '#E2D8CA') + '" stroke-width="' + (cur ? 3 : 1) + '"/><rect x="30" y="' + y + '" width="12" height="96" rx="6" fill="' + cols[i] + '"/><text x="62" y="' + (y + 42) + '" class="cfh" font-size="26">' + s[0] + '</text><text x="62" y="' + (y + 78) + '" class="cfs" font-size="21">' + s[1] + '</text><text x="1090" y="' + (y + 60) + '" text-anchor="end" class="cfm" fill="' + (on ? '#C8610C' : '#6E655C') + '" font-size="24">' + (on ? s[2] : '·') + '</text></g>'; });
+    var back = k === 2;
+    o += '<g opacity="' + (back ? 1 : 0.35) + __L('"><rect x="30" y="356" width="1080" height="190" rx="14" fill="#231F20"/><text x="62" y="400" class="cfw" font-size="24" fill="#FBB44E">다시 ① · 새 위치의 힘</text><text x="62" y="442" class="cfw" font-size="21" font-weight="500">새 위치 힘 → 가속도 a = ','"><rect x="30" y="356" width="1080" height="190" rx="14" fill="#231F20"/><text x="62" y="400" class="cfw" font-size="24" fill="#FBB44E">Back to ① · force at new position</text><text x="62" y="442" class="cfw" font-size="21" font-weight="500">Force at new position → acceleration a = ') + a1.toExponential(3) + __L(' Å/fs²</text><text x="62" y="480" class="cfw" font-size="21" font-weight="500">속도 나머지 반 걸음 → v = ','Å/fs²</text><text x="62" y="480" class="cfw" font-size="21" font-weight="500">Other half-step of velocity → v = ') + v1.toFixed(8) + __L(' Å/fs</text><text x="62" y="518" class="cfw" font-size="19" opacity=".85">반 걸음 두 번 = 위치 이동 앞뒤로 속도 갱신 분할 · 힘 계산은 스텝당 1회</text></g>','Å/fs</text><text x="62" y="518" class="cfw" font-size="19" opacity=".85">Two half-steps = velocity update split around position move · 1 force calculation per step</text></g>');
+    o += __L('<rect x="1140" y="14" width="420" height="290" rx="16" fill="#FFFFFF" stroke="#E2D8CA" stroke-width="2"/><text x="1350" y="52" text-anchor="middle" class="cfh" font-size="22">시간축 위의 한 스텝</text>','<rect x="1140" y="14" width="420" height="290" rx="16" fill="#FFFFFF" stroke="#E2D8CA" stroke-width="2"/><text x="1350" y="52" text-anchor="middle" class="cfh" font-size="22">One step on the time axis</text>');
+    o += '<line x1="1170" y1="200" x2="1530" y2="200" stroke="#6E655C" stroke-width="3"/>';
+    [['t', 1200], ['t + Δt/2', 1350], ['t + Δt', 1500]].forEach(function (p) { o += '<line x1="' + p[1] + '" y1="185" x2="' + p[1] + '" y2="215" stroke="#6E655C" stroke-width="3"/><text x="' + p[1] + '" y="248" text-anchor="middle" class="cfs" font-size="19">' + p[0] + '</text>'; });
+    o += __L('<circle cx="1200" cy="150" r="11" fill="#D9534F"/><circle cx="1350" cy="118" r="11" fill="#4F7FB0"/><circle cx="1500" cy="150" r="11" fill="#E37F1A"/><text x="1200" y="130" text-anchor="middle" class="cfm" fill="#D9534F" font-size="17">힘</text><text x="1350" y="98" text-anchor="middle" class="cfm" fill="#4F7FB0" font-size="17">속도</text><text x="1500" y="130" text-anchor="middle" class="cfm" fill="#E37F1A" font-size="17">위치</text>','<circle cx="1200" cy="150" r="11" fill="#D9534F"/><circle cx="1350" cy="118" r="11" fill="#4F7FB0"/><circle cx="1500" cy="150" r="11" fill="#E37F1A"/><text x="1200" y="130" text-anchor="middle" class="cfm" fill="#D9534F" font-size="17">Force</text><text x="1350" y="98" text-anchor="middle" class="cfm" fill="#4F7FB0" font-size="17">Velocity</text><text x="1500" y="130" text-anchor="middle" class="cfm" fill="#E37F1A" font-size="17">Position</text>');
+    o += '<circle class="pulse" cx="' + pos[k] + '" cy="' + ys[k] + '" r="18" fill="none" stroke="#E37F1A" stroke-width="4"/>';
+    o += __L('<text x="1350" y="286" text-anchor="middle" class="cfmu">숫자 = 탄소 원자쌍 r 4.00 · v 0.01 · Δt 1 fs</text>','<text x="1350" y="286" text-anchor="middle" class="cfmu">Numbers = carbon atom pair r 4.00 · v 0.01 · Δt 1 fs</text>');
+    o += __L('<rect x="1140" y="324" width="420" height="222" rx="16" fill="#FFF1E0" stroke="#F99D1C" stroke-width="2"/><text x="1350" y="366" text-anchor="middle" class="cfh" font-size="22">성질</text>','<rect x="1140" y="324" width="420" height="222" rx="16" fill="#FFF1E0" stroke="#F99D1C" stroke-width="2"/><text x="1350" y="366" text-anchor="middle" class="cfh" font-size="22">Properties</text>');
+    [__L('시간을 거꾸로 돌려도 같은 궤적','Same trajectory if time is reversed'), __L('에너지 드리프트 작음','Small energy drift'), __L('힘 계산 1회/스텝 (비용의 대부분)','1 force calculation/step (most of the cost)'), __L('7단계 전체 표 = docs · 노트북 01','Full 7-stage table = docs · notebook 01')].forEach(function (s, i) { o += '<text x="1350" y="' + (406 + i * 34) + '" text-anchor="middle" class="cfs" font-size="19">' + s + '</text>'; });
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* 18장: 비결합 쌍 그림 (맥동하는 모든 쌍) */
+(function () {
+  var svg = document.getElementById('w03-pairs'); if (!svg) return;
+  var P = [[80, 50], [230, 35], [380, 70], [120, 140], [290, 150], [430, 125], [560, 60], [600, 150]], o = '';
+  for (var i = 0; i < P.length; i++) for (var j = i + 1; j < P.length; j++) o += '<line class="tl" x1="' + P[i][0] + '" y1="' + P[i][1] + '" x2="' + P[j][0] + '" y2="' + P[j][1] + '" style="animation-delay:' + (-(i + j) * 0.17).toFixed(2) + 's"/>';
+  P.forEach(function (p) { o += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="14" fill="#4F7FB0"/>'; });
+  o += __L('<text x="650" y="100" text-anchor="end" class="cfm" fill="#4F7FB0">N 8 → 쌍 28</text>','<text x="650" y="100" text-anchor="end" class="cfm" fill="#4F7FB0">N 8 → 28 pairs</text>');
+  svg.innerHTML = o;
+})();
+
+/* 24장 TWEAK 곡선 (C–C 결합 Verlet · Δt 1 · 8) */
+(function () {
+  var K = 478.4, mu = MC / 2;
+  function run(dt, tmax) { var x = 0.10, v = 0, a = -2 * K * x * CONV / mu, E0 = K * x * x, xs = [], es = []; for (var i = 0; i <= tmax / dt; i++) { var Ek = 0.5 * mu * v * v / CONV, Et = Ek + K * x * x; xs.push(x); es.push(Et / E0); if (Math.abs(x) > 5) break; v += 0.5 * a * dt; x += v * dt; a = -2 * K * x * CONV / mu; v += 0.5 * a * dt; } return { xs: xs, es: es }; }
+  function draw(idx, ide, R, xm, emax) {
+    var px = document.getElementById(idx), pe = document.getElementById(ide); if (!px) return;
+    var d = '', de = '', n = R.xs.length;
+    R.xs.forEach(function (x, i) { var X = 60 + i / (n - 1) * 680, Y = 120 - Math.max(-1, Math.min(1, x / xm)) * 70; d += (i ? 'L' : 'M') + X.toFixed(1) + ' ' + Y.toFixed(1); });
+    R.es.forEach(function (e, i) { var X = 60 + i / (n - 1) * 680, Y = 240 - Math.max(-1, Math.min(emax, e - 1)) / emax * 50; de += (i ? 'L' : 'M') + X.toFixed(1) + ' ' + Y.toFixed(1); });
+    px.setAttribute('d', d); pe.setAttribute('d', de);
+  }
+  draw('tw1', 'tw1e', run(1, 300), 0.12, 0.05); draw('tw8', 'tw8e', run(8, 300), 0.5, 1.5);
+})();
+
+/* 23장 조작형: Δt 와 에너지 보존 · C–C 결합 1차원 진동 */
+(function () {
+  var root = document.getElementById('sim-dt'); if (!root) return;
+  var K = 478.4, mu = MC / 2, omega = Math.sqrt(2 * K * CONV / mu), Tper = 2 * Math.PI / omega;
+  var st = { dt: 1, x0: 0.10, tmax: 300 }, svg = root.querySelector('svg');
+  function run() {
+    var x = st.x0, v = 0, a = -2 * K * x * CONV / mu, E0 = K * x * x, xs = [], es = [], ts = [], n = Math.floor(st.tmax / st.dt), diverged = false, errMax = 0;
+    for (var i = 0; i <= n; i++) { var Ek = 0.5 * mu * v * v / CONV, Et = Ek + K * x * x; xs.push(x); es.push(Et); ts.push(i * st.dt); errMax = Math.max(errMax, Math.abs(Et - E0) / E0); if (Math.abs(x) > 5 || !isFinite(x)) { diverged = true; break; } v += 0.5 * a * st.dt; x += v * st.dt; a = -2 * K * x * CONV / mu; v += 0.5 * a * st.dt; }
+    return { xs: xs, es: es, ts: ts, E0: E0, div: diverged, err: errMax };
+  }
+  function draw() {
+    var R = run(), X0 = 90, X1 = 1120, Ya0 = 180, Ya1 = 24, Yb0 = 390, Yb1 = 230, o = '';
+    function X(t) { return X0 + t / st.tmax * (X1 - X0); }
+    var xm = Math.max(0.25, st.x0 * 1.3); function Ya(x) { return (Ya0 + Ya1) / 2 - x / xm * (Ya0 - Ya1) / 2; }
+    o += '<line x1="' + X0 + '" y1="' + ((Ya0 + Ya1) / 2) + '" x2="' + X1 + '" y2="' + ((Ya0 + Ya1) / 2) + '" stroke="#E2D8CA"/><line x1="' + X0 + '" y1="' + Ya1 + '" x2="' + X0 + '" y2="' + Ya0 + '" stroke="#6E655C" stroke-width="2"/><text x="' + (X0 + 12) + '" y="' + (Ya1 + 4) + '" class="cfs">r − r₀ (Å)</text>';
+    var d = ''; R.xs.forEach(function (x, i) { var y = Math.max(Ya1 - 10, Math.min(Ya0 + 10, Ya(x))); d += (i ? 'L' : 'M') + X(R.ts[i]).toFixed(1) + ' ' + y.toFixed(1); });
+    o += '<path d="' + d + '" fill="none" stroke="#4F7FB0" stroke-width="3"/><text x="' + (X0 - 8) + '" y="' + (Ya(xm) + 8).toFixed(1) + '" text-anchor="end" class="cfm" fill="#4A4540" font-size="18">+' + xm.toFixed(2) + '</text><text x="' + (X0 - 8) + '" y="' + (Ya(-xm) + 8).toFixed(1) + '" text-anchor="end" class="cfm" fill="#4A4540" font-size="18">−' + xm.toFixed(2) + '</text>';
+    o += '<line x1="' + X0 + '" y1="' + Yb0 + '" x2="' + X1 + '" y2="' + Yb0 + '" stroke="#6E655C" stroke-width="2"/><line x1="' + X0 + '" y1="' + Yb1 + '" x2="' + X0 + '" y2="' + Yb0 + '" stroke="#6E655C" stroke-width="2"/><text x="' + (X0 + 12) + '" y="' + (Yb1 + 4) + '" class="cfs">E / E₀</text>';
+    function Yb(rel) { return Yb0 - Math.max(0, Math.min(2, rel)) / 2 * (Yb0 - Yb1); }
+    o += '<line x1="' + X0 + '" y1="' + Yb(1) + '" x2="' + X1 + '" y2="' + Yb(1) + '" stroke="#2E8B57" stroke-width="2" stroke-dasharray="8 6"/><text x="' + X1 + '" y="' + (Yb(1) - 8) + __L('" text-anchor="end" class="cfm" fill="#2E8B57" font-size="18">E₀ (보존)</text>','" text-anchor="end" class="cfm" fill="#2E8B57" font-size="18">E₀ (conserved)</text>');
+    var d2 = ''; R.es.forEach(function (e, i) { d2 += (i ? 'L' : 'M') + X(R.ts[i]).toFixed(1) + ' ' + Yb(e / R.E0).toFixed(1); });
+    o += '<path d="' + d2 + '" fill="none" stroke="' + (R.div ? '#D9534F' : '#E37F1A') + '" stroke-width="3"/>';
+    [0, 0.5, 1].forEach(function (f) { o += '<text x="' + X(f * st.tmax).toFixed(1) + '" y="' + (Yb0 + 26) + '" text-anchor="middle" class="cfm" fill="#4A4540" font-size="18">' + Math.round(f * st.tmax) + ' fs</text>'; });
+    o += '<text x="' + (X0 - 8) + '" y="' + (Yb(2) + 8) + '" text-anchor="end" class="cfm" fill="#4A4540" font-size="18">2</text>';
+    svg.innerHTML = o;
+    root.querySelector('[data-o=T]').textContent = Tper.toFixed(1) + ' fs';
+    root.querySelector('[data-o=err]').textContent = R.div ? __L('발산','Divergence') : (R.err * 100).toFixed(2) + ' %';
+    root.querySelector('[data-o=verdict]').textContent = R.div ? __L('발산 (ωΔt ≥ 2)','Diverges (ωΔt ≥ 2)') : (R.err < 0.02 ? __L('안전 (< 2 %)','Safe (< 2 %)') : (R.err < 0.1 ? __L('주의 (2~10 %)','Caution (2~10 %)') : __L('위험 (≥ 10 %)','Dangerous (≥ 10 %)')));
+  }
+  root.querySelectorAll('input[type=range]').forEach(function (inp) { inp.addEventListener('input', function () { st[inp.dataset.k] = +inp.value; root.querySelector('[data-o=' + inp.dataset.k + ']').textContent = inp.value; draw(); }); });
+  function set(o) { for (var k in o) { st[k] = o[k]; root.querySelector('input[data-k=' + k + ']').value = o[k]; root.querySelector('[data-o=' + k + ']').textContent = o[k]; } draw(); }
+  root.querySelector('[data-act=fail]').onclick = function () { set({ dt: 8 }); };
+  root.querySelector('[data-act=reset]').onclick = function () { set({ dt: 1, x0: 0.10, tmax: 300 }); };
+  draw();
+})();
+</script>
+</body>
+</html>

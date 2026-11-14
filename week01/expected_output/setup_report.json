@@ -1,0 +1,29 @@
+{
+  "python": "3.12.13",
+  "packages": {
+    "numpy": "2.4.6",
+    "pandas": "3.0.2",
+    "matplotlib": "3.10.8"
+  },
+  "data": {
+    "file": "asphalt_ml_101.csv",
+    "rows": 101,
+    "columns": [
+      "doi",
+      "year",
+      "title",
+      "cites",
+      "institutions",
+      "countries",
+      "has_abstract",
+      "is_md_ml"
+    ],
+    "years": [
+      2020,
+      2026
+    ]
+  },
+  "ok": true,
+  "created": "2026-11-08T06:21:17+00:00",
+  "figure": "out/papers_by_year.png"
+}

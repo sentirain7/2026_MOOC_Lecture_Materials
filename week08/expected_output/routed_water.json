@@ -1,0 +1,49 @@
+{
+ "source_topology": "topology_water.json",
+ "role": "water",
+ "structure_hash": "d74b008cc343",
+ "n_atoms": 3,
+ "n_bonds": 2,
+ "stack": "clayff_gaff2_v1",
+ "routes": [
+  {
+   "id": 1,
+   "el": "O",
+   "spce": {
+    "type": "OW",
+    "q": -0.8476,
+    "eps": 0.1553,
+    "sig": 3.166,
+    "note": "ClayFF 스택의 짝 물 모델 · 순수 유기 스택은 TIP3P"
+   }
+  },
+  {
+   "id": 2,
+   "el": "H",
+   "spce": {
+    "type": "HW",
+    "q": 0.4238,
+    "eps": 0.0,
+    "sig": 0.0,
+    "note": "ClayFF 스택의 짝 물 모델 · 순수 유기 스택은 TIP3P"
+   }
+  },
+  {
+   "id": 3,
+   "el": "H",
+   "spce": {
+    "type": "HW",
+    "q": 0.4238,
+    "eps": 0.0,
+    "sig": 0.0,
+    "note": "ClayFF 스택의 짝 물 모델 · 순수 유기 스택은 TIP3P"
+   }
+  }
+ ],
+ "type_counts": {
+  "spce": {
+   "OW": 1,
+   "HW": 2
+  }
+ }
+}

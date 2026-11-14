@@ -1,0 +1,16 @@
+{
+ "id": "r0_5",
+ "density_gcm3": 1.1304,
+ "density_se": 0.0028,
+ "density_half_diff_pct": 0.68,
+ "density_ok": true,
+ "n_thermo": 161,
+ "t_prod_ps": 40.0,
+ "ced_MJm3": 470.6,
+ "ced_se": 4.4,
+ "delta_MPa05": 21.69,
+ "n_frames": 17,
+ "n_molecules": 83,
+ "max_molecule_extent_A": 8.1,
+ "ced_note": "E_inter = E_bulk(PPPM · tail) − Σ E_분자(직접 합) · 생산 구간 앞 20 % 버림"
+}

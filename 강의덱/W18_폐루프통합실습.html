@@ -1,0 +1,1115 @@
+<!doctype html>
+<html lang="ko" data-v="3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>W18 폐루프 통합 실습 · 아스팔트 평균 분자 역설계 · 최종 프로젝트</title>
+<link rel="stylesheet" href="../common/deck.css">
+</head>
+<body>
+
+<!-- 1 표지 -->
+<section class="slide v3 cover">
+<div class="stop">
+<div class="ribbon"></div>
+<div class="cover-txt">
+<p class="eb a" style="--d:0"><span class="ko" data-i>건설소재 역설계 도구 개발을 위한 AI와 분자동역학 활용 · WEEK 18 · 모듈 M5 파이프라인 · 차시 18-1 ~ 18-4 · 54분</span><span class="en" data-i>AI and Molecular Dynamics for Inverse Design of Construction Materials · WEEK 18 · Module M5 Pipeline · sessions 18-1 ~ 18-4 · 54 min</span></p>
+<h1 class="cover-h a" style="--d:1"><span class="ko" data-i>폐루프 통합 실습: 아스팔트 평균 분자 역설계 · 최종 프로젝트</span><span class="en" data-i>Closed-loop integration lab: inverse design of an asphalt average molecule · final project</span></h1>
+<p class="cover-sub a" style="--d:2"><span class="ko" data-i>문헌 표적 2개 → 후보 168 → MD 12회 → 대리모델 → 체비셰프 EI → 실행 노트 환류</span><span class="en" data-i>2 literature targets → 168 candidates → 12 MD runs → surrogate → Chebyshev EI → run notes fed back</span></p>
+<p class="who a" style="--d:3"><span class="ko" data-i><b>윤태영</b> 연구위원 · 한국건설기술연구원 도로교통연구본부 · 과학기술연합대학원대학교(UST) 교수</span><span class="en" data-i><b>Taeyoung Yun</b> Senior Research Fellow · Department of Highway & Transportation Research, Korea Institute of Civil Engineering and Building Technology (KICT) · Professor, University of Science and Technology (UST)</span></p>
+<div class="rel a" style="--d:4;justify-content:flex-start"><span><span class="ko" data-i>준비물 · 터미널 + Claude Code</span><span class="en" data-i>Prerequisites · terminal + Claude Code</span></span><span>conda mdai</span><span>repo/loop · week18</span></div>
+</div>
+<div class="cover-fig"><div class="emb" data-emb="pathc" data-dur="12"></div></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 2 오늘 만들 것 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>오늘 만들 것 · W18</span><span class="en" data-i>Today's deliverables · W18</span></p>
+<div class="hrow"><span class="hico" data-ico="package-check"></span><h2 class="h"><span class="ko" data-i>오늘의 완성물 3: 문헌 표적 · 폐루프 한 바퀴 결과 · 볼트 실행 노트</span><span class="en" data-i>3 deliverables today: literature targets · one closed-loop turn · vault run notes</span></h2></div>
+<p class="sub"><span class="ko" data-i>W17 = 후보 1개 계산 · W18 = 후보 168개 중 다음 계산 선택 · 기준 사례 = MD 12회</span><span class="en" data-i>W17 = compute 1 candidate · W18 = choose the next calculation among 168 · reference case = 12 MD runs</span></p>
+<div class="bd today">
+<div class="goal">
+<div class="it white a" style="--d:1"><div class="ih"><span class="icb" data-ico="book-open"></span><div><p class="k"><span class="ko" data-i>완성물 ① · 18-1</span><span class="en" data-i>Deliverable ① · 18-1</span></p><h4><span class="ko" data-i>lit_targets.json · 밀도 1.018 · CED 354.2</span><span class="en" data-i>lit_targets.json · density 1.018 · CED 354.2</span></h4></div></div><p><span class="ko" data-i>논문 노트 15편 → 값 30행 → 중앙값 표적 2개 · 근거 citekey</span><span class="en" data-i>15 paper notes → 30 value rows → 2 median targets · evidence citekeys</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="route"></span><div><p class="k"><span class="ko" data-i>완성물 ② · 18-2 · 18-3</span><span class="en" data-i>Deliverable ② · 18-2 · 18-3</span></p><h4><span class="ko" data-i>loop_results.csv 12행 · state.json · 최선 d 3.04 → 1.97</span><span class="en" data-i>loop_results.csv 12 rows · state.json · best d 3.04 → 1.97</span></h4></div></div><p><span class="ko" data-i>초기 설계 6 · 체비셰프 EI · 재생 약 2.5 s</span><span class="en" data-i>Initial design 6 · Chebyshev EI · replay approx. 2.5 s</span></p></div>
+<div class="it white a" style="--d:3"><div class="ih"><span class="icb" data-ico="notebook-pen"></span><div><p class="k"><span class="ko" data-i>완성물 ③ · 18-4</span><span class="en" data-i>Deliverable ③ · 18-4</span></p><h4><span class="ko" data-i>vault/runs 12 · vault/rounds 4 → 최종 프로젝트</span><span class="en" data-i>vault/runs 12 · vault/rounds 4 → final project</span></h4></div></div><p><span class="ko" data-i>근거 문헌 링크 · 그래프 · 제출 7파일</span><span class="en" data-i>Evidence links · graph · 7 submission files</span></p></div>
+</div>
+<div class="plan">
+<div class="lines">
+<div class="ln a" style="--d:1"><span class="nn">18-1</span><div><h4><span class="ko" data-i>문제와 표적</span><span class="en" data-i>Problem and targets</span></h4><p><span class="ko" data-i>Zotero → 볼트 → 표적 2개 · 평균 분자</span><span class="en" data-i>Zotero → vault → 2 targets · average molecule</span></p></div><span class="min"><span class="ko" data-i>12분</span><span class="en" data-i>12 min</span></span></div>
+<div class="ln a" style="--d:2"><span class="nn">18-2</span><div><h4><span class="ko" data-i>설계 후보와 대리모델</span><span class="en" data-i>Design candidates and surrogate</span></h4><p><span class="ko" data-i>후보 168 · 초기 설계 6 · 모델 3종 · L-1 · L-2</span><span class="en" data-i>168 candidates · initial design 6 · 3 models · L-1 · L-2</span></p></div><span class="min"><span class="ko" data-i>12분</span><span class="en" data-i>12 min</span></span></div>
+<div class="ln a" style="--d:3"><span class="nn">18-3</span><div><h4><span class="ko" data-i>능동학습 한 바퀴</span><span class="en" data-i>One active-learning turn</span></h4><p><span class="ko" data-i>체비셰프 EI · 경로 · EHVI · 재생 · L-5 · L-6</span><span class="en" data-i>Chebyshev EI · path · EHVI · replay · L-5 · L-6</span></p></div><span class="min"><span class="ko" data-i>16분</span><span class="en" data-i>16 min</span></span></div>
+<div class="ln a" style="--d:4"><span class="nn">18-4</span><div><h4><span class="ko" data-i>환류 · 검증 · 최종 프로젝트</span><span class="en" data-i>Feedback · validation · final project</span></h4><p><span class="ko" data-i>볼트 노트 · 한계 · 내 문제 · L-7 · L-8</span><span class="en" data-i>Vault notes · limits · my problem · L-7 · L-8</span></p></div><span class="min"><span class="ko" data-i>14분</span><span class="en" data-i>14 min</span></span></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>준비물: <b>터미널 + Claude Code</b> · conda mdai · 저장소 week18 · loop</span><span class="en" data-i>Needed: <b>terminal + Claude Code</b> · conda mdai · repo week18 · loop</span></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>수치 = repo/loop/expected_output/avg_molecule_2target (12회 실제 MD · 4코어) · _ehvi (같은 초기 6개 + EHVI) · 표적 = loop/README.md · 도구 = repo/loop · repo/mdworkflow</span><span class="en" data-i>Values = repo/loop/expected_output/avg_molecule_2target (12 real MD runs · 4 cores) · _ehvi (same initial 6 + EHVI) · targets = loop/README.md · tools = repo/loop · repo/mdworkflow</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 3 차시 18-1 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 18-1 · 12분 · 영상 1편</span><span class="en" data-i>Session 18-1 · 12 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="book-open"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">1</p><p class="hubt"><span class="ko" data-i>문제와 표적</span><span class="en" data-i>Problem and targets</span></p><p class="hubs"><span class="ko" data-i>논문 노트 → 표적 2개 · 평균 분자의 뜻</span><span class="en" data-i>Paper notes → 2 targets · meaning of the average molecule</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>lit_targets.json: 밀도 1.018 · CED 354.2</span><span class="en" data-i>lit_targets.json: density 1.018 · CED 354.2</span></h4></div></div><p><span class="ko" data-i>Zotero → library.bib → 볼트 논문 노트 15편 → lit_extract</span><span class="en" data-i>Zotero → library.bib → 15 paper notes in vault → lit_extract</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>18주의 마지막 칸 · W01 순환 그림 → 실제 파일</span><span class="en" data-i>Last step of 18 weeks · W01 loop figure → real files</span></h4></div></div><p><span class="ko" data-i>W02 문헌 도구 · W09 CED · W11 아스팔트 · W17 MD 워크플로우 → 한 바퀴</span><span class="en" data-i>W02 literature tools · W09 CED · W11 asphalt · W17 MD workflow → one turn</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 4 FIG 강좌 안의 위치 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>18-1 · 왜</span><span class="en" data-i>18-1 · Why</span></p>
+<div class="hrow"><span class="hico" data-ico="map"></span><h2 class="h"><span class="ko" data-i>강좌 안의 위치: W01 순환 6칸 = repo/loop 의 실제 파일 · 18주의 마지막 칸</span><span class="en" data-i>Where this fits: W01 6-step loop = real files in repo/loop · last step of 18 weeks</span></h2></div>
+<p class="sub"><span class="ko" data-i>W01 21장 = 순환의 지도 · W02 ~ W17 = 칸마다 도구 · W18 = 같은 6칸을 파일로 한 바퀴</span><span class="en" data-i>W01 slide 21 = map of the loop · W02 ~ W17 = tools per step · W18 = same 6 steps, one turn with files</span></p>
+<div class="bd">
+<div class="figw white fill"><svg viewBox="0 0 1588 500" class="cfig">
+<g fill="#FFF8EE" stroke="#F99D1C" stroke-width="3">
+<rect x="20" y="16" width="470" height="150" rx="18"/><rect x="559" y="16" width="470" height="150" rx="18"/><rect x="1098" y="16" width="470" height="150" rx="18"/>
+<rect x="20" y="330" width="470" height="150" rx="18"/><rect x="559" y="330" width="470" height="150" rx="18"/><rect x="1098" y="330" width="470" height="150" rx="18"/>
+</g>
+<text x="44" y="58" class="cfh"><tspan class="ko" data-i>① 문헌 · 후보</tspan><tspan class="en" data-i>① Literature · candidates</tspan></text><text x="466" y="58" text-anchor="end" class="cfmu">W02 · W11</text>
+<text x="44" y="100" font-family="JetBrains Mono, monospace" font-size="19" font-weight="700" fill="#C8610C">vault/papers → lit_targets.json</text>
+<text x="44" y="140" class="cfs"><tspan class="ko" data-i>L-1 · 노트 15편 → 표적 2개</tspan><tspan class="en" data-i>L-1 · 15 notes → 2 targets</tspan></text>
+<text x="583" y="58" class="cfh"><tspan class="ko" data-i>② 구조 생성</tspan><tspan class="en" data-i>② Structure generation</tspan></text><text x="1005" y="58" text-anchor="end" class="cfmu">W06 · W17</text>
+<text x="583" y="100" font-family="JetBrains Mono, monospace" font-size="19" font-weight="700" fill="#C8610C">library.csv · ff/ · cells/</text>
+<text x="583" y="140" class="cfs"><tspan class="ko" data-i>L-2 · 후보 168 · 단분자 상자</tspan><tspan class="en" data-i>L-2 · 168 candidates · single-component box</tspan></text>
+<text x="1122" y="58" class="cfh"><tspan class="ko" data-i>③ MD 계산</tspan><tspan class="en" data-i>③ MD calculation</tspan></text><text x="1544" y="58" text-anchor="end" class="cfmu">W09 · W17</text>
+<text x="1122" y="100" font-family="JetBrains Mono, monospace" font-size="19" font-weight="700" fill="#C8610C">runs/*/props.json</text>
+<text x="1122" y="140" class="cfs"><tspan class="ko" data-i>MD 워크플로우 · 밀도 · CED</tspan><tspan class="en" data-i>MD workflow · density · CED</tspan></text>
+<text x="1122" y="372" class="cfh"><tspan class="ko" data-i>④ 대리모델</tspan><tspan class="en" data-i>④ Surrogate model</tspan></text><text x="1544" y="372" text-anchor="end" class="cfmu">W13 ~ W15</text>
+<text x="1122" y="414" font-family="JetBrains Mono, monospace" font-size="19" font-weight="700" fill="#C8610C">model_compare.json</text>
+<text x="1122" y="454" class="cfs">L-4 · gp · rf · xgb · μ ± σ</text>
+<text x="583" y="372" class="cfh"><tspan class="ko" data-i>⑤ 능동학습</tspan><tspan class="en" data-i>⑤ Active learning</tspan></text><text x="1005" y="372" text-anchor="end" class="cfmu">W15 · W16</text>
+<text x="583" y="414" font-family="JetBrains Mono, monospace" font-size="19" font-weight="700" fill="#C8610C">state.json · picks</text>
+<text x="583" y="454" class="cfs"><tspan class="ko" data-i>L-5 · L-6 · 체비셰프 EI · 2개씩</tspan><tspan class="en" data-i>L-5 · L-6 · Chebyshev EI · 2 at a time</tspan></text>
+<text x="44" y="372" class="cfh"><tspan class="ko" data-i>⑥ 환류 · 정지</tspan><tspan class="en" data-i>⑥ Feedback · stop</tspan></text><text x="466" y="372" text-anchor="end" class="cfmu">W16 · W18</text>
+<text x="44" y="414" font-family="JetBrains Mono, monospace" font-size="19" font-weight="700" fill="#C8610C">vault/runs · vault/rounds</text>
+<text x="44" y="454" class="cfs"><tspan class="ko" data-i>L-7 · L-8 · 실행 노트 → 볼트</tspan><tspan class="en" data-i>L-7 · L-8 · run notes → vault</tspan></text>
+<g stroke="#C8610C" stroke-width="4" fill="none" stroke-linecap="round">
+<path class="tl" d="M494 91 L552 91"/><path class="tl" d="M1033 91 L1091 91"/><path class="tl" d="M1333 170 L1333 323"/>
+<path class="tl" d="M1094 405 L1036 405"/><path class="tl" d="M555 405 L497 405"/><path class="tl" d="M255 326 L255 173"/>
+</g>
+<g fill="#C8610C"><path d="M552 81 L568 91 L552 101 Z"/><path d="M1091 81 L1107 91 L1091 101 Z"/><path d="M1323 323 L1333 339 L1343 323 Z"/><path d="M1036 395 L1020 405 L1036 415 Z"/><path d="M497 395 L481 405 L497 415 Z"/><path d="M245 173 L255 157 L265 173 Z"/></g>
+<text x="276" y="256" class="cfm"><tspan class="ko" data-i>환류</tspan><tspan class="en" data-i>Feedback</tspan></text><text x="1312" y="256" text-anchor="end" class="cfm"><tspan class="ko" data-i>결과 → 학습</tspan><tspan class="en" data-i>Results → training</tspan></text>
+<text x="794" y="236" text-anchor="middle" class="cfh"><tspan class="ko" data-i>W01 21장 6단계 순환 = W18 repo/loop 의 실제 파일</tspan><tspan class="en" data-i>W01 slide 21 6-step loop = real files in W18 repo/loop</tspan></text>
+<text x="794" y="276" text-anchor="middle" class="cfs"><tspan class="ko" data-i>한 바퀴 = 표적 2 · 후보 168 · MD 12회 · 3라운드 · 노트 16</tspan><tspan class="en" data-i>One turn = 2 targets · 168 candidates · 12 MD runs · 3 rounds · 16 notes</tspan></text>
+</svg></div>
+<div class="foot a" style="--d:3"><span class="ko" data-i>W01 = 순환의 지도 · W18 = <b>같은 6칸을 내 컴퓨터의 파일로 한 바퀴</b> · 마지막 칸의 노트 = 첫 칸과 같은 볼트</span><span class="en" data-i>W01 = map of the loop · W18 = <b>same 6 steps, one turn with files on my computer</b> · notes of the last step = same vault as the first</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>W01 21장 「자율 탐색 파이프라인 = 6단계 순환」 · repo/loop/README.md ①~⑥ · vault/00_루프지도.md · 노트 16 = 실행 노트 12 + 라운드 노트 4</span><span class="en" data-i>W01 slide 21 "autonomous exploration pipeline = 6-step loop" · repo/loop/README.md ①~⑥ · vault loop-map note (00_) · 16 notes = 12 run notes + 4 round notes</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 5 FIG 문헌 → 표적 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>18-1 · 무엇</span><span class="en" data-i>18-1 · What</span></p>
+<div class="hrow"><span class="hico" data-ico="library"></span><h2 class="h"><span class="ko" data-i>문헌 → 표적: Zotero 서지 → library.bib → 볼트 논문 노트 → lit_extract → 표적 2개</span><span class="en" data-i>Literature → targets: Zotero records → library.bib → vault paper notes → lit_extract → 2 targets</span></h2></div>
+<p class="sub"><span class="ko" data-i>W02 의 문헌 도구 그대로 · 노트 머리 loop_role: target · 「보고 물성」 표의 값만 자동으로 읽음</span><span class="en" data-i>W02 literature tools as is · note header loop_role: target · only values in the "reported properties" table read automatically</span></p>
+<div class="bd">
+<div class="exf a" style="--d:1">
+<div class="exs"><span class="exi" data-ico="library"></span><div><h4>Zotero</h4><p><span class="ko" data-i>서지 · 인용키 · I-3</span><span class="en" data-i>Records · citation keys · I-3</span></p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="file-text"></span><div><h4>library.bib</h4><p><span class="ko" data-i>15편 · 자동 내보내기</span><span class="en" data-i>15 papers · auto export</span></p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="notebook-pen"></span><div><h4>vault/papers</h4><p><span class="ko" data-i>노트 15 · I-4</span><span class="en" data-i>15 notes · I-4</span></p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="scan-search"></span><div><h4>lit_extract.py</h4><p><span class="ko" data-i>값 30행 · CSV</span><span class="en" data-i>30 value rows · CSV</span></p></div></div><span class="exa"></span>
+<div class="exs hot"><span class="exi" data-ico="target"></span><div><h4>lit_targets.json</h4><p><span class="ko" data-i>표적 2개 · 근거</span><span class="en" data-i>2 targets · evidence</span></p></div></div>
+</div>
+<div class="row">
+<div class="doc a" style="--d:2;width:760px;flex:none">
+<p class="doc-pub">loop/vault/papers/zhu2019use.md</p>
+<pre class="code doccode"><span class="ko" data-i>---
+citekey: zhu2019use
+loop_role: target
+---
+## 보고 물성
+| 물성 | 값 | 단위 | 조건 |
+| 용해도 매개변수 δ | 19.15 | MPa^0.5 |
+  실온 · Redelius (2004) Hansen δt |</span><span class="en" data-i>---
+citekey: zhu2019use
+loop_role: target
+---
+## Reported properties
+| Property | Value | Unit | Condition |
+| Solubility parameter δ | 19.15 | MPa^0.5 |
+  room temp · Redelius (2004) Hansen δt |</span></pre>
+<p class="doc-m"><span class="ko" data-i>노트 형식 = vault/templates/논문노트.md (W02 템플릿 + loop_role 한 칸)</span><span class="en" data-i>Note format = paper-note template in vault/templates (W02 template + one loop_role field)</span></p>
+</div>
+<div class="grid c2 fill">
+<div class="it a" style="--d:2"><p class="k"><span class="ko" data-i>규칙 ① · 역할</span><span class="en" data-i>Rule ① · role</span></p><h4><span class="ko" data-i>loop_role: target 만</span><span class="en" data-i>Only loop_role: target</span></h4><p><span class="ko" data-i>validation · none = 기록만</span><span class="en" data-i>validation · none = logged only</span></p></div>
+<div class="it a" style="--d:3"><p class="k"><span class="ko" data-i>규칙 ② · 조건</span><span class="en" data-i>Rule ② · condition</span></p><h4><span class="ko" data-i>25 °C · 298 K 행만</span><span class="en" data-i>Only 25 °C · 298 K rows</span></h4><p><span class="ko" data-i>값 빈칸 · 「미기재」 = 건너뜀</span><span class="en" data-i>Empty value · "not reported" = skipped</span></p></div>
+<div class="it a" style="--d:3"><p class="k"><span class="ko" data-i>규칙 ③ · 환산</span><span class="en" data-i>Rule ③ · conversion</span></p><h4>δ → CED = δ²</h4><p>19.15² = 366.7 MJ/m³</p></div>
+<div class="it warm a" style="--d:4"><p class="k"><span class="ko" data-i>규칙 ④ · 제외</span><span class="en" data-i>Rule ④ · exclusion</span></p><h4><span class="ko" data-i>근거 칸 「표적 아님」</span><span class="en" data-i>Evidence field "not a target"</span></h4><p><span class="ko" data-i>MD 밀도 0.947 1행 = 기록만</span><span class="en" data-i>MD density 0.947, 1 row = logged only</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>loop/lit/library.bib (15편 · Crossref 메타데이터) · vault/papers/*.md · scripts/lit_extract.py 머리 주석 · expected_output/avg_molecule_2target/lit_values.csv (30행)</span><span class="en" data-i>loop/lit/library.bib (15 papers · Crossref metadata) · vault/papers/*.md · header comment of scripts/lit_extract.py · expected_output/avg_molecule_2target/lit_values.csv (30 rows)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 6 FIG 표적 2개 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>18-1 · 무엇</span><span class="en" data-i>18-1 · What</span></p>
+<div class="hrow"><span class="hico" data-ico="target"></span><h2 class="h"><span class="ko" data-i>표적 2개: 밀도 1.018 g/cm³ (실측 22개 중앙값) · CED 354.2 MJ/m³ (바인더 값 7개 중앙값)</span><span class="en" data-i>2 targets: density 1.018 g/cm³ (median of 22 measurements) · CED 354.2 MJ/m³ (median of 7 binder values)</span></h2></div>
+<p class="sub"><span class="ko" data-i>표적 = 중앙값(튀는 값에 덜 흔들림) · 폭(tol) = 「맞았다」 판정 범위 · 밀도 ±0.02 · CED ±20</span><span class="en" data-i>Target = median (less sensitive to outliers) · tolerance (tol) = "hit" range · density ±0.02 · CED ±20</span></p>
+<div class="bd">
+<div class="row">
+<div class="figw white fill"><svg id="w18-strip" viewBox="0 0 1000 500" class="cfig"></svg></div>
+<div class="col" style="width:540px;flex:none">
+<div class="it a" style="--d:1"><p class="k"><span class="ko" data-i>밀도 · 실측 22개 · 문헌 11편</span><span class="en" data-i>Density · 22 measurements · 11 papers</span></p><h4><span class="ko" data-i>1.018 g/cm³ · 폭 ±0.02</span><span class="en" data-i>1.018 g/cm³ · tol ±0.02</span></h4><p><span class="ko" data-i>평균 1.0208 · 사분위 약 1.01 ~ 1.04 · 범위 0.94 ~ 1.08</span><span class="en" data-i>Mean 1.0208 · quartiles approx. 1.01 ~ 1.04 · range 0.94 ~ 1.08</span></p></div>
+<div class="it a" style="--d:2"><p class="k"><span class="ko" data-i>CED · 바인더 전체 값 7개</span><span class="en" data-i>CED · 7 whole-binder values</span></p><h4><span class="ko" data-i>354.2 MJ/m³ · 폭 ±20</span><span class="en" data-i>354.2 MJ/m³ · tol ±20</span></h4><p><span class="ko" data-i>용해도 시험 1 (δ 19.15 → 366.7) · MD 문헌 6</span><span class="en" data-i>Solubility test 1 (δ 19.15 → 366.7) · MD papers 6</span></p></div>
+<div class="it dark a" style="--d:3"><p class="k"><span class="ko" data-i>CED 직접 측정 불가</span><span class="en" data-i>CED not directly measurable</span></p><p><span class="ko" data-i>바인더 = 증발 안 함 → 증발열 측정 불가 → 용해도 시험 δ · MD 문헌값으로 대신</span><span class="en" data-i>Binder does not vaporize → no heat of vaporization → solubility test δ · MD literature values instead</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>expected_output/avg_molecule_2target/lit_targets.json (values · mean · citekeys) · lit_values.csv · 폭 = config/loop.yaml targets.tol · 사분위 = loop.yaml 주석</span><span class="en" data-i>expected_output/avg_molecule_2target/lit_targets.json (values · mean · citekeys) · lit_values.csv · tol = config/loop.yaml targets.tol · quartiles = loop.yaml comment</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 7 FIG 평균 분자 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>18-1 · 왜 · 한계</span><span class="en" data-i>18-1 · Why · limits</span></p>
+<div class="hrow"><span class="hico" data-ico="hexagon"></span><h2 class="h"><span class="ko" data-i>평균 분자: 혼합물 바인더 → 한 종류 분자 N 개 상자 · 맞추는 것 = 밀도 · CED</span><span class="en" data-i>Average molecule: binder mixture → box of N copies of one molecule · fitted = density · CED</span></h2></div>
+<p class="sub"><span class="ko" data-i>질문: 어떤 방향족 핵 · 알킬 사슬이면 두 물성을 동시에 맞추는가 · 단분자 상자 = W06 · W17 방식</span><span class="en" data-i>Question: which aromatic core · alkyl chains match both properties at once · single-component box = W06 · W17 style</span></p>
+<div class="bd">
+<div class="row">
+<div class="figw white fill"><svg viewBox="0 0 960 480" class="cfig">
+<rect x="20" y="40" width="380" height="330" rx="18" fill="#F6F0E7" stroke="#E2D8CA" stroke-width="2"/>
+<text x="210" y="28" text-anchor="middle" class="cfh"><tspan class="ko" data-i>실제 바인더 · 수천 종 분자</tspan><tspan class="en" data-i>Real binder · thousands of molecules</tspan></text>
+<g stroke-width="2">
+<g fill="#E8F3EC" stroke="#2E8B57"><rect x="50" y="70" width="70" height="14" rx="7"/><rect x="230" y="96" width="80" height="14" rx="7"/><rect x="70" y="300" width="64" height="14" rx="7"/><rect x="300" y="250" width="70" height="14" rx="7"/><rect x="170" y="330" width="76" height="14" rx="7"/></g>
+<g fill="#EAF1F8" stroke="#4F7FB0"><polygon points="160,70 172,63 184,70 184,84 172,91 160,84"/><polygon points="330,150 342,143 354,150 354,164 342,171 330,164"/><polygon points="60,190 72,183 84,190 84,204 72,211 60,204"/><polygon points="260,300 272,293 284,300 284,314 272,321 260,314"/></g>
+<g fill="#FFF1E0" stroke="#E37F1A"><polygon points="110,130 124,122 138,130 138,146 124,154 110,146"/><polygon points="138,130 152,122 166,130 166,146 152,154 138,146"/><polygon points="230,180 244,172 258,180 258,196 244,204 230,196"/><polygon points="258,180 272,172 286,180 286,196 272,204 258,196"/><polygon points="160,250 174,242 188,250 188,266 174,274 160,266"/><polygon points="188,250 202,242 216,250 216,266 202,274 188,266"/></g>
+<g fill="#E9E1D7" stroke="#6E655C"><polygon points="300,60 314,52 328,60 328,76 314,84 300,76"/><polygon points="328,60 342,52 356,60 356,76 342,84 328,76"/><polygon points="314,84 328,76 342,84 342,100 328,108 314,100"/><polygon points="90,240 104,232 118,240 118,256 104,264 90,256"/><polygon points="118,240 132,232 146,240 146,256 132,264 118,256"/><polygon points="104,264 118,256 132,264 132,280 118,288 104,280"/></g>
+</g>
+<g font-size="16" class="cfmu"><text x="40" y="400"><tspan class="ko" data-i>초록 포화분</tspan><tspan class="en" data-i>Green saturates</tspan></text><text x="140" y="400"><tspan class="ko" data-i>파랑 방향족</tspan><tspan class="en" data-i>Blue aromatics</tspan></text><text x="240" y="400"><tspan class="ko" data-i>주황 레진</tspan><tspan class="en" data-i>Orange resins</tspan></text><text x="330" y="400"><tspan class="ko" data-i>회색 아스팔텐</tspan><tspan class="en" data-i>Gray asphaltenes</tspan></text></g>
+<line class="tl" x1="420" y1="205" x2="520" y2="205" stroke-width="5"/><path d="M520 193 L540 205 L520 217 Z" fill="#E37F1A"/>
+<text x="480" y="182" text-anchor="middle" class="cfm"><tspan class="ko" data-i>단순화</tspan><tspan class="en" data-i>Simplify</tspan></text>
+<rect x="560" y="40" width="380" height="330" rx="18" fill="#FFF8EE" stroke="#F99D1C" stroke-width="3"/>
+<text x="750" y="28" text-anchor="middle" class="cfh"><tspan class="ko" data-i>평균 분자 상자 · 1종 × N</tspan><tspan class="en" data-i>Average-molecule box · 1 type × N</tspan></text>
+<g id="w18-avgbox"></g>
+<text x="750" y="400" text-anchor="middle" class="cfm"><tspan class="ko" data-i>dbt-2x6 × 26 · 1,482 원자</tspan><tspan class="en" data-i>dbt-2x6 × 26 · 1,482 atoms</tspan></text>
+<text x="480" y="448" text-anchor="middle" class="cfs"><tspan class="ko" data-i>맞추는 것 = 밀도 · CED 평균 물성 2개 · 버리는 것 = 분자량 · 극성 분포</tspan><tspan class="en" data-i>Fitted = 2 mean properties density · CED · dropped = molecular weight · polarity distribution</tspan></text>
+</svg></div>
+<div class="col" style="width:560px;flex:none">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="hexagon"></span><div><p class="k"><span class="ko" data-i>뜻</span><span class="en" data-i>Meaning</span></p><h4><span class="ko" data-i>바인더 = 한 종류 분자 N 개</span><span class="en" data-i>Binder = N copies of one molecule</span></h4></div></div><p><span class="ko" data-i>후보 = 방향족 · 레진 성분을 닮은 핵 + 알킬 사슬</span><span class="en" data-i>Candidate = core resembling aromatic · resin fractions + alkyl chains</span></p></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="timer"></span><div><p class="k"><span class="ko" data-i>쓸모</span><span class="en" data-i>Use</span></p><h4><span class="ko" data-i>계산 1건 약 5분 · 4코어</span><span class="en" data-i>1 calculation approx. 5 min · 4 cores</span></h4></div></div><p><span class="ko" data-i>역설계 순환 전체를 실습 시간 안에 · 약 1,500 원자</span><span class="en" data-i>Whole inverse-design loop within lab time · approx. 1,500 atoms</span></p></div>
+<div class="it dark a" style="--d:3"><div class="ih"><span class="icb" data-ico="triangle-alert"></span><div><p class="k"><span class="ko" data-i>한계</span><span class="en" data-i>Limits</span></p><h4><span class="ko" data-i>분포 · 성분 사이 상호작용 무시</span><span class="en" data-i>Ignores distribution · interactions between fractions</span></h4></div></div><p><span class="ko" data-i>점도 · 노화 · 상분리 설명 불가 · 값 = 후보 간 비교용</span><span class="en" data-i>Cannot explain viscosity · aging · phase separation · values = for comparing candidates</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>repo/loop/README.md 「질문」 · 「범위와 한계」 · SARA 4분획 = W11 · 상자 = expected_output/avg_molecule_2target/runs/r3_2/cell.json (분자 26 · 원자 1,482)</span><span class="en" data-i>repo/loop/README.md "Question" · "Scope and limits" · SARA 4 fractions = W11 · box = expected_output/avg_molecule_2target/runs/r3_2/cell.json (26 molecules · 1,482 atoms)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 8 차시 18-2 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 18-2 · 12분 · 영상 1편</span><span class="en" data-i>Session 18-2 · 12 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="layout-grid"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">2</p><p class="hubt"><span class="ko" data-i>설계 후보와 대리모델</span><span class="en" data-i>Design candidates and surrogate</span></p><p class="hubs"><span class="ko" data-i>후보 168 · 초기 설계 6 · 모델 3종 비교</span><span class="en" data-i>168 candidates · initial design 6 · compare 3 models</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>library.csv 168행 · lit_targets.json</span><span class="en" data-i>library.csv 168 rows · lit_targets.json</span></h4></div></div><p><span class="ko" data-i>지시 L-1 · L-2 · 모델 비교표(관측 12) 읽기</span><span class="en" data-i>Prompts L-1 · L-2 · read model comparison (12 observations)</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>W11 분자 기술자 + W14 · W15 대리모델 · 불확실성</span><span class="en" data-i>W11 molecular descriptors + W14 · W15 surrogate · uncertainty</span></h4></div></div><p><span class="ko" data-i>W14 = 표현자 · W15 = GP 띠 · 보정 · W18 = 같은 도구로 다음 계산 선정</span><span class="en" data-i>W14 = descriptors · W15 = GP band · calibration · W18 = same tools choose the next calculation</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 9 DEF 용어 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>용어 정의</span><span class="en" data-i>Key terms</span></p>
+<div class="hrow"><span class="hico" data-ico="book-marked"></span><h2 class="h"><span class="ko" data-i>새 용어 6: 단순화 · 선택 · 실행 · 기록의 말</span><span class="en" data-i>6 new terms: simplification · selection · execution · records</span></h2></div>
+<p class="sub"><span class="ko" data-i>영어 병기 · 한 줄 정의 · 다시 나오는 곳</span><span class="en" data-i>English term · one-line definition · where it returns</span></p>
+<div class="bd">
+<div class="defs icon" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+<div class="defcard icon a" style="--d:1"><span class="lic" data-ico="hexagon"></span><p class="term"><span class="ko" data-i>평균 분자<em>average molecule</em></span><span class="en" data-i>Average molecule<em>average molecule</em></span></p><p class="def"><span class="ko" data-i>혼합물 바인더를 한 종류 분자로 나타낸 단순화 모델</span><span class="en" data-i>Simplified model representing a binder mixture with one molecule type</span></p><p class="again">18-1 · 18-4</p></div>
+<div class="defcard icon a" style="--d:1"><span class="lic" data-ico="square"></span><p class="term"><span class="ko" data-i>체비셰프 스칼라화<em>Chebyshev scalarization</em></span><span class="en" data-i>Chebyshev scalarization<em>Chebyshev scalarization</em></span></p><p class="def"><span class="ko" data-i>목표별 표적 거리(폭 단위) 중 가장 큰 값 하나로 줄인 점수</span><span class="en" data-i>Score reduced to the largest of the per-objective target distances (in tol units)</span></p><p class="again"><span class="ko" data-i>18-3 · W16 12장</span><span class="en" data-i>18-3 · W16 slide 12</span></p></div>
+<div class="defcard icon a" style="--d:2"><span class="lic" data-ico="split"></span><p class="term"><span class="ko" data-i>단일 제외 교차검증<em>leave-one-out · LOO</em></span><span class="en" data-i>Leave-one-out cross-validation<em>leave-one-out · LOO</em></span></p><p class="def"><span class="ko" data-i>관측 하나씩 빼고 학습 → 뺀 점 예측 · 관측 수만큼 반복</span><span class="en" data-i>Leave out one observation, train, predict it · repeat for every observation</span></p><p class="again">18-2 · L-4</p></div>
+<div class="defcard icon a" style="--d:2"><span class="lic" data-ico="history"></span><p class="term"><span class="ko" data-i>재생 모드<em>replay mode</em></span><span class="en" data-i>Replay mode<em>replay mode</em></span></p><p class="def"><span class="ko" data-i>MD 대신 기준 결과를 넣어 같은 경로를 수 초에 재현하는 방식</span><span class="en" data-i>Way of reproducing the same path in seconds by inserting reference results instead of MD</span></p><p class="again">18-3 · L-6 · L-8</p></div>
+<div class="defcard icon a" style="--d:3"><span class="lic" data-ico="notebook-pen"></span><p class="term"><span class="ko" data-i>실행 노트<em>run note</em></span><span class="en" data-i>Run note<em>run note</em></span></p><p class="def"><span class="ko" data-i>계산 1건 = Obsidian 노트 1개 · 후보 · 물성 · 표적 차 · 근거 문헌 링크</span><span class="en" data-i>1 calculation = 1 Obsidian note · candidate · properties · target gap · evidence links</span></p><p class="again">18-4 · L-7</p></div>
+<div class="defcard icon a" style="--d:3"><span class="lic" data-ico="octagon-alert"></span><p class="term"><span class="ko" data-i>정지 규칙<em>stopping rule</em></span><span class="en" data-i>Stopping rule<em>stopping rule</em></span></p><p class="def"><span class="ko" data-i>루프를 멈추는 조건 · 두 표적 안 · MD 12회 · 3라운드 중 먼저 오는 것</span><span class="en" data-i>Condition to stop the loop · both targets hit · 12 MD runs · 3 rounds, whichever first</span></p><p class="again"><span class="ko" data-i>18-3 · W16 18장</span><span class="en" data-i>18-3 · W16 slide 18</span></p></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>정의 문구 = GLOSSARY.md · 근거 = loop/scripts 머리 주석 (acquire.py · surrogate.py · loop_step.py · notes.py) · config/loop.yaml stop</span><span class="en" data-i>Definitions = GLOSSARY.md · basis = header comments in loop/scripts (acquire.py · surrogate.py · loop_step.py · notes.py) · config/loop.yaml stop</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 10 FIG 후보 168 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>18-2 · 무엇</span><span class="en" data-i>18-2 · What</span></p>
+<div class="hrow"><span class="hico" data-ico="layout-grid"></span><h2 class="h"><span class="ko" data-i>설계 후보 168: 방향족 핵 7 × 사슬 1 · 2개 × 길이 1 ~ 12 · 계산 = 12개</span><span class="en" data-i>168 design candidates: 7 aromatic cores × 1 · 2 chains × length 1 ~ 12 · computed = 12</span></h2></div>
+<p class="sub"><span class="ko" data-i>칸 = 후보 1개 · 색 진하기 = 원자 수 15 ~ 96 · 대리모델 입력 = RDKit 기술자 5개 · 나머지 156개 = 예측으로만</span><span class="en" data-i>Cell = 1 candidate · shade = atom count 15 ~ 96 · surrogate input = 5 RDKit descriptors · remaining 156 = predicted only</span></p>
+<div class="bd">
+<div class="figw white fill"><svg id="w18-grid" viewBox="0 0 1588 440" class="cfig"></svg></div>
+<div class="cb a" style="--d:2"><span class="fc or"><span class="ko" data-i>기술자 5</span><span class="en" data-i>5 descriptors</span></span><span class="fc">MW <em>92 ~ 521</em></span><span class="fc">fa <em>0.18 ~ 0.93</em></span><span class="fc">H/C <em>0.77 ~ 1.80</em></span><span class="fc">het <em>0 ~ 0.10</em></span><span class="fc">rot <em>0 ~ 0.73</em></span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>scripts/library.py CORES · FEAT · expected_output/avg_molecule_2target/library.csv · fa = 방향족 탄소 비율 · het = 헤테로 원자 비율 · rot = 회전 결합 비율 · W17 시험 = week17/expected_output/candidates</span><span class="en" data-i>scripts/library.py CORES · FEAT · expected_output/avg_molecule_2target/library.csv · fa = aromatic carbon fraction · het = heteroatom fraction · rot = rotatable bond fraction · W17 trials = week17/expected_output/candidates</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 11 ANIM 초기 설계 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>18-2 · 어떻게 · 동적</span><span class="en" data-i>18-2 · How · animated</span></p>
+<div class="hrow"><span class="hico" data-ico="scan-search"></span><h2 class="h"><span class="ko" data-i>초기 설계 6: 기술자 공간에서 서로 가장 먼 후보부터 · 최대 최소 거리</span><span class="en" data-i>Initial design 6: start from candidates farthest apart in descriptor space · max-min distance</span></h2></div>
+<p class="sub"><span class="ko" data-i>초기 설계(initial design) = 모델 없이 고르는 첫 MD 6개 · 첫 점 = seed 7 · 다음 점 = 고른 점들과의 최소 거리(max-min)가 가장 큰 후보</span><span class="en" data-i>Initial design = first 6 MD runs chosen without a model · first point = seed 7 · next point = candidate with the largest min distance (max-min) to the chosen points</span></p>
+<div class="bd"><div class="emb" data-emb="init6" data-dur="15" data-steps="6" data-labels="① seed 7|② tet-2x12|③ phen-1x1|④ benz-1x9|⑤ bt-1x1|⑥ tet-2x1 → MD"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>scripts/loop_step.py init_design() · 거리 = 기술자 5개 표준화 공간 · 그림 = 주성분 2축 투영 · 기술자 값 = library.csv · 순서 = expected_output state.json 라운드 0</span><span class="en" data-i>scripts/loop_step.py init_design() · distance = standardized 5-descriptor space · figure = projection on 2 principal components · descriptor values = library.csv · order = expected_output state.json round 0</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 12 FIG 모델 3종 LOO -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>18-2 · 확인</span><span class="en" data-i>18-2 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="scale"></span><h2 class="h"><span class="ko" data-i>대리모델 3종 비교: 관측 12개 · 단일 제외 교차검증 · RMSE + 1σ 포함 비율</span><span class="en" data-i>Comparing 3 surrogates: 12 observations · leave-one-out · RMSE + 1σ coverage</span></h2></div>
+<p class="sub"><span class="ko" data-i>좋은 모델 = 오차 작음 + σ 정직(1σ 안 ≈ 68 %) · 기본 gp = RBF 길이 하나(관측 6 ~ 12개로 길이 5개 → 과적합)</span><span class="en" data-i>Good model = small error + honest σ (≈ 68 % within 1σ) · default gp = single-length RBF (6 ~ 12 observations for 5 lengths → overfitting)</span></p>
+<div class="bd">
+<div class="row">
+<div class="figw white fill"><svg id="w18-loo" viewBox="0 0 960 520" class="cfig"></svg></div>
+<div class="col" style="width:780px;flex:none">
+<div class="it dark a" style="--d:1"><p class="k"><span class="ko" data-i>관측 12개에서의 선택</span><span class="en" data-i>Choice at 12 observations</span></p><p><span class="ko" data-i>rf = 보정 가장 가까움 (0.58 · 0.75) · gp = σ 과신 · xgb = σ 거의 0</span><span class="en" data-i>rf = closest calibration (0.58 · 0.75) · gp = overconfident σ · xgb = σ almost 0</span></p><p><span class="ko" data-i>σ = gp 사후 표준편차 · rf 나무 300그루 · xgb 시드 5개 모델의 흩어짐</span><span class="en" data-i>σ = gp posterior SD · rf spread of 300 trees · xgb spread of 5 seed models</span></p></div>
+<div class="prompt a" style="--d:2" data-id="L-4"><span class="ko" data-i>../loop 폴더에서 python scripts/surrogate.py compare 로 gp · rf · xgb 를 단일 제외 교차검증해라(관측 4개 미만이면 L-6 을 먼저). 모델별 밀도 · CED 의 RMSE 와 1σ 포함 비율을 표로 적고, 지금 관측 수에서 쓸 모델을 근거 두 줄과 함께 제안만 해라(../loop/config/loop.yaml 은 바꾸지 마라). 관측 12개면 @../loop/expected_output/avg_molecule_2target/model_compare.json 과 비교해라. → out/L-4_result.md</span><span class="en" data-i>In the ../loop folder, run leave-one-out cross-validation of gp · rf · xgb with python scripts/surrogate.py compare (if fewer than 4 observations, run L-6 first). Tabulate RMSE and 1σ coverage of density · CED per model, and only propose which model to use at the current number of observations with two lines of reasoning (do not change ../loop/config/loop.yaml). With 12 observations, compare with @../loop/expected_output/avg_molecule_2target/model_compare.json. → out/L-4_result.md</span></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>expected_output/avg_molecule_2target/model_compare.json (n 12) · scripts/surrogate.py fit_predict() · loo() · 1σ 포함 = |오차| ≤ σ 인 비율 · 보정 = W15</span><span class="en" data-i>expected_output/avg_molecule_2target/model_compare.json (n 12) · scripts/surrogate.py fit_predict() · loo() · 1σ coverage = share with |error| ≤ σ · calibration = W15</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 13 MAKE L-1 · L-2 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>18-2 · 만들어 보기</span><span class="en" data-i>18-2 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="pencil-ruler"></span><h2 class="h"><span class="ko" data-i>만들어 보기 L-1 · L-2: 논문 노트 → 표적 2개 · 후보 표 168</span><span class="en" data-i>Try it L-1 · L-2: paper notes → 2 targets · candidate table 168</span></h2></div>
+<div class="bd">
+<div class="make" style="grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
+<pre class="code a" style="--d:1;grid-column:1/-1;margin:0"><span class="c"><span class="ko" data-i># 환경: mdai · cd week18 · claude · 폐루프 폴더 = ../loop · 결과 = ../loop/ws/avg_molecule_2target</span><span class="en" data-i># Env: mdai · cd week18 · claude · loop folder = ../loop · results = ../loop/ws/avg_molecule_2target</span></span>
+cd ../loop && python scripts/lit_extract.py   <span class="c"><span class="ko" data-i># L-1 · 표적 2개</span><span class="en" data-i># L-1 · 2 targets</span></span>
+cd ../loop && python scripts/library.py       <span class="c"><span class="ko" data-i># L-2 · 후보 168</span><span class="en" data-i># L-2 · 168 candidates</span></span></pre>
+<div class="left a" style="--d:2">
+<div class="prompt" data-id="L-1"><span class="ko" data-i>../loop 폴더에서 python scripts/lit_extract.py 를 실행해 @../loop/vault/papers 의 논문 노트로 표적을 만들어라. ../loop/ws/&lt;이름&gt;/lit_values.csv 와 lit_targets.json 을 읽고(이름 = ../loop/config/loop.yaml 의 name) ① 물성별 표적값(중앙값) · 평균 · 개수 · 근거 citekey ② 표적에서 뺀 행과 이유 ③ 밀도 실측 22개의 흩어짐(최소 · 최대 · 사분위)을 표로 적어라. 노트 내용(값)은 고치지 마라. → out/L-1_result.md</span><span class="en" data-i>In the ../loop folder, run python scripts/lit_extract.py to build targets from the paper notes in @../loop/vault/papers. Read ../loop/ws/&lt;name&gt;/lit_values.csv and lit_targets.json (name = name in ../loop/config/loop.yaml) and tabulate ① target value (median) · mean · count · evidence citekeys per property ② rows excluded from targets and why ③ spread of the 22 density measurements (min · max · quartiles). Do not change the note contents (values). → out/L-1_result.md</span></div>
+<div class="cb wrap"><span class="fc or">density <em>1.018</em> · n <em>22</em></span><span class="fc or">ced <em>354.2</em> · n <em>7</em></span><span class="fc"><span class="ko" data-i>값 <em>30</em>행</span><span class="en" data-i>Values <em>30</em> rows</span></span><span class="fc"><span class="ko" data-i>뺀 행 <em>1</em></span><span class="en" data-i>Excluded <em>1</em></span></span></div>
+</div>
+<div class="expect a" style="--d:3">
+<div class="prompt" data-id="L-2"><span class="ko" data-i>../loop 폴더에서 python scripts/library.py 로 「아스팔트 평균 분자」 후보 표를 만들어라. 핵별 · 사슬 수별 후보 개수, 원자 수 · 분자량 범위, 기술자 5개(MW · fa · HC · het · rot)의 범위를 표로 적고, 이 후보들이 아스팔트의 어느 성분(방향족 · 레진)을 닮았는지 두 줄로 설명해라. → out/L-2_result.md</span><span class="en" data-i>In the ../loop folder, build the "asphalt average molecule" candidate table with python scripts/library.py. Tabulate candidate counts per core · per chain count, atom count · molecular weight ranges, and ranges of the 5 descriptors (MW · fa · HC · het · rot), and explain in two lines which asphalt fractions (aromatics · resins) these candidates resemble. → out/L-2_result.md</span></div>
+<div class="cb wrap"><span class="fc gr"><span class="ko" data-i>후보 <em>168</em></span><span class="en" data-i>Candidates <em>168</em></span></span><span class="fc"><span class="ko" data-i>핵 <em>7</em> × <em>24</em></span><span class="en" data-i>Cores <em>7</em> × <em>24</em></span></span><span class="fc"><span class="ko" data-i>원자 <em>15 ~ 96</em></span><span class="en" data-i>Atoms <em>15 ~ 96</em></span></span><span class="fc"><span class="ko" data-i>분자량 <em>92 ~ 521</em></span><span class="en" data-i>Mol. weight <em>92 ~ 521</em></span></span></div>
+</div>
+</div>
+<div class="check a" style="--d:4"><p><span class="ko" data-i>lit_targets.json 의 value · n = ../loop/expected_output/avg_molecule_2target 과 같은가</span><span class="en" data-i>Do value · n in lit_targets.json match ../loop/expected_output/avg_molecule_2target</span></p><p><span class="ko" data-i>library.csv 168행 · 열 11개 (cand ~ rot) · 같은 SMILES 규칙</span><span class="en" data-i>library.csv 168 rows · 11 columns (cand ~ rot) · same SMILES rules</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>지시문 원문 week18/prompts.md · L-1 · L-2 (기준 = repo/loop/prompts.md) · 기대 결과 = loop/expected_output/avg_molecule_2target/lit_targets.json · library.csv</span><span class="en" data-i>Prompt source week18/prompts.md · L-1 · L-2 (basis = repo/loop/prompts.md) · expected = loop/expected_output/avg_molecule_2target/lit_targets.json · library.csv</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 14 차시 18-3 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 18-3 · 16분 · 영상 1편</span><span class="en" data-i>Session 18-3 · 16 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="route"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">3</p><p class="hubt"><span class="ko" data-i>능동학습 한 바퀴</span><span class="en" data-i>One active-learning turn</span></p><p class="hubs"><span class="ko" data-i>체비셰프 EI → 2개씩 3라운드 → 정지</span><span class="en" data-i>Chebyshev EI → 2 per round for 3 rounds → stop</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>loop_results.csv 12행 · state.json · 노트 16</span><span class="en" data-i>loop_results.csv 12 rows · state.json · 16 notes</span></h4></div></div><p><span class="ko" data-i>재생 모드 약 2.5 s · 실행 모드 = 후보당 약 5분 · L-5 · L-6</span><span class="en" data-i>Replay mode approx. 2.5 s · live mode = approx. 5 min per candidate · L-5 · L-6</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>W15 획득함수 + W16 체비셰프 · EHVI · 정지 규칙</span><span class="en" data-i>W15 acquisition function + W16 Chebyshev · EHVI · stopping rules</span></h4></div></div><p><span class="ko" data-i>W16 = 계산된 값 안에서 고르기 · W18 = 고른 뒤 MD 를 실제로 실행</span><span class="en" data-i>W16 = choose among already computed values · W18 = choose, then actually run MD</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 15 ANIM 체비셰프 EI -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>18-3 · 무엇 · 동적</span><span class="en" data-i>18-3 · What · animated</span></p>
+<div class="hrow"><span class="hico" data-ico="crosshair"></span><h2 class="h"><span class="ko" data-i>체비셰프 EI: 더 먼 표적 쪽 거리 d 를 줄일 기대 개선 · 두 표적 동시 일치용 점수</span><span class="en" data-i>Chebyshev EI: expected improvement of the distance d to the farther target · score for hitting both targets</span></h2></div>
+<p class="sub"><span class="ko" data-i>축 = 폭으로 나눈 차 · 같은 d = 정사각형 · 표본 개선량의 평균 = 기대 개선(expected improvement · EI)</span><span class="en" data-i>Axes = gap divided by tol · equal d = square · mean of sample improvements = expected improvement (EI)</span></p>
+<div class="bd"><div class="emb" data-emb="cheb" data-dur="14" data-steps="4" data-labels="① 폭으로 나눈 평면|② 지금 최선 d_best 3.04|③ tetralin-1x1 예측 구름|④ benzene-1x3 구름 · EI 점수" data-labels-en="① Plane scaled by tol|② Current best d_best 3.04|③ tetralin-1x1 prediction cloud|④ benzene-1x3 cloud · EI score"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>scripts/acquire.py select() method cheb (표본 256개) · 예측 μ · σ · 점수 = expected_output state.json 라운드 1 picks · 체비셰프 스칼라화 = W16 12장 · 2번째 후보 = 1번째 예측을 가상 관측으로 넣고 재계산</span><span class="en" data-i>scripts/acquire.py select() method cheb (256 samples) · prediction μ · σ · score = expected_output state.json round 1 picks · Chebyshev scalarization = W16 slide 12 · 2nd candidate = recomputed with the 1st prediction as a virtual observation</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 16 ANIM 라운드별 경로 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>18-3 · 어떻게 · 동적</span><span class="en" data-i>18-3 · How · animated</span></p>
+<div class="hrow"><span class="hico" data-ico="route"></span><h2 class="h"><span class="ko" data-i>라운드별 경로: 최선 d 3.04 → 3.04 → 2.64 → 1.97 · 표적 상자 안 = 0개</span><span class="en" data-i>Path by round: best d 3.04 → 3.04 → 2.64 → 1.97 · inside target box = 0</span></h2></div>
+<p class="sub"><span class="ko" data-i>속 빈 점 = 대리모델 예측 μ ± σ · 찬 점 = MD 실측 · 주황 점선 = 지금 최선 d 의 등고선 · 정지 = MD 12회 · 3라운드</span><span class="en" data-i>Hollow point = surrogate prediction μ ± σ · filled point = MD result · orange dashed = contour of current best d · stop = 12 MD runs · 3 rounds</span></p>
+<div class="bd"><div class="emb" data-emb="path4" data-dur="16" data-steps="4" data-labels="① 라운드 0 · 초기 6|② 라운드 1 · 외삽 실수|③ 라운드 2 · d 2.64|④ 라운드 3 · d 1.97 · 정지" data-labels-en="① Round 0 · initial 6|② Round 1 · extrapolation miss|③ Round 2 · d 2.64|④ Round 3 · d 1.97 · stop"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>expected_output/avg_molecule_2target/loop_results.csv · state.json (picks mu · sd · best_dist) · d = max(|Δρ| ÷ 0.02, |ΔCED| ÷ 20) · 이름 = 핵-사슬 수 x 탄소 수 (quin · tet · phen · benz · bt · dbt)</span><span class="en" data-i>expected_output/avg_molecule_2target/loop_results.csv · state.json (picks mu · sd · best_dist) · d = max(|Δρ| ÷ 0.02, |ΔCED| ÷ 20) · name = core-number of chains x carbons (quin · tet · phen · benz · bt · dbt)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 17 SIM 거리 정의 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>18-3 · 확인 · 조작형</span><span class="en" data-i>18-3 · Check · interactive</span></p>
+<div class="hrow"><span class="hico" data-ico="sliders-horizontal"></span><h2 class="h"><span class="ko" data-i>거리 정의 · 폭 조작: 12개 계산의 순위 → 「가장 가까운 후보」가 바뀜</span><span class="en" data-i>Distance definition · tolerance: ranking of 12 calculations → "closest candidate" changes</span></h2></div>
+<p class="sub"><span class="ko" data-i>체비셰프 = 더 먼 쪽 · 합(L1) = 두 차의 합 · 유클리드(L2) = 제곱합의 제곱근 · 폭 = 표적마다 허용 차 · 선 = 1위 후보와 같은 d 의 등고선</span><span class="en" data-i>Chebyshev = farther side · sum (L1) = sum of both gaps · Euclidean (L2) = root of sum of squares · tol = allowed gap per target · line = contour with the same d as rank 1</span></p>
+<div class="bd">
+<div class="sim" id="sim-dist">
+<div class="ctl">
+<div class="chips"><button type="button" data-m="cheb"><span class="ko" data-i>체비셰프 max</span><span class="en" data-i>Chebyshev max</span></button><button type="button" class="alt" data-m="l1"><span class="ko" data-i>합 L1</span><span class="en" data-i>Sum L1</span></button><button type="button" class="alt" data-m="l2"><span class="ko" data-i>유클리드 L2</span><span class="en" data-i>Euclidean L2</span></button></div>
+<label><span class="ko" data-i><b>밀도 폭 <output data-o="tr">±0.020</output></b></span><span class="en" data-i><b>Density tol <output data-o="tr">±0.020</output></b></span><input type="range" min="0.01" max="0.04" value="0.02" step="0.005" data-k="tr"></label>
+<label><span class="ko" data-i><b>CED 폭 <output data-o="tc">±20</output></b></span><span class="en" data-i><b>CED tol <output data-o="tc">±20</output></b></span><input type="range" min="10" max="40" value="20" step="5" data-k="tc"></label>
+<button type="button" class="alt" data-act="reset"><span class="ko" data-i>처음 상태 (체비셰프 · 0.02 · 20)</span><span class="en" data-i>Reset (Chebyshev · 0.02 · 20)</span></button>
+</div>
+<div class="view"><svg viewBox="0 0 1160 430" aria-label="밀도–CED 거리 순위"></svg>
+<div class="kpi"><div><span class="ko" data-i>1위 <b data-o="r1"> · </b></span><span class="en" data-i>#1 <b data-o="r1"> · </b></span></div><div><span class="ko" data-i>2위 <b data-o="r2"> · </b></span><span class="en" data-i>#2 <b data-o="r2"> · </b></span></div><div><span class="ko" data-i>3위 <b data-o="r3"> · </b></span><span class="en" data-i>#3 <b data-o="r3"> · </b></span></div><div><span class="ko" data-i>기본 대비 <b data-o="chg"> · </b></span><span class="en" data-i>vs. default <b data-o="chg"> · </b></span></div></div>
+</div>
+</div>
+<div class="foot a" style="--d:3"><span class="ko" data-i>기본(체비셰프 · 0.02 · 20) 1위 = <b>dbt-2x6 1.97</b> · 합 L1 이면 1위 = dbt-1x10 · CED 폭 40 이면 1위 = dbt-1x10 → 정의 · 폭 = 문제 정의의 일부</span><span class="en" data-i>Default (Chebyshev · 0.02 · 20) rank 1 = <b>dbt-2x6 1.97</b> · with sum L1 rank 1 = dbt-1x10 · with CED tol 40 rank 1 = dbt-1x10 → definition · tol = part of the problem definition</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>점 = expected_output/avg_molecule_2target/loop_results.csv 12행 · 기본 정의 = scripts/acquire.py cheb · loop_step.py dist · 폭 = config/loop.yaml targets.tol</span><span class="en" data-i>Points = expected_output/avg_molecule_2target/loop_results.csv 12 rows · default definition = scripts/acquire.py cheb · loop_step.py dist · tol = config/loop.yaml targets.tol</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 18 FIG EHVI 비교 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>18-3 · 비교</span><span class="en" data-i>18-3 · Comparison</span></p>
+<div class="hrow"><span class="hico" data-ico="git-compare"></span><h2 class="h"><span class="ko" data-i>EHVI 비교: 같은 초기 6개 → 최선 d 3.04 유지 · CED 만 맞는 알킬벤젠 선택</span><span class="en" data-i>EHVI comparison: same initial 6 → best d stays 3.04 · picks alkylbenzenes matching CED only</span></h2></div>
+<p class="sub"><span class="ko" data-i>EHVI(W16) = 두 목표 각각의 개선 · 전선 넓힘 · 체비셰프 = 더 먼 쪽 기준 · 같은 대리모델 gp · 같은 배치 2 · 3라운드</span><span class="en" data-i>EHVI (W16) = improvement of each objective · widen the front · Chebyshev = farther side · same surrogate gp · same batch 2 · 3 rounds</span></p>
+<div class="bd">
+<div class="row">
+<div class="figw white fill"><svg id="w18-ehvi" viewBox="0 0 1000 500" class="cfig"></svg></div>
+<div class="col" style="width:540px;flex:none">
+<div class="it a" style="--d:1"><p class="k"><span class="ko" data-i>EHVI 선택 6개</span><span class="en" data-i>6 EHVI picks</span></p><h4><span class="ko" data-i>알킬벤젠 3개 = CED 폭 안</span><span class="en" data-i>3 alkylbenzenes = CED within tol</span></h4><p><span class="ko" data-i>benz-2x1 · 1x1 · 1x2: CED 350.3 ~ 363.2 · 밀도 0.8649 ~ 0.8796 (폭의 6.9 ~ 7.7배 밖)</span><span class="en" data-i>benz-2x1 · 1x1 · 1x2: CED 350.3 ~ 363.2 · density 0.8649 ~ 0.8796 (6.9 ~ 7.7× tol outside)</span></p></div>
+<div class="it a" style="--d:2"><p class="k"><span class="ko" data-i>실패 1건</span><span class="en" data-i>1 failure</span></p><h4>naphthalene-2x9 · ok False</h4><p><span class="ko" data-i>결과 표에 실패로 기록 · 학습에서 제외</span><span class="en" data-i>Recorded as failure in results table · excluded from training</span></p></div>
+<div class="it dark a" style="--d:3"><p class="k"><span class="ko" data-i>해석</span><span class="en" data-i>Interpretation</span></p><p><span class="ko" data-i>목표 하나만 좋은 점 = 전선 확장 → EHVI 점수 큼 · 「동시에」 = 체비셰프 쪽이 직접</span><span class="en" data-i>Point good in one objective only = front extension → large EHVI score · "at once" = Chebyshev targets it directly</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>repo/loop/expected_output/avg_molecule_2target_ehvi/loop_results.csv · state.json (acq ehvi · best_dist) · 체비셰프 = avg_molecule_2target · 폭 단위 = (1.018 − ρ) ÷ 0.02</span><span class="en" data-i>repo/loop/expected_output/avg_molecule_2target_ehvi/loop_results.csv · state.json (acq ehvi · best_dist) · Chebyshev = avg_molecule_2target · tol units = (1.018 − ρ) ÷ 0.02</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 19 FIG 재생 · 실행 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>18-3 · 확인</span><span class="en" data-i>18-3 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="history"></span><h2 class="h"><span class="ko" data-i>재생 · 실행 모드: 같은 경로 약 2.5 s ↔ 후보당 약 5분 · 같은 결과 = 판정 폭 안</span><span class="en" data-i>Replay · live mode: same path approx. 2.5 s ↔ approx. 5 min per candidate · same result = within tolerance</span></h2></div>
+<p class="sub"><span class="ko" data-i>loop.yaml mode · 재생 = ③ MD 자리에 기준 값 · 실행 = 내 컴퓨터에서 MD · 흔들림 판정 폭 = W17 (밀도 ±0.015 · CED ±15)</span><span class="en" data-i>loop.yaml mode · replay = reference values in the ③ MD slot · live = MD on my computer · scatter tolerance = W17 (density ±0.015 · CED ±15)</span></p>
+<div class="bd">
+<div class="row">
+<div class="col" style="width:620px;flex:none">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="history"></span><div><p class="k"><span class="ko" data-i>재생 replay · 기본</span><span class="en" data-i>Replay · default</span></p><h4><span class="ko" data-i>후보 이름 · 순서 · 거리 = 기준과 모두 같음</span><span class="en" data-i>Candidate names · order · distances = all identical to reference</span></h4></div></div><p><span class="ko" data-i>12회 전체 약 2.5 s · 수업 · 퀴즈 · 최종 프로젝트 기준선</span><span class="en" data-i>All 12 runs approx. 2.5 s · baseline for class · quiz · final project</span></p></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="cpu"></span><div><p class="k"><span class="ko" data-i>실행 live · --mode live</span><span class="en" data-i>Live · --mode live</span></p><h4><span class="ko" data-i>라운드 0 의 6개 = 같은 후보 · 값 = 판정 폭 안</span><span class="en" data-i>6 of round 0 = same candidates · values = within tolerance</span></h4></div></div><p><span class="ko" data-i>후보 1개 약 5분 · 12개 약 1시간 · 이후 경로 = MD 값 차이로 갈라질 수 있음 · 후보 하나만 = L-3</span><span class="en" data-i>1 candidate approx. 5 min · 12 approx. 1 hour · later path = may diverge with MD differences · one candidate only = L-3</span></p></div>
+</div>
+<div class="figw white fill"><svg id="w18-twice" viewBox="0 0 860 470" class="cfig"></svg></div>
+</div>
+<div class="foot a" style="--d:3"><span class="ko" data-i>같은 결과 = <b>비트 단위 동일 대신 판정 폭 안</b> · dbt-2x6 두 번 계산: 차 0.0076 · 7.1 → 같음</span><span class="en" data-i>Same result = <b>within tolerance, not bitwise identical</b> · dbt-2x6 computed twice: diff 0.0076 · 7.1 → same</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>scripts/loop_step.py run_md() · loop/README.md 「두 모드와 같은 결과」 · dbt-2x6 = week17/expected_output/candidates (0.9817 · 386.4) ↔ loop r3_2 (0.9893 · 393.5)</span><span class="en" data-i>scripts/loop_step.py run_md() · loop/README.md "Two modes and same result" · dbt-2x6 = week17/expected_output/candidates (0.9817 · 386.4) ↔ loop r3_2 (0.9893 · 393.5)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 20 MAKE L-5 · L-6 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>18-3 · 만들어 보기</span><span class="en" data-i>18-3 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="play"></span><h2 class="h"><span class="ko" data-i>만들어 보기 L-6 · L-5: 라운드 0 실행 → 다음 후보 2개 예측 → 정지까지</span><span class="en" data-i>Try it L-6 · L-5: round 0 → next 2 picks → run to stop</span></h2></div>
+<div class="bd">
+<div class="make" style="grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
+<pre class="code a" style="--d:1;grid-column:1/-1;margin:0"><span class="c"><span class="ko" data-i># 환경: mdai · cd week18 · claude · 재생 모드(기본) · 실행 모드 = --mode live</span><span class="en" data-i># Env: mdai · cd week18 · claude · replay mode (default) · live mode = --mode live</span></span>
+cd ../loop && python scripts/loop_step.py         <span class="c"><span class="ko" data-i># L-6 · 라운드 0 · 초기 6 → 이어서 L-5 (MD 없음)</span><span class="en" data-i># L-6 · round 0 · initial 6 → then L-5 (no MD)</span></span>
+cd ../loop && python scripts/loop_step.py --all   <span class="c"><span class="ko" data-i># 라운드 1 ~ 3 · 정지까지</span><span class="en" data-i># rounds 1 ~ 3 · until stop</span></span></pre>
+<div class="left a" style="--d:2">
+<div class="prompt" data-id="L-6"><span class="ko" data-i>../loop 폴더에서 python scripts/loop_step.py 를 [재생] 모드로 한 라운드 실행해라(--all = 정지까지 · 실행 모드는 --mode live · 후보 하나 약 5분). 라운드 번호 · 고른 후보 · 결과 · 가장 가까운 계산 · 정지 여부를 표로 적고, ../loop/vault/rounds/round_k.md 와 ../loop/vault/runs/ 에 새 노트가 생겼는지 확인해라. → out/L-6_result.md</span><span class="en" data-i>In the ../loop folder, run one round of python scripts/loop_step.py in [replay] mode (--all = until stop · live mode is --mode live · approx. 5 min per candidate). Tabulate round number · chosen candidates · results · closest calculation · whether stopped, and check that new notes appeared in ../loop/vault/rounds/round_k.md and ../loop/vault/runs/. → out/L-6_result.md</span></div>
+<div class="cb wrap"><span class="fc or"><span class="ko" data-i>라운드 0 · <em>6</em>개</span><span class="en" data-i>Round 0 · <em>6</em></span></span><span class="fc"><span class="ko" data-i>최선 quin-2x3 · <em>3.04</em></span><span class="en" data-i>Best quin-2x3 · <em>3.04</em></span></span><span class="fc gr"><span class="ko" data-i>--all → MD <em>12</em> · <em>1.97</em> · 정지</span><span class="en" data-i>--all → MD <em>12</em> · <em>1.97</em> · stop</span></span></div>
+</div>
+<div class="expect a" style="--d:3">
+<div class="prompt" data-id="L-5"><span class="ko" data-i>../loop 폴더에서 지금 결과로 대리모델을 학습해 후보 전체의 예측 μ · σ 를 구하고, scripts/acquire.py 의 [cheb] 획득함수(체비셰프 EI · 다른 선택 ehvi · ucb)로 다음 후보 [2]개를 골라라(아직 MD 하지 않음 · loop_step.py 와 같은 seed · 계산한 후보 제외 · scripts 는 고치지 말고 out/ 에 새 파일로). 고른 후보의 예측 밀도 · CED ± σ, 표적과의 거리(표적 폭 단위 · 더 먼 쪽), 획득 점수를 표로 적고, 탐색(σ 큼)과 활용(μ 가 표적 가까움) 중 어느 쪽 선택인지 설명해라. 라운드 0 뒤라면 @../loop/expected_output/avg_molecule_2target/state.json 의 라운드 1 picks 와 비교해라. → out/L-5_result.md</span><span class="en" data-i>In ../loop, train the surrogate on current results (μ · σ for all candidates) and pick the next [2] with the [cheb] acquisition in scripts/acquire.py (or ehvi · ucb) (no MD · same seed as loop_step.py · skip computed · no edits to scripts, new file in out/). Tabulate predicted density · CED ± σ, distance (tol units · farther side), score; exploration (large σ) or exploitation (μ near target). After round 0, compare with round 1 picks in @../loop/expected_output/avg_molecule_2target/state.json. → out/L-5_result.md</span></div>
+<div class="cb wrap"><span class="fc or">tetralin-1x1 <em>0.173</em></span><span class="fc or">benzene-1x3 <em>0.159</em></span><span class="fc"><span class="ko" data-i>= 라운드 1 선택</span><span class="en" data-i>= round 1 picks</span></span></div>
+</div>
+</div>
+<div class="check a" style="--d:4"><p><span class="ko" data-i>재생: 라운드별 후보 · 순서 = expected_output/state.json · 최선 d 3.04 → 1.97</span><span class="en" data-i>Replay: candidates · order per round = expected_output/state.json · best d 3.04 → 1.97</span></p><p><span class="ko" data-i>L-5 의 2개 = 라운드 1 실제 선택 · 점수 · μ · σ 같음</span><span class="en" data-i>2 from L-5 = actual round 1 picks · same score · μ · σ</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>지시문 원문 week18/prompts.md · L-5 · L-6 · 기대 결과 = loop/expected_output/avg_molecule_2target/state.json · loop_results.csv · vault/runs · vault/rounds</span><span class="en" data-i>Prompt source week18/prompts.md · L-5 · L-6 · expected = loop/expected_output/avg_molecule_2target/state.json · loop_results.csv · vault/runs · vault/rounds</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 21 차시 18-4 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 18-4 · 14분 · 영상 1편</span><span class="en" data-i>Session 18-4 · 14 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="notebook-pen"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">4</p><p class="hubt"><span class="ko" data-i>환류 · 검증 · 제출</span><span class="en" data-i>Feedback · validation · submission</span></p><p class="hubs"><span class="ko" data-i>볼트 노트 → 한계 → 내 문제로</span><span class="en" data-i>Vault notes → limits → my problem</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>환류 확인표 · 기준 대조표 · 제출 계획</span><span class="en" data-i>Feedback check table · reference comparison table · submission plan</span></h4></div></div><p><span class="ko" data-i>L-7 · L-8 · 최종 프로젝트 제출 폴더 7파일</span><span class="en" data-i>L-7 · L-8 · final project submission folder 7 files</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>W02 볼트 · W16 삼각 대조 · 최종 프로젝트</span><span class="en" data-i>W02 vault · W16 triangulation · final project</span></h4></div></div><p><span class="ko" data-i>W02 = 논문 노트 · W18 = 계산 결과도 같은 볼트로</span><span class="en" data-i>W02 = paper notes · W18 = calculation results into the same vault</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 22 FIG 볼트 환류 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>18-4 · 어떻게</span><span class="en" data-i>18-4 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="network"></span><h2 class="h"><span class="ko" data-i>볼트 환류: 실행 노트 12 · 라운드 노트 4 → 근거 문헌 15편과 그래프로 연결</span><span class="en" data-i>Vault feedback: 12 run notes · 4 round notes → linked to 15 evidence papers in the graph</span></h2></div>
+<p class="sub"><span class="ko" data-i>계산 1건 = 노트 1개 · 노트마다 [[citekey]] · [[round_k]] 링크 · Obsidian 그래프 보기 = 문헌 ↔ 실행 ↔ 라운드 한 그림</span><span class="en" data-i>1 calculation = 1 note · each note links [[citekey]] · [[round_k]] · Obsidian graph view = literature ↔ runs ↔ rounds in one picture</span></p>
+<div class="bd">
+<div class="row">
+<div class="doc a" style="--d:1;width:640px;flex:none">
+<p class="doc-pub">loop/vault/runs/r3_2.md</p>
+<pre class="code doccode"><span class="ko" data-i>---
+id: r3_2 · round: 3
+candidate: dibenzothiophene-2x6
+density_gcm3: 0.9893 · ced_MJm3: 393.5
+tags: [mdrun, round3]
+---
+| 밀도 | 0.9893 ± 0.0011 (차 0.0287) |
+| CED  | 393.5 ± 2.0 (차 39.3) |
+| 두 표적 안 | 아니오 |
+- 근거 문헌: [[ai2024properties]] · … 15편
+- 라운드: [[round_3]]
+- 고른 이유: cheb 0.890 · 예측 ρ 0.990±0.019
+             · CED 374.3±18.2</span><span class="en" data-i>---
+id: r3_2 · round: 3
+candidate: dibenzothiophene-2x6
+density_gcm3: 0.9893 · ced_MJm3: 393.5
+tags: [mdrun, round3]
+---
+| Density | 0.9893 ± 0.0011 (gap 0.0287) |
+| CED  | 393.5 ± 2.0 (gap 39.3) |
+| Both targets | no |
+- Evidence: [[ai2024properties]] · … 15 papers
+- Round: [[round_3]]
+- Reason chosen: cheb 0.890 · predicted ρ 0.990±0.019
+             · CED 374.3±18.2</span></pre>
+<p class="doc-m"><span class="ko" data-i>만든 곳 = scripts/notes.py run_note() · 표적에 들면 tags 에 hit</span><span class="en" data-i>Made by = scripts/notes.py run_note() · hit added to tags when inside targets</span></p>
+</div>
+<div class="figw white fill"><svg id="w18-graph" viewBox="0 0 900 520" class="cfig"></svg></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>expected_output/avg_molecule_2target/vault/runs/r3_2.md · vault/rounds/round_0 ~ 3.md · 근거 문헌 = lit_targets.json citekeys (밀도 11 + CED 4) · 그래프 = 링크 구조 도식</span><span class="en" data-i>expected_output/avg_molecule_2target/vault/runs/r3_2.md · vault/rounds/round_0 ~ 3.md · evidence = lit_targets.json citekeys (density 11 + CED 4) · graph = diagram of link structure</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 23 FIG 왜 못 들어갔나 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>18-4 · 왜</span><span class="en" data-i>18-4 · Why</span></p>
+<div class="hrow"><span class="hico" data-ico="circle-help"></span><h2 class="h"><span class="ko" data-i>두 표적 안 = 0개인 이유: 힘장 CED 과대 · 평균 분자 단순화 · 짧은 MD</span><span class="en" data-i>Why 0 inside both targets: FF CED too high · average-molecule simplification · short MD</span></h2></div>
+<p class="sub"><span class="ko" data-i>계산 23개(루프 12 · W17 후보 8 · 검증 3) 중 밀도 1.0 이상 = CED 405.3 이상 · CED 374.2 이하 = 밀도 0.9036 이하</span><span class="en" data-i>Of 23 calculations (loop 12 · W17 candidates 8 · validation 3): density ≥ 1.0 = CED ≥ 405.3 · CED ≤ 374.2 = density ≤ 0.9036</span></p>
+<div class="bd">
+<div class="row">
+<div class="figw white fill"><svg id="w18-why" viewBox="0 0 1000 500" class="cfig"></svg></div>
+<div class="col" style="width:560px;flex:none">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="magnet"></span><div><p class="k"><span class="ko" data-i>① 힘장</span><span class="en" data-i>① Force field</span></p><h4><span class="ko" data-i>GAFF2 CED 과대 +6 % · +21 %</span><span class="en" data-i>GAFF2 CED too high +6 % · +21 %</span></h4></div></div><p><span class="ko" data-i>dbt-2x6 393.5 ÷ 1.06 = 371.2 · ÷ 1.21 = 325.2 → 표적 354.2 가 그 사이 · 표적 CED 6개 = 다른 힘장 MD</span><span class="en" data-i>dbt-2x6 393.5 ÷ 1.06 = 371.2 · ÷ 1.21 = 325.2 → target 354.2 in between · 6 target CED values = MD with other FFs</span></p></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="hexagon"></span><div><p class="k"><span class="ko" data-i>② 단순화</span><span class="en" data-i>② Simplification</span></p><h4><span class="ko" data-i>분자 하나 = 밀도 · CED 함께 움직임</span><span class="en" data-i>One molecule = density · CED move together</span></h4></div></div><p><span class="ko" data-i>바인더 = 분자량 · 극성 분포 · 평균 분자 = 분포 없음</span><span class="en" data-i>Binder = molecular weight · polarity distribution · average molecule = no distribution</span></p></div>
+<div class="it a" style="--d:3"><div class="ih"><span class="icb" data-ico="timer"></span><div><p class="k"><span class="ko" data-i>③ 짧은 MD</span><span class="en" data-i>③ Short MD</span></p><h4><span class="ko" data-i>130 ps · 약 1,500 원자</span><span class="en" data-i>130 ps · approx. 1,500 atoms</span></h4></div></div><p><span class="ko" data-i>값 = 후보 비교용 · 판정 폭 ±0.015 · ±15</span><span class="en" data-i>Values = for comparing candidates · tolerance ±0.015 · ±15</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>점 = loop_results.csv · week17/expected_output/candidates · 검증 = mdworkflow/README.md (톨루엔 · 1-메틸나프탈렌 · n-데칸은 그림 밖) · CED 과대 = 같은 README 힘장 검증 사례 · 나눗셈 = 비율 가정 계산</span><span class="en" data-i>Points = loop_results.csv · week17/expected_output/candidates · validation = mdworkflow/README.md (toluene · 1-methylnaphthalene · n-decane outside the plot) · CED too high = FF validation in the same README · division = assumed-ratio arithmetic</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 24 FIG 내 문제 · 최종 프로젝트 -->
+<section class="slide v3" data-min="2.5">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>18-4 · 최종 프로젝트</span><span class="en" data-i>18-4 · Final project</span></p>
+<div class="hrow"><span class="hico" data-ico="settings"></span><h2 class="h"><span class="ko" data-i>내 문제로 바꾸기: 노트 · 후보 표 · loop.yaml 3곳 → 최종 프로젝트 제출 7파일</span><span class="en" data-i>Adapting to my problem: notes · candidate table · loop.yaml, 3 places → 7 final-project files</span></h2></div>
+<p class="sub"><span class="ko" data-i>강좌 스크립트 = 고치지 않음 · 바꾸는 것 = 입력 파일과 설정 · 재생 모드 = 기준 사례 이름 전용 → 내 문제 = 실행 모드</span><span class="en" data-i>Course scripts = unchanged · what changes = input files and settings · replay mode = reference case name only → my problem = live mode</span></p>
+<div class="bd">
+<div class="grid c2 fill">
+<div class="it white a" style="--d:1"><div class="ih"><span class="icb" data-ico="wrench"></span><div><p class="k"><span class="ko" data-i>바꾸는 3곳</span><span class="en" data-i>3 places to change</span></p><h4><span class="ko" data-i>입력 2 + 설정 1</span><span class="en" data-i>2 inputs + 1 setting</span></h4></div></div>
+<table class="t"><thead><tr><th><span class="ko" data-i>곳</span><span class="en" data-i>Place</span></th><th><span class="ko" data-i>파일</span><span class="en" data-i>File</span></th><th><span class="ko" data-i>할 일</span><span class="en" data-i>Action</span></th></tr></thead><tbody>
+<tr><td><span class="ko" data-i>① 표적</span><span class="en" data-i>① Targets</span></td><td class="mono">vault/papers/*.md</td><td><span class="ko" data-i>loop_role: target · 「보고 물성」 표</span><span class="en" data-i>loop_role: target · "reported properties" table</span></td></tr>
+<tr><td><span class="ko" data-i>② 후보</span><span class="en" data-i>② Candidates</span></td><td class="mono"><span class="ko" data-i>ws/&lt;새 이름&gt;/library.csv</span><span class="en" data-i>ws/&lt;new name&gt;/library.csv</span></td><td><span class="ko" data-i>같은 열 · out/ 의 새 스크립트로 생성</span><span class="en" data-i>Same columns · generated by a new script in out/</span></td></tr>
+<tr><td><span class="ko" data-i>③ 설정</span><span class="en" data-i>③ Settings</span></td><td class="mono">config/my.yaml</td><td><span class="ko" data-i>loop.yaml 복사 · name · tol · model · acquisition · stop · --config</span><span class="en" data-i>Copy loop.yaml · name · tol · model · acquisition · stop · --config</span></td></tr>
+</tbody></table>
+<p><span class="ko" data-i>모델 · 획득함수 = 이름만 교체 (gp · rf · xgb · cheb · ehvi · ucb)</span><span class="en" data-i>Model · acquisition = change the name only (gp · rf · xgb · cheb · ehvi · ucb)</span></p></div>
+<div class="it white a" style="--d:2"><div class="ih"><span class="icb" data-ico="clipboard-check"></span><div><p class="k"><span class="ko" data-i>제출 = week16/docs/final_project.md 「W18」 절</span><span class="en" data-i>Submission = "W18" section of week16/docs/final_project.md</span></p><h4><span class="ko" data-i>7파일 + slides · 평가 100</span><span class="en" data-i>7 files + slides · score 100</span></h4></div></div>
+<table class="t"><thead><tr><th><span class="ko" data-i>제출 파일</span><span class="en" data-i>Submission file</span></th><th><span class="ko" data-i>W18 에서 가져올 것</span><span class="en" data-i>What to take from W18</span></th></tr></thead><tbody>
+<tr><td class="mono">problem.json</td><td><span class="ko" data-i>lit_targets.json · 폭 · citekey</span><span class="en" data-i>lit_targets.json · tol · citekeys</span></td></tr>
+<tr><td class="mono">protocol.json</td><td><span class="ko" data-i>표준 프로토콜 · loop.yaml</span><span class="en" data-i>Standard protocol · loop.yaml</span></td></tr>
+<tr><td class="mono">pareto · recommendations</td><td>loop_results.csv · state.json picks</td></tr>
+<tr><td class="mono">validation · limits</td><td><span class="ko" data-i>표적 거리 · 힘장 점검 · 평균 분자 한계</span><span class="en" data-i>Target distance · FF check · average-molecule limits</span></td></tr>
+<tr><td class="mono">run_manifest.json</td><td>mode · seed · environment.lock.txt</td></tr>
+</tbody></table></div>
+</div>
+<div class="foot a" style="--d:3"><span class="ko" data-i>평가 100 = 문제 정의 <b>20</b> · 계산 · 검증 설계 <b>30</b> · 탐색 결과 <b>25</b> · 재현성 <b>15</b> · 한계 논의 <b>10</b> · 발표 10분 + 질의 5분</span><span class="en" data-i>Score 100 = problem definition <b>20</b> · calculation · validation design <b>30</b> · search results <b>25</b> · reproducibility <b>15</b> · discussion of limits <b>10</b> · 10 min talk + 5 min Q&A</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>repo/week16/docs/final_project.md 「제출 폴더」 · 「평가 기준」 · 「W18 폐루프 결과 사용」 · config/loop.yaml · scripts/common.py library() · run_md() (재생 = expected_output/&lt;name&gt; 필요) · repo/CLAUDE.md 폴더 규칙</span><span class="en" data-i>repo/week16/docs/final_project.md "Submission folder" · "Evaluation criteria" · "Using W18 closed-loop results" · config/loop.yaml · scripts/common.py library() · run_md() (replay = needs expected_output/&lt;name&gt;) · repo/CLAUDE.md folder rules</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 25 MAKE L-7 · L-8 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>18-4 · 만들어 보기</span><span class="en" data-i>18-4 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="list-checks"></span><h2 class="h"><span class="ko" data-i>만들어 보기 L-7 · L-8: 볼트 환류 확인표 · 기준 사례 대조표</span><span class="en" data-i>Try it L-7 · L-8: vault feedback check · reference comparison</span></h2></div>
+<div class="bd">
+<div class="make" style="grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
+<pre class="code a" style="--d:1;grid-column:1/-1;margin:0"><span class="c"><span class="ko" data-i># 환경: mdai · cd week18 · claude · Obsidian 보관함 = ../loop/vault (I-4)</span><span class="en" data-i># Env: mdai · cd week18 · claude · Obsidian vault = ../loop/vault (I-4)</span></span>
+ls ../loop/vault/runs ../loop/vault/rounds                       <span class="c"><span class="ko" data-i># L-7 · 노트 12 + 4</span><span class="en" data-i># L-7 · notes 12 + 4</span></span>
+cut -d, -f1-3 ../loop/ws/avg_molecule_2target/db/loop_results.csv   <span class="c"><span class="ko" data-i># L-8 · id · 라운드 · 후보</span><span class="en" data-i># L-8 · id · round · candidate</span></span></pre>
+<div class="left a" style="--d:2">
+<div class="prompt" data-id="L-7"><span class="ko" data-i>@../loop/vault/runs 와 @../loop/vault/rounds 의 노트를 읽어 라운드별로 어떤 후보를 왜 골랐는지(「고른 이유」) 표로 정리하고, 각 실행 노트가 근거 문헌 [[citekey]] 에 링크되어 있는지 확인해라. Obsidian 그래프에서 무엇을 보면 되는지 한 줄로 써라. → out/L-7_result.md</span><span class="en" data-i>Read the notes in @../loop/vault/runs and @../loop/vault/rounds, tabulate per round which candidates were chosen and why ("reason chosen"), and check that each run note links to the evidence papers [[citekey]]. Write one line on what to look for in the Obsidian graph. → out/L-7_result.md</span></div>
+<div class="cb wrap"><span class="fc or"><span class="ko" data-i>실행 노트 <em>12</em></span><span class="en" data-i>Run notes <em>12</em></span></span><span class="fc or"><span class="ko" data-i>라운드 노트 <em>4</em></span><span class="en" data-i>Round notes <em>4</em></span></span><span class="fc"><span class="ko" data-i>근거 링크 <em>15</em>편</span><span class="en" data-i>Evidence links <em>15</em> papers</span></span><span class="fc">hit <em>0</em></span></div>
+</div>
+<div class="expect a" style="--d:3">
+<div class="prompt" data-id="L-8"><span class="ko" data-i>../loop/ws/&lt;이름&gt;/db/loop_results.csv 와 state.json 을 @../loop/expected_output/&lt;이름&gt;/ 의 같은 파일과 비교해라. 재생 모드: 라운드별 후보 이름 · 순서가 모두 같아야 한다. 실행 모드: 라운드 0 의 6개는 같은 후보이고 밀도 차 ≤ 0.015 g/cm³ · CED 차 ≤ 15 MJ/m³ 이면 「같음」(같은 계산을 다시 돌린 흔들림의 약 1.5배). 항목별로 같음 · 허용 오차 안 · 다름을 표로 적어라. → out/L-8_result.md</span><span class="en" data-i>Compare ../loop/ws/&lt;name&gt;/db/loop_results.csv and state.json with the same files in @../loop/expected_output/&lt;name&gt;/. Replay: candidate names · order must all match per round. Live: "same" if the 6 of round 0 are the same candidates and density diff ≤ 0.015 g/cm³ · CED diff ≤ 15 MJ/m³ (approx. 1.5× rerun scatter). Tabulate same · within tolerance · different per item. → out/L-8_result.md</span></div>
+<div class="cb wrap"><span class="fc gr"><span class="ko" data-i>재생 <em>12 / 12</em> 같음</span><span class="en" data-i>Replay <em>12 / 12</em> same</span></span><span class="fc"><span class="ko" data-i>실행 = 라운드 0 <em>6</em>개 · ±<em>0.015</em> · ±<em>15</em></span><span class="en" data-i>Live = round 0 <em>6</em> · ±<em>0.015</em> · ±<em>15</em></span></span></div>
+</div>
+</div>
+<div class="check a" style="--d:4"><p><span class="ko" data-i>노트마다 근거 문헌 15편 · [[round_k]] 링크 · 「고른 이유」 = cheb 점수 · 예측 ± σ</span><span class="en" data-i>Each note: 15 evidence papers · [[round_k]] link · "reason chosen" = cheb score · prediction ± σ</span></p><p><span class="ko" data-i>재생 = 후보 이름 · 순서 · 거리 모두 같음 · 실행 = 판정 폭 안</span><span class="en" data-i>Replay = candidate names · order · distances all same · live = within tolerance</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>지시문 원문 week18/prompts.md · L-7 · L-8 · 기대 결과 = loop/expected_output/avg_molecule_2target/vault · loop_results.csv · state.json · 판정 폭 = mdworkflow/README.md</span><span class="en" data-i>Prompt source week18/prompts.md · L-7 · L-8 · expected = loop/expected_output/avg_molecule_2target/vault · loop_results.csv · state.json · tolerance = mdworkflow/README.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 26 FIG 확인 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>18-4 · 확인</span><span class="en" data-i>18-4 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="circle-help"></span><h2 class="h"><span class="ko" data-i>확인 4문항: CED 표적 · 모델 선택 · 체비셰프 거리 · 같은 결과</span><span class="en" data-i>Check 4 questions: CED target · model choice · Chebyshev distance · same result</span></h2></div>
+<p class="sub"><span class="ko" data-i>답 = 이번 주 화면의 숫자 · 해설과 추가 문항 = repo/week18/quiz.md</span><span class="en" data-i>Answers = numbers on this week's slides · explanations and more questions = repo/week18/quiz.md</span></p>
+<div class="bd">
+<div class="grid c2 fill">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="target"></span><div><p class="k">Q1 · 18-1</p><h4><span class="ko" data-i>CED 표적 = 실측 대신 바인더 값 7개 중앙값인 이유</span><span class="en" data-i>Why the CED target = median of 7 binder values instead of a measurement</span></h4></div></div><p><span class="ko" data-i><b>답</b> 바인더 증발 안 함 → CED 직접 측정 불가 · 용해도 시험 δ 19.15 → 366.7 + MD 문헌 6</span><span class="en" data-i><b>Answer</b> binder does not vaporize → CED not directly measurable · solubility test δ 19.15 → 366.7 + MD papers 6</span></p><p><span class="ko" data-i>근거 = 6장</span><span class="en" data-i>Basis = slide 6</span></p></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="scale"></span><div><p class="k">Q2 · 18-2</p><h4><span class="ko" data-i>관측 12개 · 1σ 포함 gp 0.33 · 0.50 ↔ rf 0.58 · 0.75</span><span class="en" data-i>12 observations · 1σ coverage gp 0.33 · 0.50 ↔ rf 0.58 · 0.75</span></h4></div></div><p><span class="ko" data-i><b>답</b> rf · 68 % 에 더 가까움 · RMSE 도 가장 작음 (0.0607 · 27.9)</span><span class="en" data-i><b>Answer</b> rf · closer to 68 % · smallest RMSE too (0.0607 · 27.9)</span></p><p><span class="ko" data-i>근거 = 12장</span><span class="en" data-i>Basis = slide 12</span></p></div>
+<div class="it a" style="--d:3"><div class="ih"><span class="icb" data-ico="crosshair"></span><div><p class="k">Q3 · 18-3</p><h4><span class="ko" data-i>dbt-2x6 · 0.9893 · 393.5 → 체비셰프 거리 d</span><span class="en" data-i>dbt-2x6 · 0.9893 · 393.5 → Chebyshev distance d</span></h4></div></div><p><span class="ko" data-i><b>답</b> max(0.0287 ÷ 0.02, 39.3 ÷ 20) = max(1.435, 1.965) → 1.97 · CED 쪽 · 1 초과 = 상자 밖</span><span class="en" data-i><b>Answer</b> max(0.0287 ÷ 0.02, 39.3 ÷ 20) = max(1.435, 1.965) → 1.97 · CED side · above 1 = outside box</span></p><p><span class="ko" data-i>근거 = 15 · 16장</span><span class="en" data-i>Basis = slides 15 · 16</span></p></div>
+<div class="it a" style="--d:4"><div class="ih"><span class="icb" data-ico="repeat"></span><div><p class="k">Q4 · 18-3</p><h4><span class="ko" data-i>실행 0.9817 · 386.4 ↔ 기준 0.9893 · 393.5</span><span class="en" data-i>Live 0.9817 · 386.4 ↔ reference 0.9893 · 393.5</span></h4></div></div><p><span class="ko" data-i><b>답</b> 차 0.0076 · 7.1 → 판정 폭 ±0.015 · ±15 안 → 같은 결과</span><span class="en" data-i><b>Answer</b> diff 0.0076 · 7.1 → within tolerance ±0.015 · ±15 → same result</span></p><p><span class="ko" data-i>근거 = 19장</span><span class="en" data-i>Basis = slide 19</span></p></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>문항 = 6 · 12 · 15 · 16 · 19장 숫자 · 차 = 표적 − 실측 (1.018 − 0.9893 · 393.5 − 354.2)</span><span class="en" data-i>Questions = numbers from slides 6 · 12 · 15 · 16 · 19 · gap = target − result (1.018 − 0.9893 · 393.5 − 354.2)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 27 다음 주차로 · 18주 마무리 -->
+<section class="slide v3 accent">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>다음 주차로 · 최종 프로젝트 제출 · 18주 과정 마무리</span><span class="en" data-i>Next week · final project submission · end of the 18-week course</span></p>
+<div class="hrow"><span class="hico" data-ico="flag"></span><h2 class="h"><span class="ko" data-i>18주 마무리: 문헌 → 표적 → MD → 대리모델 → 능동학습 → 환류 · 다음 = 최종 프로젝트</span><span class="en" data-i>18 weeks wrap-up: literature → targets → MD → surrogate → active learning → feedback · next = final project</span></h2></div>
+<p class="sub"><span class="ko" data-i>W01 순환 그림 → W02 ~ W17 칸마다 도구 → W18 실제 파일로 한 바퀴 · 최선 d 3.04 → 1.97 · 두 표적 안 = 0 → 한계 보고까지 결과</span><span class="en" data-i>W01 loop figure → W02 ~ W17 tools per step → W18 one turn with real files · best d 3.04 → 1.97 · inside both targets = 0 → result includes the limits report</span></p>
+<div class="bd">
+<div class="lines">
+<div class="ln a" style="--d:1"><span class="nn">01</span><div><h4><span class="ko" data-i>오늘의 산출물</span><span class="en" data-i>Today's outputs</span></h4><p><span class="file">lit_targets.json</span> · <span class="file">loop_results.csv</span> · <span class="file">state.json</span> <span class="ko" data-i>· 실행 노트 12 · 라운드 노트 4 · L-1 ~ L-8 결과</span><span class="en" data-i>· 12 run notes · 4 round notes · L-1 ~ L-8 results</span></p></div></div>
+<div class="ln a" style="--d:2"><span class="nn">02</span><div><h4><span class="ko" data-i>최종 프로젝트</span><span class="en" data-i>Final project</span></h4><p><span class="file">week16/docs/final_project.md</span> <span class="ko" data-i>「W18 폐루프 결과 사용」 · 제출 7파일 + slides · 내 문제 = 실행 모드</span><span class="en" data-i>"Using W18 closed-loop results" · 7 submission files + slides · my problem = live mode</span></p></div></div>
+<div class="ln a" style="--d:3"><span class="nn">03</span><div><h4><span class="ko" data-i>못 끝냈다면</span><span class="en" data-i>If unfinished</span></h4><p><span class="file">loop/expected_output/</span> <span class="ko" data-i>· 재생 모드 = 같은 경로 약 2.5 s · 최종 프로젝트 기준선으로 사용 가능</span><span class="en" data-i>· replay mode = same path approx. 2.5 s · usable as final-project baseline</span></p></div></div>
+<div class="ln a" style="--d:4"><span class="nn">04</span><div><h4><span class="ko" data-i>퀴즈 · 용어 · 보충</span><span class="en" data-i>Quiz · key terms · supplements</span></h4><p><span class="file">week18/quiz.md</span> · <span class="file">GLOSSARY.md</span> <span class="ko" data-i>용어 6 ·</span><span class="en" data-i>6 terms ·</span> <span class="file">loop/README.md</span> · <span class="file">mdworkflow/README.md</span></p></div></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>18주 과정 = W01 ~ W16 + W17 MD 워크플로우 조립 + W18 폐루프 통합 실습 · 제출 기준 = repo/week16/docs/final_project.md</span><span class="en" data-i>18-week course = W01 ~ W16 + W17 MD workflow assembly + W18 closed-loop integration lab · submission basis = repo/week16/docs/final_project.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<script src="../common/icons.js"></script>
+<script src="../common/deck.js"></script>
+<script>
+function stepOf(root) { var s = parseInt(root.dataset.step || '0', 10); return isNaN(s) ? 0 : s; }
+function icoIn(n, x, y, s, col) { return '<svg x="' + x + '" y="' + y + '" width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" stroke="' + col + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + (IC[n] || '') + '</svg>'; }
+function mono(x, y, s, col, size, anchor, w) { return '<text x="' + x + '" y="' + y + '" font-family="JetBrains Mono, monospace" font-size="' + (size || 18) + '" fill="' + col + '"' + (anchor ? ' text-anchor="' + anchor + '"' : '') + (w ? ' font-weight="' + w + '"' : '') + '>' + s + '</text>'; }
+function tx(x, y, s, cls, anchor, fill, size) { return '<text x="' + x + '" y="' + y + '"' + (cls ? ' class="' + cls + '"' : '') + (anchor ? ' text-anchor="' + anchor + '"' : '') + (fill ? ' fill="' + fill + '"' : '') + (size ? ' font-size="' + size + '"' : '') + '>' + s + '</text>'; }
+function rr(x, y, w, h, r, fill, stroke, sw, extra) { return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="' + r + '" fill="' + fill + '"' + (stroke ? ' stroke="' + stroke + '" stroke-width="' + (sw || 2) + '"' : '') + (extra || '') + '/>'; }
+function ln(x1, y1, x2, y2, col, w, extra) { return '<line x1="' + (+x1).toFixed(1) + '" y1="' + (+y1).toFixed(1) + '" x2="' + (+x2).toFixed(1) + '" y2="' + (+y2).toFixed(1) + '" stroke="' + col + '" stroke-width="' + (w || 2) + '"' + (extra || '') + '/>'; }
+function dot(x, y, r, fill, stroke, sw, extra) { return '<circle cx="' + (+x).toFixed(1) + '" cy="' + (+y).toFixed(1) + '" r="' + r + '" fill="' + fill + '"' + (stroke ? ' stroke="' + stroke + '" stroke-width="' + (sw || 2) + '"' : '') + (extra || '') + '/>'; }
+function halo(x, y, s, col, size, anchor) { return '<text x="' + (+x).toFixed(1) + '" y="' + (+y).toFixed(1) + '" font-family="JetBrains Mono, monospace" font-size="' + (size || 15) + '" font-weight="700" fill="' + col + '" stroke="#FFFFFF" stroke-width="5" stroke-linejoin="round" paint-order="stroke"' + (anchor ? ' text-anchor="' + anchor + '"' : '') + '>' + s + '</text>'; }
+function ez(u) { u = Math.max(0, Math.min(1, u)); return 1 - Math.pow(1 - u, 3); }
+function cl(u) { return Math.max(0, Math.min(1, u)); }
+function arrowHead(x1, y1, x2, y2, col, s) { var a = Math.atan2(y2 - y1, x2 - x1), k = s || 12; return '<path d="M' + x2.toFixed(1) + ' ' + y2.toFixed(1) + ' L' + (x2 - k * Math.cos(a - 0.45)).toFixed(1) + ' ' + (y2 - k * Math.sin(a - 0.45)).toFixed(1) + ' L' + (x2 - k * Math.cos(a + 0.45)).toFixed(1) + ' ' + (y2 - k * Math.sin(a + 0.45)).toFixed(1) + ' Z" fill="' + col + '"/>'; }
+function rng(seed) { var s = seed; return function () { s = (s * 9301 + 49297) % 233280; return s / 233280; }; }
+function gauss(R) { var u = Math.max(1e-6, R()), v = R(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+
+/* ===== 데이터 = repo/loop/expected_output (avg_molecule_2target · _ehvi) · week17 candidates · mdworkflow/README ===== */
+var W18 = {
+  T: { rho: 1.018, rt: 0.02, ced: 354.2, ct: 20 },
+  /* id · 라운드 · 짧은 이름 · 밀도 · CED · 이름표 위치(dx, dy, anchor) */
+  R: [
+    ['r0_1', 0, 'quin-2x3', 0.9706, 415.0, 0, -18, 'middle'],
+    ['r0_2', 0, 'tet-2x12', 0.8577, 334.8, 14, 20, 'start'],
+    ['r0_3', 0, 'phen-1x1', 1.1011, 487.3, -14, 6, 'end'],
+    ['r0_4', 0, 'benz-1x9', 0.8507, 343.7, -14, 4, 'end'],
+    ['r0_5', 0, 'bt-1x1', 1.1304, 470.6, -14, 22, 'end'],
+    ['r0_6', 0, 'tet-2x1', 0.9447, 399.7, -14, -4, 'end'],
+    ['r1_1', 1, 'tet-1x1', 0.9526, 411.2, -14, -6, 'end'],
+    ['r1_2', 1, 'benz-1x3', 0.8714, 352.1, 14, 22, 'start'],
+    ['r2_1', 2, 'dbt-2x4', 1.0256, 407.0, 14, -4, 'start'],
+    ['r2_2', 2, 'phen-2x3', 1.0036, 422.1, 0, -18, 'middle'],
+    ['r3_1', 3, 'dbt-1x10', 1.0099, 405.3, -12, -14, 'end'],
+    ['r3_2', 3, 'dbt-2x6', 0.9893, 393.5, -20, 28, 'end']],
+  /* 예측 μρ · σρ · μCED · σCED · 점수 (state.json picks) */
+  P: { r1_1: [0.9624, 0.0055, 409.2, 2.9, 0.173], r1_2: [0.953, 0.0226, 404.8, 11.8, 0.159], r2_1: [0.9745, 0.0357, 413.4, 28.2, 0.309], r2_2: [0.9787, 0.0453, 417.7, 35.3, 0.299], r3_1: [0.9986, 0.0136, 384.2, 13.4, 0.955], r3_2: [0.9905, 0.0193, 374.3, 18.2, 0.890] },
+  best: [3.04, 3.04, 2.64, 1.97], bestc: ['quin-2x3', 'quin-2x3', 'dbt-2x4', 'dbt-2x6'],
+  ehvi: [['bt-1x4', 1, 1.0486, 426.0, 1], ['benz-2x1', 1, 0.8649, 350.3, 1], ['benz-1x1', 2, 0.8732, 358.5, 1], ['benz-1x2', 2, 0.8796, 363.2, 1], ['naph-2x2', 3, 0.9792, 426.0, 1], ['naph-2x9', 3, 0.8798, 351.0, 0]],
+  ebest: [3.04, 3.04, 3.04, 3.04],
+  w17: [['naph-1x4', 0.9784, 420.6], ['naph-2x6', 0.9036, 361.0], ['phen-1x4', 1.0457, 453.4], ['dbt-1x2', 1.1378, 466.5], ['dbt-2x6', 0.9817, 386.4], ['bt-1x6', 1.0137, 408.1], ['quin-1x4', 1.0062, 444.7], ['tet-1x8', 0.8961, 369.1]],
+  val: [[__L('톨루엔','toluene'), 0.8703, 352.3], [__L('1-메틸나프탈렌','1-methylnaphthalene'), 1.0299, 452.9]],
+  dens: [0.94, 0.95, 1.002, 1.005, 1.01, 1.01, 1.012, 1.012, 1.0126, 1.016, 1.017, 1.019, 1.02, 1.03, 1.038, 1.04, 1.04, 1.041, 1.042, 1.051, 1.07, 1.08],
+  /* CED 값 · 출처 종류(0 = MD 문헌 · 1 = 용해도 시험) · 이름표 */
+  ced: [[305.0, 0, 'PCFF'], [322.6, 0, 'δ 17.96'], [353.3, 0, ''], [354.2, 0, ''], [354.6, 0, ''], [366.7, 1, 'δ 19.15'], [382.1, 0, '']],
+  loo: { gp: [0.0630, 33.2, 0.33, 0.50], rf: [0.0607, 27.9, 0.58, 0.75], xgb: [0.0654, 33.9, 0.00, 0.17] },
+  cores: ['benzene', 'tetralin', 'naphthalene', 'phenanthrene', 'benzothiophene', 'dibenzothiophene', 'quinoline'],
+  base: [12, 22, 18, 24, 15, 21, 17],
+  ccol: ['#B9AE9E', '#8C8279', '#7FA6CC', '#4F7FB0', '#93C2A2', '#2E8B57', '#B58BB5']
+};
+
+/* ===== 1장 표지 · 라운드별 경로(작게) ===== */
+EMB["pathc"] = function (root, RAF) {
+  var t0 = CLK(), T = W18.T, X0 = 80, X1 = 520, Y0 = 470, Y1 = 90;
+  function X(v) { return X0 + (v - 0.82) / 0.32 * (X1 - X0); } function Y(v) { return Y0 - (v - 300) / 200 * (Y0 - Y1); }
+  function f(now) {
+    var t = ((now - t0) / 1000) % 12, k = Math.min(3, Math.floor(t / 2.4)), u = cl((t - k * 2.4) / 1.2), o = '<svg viewBox="0 0 560 560" class="cfig">';
+    o += tx(280, 46, __L('라운드별 경로 · 밀도–CED','Path by round · density–CED'), 'cfh', 'middle');
+    o += ln(X0, Y0, X1, Y0, '#6E655C', 2) + ln(X0, Y0, X0, Y1, '#6E655C', 2);
+    o += tx((X0 + X1) / 2, Y0 + 30, __L('밀도 →','density →'), 'cfmu', 'middle') + tx(X0 - 12, Y1 - 12, 'CED ↑', 'cfmu', 'start');
+    var d = k ? W18.best[k - 1] + (W18.best[k] - W18.best[k - 1]) * ez(u) : W18.best[0];
+    var bx0 = Math.max(X0, X(T.rho - d * T.rt)), bx1 = Math.min(X1, X(T.rho + d * T.rt)), by0 = Math.max(Y1, Y(T.ced + d * T.ct)), by1 = Math.min(Y0, Y(T.ced - d * T.ct));
+    o += rr(bx0.toFixed(1), by0.toFixed(1), (bx1 - bx0).toFixed(1), (by1 - by0).toFixed(1), 6, 'none', '#E37F1A', 3, ' stroke-dasharray="8 6"');
+    o += rr(X(T.rho - T.rt).toFixed(1), Y(T.ced + T.ct).toFixed(1), (X(T.rho + T.rt) - X(T.rho - T.rt)).toFixed(1), (Y(T.ced - T.ct) - Y(T.ced + T.ct)).toFixed(1), 4, '#2E8B57', '#2E8B57', 2, ' fill-opacity=".18"');
+    W18.R.forEach(function (r) {
+      if (r[1] > k) return; var a = r[1] < k ? 1 : ez(u * 1.5);
+      o += '<g opacity="' + a.toFixed(2) + '">' + dot(X(r[3]), Y(r[4]), r[1] === k ? 10 : 8, r[1] === 0 ? '#9A9088' : '#E37F1A', '#FFFFFF', 2) + '</g>';
+    });
+    o += mono(280, 528, __L('라운드 ','Round ') + k + __L(' · 최선 d ',' · best d ') + W18.best[k].toFixed(2), '#C8610C', 22, 'middle', 700);
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 6장 · 표적 2개 띠 그림 ===== */
+(function () {
+  var svg = document.getElementById('w18-strip'); if (!svg) return;
+  var o = '', XA = 70, XB = 960;
+  /* 밀도: 0.005 칸마다 쌓기 */
+  var r0 = 0.93, r1 = 1.09, yb = 200; function XR(v) { return XA + (v - r0) / (r1 - r0) * (XB - XA); }
+  o += tx(XA - 50, 24, __L('밀도 g/cm³ · 무첨가 바인더 25 °C 실측 22개','density g/cm³ · neat binder 25 °C, 22 measurements'), 'cfh', null, null, 21);
+  o += rr(XR(0.998).toFixed(1), 56, (XR(1.038) - XR(0.998)).toFixed(1), yb - 56, 6, '#2E8B57', null, 0, ' fill-opacity=".12"');
+  o += mono((XR(1.038) + 8).toFixed(1), 70, __L('폭 ±0.02','tol ±0.02'), '#2E8B57', 16, 'start', 700);
+  var cnt = {};
+  W18.dens.forEach(function (v) { var k = Math.floor(v / 0.005 + 1e-9), n = cnt[k] = (cnt[k] || 0) + 1; o += dot(XR((k + 0.5) * 0.005), yb - 12 - (n - 1) * 19, 8, '#4F7FB0', '#FFFFFF', 2); });
+  o += ln(XR(1.018), 50, XR(1.018), yb, '#C8610C', 4) + mono((XR(1.018) - 8).toFixed(1), 48, __L('중앙값 1.018','median 1.018'), '#C8610C', 18, 'end', 700);
+  o += ln(XR(1.0208), 80, XR(1.0208), yb, '#231F20', 2, ' stroke-dasharray="5 4"');
+  o += ln(XA, yb, XB, yb, '#6E655C', 2);
+  [0.94, 0.98, 1.02, 1.06].forEach(function (v) { o += ln(XR(v), yb, XR(v), yb + 8, '#6E655C', 2) + mono(XR(v).toFixed(1), yb + 26, v.toFixed(2), '#6E655C', 15, 'middle'); });
+  o += dot(XR(0.947), yb + 46, 8, '#FFFFFF', '#9A9088', 2) + tx(XR(0.947) + 16, yb + 52, __L('MD 값 0.947 = 표적 아님 (제외)','MD value 0.947 = not a target (excluded)'), 'cfmu', 'start', null, 15);
+  o += tx(XB, yb + 52, __L('실선 = 중앙값 · 점선 = 평균 1.0208','solid = median · dotted = mean 1.0208'), 'cfmu', 'end', null, 15);
+  /* CED */
+  var c0 = 290, c1 = 400, yc = 460; function XC(v) { return XA + (v - c0) / (c1 - c0) * (XB - XA); }
+  o += tx(XA - 50, 292, __L('CED MJ/m³ · 바인더 전체 값 7개','CED MJ/m³ · 7 whole-binder values'), 'cfh', null, null, 21);
+  o += rr(XC(334.2).toFixed(1), 320, (XC(374.2) - XC(334.2)).toFixed(1), yc - 320, 6, '#2E8B57', null, 0, ' fill-opacity=".12"');
+  o += mono((XC(374.2) + 8).toFixed(1), 336, __L('폭 ±20','tol ±20'), '#2E8B57', 16, 'start', 700);
+  o += ln(XC(354.2), 314, XC(354.2), yc, '#C8610C', 4) + mono((XC(354.2) - 8).toFixed(1), 312, __L('중앙값 354.2','median 354.2'), '#C8610C', 18, 'end', 700);
+  var lab = [[305.0, 'PCFF', 'end'], [322.6, 'COMPASS II', 'middle'], [382.1, 'COMPASS', 'middle']];
+  W18.ced.forEach(function (c, i) {
+    var y = yc - 12 - ((i >= 2 && i <= 4) ? (i - 2) * 19 : 0), x = XC(c[0]);
+    if (c[1]) o += '<path d="M' + x.toFixed(1) + ' ' + (y - 12) + ' L' + (x + 11).toFixed(1) + ' ' + (y + 8) + ' L' + (x - 11).toFixed(1) + ' ' + (y + 8) + ' Z" fill="#E37F1A" stroke="#FFFFFF" stroke-width="2"/>';
+    else o += dot(x, y, 8, '#6E655C', '#FFFFFF', 2);
+  });
+  o += mono(XC(305.0) - 12, yc - 7, 'PCFF', '#6E655C', 15, 'end', 700) + mono(XC(322.6), yc - 28, 'COMPASS II', '#6E655C', 15, 'middle', 700);
+  o += mono(XC(354.2) + 14, yc - 44, 'COMPASS ×3', '#6E655C', 15, 'start', 700) + mono(XC(382.1), yc - 28, 'COMPASS', '#6E655C', 15, 'middle', 700);
+  o += mono(XC(366.7) + 14, yc - 4, __L('용해도 시험','solubility test'), '#C8610C', 15, 'start', 700);
+  o += ln(XA, yc, XB, yc, '#6E655C', 2);
+  [300, 320, 340, 360, 380, 400].forEach(function (v) { o += ln(XC(v), yc, XC(v), yc + 8, '#6E655C', 2) + mono(XC(v).toFixed(1), yc + 26, String(v), '#6E655C', 15, 'middle'); });
+  svg.innerHTML = o;
+})();
+
+/* ===== 7장 · 평균 분자 상자 ===== */
+(function () {
+  var g = document.getElementById('w18-avgbox'); if (!g) return;
+  var o = '', R = rng(11);
+  for (var i = 0; i < 4; i++) for (var j = 0; j < 4; j++) {
+    var x = 618 + j * 80 + R() * 8, y = 96 + i * 72 + R() * 8, a = (R() - 0.5) * 1.6 + (R() < 0.5 ? 0 : Math.PI), h = '';
+    x -= 13 * Math.cos(a); y -= 13 * Math.sin(a);
+    for (var k = 0; k < 3; k++) { var cx = x + k * 13 * Math.cos(a), cy = y + k * 13 * Math.sin(a), p = []; for (var q = 0; q < 6; q++) { var b = a + q * Math.PI / 3 + Math.PI / 6; p.push((cx + 8 * Math.cos(b)).toFixed(1) + ',' + (cy + 8 * Math.sin(b)).toFixed(1)); } h += '<polygon points="' + p.join(' ') + '" fill="#FFF1E0" stroke="#E37F1A" stroke-width="1.6"/>'; }
+    var ex = x - 8 * Math.cos(a), ey = y - 8 * Math.sin(a), fx = x + 34 * Math.cos(a), fy = y + 34 * Math.sin(a);
+    h += ln(ex, ey, ex - 12 * Math.cos(a + 0.6), ey - 12 * Math.sin(a + 0.6), '#6E655C', 2) + ln(fx, fy, fx + 12 * Math.cos(a - 0.6), fy + 12 * Math.sin(a - 0.6), '#6E655C', 2);
+    o += h;
+  }
+  g.innerHTML = o;
+})();
+
+/* ===== 10장 · 후보 168 칸 ===== */
+(function () {
+  var svg = document.getElementById('w18-grid'); if (!svg) return;
+  var o = '', CW = 50, CH = 44, X0 = 270, Y0 = 70, GAP = 24;
+  var mark = { 'quinoline-2x3': 'i', 'tetralin-2x12': 'i', 'phenanthrene-1x1': 'i', 'benzene-1x9': 'i', 'benzothiophene-1x1': 'i', 'tetralin-2x1': 'i', 'tetralin-1x1': 'l', 'benzene-1x3': 'l', 'dibenzothiophene-2x4': 'l', 'phenanthrene-2x3': 'l', 'dibenzothiophene-1x10': 'l', 'dibenzothiophene-2x6': 'b' };
+  var w17 = { 'naphthalene-1x4': 1, 'naphthalene-2x6': 1, 'phenanthrene-1x4': 1, 'dibenzothiophene-1x2': 1, 'dibenzothiophene-2x6': 1, 'benzothiophene-1x6': 1, 'quinoline-1x4': 1, 'tetralin-1x8': 1 };
+  function cx(n, L) { return X0 + (n - 1) * (12 * CW + GAP) + (L - 1) * CW; }
+  o += tx(cx(1, 1) + 6 * CW, 26, __L('사슬 1개 · 길이 1 → 12','1 chain · length 1 → 12'), 'cfh', 'middle', null, 21) + tx(cx(2, 1) + 6 * CW, 26, __L('사슬 2개 · 길이 1 → 12','2 chains · length 1 → 12'), 'cfh', 'middle', null, 21);
+  [1, 2].forEach(function (n) { [1, 6, 12].forEach(function (L) { o += mono((cx(n, L) + CW / 2).toFixed(1), 56, String(L), '#6E655C', 15, 'middle'); }); });
+  W18.cores.forEach(function (c, i) {
+    var y = Y0 + i * CH;
+    o += mono(X0 - 16, y + CH / 2 + 6, c, '#231F20', 18, 'end', 700) + dot(18, y + CH / 2, 7, W18.ccol[i]);
+    [1, 2].forEach(function (n) {
+      for (var L = 1; L <= 12; L++) {
+        var at = W18.base[i] + 3 * L * n, s = (at - 15) / (96 - 15), name = c + '-' + n + 'x' + L, x = cx(n, L);
+        o += rr(x + 2, y + 2, CW - 4, CH - 4, 5, 'rgb(' + Math.round(250 - 70 * s) + ',' + Math.round(244 - 84 * s) + ',' + Math.round(234 - 104 * s) + ')');
+        var m = mark[name];
+        if (m === 'i') o += dot(x + CW / 2, y + CH / 2, 13, '#F99D1C', '#C8610C', 2);
+        else if (m === 'l') o += dot(x + CW / 2, y + CH / 2, 13, '#231F20', '#231F20', 2);
+        else if (m === 'b') o += '<path class="pulse" d="' + (function () { var p = []; for (var q = 0; q < 10; q++) { var a = -Math.PI / 2 + q * Math.PI / 5, rr_ = q % 2 ? 7 : 17; p.push((q ? 'L' : 'M') + (x + CW / 2 + rr_ * Math.cos(a)).toFixed(1) + ' ' + (y + CH / 2 + rr_ * Math.sin(a)).toFixed(1)); } return p.join(' ') + 'Z'; })() + '" fill="#231F20" stroke="#FBB44E" stroke-width="2"/>';
+        if (w17[name]) o += rr(x + 4, y + 4, CW - 8, CH - 8, 5, 'none', '#4F7FB0', 3);
+      }
+    });
+  });
+  var ly = Y0 + 7 * CH + 34;
+  o += dot(X0 + 10, ly - 6, 11, '#F99D1C', '#C8610C', 2) + tx(X0 + 30, ly, __L('초기 설계 6 (라운드 0)','initial design 6 (round 0)'), 'cfs', null, null, 19);
+  o += dot(X0 + 300, ly - 6, 11, '#231F20') + tx(X0 + 320, ly, __L('능동학습 5 (라운드 1 ~ 3)','active learning 5 (rounds 1 ~ 3)'), 'cfs', null, null, 19);
+  o += mono(X0 + 600, ly, '★', '#231F20', 26, 'middle', 700) + tx(X0 + 620, ly, __L('최선 dbt-2x6 (d 1.97)','best dbt-2x6 (d 1.97)'), 'cfs', null, null, 19);
+  o += rr(X0 + 890, ly - 20, 30, 26, 5, 'none', '#4F7FB0', 3) + tx(X0 + 930, ly, __L('W17 후보 시험 8','W17 candidate trials 8'), 'cfs', null, null, 19);
+  o += tx(X0 + 1130, ly, __L('진할수록 원자 많음','darker = more atoms'), 'cfmu', null, null, 18);
+  svg.innerHTML = o;
+})();
+
+/* ===== 11장 · 초기 설계 6 (주성분 2축 투영) ===== */
+var PCA = [[-2.99,-1.69,0],[-2.07,-1.55,0],[-1.35,-1.43,0],[-0.75,-1.33,0],[-0.26,-1.23,0],[0.17,-1.15,0],[0.53,-1.06,0],[0.86,-0.98,0],[1.15,-0.91,0],[1.41,-0.84,0],[1.64,-0.77,0],[1.86,-0.7,0],[-2.41,-1.66,0],[-1.02,-1.42,0],[-0.06,-1.22,0],[0.67,-1.05,0],[1.24,-0.89,0],[1.71,-0.75,0],[2.12,-0.61,0],[2.47,-0.48,0],[2.78,-0.35,0],[3.07,-0.23,0],[3.33,-0.11,0],[3.57,0.01,0],[-1.62,-1.5,1],[-1.08,-1.39,1],[-0.62,-1.29,1],[-0.21,-1.2,1],[0.15,-1.11,1],[0.47,-1.02,1],[0.76,-0.94,1],[1.03,-0.87,1],[1.27,-0.79,1],[1.5,-0.72,1],[1.71,-0.65,1],[1.91,-0.58,1],[-1.31,-1.47,1],[-0.4,-1.26,1],[0.3,-1.08,1],[0.88,-0.91,1],[1.36,-0.76,1],[1.78,-0.62,1],[2.15,-0.48,1],[2.49,-0.35,1],[2.79,-0.22,1],[3.07,-0.09,1],[3.32,0.03,1],[3.57,0.15,1],[-3.4,-1.44,2],[-2.72,-1.33,2],[-2.13,-1.24,2],[-1.62,-1.15,2],[-1.17,-1.06,2],[-0.76,-0.98,2],[-0.4,-0.9,2],[-0.07,-0.83,2],[0.23,-0.76,2],[0.51,-0.69,2],[0.76,-0.62,2],[1.0,-0.55,2],[-2.94,-1.4,2],[-1.81,-1.21,2],[-0.93,-1.04,2],[-0.22,-0.88,2],[0.37,-0.73,2],[0.88,-0.59,2],[1.33,-0.46,2],[1.72,-0.33,2],[2.08,-0.2,2],[2.4,-0.08,2],[2.7,0.04,2],[2.98,0.16,2],[-3.48,-1.22,3],[-2.94,-1.13,3],[-2.45,-1.04,3],[-2.0,-0.96,3],[-1.6,-0.88,3],[-1.23,-0.81,3],[-0.9,-0.74,3],[-0.58,-0.66,3],[-0.29,-0.59,3],[-0.02,-0.53,3],[0.24,-0.46,3],[0.48,-0.39,3],[-3.1,-1.18,3],[-2.15,-1.01,3],[-1.37,-0.85,3],[-0.7,-0.7,3],[-0.13,-0.56,3],[0.37,-0.43,3],[0.82,-0.3,3],[1.23,-0.17,3],[1.6,-0.04,3],[1.94,0.08,3],[2.26,0.2,3],[2.56,0.32,3],[-4.13,1.74,4],[-3.27,1.56,4],[-2.56,1.42,4],[-1.95,1.31,4],[-1.43,1.22,4],[-0.97,1.15,4],[-0.56,1.1,4],[-0.19,1.06,4],[0.14,1.03,4],[0.44,1.0,4],[0.72,0.99,4],[0.98,0.98,4],[-3.52,1.48,4],[-2.16,1.24,4],[-1.14,1.09,4],[-0.35,1.0,4],[0.3,0.96,4],[0.85,0.94,4],[1.32,0.94,4],[1.74,0.96,4],[2.11,0.99,4],[2.44,1.04,4],[2.75,1.09,4],[3.03,1.15,4],[-4.04,1.07,5],[-3.39,1.01,5],[-2.83,0.96,5],[-2.32,0.92,5],[-1.87,0.9,5],[-1.46,0.88,5],[-1.08,0.87,5],[-0.74,0.87,5],[-0.42,0.87,5],[-0.13,0.88,5],[0.15,0.89,5],[0.4,0.9,5],[-3.57,0.95,5],[-2.48,0.87,5],[-1.6,0.84,5],[-0.87,0.83,5],[-0.24,0.84,5],[0.3,0.86,5],[0.77,0.9,5],[1.2,0.95,5],[1.59,1.0,5],[1.94,1.06,5],[2.27,1.13,5],[2.58,1.2,5],[-4.09,1.44,6],[-3.31,1.3,6],[-2.65,1.19,6],[-2.08,1.1,6],[-1.58,1.04,6],[-1.13,0.99,6],[-0.73,0.95,6],[-0.38,0.92,6],[-0.05,0.9,6],[0.25,0.89,6],[0.52,0.88,6],[0.78,0.88,6],[-3.53,1.22,6],[-2.27,1.04,6],[-1.3,0.93,6],[-0.52,0.87,6],[0.12,0.84,6],[0.66,0.84,6],[1.13,0.85,6],[1.55,0.88,6],[1.92,0.92,6],[2.26,0.97,6],[2.57,1.02,6],[2.86,1.09,6]];
+var INIT = [
+  { i: 158, lx: 20, ly: -16, la: 'start', n: 'quinoline-2x3', d: 'MW 213.3 · fa 0.60 · H/C 1.27', why: __L('seed 7 무작위 첫 점','seed 7 random first point') },
+  { i: 47, lx: -20, ly: -20, la: 'end', n: 'tetralin-2x12', d: 'MW 468.9 · fa 0.18 · H/C 1.76', why: __L('가장 먼 후보 · 큰 포화 분자','farthest · large saturated molecule') },
+  { i: 72, lx: 18, ly: 30, la: 'start', n: 'phenanthrene-1x1', d: 'MW 192.3 · fa 0.93 · H/C 0.80', why: __L('방향족 비율 최대 쪽','highest aromatic fraction side') },
+  { i: 8, lx: 20, ly: 28, la: 'start', n: 'benzene-1x9', d: 'MW 204.4 · fa 0.40 · H/C 1.60', why: __L('헤테로 없음 · 긴 사슬','no heteroatom · long chain') },
+  { i: 96, lx: 22, ly: 6, la: 'start', n: 'benzothiophene-1x1', d: 'MW 148.2 · fa 0.89 · H/C 0.89', why: __L('황 포함 · 작은 분자','contains S · small molecule') },
+  { i: 36, lx: 20, ly: 30, la: 'start', n: 'tetralin-2x1', d: 'MW 160.3 · fa 0.50 · H/C 1.33', why: __L('남은 빈 곳 · 포화 고리','remaining gap · saturated ring') }];
+EMB["init6"] = function (root, RAF) {
+  var t0 = CLK(), D = 2.3, X0 = 80, X1 = 960, Y0 = 470, Y1 = 70;
+  function X(v) { return X0 + (v + 4.4) / 8.2 * (X1 - X0); } function Y(v) { return Y0 - (v + 2.0) / 4.0 * (Y0 - Y1); }
+  function f(now) {
+    var st = stepOf(root), t = st ? (st - 1) * D + D * 0.98 : ((now - t0) / 1000) % (6 * D + 1.2), k = Math.min(5, Math.floor(t / D)), u = cl((t - k * D) / D), o = '<svg viewBox="0 0 1588 560" class="cfig">';
+    o += rr(X0 - 20, Y1 - 50, X1 - X0 + 40, Y0 - Y1 + 66, 14, '#FFFFFF', '#E2D8CA', 2);
+    ['benz', 'tet', 'naph', 'phen', 'bt', 'dbt', 'quin'].forEach(function (c, i) { o += dot(X0 + 6 + i * 92, Y1 - 26, 7, W18.ccol[i]) + tx(X0 + 18 + i * 92, Y1 - 20, c, 'cfmu', null, null, 16); });
+    PCA.forEach(function (p) { o += dot(X(p[0]), Y(p[1]), 5, W18.ccol[p[2]], null, 0, ' opacity=".75"'); });
+    o += tx((X0 + X1) / 2, Y0 + 40, __L('주성분 1: 사슬 길이 · 포화도 ↑ (방향족 비율 ↓) →','PC 1: chain length · saturation ↑ (aromatic fraction ↓) →'), 'cfs', 'middle', null, 18);
+    o += tx(X0 - 34, (Y0 + Y1) / 2, __L('주성분 2: 헤테로 원자 S · N ↑','PC 2: heteroatoms S · N ↑'), 'cfs', 'middle', null, 18).replace('<text ', '<text transform="rotate(-90 ' + (X0 - 34) + ' ' + ((Y0 + Y1) / 2) + ')" ');
+    var q = PCA[INIT[0].i];
+    for (var j = 0; j <= k; j++) {
+      var p = PCA[INIT[j].i], a = j < k ? 1 : ez(u * 2);
+      if (j > 0) o += '<g opacity="' + a.toFixed(2) + '">' + ln(X(p[0]), Y(p[1]), X(q[0]), Y(q[1]), '#C8610C', 2.5, ' stroke-dasharray="7 6"') + '</g>';
+    }
+    for (j = 0; j <= k; j++) {
+      p = PCA[INIT[j].i]; a = j < k ? 1 : ez(u * 2);
+      o += '<g opacity="' + a.toFixed(2) + '">' + dot(X(p[0]), Y(p[1]), j === k ? 16 + 6 * (1 - ez(u * 2)) : 14, 'none', j === k ? '#C8610C' : '#231F20', 3) + dot(X(p[0]), Y(p[1]), 8, '#F99D1C', '#231F20', 2) + halo(X(p[0]) + INIT[j].lx, Y(p[1]) + INIT[j].ly, (j + 1) + ' ' + INIT[j].n, '#231F20', 17, INIT[j].la) + '</g>';
+    }
+    /* 오른쪽 목록 */
+    o += tx(1010, 40, __L('고른 순서 · 기술자 값','Pick order · descriptor values'), 'cfh', null, null, 22);
+    INIT.forEach(function (s, j) {
+      var y = 74 + j * 70, on = j === k, vis = j < k ? 1 : (j === k ? ez(u * 2) : 0.18);
+      o += '<g opacity="' + vis.toFixed(2) + '">' + rr(1004, y, 576, 62, 10, on ? '#FFF1E0' : '#F6F0E7', on ? '#F99D1C' : null, 2) + mono(1020, y + 26, (j + 1) + ' ' + s.n, '#231F20', 19, null, 700) + mono(1572, y + 26, s.why, '#6E655C', 14, 'end') + mono(1020, y + 50, s.d, '#C8610C', 16) + '</g>';
+    });
+    o += tx(1010, 522, __L('점선 = 이미 고른 점 중 가장 가까운 점 (5개 기술자 거리)','dashed = nearest already-chosen point (5-descriptor distance)'), 'cfmu', null, null, 16);
+    o += tx(1010, 546, __L('6개 → 라운드 0 MD · 모델 없이 고른 첫 계산','6 → round 0 MD · first runs chosen without a model'), 'cfmu', null, null, 16);
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 12장 · 모델 3종 LOO 막대 ===== */
+(function () {
+  var svg = document.getElementById('w18-loo'); if (!svg) return;
+  var o = '', M = [['gp', '#E37F1A'], ['rf', '#2E8B57'], ['xgb', '#4F7FB0']], X0 = 80, W = 700;
+  var rows = [[__L('밀도 RMSE · g/cm³','density RMSE · g/cm³'), 0, 0.08, 4, __L('작을수록 좋음','smaller is better')], ['CED RMSE · MJ/m³', 1, 40, 1, __L('작을수록 좋음','smaller is better')], [__L('밀도 1σ 포함 비율','density 1σ coverage'), 2, 1, 2, __L('0.68 에 가까울수록 정직','closer to 0.68 = honest')], [__L('CED 1σ 포함 비율','CED 1σ coverage'), 3, 1, 2, __L('0.68 에 가까울수록 정직','closer to 0.68 = honest')]];
+  rows.forEach(function (r, i) {
+    var y = 14 + i * 126;
+    o += tx(10, y + 18, r[0], 'cfh', null, null, 20) + tx(950, y + 18, r[4], 'cfmu', 'end', null, 15);
+    M.forEach(function (m, j) {
+      var v = W18.loo[m[0]][r[1]], yy = y + 30 + j * 28, w = Math.max(3, v / r[2] * W);
+      o += mono(X0 - 10, yy + 17, m[0], '#231F20', 17, 'end', 700) + rr(X0, yy + 2, w.toFixed(1), 20, 4, m[1]) + mono((X0 + w + 10).toFixed(1), yy + 18, v.toFixed(r[3]), '#231F20', 17, null, 700);
+    });
+    o += ln(X0, y + 28, X0, y + 116, '#6E655C', 2);
+    if (i >= 2) o += ln(X0 + 0.68 * W, y + 26, X0 + 0.68 * W, y + 116, '#231F20', 2, ' stroke-dasharray="6 5"') + mono(X0 + 0.68 * W, y + 18, '0.68', '#231F20', 15, 'middle', 700);
+  });
+  svg.innerHTML = o;
+})();
+
+/* ===== 15장 · 체비셰프 EI ===== */
+var CHEB = (function () {
+  var out = [], specs = [['r1_1', 31], ['r1_2', 57]];
+  specs.forEach(function (s) {
+    var p = W18.P[s[0]], R = rng(s[1]), mx = (p[0] - 1.018) / 0.02, my = (p[2] - 354.2) / 20, sx = p[1] / 0.02, sy = p[3] / 20, pts = [];
+    for (var i = 0; i < 100; i++) { var x = mx + sx * gauss(R), y = my + sy * gauss(R); pts.push([x, y, Math.max(Math.abs(x), Math.abs(y)) < 3.04]); }
+    out.push({ mx: mx, my: my, sx: sx, sy: sy, pts: pts });
+  });
+  return out;
+})();
+EMB["cheb"] = function (root, RAF) {
+  var t0 = CLK(), D = 3.2, X0 = 120, Y0 = 522, S = 84, XL = -4.5, XR = 1.5;
+  function X(v) { return X0 + (v - XL) * S; } function Y(v) { return Y0 - (v + 1.5) * S; }
+  var obs = [[-2.37, 3.04, 'quin-2x3'], [-3.665, 2.275, 'tet-2x1']];
+  function f(now) {
+    var st = stepOf(root), t = st ? (st - 1) * D + D * 0.98 : ((now - t0) / 1000) % (4 * D + 1.2), k = Math.min(3, Math.floor(t / D)), u = cl((t - k * D) / D), o = '<svg viewBox="0 0 1588 590" class="cfig">';
+    o += '<defs><clipPath id="w18-chc"><rect x="' + X(XL) + '" y="' + Y(4.5) + '" width="' + ((XR - XL) * S) + '" height="' + (6 * S) + '"/></clipPath></defs>';
+    o += rr(X(XL), Y(4.5), (XR - XL) * S, 6 * S, 8, '#FFFFFF', '#E2D8CA', 2);
+    for (var g = -4; g <= 1; g++) o += ln(X(g), Y(4.5), X(g), Y(-1.5), '#F2EEE8', 1.5) + mono(X(g).toFixed(1), Y(-1.5) + 24, String(g), '#6E655C', 15, 'middle');
+    for (g = -1; g <= 4; g++) o += ln(X(XL), Y(g), X(XR), Y(g), '#F2EEE8', 1.5) + mono(X(XL) - 10, Y(g) + 5, String(g), '#6E655C', 15, 'end');
+    o += tx((X(XL) + X(XR)) / 2, Y(-1.5) + 54, __L('밀도 차 ÷ 폭 = (ρ − 1.018) ÷ 0.02','density gap ÷ tol = (ρ − 1.018) ÷ 0.02'), 'cfs', 'middle', null, 18);
+    o += tx(X(XL) - 50, Y(1.5), __L('CED 차 ÷ 폭 = (CED − 354.2) ÷ 20','CED gap ÷ tol = (CED − 354.2) ÷ 20'), 'cfs', 'middle', null, 18).replace('<text ', '<text transform="rotate(-90 ' + (X(XL) - 50) + ' ' + Y(1.5) + ')" ');
+    o += '<g clip-path="url(#w18-chc)">';
+    o += rr(X(-1), Y(1), 2 * S, 2 * S, 4, '#2E8B57', '#2E8B57', 2, ' fill-opacity=".16"');
+    if (k >= 1) { var a1 = k > 1 ? 1 : ez(u * 2); o += '<g opacity="' + a1.toFixed(2) + '">' + rr(X(-3.04), Y(3.04), 6.08 * S, 6.08 * S, 4, 'none', '#E37F1A', 3.5, ' stroke-dasharray="10 7"') + '</g>'; }
+    CHEB.forEach(function (c, ci) {
+      if (k < 2 + ci) return; var a = k > 2 + ci ? 1 : ez(u * 1.6), col = ci ? '#4F7FB0' : '#C8610C', sh = k >= 3;
+      o += '<g opacity="' + a.toFixed(2) + '">';
+      c.pts.forEach(function (p) { o += dot(X(p[0]), Y(p[1]), 3.6, sh && p[2] ? col : (sh ? '#FFFFFF' : col), col, 1.2, sh && !p[2] ? ' opacity=".55"' : ''); });
+      o += '<ellipse cx="' + X(c.mx).toFixed(1) + '" cy="' + Y(c.my).toFixed(1) + '" rx="' + (2 * c.sx * S).toFixed(1) + '" ry="' + (2 * c.sy * S).toFixed(1) + '" fill="none" stroke="' + col + '" stroke-width="2.5" stroke-dasharray="5 4"/>';
+      o += dot(X(c.mx), Y(c.my), 7, '#FFFFFF', col, 3) + '</g>';
+    });
+    o += '</g>';
+    obs.forEach(function (p, i) { o += dot(X(p[0]), Y(p[1]), 9, '#6E655C', '#FFFFFF', 2) + halo(X(p[0]) + (i ? -14 : 14), Y(p[1]) - 14, p[2], '#4A4540', 15, i ? 'end' : 'start'); });
+    o += mono(X(XL) + 10, Y(-0.75) + 5, '← tet-2x12 · benz-1x9', '#6E655C', 14) + mono(X(XR) - 10, Y(4.5) + 22, 'phen-1x1 · bt-1x1 ↗', '#6E655C', 14, 'end');
+    o += mono(X(0), Y(0) + 5, __L('표적','target'), '#2E8B57', 15, 'middle', 700);
+    if (k >= 1) o += mono(X(-3.04) + 8, Y(-1.5) - 10, 'd = 3.04', '#C8610C', 16, 'start', 700);
+    /* 오른쪽 */
+    var RX = 700;
+    o += rr(RX, 24, 870, 118, 14, '#231F20');
+    o += mono(RX + 26, 64, 'd = max( |ρ − ρ*| ÷ 0.02 , |CED − CED*| ÷ 20 )', '#FBB44E', 21, null, 700);
+    o += mono(RX + 26, 100, __L('EI = 평균 [ max(0, d_best − d) ] · 표본 256개','EI = mean [ max(0, d_best − d) ] · 256 samples'), '#F4EEE6', 19);
+    o += tx(RX + 26, 128, __L('두 표적 안 = d ≤ 1 · d 가 같은 점 = 정사각형 테두리','both targets = d ≤ 1 · equal d = square outline'), 'cfw', null, null, 17);
+    var steps = [
+      [__L('① 폭으로 나눈 평면','① Plane scaled by tol'), __L('원점 = 표적 · 초록 = 두 표적 안 · 라운드 0 의 6개 중 2개가 그림 안','origin = target · green = both targets · 2 of the 6 from round 0 in view')],
+      [__L('② 지금 최선 d_best = 3.04','② Current best d_best = 3.04'), __L('quin-2x3: 밀도 쪽 2.37 · CED 쪽 3.04 → 더 먼 쪽 3.04','quin-2x3: density side 2.37 · CED side 3.04 → farther side 3.04')],
+      [__L('③ tetralin-1x1 · 활용','③ tetralin-1x1 · exploitation'), __L('예측 0.962 ± 0.0055 · 409.2 ± 2.9 → 구름 작음 · 대부분 d < 3.04 · EI 0.173','pred. 0.962 ± 0.0055 · 409.2 ± 2.9 → small cloud · mostly d < 3.04 · EI 0.173')],
+      [__L('④ benzene-1x3 · 탐색','④ benzene-1x3 · exploration'), __L('예측 0.953 ± 0.023 · 404.8 ± 11.8 → 구름 큼 · 일부만 개선 · EI 0.159','pred. 0.953 ± 0.023 · 404.8 ± 11.8 → large cloud · only part improves · EI 0.159')]];
+    steps.forEach(function (s, j) {
+      var y = 166 + j * 96, on = j === k, vis = j < k ? 1 : (on ? ez(u * 2) : 0.2);
+      o += '<g opacity="' + vis.toFixed(2) + '">' + rr(RX, y, 870, 84, 12, on ? '#FFF1E0' : '#F6F0E7', on ? '#F99D1C' : null, 2) + tx(RX + 20, y + 32, s[0], 'cfh', null, null, 21) + tx(RX + 20, y + 64, s[1], 'cfs', null, null, 17) + '</g>';
+    });
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 16장 · 라운드별 경로 ===== */
+EMB["path4"] = function (root, RAF) {
+  var t0 = CLK(), D = 3.6, T = W18.T, X0 = 120, X1 = 1020, Y0 = 500, Y1 = 40;
+  function X(v) { return X0 + (v - 0.80) / 0.34 * (X1 - X0); } function Y(v) { return Y0 - (v - 300) / 200 * (Y0 - Y1); }
+  function box(d, col, w, dash, op) {
+    var a = Math.max(X0, X(T.rho - d * T.rt)), b = Math.min(X1, X(T.rho + d * T.rt)), c = Math.max(Y1, Y(T.ced + d * T.ct)), e = Math.min(Y0, Y(T.ced - d * T.ct));
+    return rr(a.toFixed(1), c.toFixed(1), (b - a).toFixed(1), (e - c).toFixed(1), 6, op ? col : 'none', col, w, (dash ? ' stroke-dasharray="' + dash + '"' : '') + (op ? ' fill-opacity="' + op + '"' : ''));
+  }
+  var rows = [
+    [__L('라운드 0 · 초기 설계 6','Round 0 · initial design 6'), __L('최선 quin-2x3 · d 3.04','best quin-2x3 · d 3.04')],
+    [__L('라운드 1 · tet-1x1 · benz-1x3','Round 1 · tet-1x1 · benz-1x3'), __L('d 3.04 유지 · benz-1x3 예측 ρ 0.953 → 실측 0.871','d 3.04 kept · benz-1x3 pred. ρ 0.953 → result 0.871')],
+    [__L('라운드 2 · dbt-2x4 · phen-2x3','Round 2 · dbt-2x4 · phen-2x3'), __L('d 3.04 → 2.64 (dbt-2x4 · CED 쪽)','d 3.04 → 2.64 (dbt-2x4 · CED side)')],
+    [__L('라운드 3 · dbt-1x10 · dbt-2x6','Round 3 · dbt-1x10 · dbt-2x6'), __L('d 2.64 → 1.97 · 정지: MD 12회 · 3라운드','d 2.64 → 1.97 · stop: 12 MD runs · 3 rounds')]];
+  function f(now) {
+    var st = stepOf(root), t = st ? (st - 1) * D + D * 0.98 : ((now - t0) / 1000) % (4 * D + 1.4), k = Math.min(3, Math.floor(t / D)), u = cl((t - k * D) / D), o = '<svg viewBox="0 0 1588 560" class="cfig">';
+    [0.85, 0.90, 0.95, 1.00, 1.05, 1.10].forEach(function (v) { o += ln(X(v), Y1, X(v), Y0, '#F2EEE8', 1.5) + mono(X(v).toFixed(1), Y0 + 24, v.toFixed(2), '#6E655C', 15, 'middle'); });
+    [300, 350, 400, 450, 500].forEach(function (v) { o += ln(X0, Y(v), X1, Y(v), '#F2EEE8', 1.5) + mono(X0 - 10, Y(v) + 5, String(v), '#6E655C', 15, 'end'); });
+    o += ln(X0, Y0, X1, Y0, '#6E655C', 2) + ln(X0, Y1, X0, Y0, '#6E655C', 2);
+    o += tx((X0 + X1) / 2, Y0 + 52, __L('밀도 (g/cm³)','density (g/cm³)'), 'cfs', 'middle', null, 18) + tx(56, (Y0 + Y1) / 2, 'CED (MJ/m³)', 'cfs', 'middle', null, 18).replace('<text ', '<text transform="rotate(-90 56 ' + ((Y0 + Y1) / 2) + ')" ');
+    o += box(1, '#2E8B57', 3, null, 0.16) + mono(X(T.rho).toFixed(1), (Y(T.ced - T.ct) + 22).toFixed(1), __L('표적 1.018 · 354.2','target 1.018 · 354.2'), '#2E8B57', 15, 'middle', 700);
+    var d = k ? W18.best[k - 1] + (W18.best[k] - W18.best[k - 1]) * ez(cl((u - 0.66) / 0.3)) : W18.best[0];
+    o += box(d, '#E37F1A', 3, '10 7');
+    /* 예측 → 실측 */
+    W18.R.forEach(function (r) {
+      var rd = r[1]; if (rd > k || rd === 0) return; var p = W18.P[r[0]], cur = rd === k, ua = cur ? cl(u / 0.3) : 1, ub = cur ? cl((u - 0.3) / 0.35) : 1;
+      var px = X(p[0]), py = Y(p[2]), mx = X(r[3]), my = Y(r[4]);
+      if (cur) o += '<g opacity="' + (ez(ua) * (1 - 0.4 * ub)).toFixed(2) + '">' + ln(X(p[0] - p[1]), py, X(p[0] + p[1]), py, '#6E655C', 2, ' stroke-dasharray="4 4"') + ln(px, Y(p[2] - p[3]), px, Y(p[2] + p[3]), '#6E655C', 2, ' stroke-dasharray="4 4"') + '</g>';
+      var old = r[0] === 'r1_2' ? 0.6 : 0.25;
+      o += '<g opacity="' + (cur ? ez(ua) : old).toFixed(2) + '">' + dot(px, py, 8, '#FFFFFF', '#6E655C', 2.5) + '</g>';
+      if (ub > 0) { var ex = px + (mx - px) * ez(ub), ey = py + (my - py) * ez(ub); o += '<g opacity="' + (cur ? 1 : old) + '">' + ln(px, py, ex, ey, '#6E655C', 2, ' stroke-dasharray="6 4"') + (ub > 0.15 ? arrowHead(px, py, ex, ey, '#6E655C', 11) : '') + '</g>'; }
+    });
+    W18.R.forEach(function (r) {
+      var rd = r[1]; if (rd > k) return; var cur = rd === k, a = rd === 0 ? (cur ? ez(u * 2) : 1) : (cur ? ez(cl((u - 0.55) / 0.2)) : 1);
+      if (a <= 0) return; var x = X(r[3]), y = Y(r[4]), isb = r[2] === W18.bestc[k];
+      o += '<g opacity="' + a.toFixed(2) + '">' + (isb ? dot(x, y, 16, 'none', '#231F20', 3) : '') + dot(x, y, 9, rd === 0 ? '#9A9088' : '#E37F1A', '#FFFFFF', 2) + halo(x + r[5], y + r[6], r[2], isb ? '#231F20' : '#4A4540', 15, r[7]) + '</g>';
+    });
+    /* 오른쪽 라운드 표 */
+    var RX = 1070;
+    o += tx(RX, 40, __L('라운드 · 고른 후보 · 최선 d','Round · chosen candidates · best d'), 'cfh', null, null, 22);
+    rows.forEach(function (s, j) {
+      var y = 62 + j * 104, on = j === k, vis = j < k ? 1 : (on ? ez(cl((u - 0.5) / 0.4)) : 0.15);
+      if (j === 0 && k === 0) vis = ez(u * 2);
+      o += '<g opacity="' + vis.toFixed(2) + '">' + rr(RX, y, 506, 92, 12, on ? '#FFF1E0' : '#F6F0E7', on ? '#F99D1C' : null, 2) + tx(RX + 18, y + 32, s[0], 'cfh', null, null, 19) + tx(RX + 18, y + 62, s[1], 'cfs', null, null, 16);
+      o += rr(RX + 18, y + 72, (W18.best[j] / 3.2 * 300).toFixed(1), 10, 4, '#E37F1A') + mono(RX + 26 + W18.best[j] / 3.2 * 300, y + 82, W18.best[j].toFixed(2), '#C8610C', 14, null, 700) + '</g>';
+    });
+    o += tx(RX, 500, __L('막대 = 최선 d · 1 이하 = 두 표적 안','bar = best d · ≤ 1 = both targets'), 'cfmu', null, null, 16);
+    o += tx(RX, 526, __L('회색 = 초기 설계 · 주황 = 능동학습 선택','gray = initial design · orange = active-learning picks'), 'cfmu', null, null, 16);
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 17장 · SIM 거리 정의 · 폭 ===== */
+(function () {
+  var root = document.getElementById('sim-dist'); if (!root) return;
+  var svg = root.querySelector('svg'), st = { m: 'cheb', tr: 0.02, tc: 20 }, T = W18.T, C = W18.R;
+  var X0 = 90, X1 = 1130, Y0 = 370, Y1 = 30;
+  function X(v) { return X0 + (v - 0.82) / 0.32 * (X1 - X0); } function Y(v) { return Y0 - (v - 300) / 200 * (Y0 - Y1); }
+  function dist(r, s) { var a = Math.abs(r[3] - T.rho) / s.tr, b = Math.abs(r[4] - T.ced) / s.tc; return s.m === 'cheb' ? Math.max(a, b) : (s.m === 'l1' ? a + b : Math.sqrt(a * a + b * b)); }
+  function rank(s) { return C.map(function (r) { return [r, dist(r, s)]; }).sort(function (p, q) { return p[1] - q[1]; }); }
+  function shape(d, s, col, w, dash, fill) {
+    var cx = X(T.rho), cy = Y(T.ced), rx = X(T.rho + d * s.tr) - cx, ry = cy - Y(T.ced + d * s.tc), ex = (dash ? ' stroke-dasharray="' + dash + '"' : '') + (fill ? ' fill-opacity=".14"' : '');
+    if (s.m === 'cheb') return rr((cx - rx).toFixed(1), (cy - ry).toFixed(1), (2 * rx).toFixed(1), (2 * ry).toFixed(1), 4, fill ? col : 'none', col, w, ex);
+    if (s.m === 'l1') return '<path d="M' + (cx - rx).toFixed(1) + ' ' + cy.toFixed(1) + ' L' + cx.toFixed(1) + ' ' + (cy - ry).toFixed(1) + ' L' + (cx + rx).toFixed(1) + ' ' + cy.toFixed(1) + ' L' + cx.toFixed(1) + ' ' + (cy + ry).toFixed(1) + ' Z" fill="' + (fill ? col : 'none') + '" stroke="' + col + '" stroke-width="' + w + '"' + ex + '/>';
+    return '<ellipse cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) + '" rx="' + rx.toFixed(1) + '" ry="' + ry.toFixed(1) + '" fill="' + (fill ? col : 'none') + '" stroke="' + col + '" stroke-width="' + w + '"' + ex + '/>';
+  }
+  var base = rank({ m: 'cheb', tr: 0.02, tc: 20 })[0][0][2];
+  function setO(k, v) { root.querySelectorAll('[data-o=' + k + ']').forEach(function (e) { e.textContent = v; }); }
+  function draw() {
+    var o = '<defs><clipPath id="w18-sdc"><rect x="' + X0 + '" y="' + Y1 + '" width="' + (X1 - X0) + '" height="' + (Y0 - Y1) + '"/></clipPath></defs>';
+    [0.85, 0.90, 0.95, 1.00, 1.05, 1.10].forEach(function (v) { o += ln(X(v), Y1, X(v), Y0, '#F2EEE8', 2) + mono(X(v).toFixed(1), Y0 + 24, v.toFixed(2), '#6E655C', 15, 'middle'); });
+    [300, 350, 400, 450].forEach(function (v) { o += ln(X0, Y(v), X1, Y(v), '#F2EEE8', 2) + mono(X0 - 10, Y(v) + 5, String(v), '#6E655C', 15, 'end'); });
+    o += ln(X0, Y0, X1, Y0, '#6E655C', 2) + ln(X0, Y1, X0, Y0, '#6E655C', 2);
+    o += tx((X0 + X1) / 2, Y0 + 52, __L('밀도 (g/cm³)','density (g/cm³)'), 'cfs', 'middle', null, 18) + tx(30, (Y0 + Y1) / 2, 'CED (MJ/m³)', 'cfs', 'middle', null, 18).replace('<text ', '<text transform="rotate(-90 30 ' + ((Y0 + Y1) / 2) + ')" ');
+    var R = rank(st);
+    o += '<g clip-path="url(#w18-sdc)">' + shape(1, st, '#2E8B57', 3, null, true) + shape(R[0][1], st, '#E37F1A', 3, '10 7') + '</g>';
+    C.forEach(function (r) {
+      var x = X(r[3]), y = Y(r[4]), j = R.findIndex(function (q) { return q[0] === r; });
+      o += dot(x, y, j < 3 ? 11 : 8, j < 3 ? '#E37F1A' : '#B9AE9E', '#FFFFFF', 2);
+      if (j < 3) o += halo(x + r[5], y + r[6], (j + 1) + ' ' + r[2], '#231F20', 15, r[7]);
+    });
+    svg.innerHTML = o;
+    ['r1', 'r2', 'r3'].forEach(function (k, j) { setO(k, R[j][0][2] + ' · ' + R[j][1].toFixed(2)); });
+    setO('chg', R[0][0][2] === base ? __L('1위 같음','rank 1 same') : __L('1위 바뀜','rank 1 changed'));
+    setO('tr', '±' + st.tr.toFixed(3));
+    setO('tc', '±' + st.tc);
+    root.querySelectorAll('[data-m]').forEach(function (b) { b.classList.toggle('alt', b.dataset.m !== st.m); });
+  }
+  root.querySelectorAll('input[data-k]').forEach(function (inp) { inp.addEventListener('input', function (e) { st[e.target.dataset.k] = +e.target.value; draw(); }); });
+  root.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-m],[data-act]'); if (!b || !root.contains(b)) return;
+    if (b.dataset.m) st.m = b.dataset.m;
+    else if (b.dataset.act === 'reset') { st = { m: 'cheb', tr: 0.02, tc: 20 }; root.querySelector('input[data-k=tr]').value = 0.02; root.querySelector('input[data-k=tc]').value = 20; }
+    draw();
+  });
+  draw();
+})();
+
+/* ===== 18장 · EHVI 비교 ===== */
+(function () {
+  var svg = document.getElementById('w18-ehvi'); if (!svg) return;
+  var o = '', T = W18.T;
+  /* 왼쪽: 최선 d */
+  var A0 = 70, A1 = 420, B0 = 420, B1 = 60;
+  function XA(r) { return A0 + r / 3 * (A1 - A0); } function YA(d) { return B0 - d / 4 * (B0 - B1); }
+  o += tx(20, 30, __L('최선 d · 라운드별','best d · per round'), 'cfh', null, null, 20);
+  [0, 1, 2, 3, 4].forEach(function (d) { o += ln(A0, YA(d), A1, YA(d), '#F2EEE8', 1.5) + mono(A0 - 10, YA(d) + 5, String(d), '#6E655C', 15, 'end'); });
+  [0, 1, 2, 3].forEach(function (r) { o += mono(XA(r).toFixed(1), B0 + 24, String(r), '#6E655C', 15, 'middle'); });
+  o += tx((A0 + A1) / 2, B0 + 52, __L('라운드','round'), 'cfs', 'middle', null, 17);
+  o += rr(A0, YA(1), A1 - A0, YA(0) - YA(1), 0, '#2E8B57', null, 0, ' fill-opacity=".14"') + mono(A1 - 6, YA(0.5) + 5, __L('두 표적 안','both targets'), '#2E8B57', 14, 'end', 700);
+  [['ebest', '#4F7FB0', 'EHVI 3.04'], ['best', '#E37F1A', __L('체비셰프 1.97','Chebyshev 1.97')]].forEach(function (s, j) {
+    var p = ''; W18[s[0]].forEach(function (d, r) { p += (r ? 'L' : 'M') + XA(r).toFixed(1) + ' ' + YA(d).toFixed(1); });
+    o += '<path d="' + p + '" fill="none" stroke="' + s[1] + '" stroke-width="4"/>';
+    W18[s[0]].forEach(function (d, r) { o += dot(XA(r), YA(d), 7, s[1], '#FFFFFF', 2); });
+    o += mono(A1 + 8, YA(W18[s[0]][3]) + (j ? 6 : -8), s[2], s[1], 16, null, 700);
+  });
+  /* 오른쪽: EHVI 선택 */
+  var C0 = 540, C1 = 980, D0 = 420, D1 = 60;
+  function X(v) { return C0 + (v - 0.84) / 0.24 * (C1 - C0); } function Y(v) { return D0 - (v - 330) / 110 * (D0 - D1); }
+  o += tx(C0 - 20, 30, __L('EHVI 가 고른 6개 · 밀도–CED','6 EHVI picks · density–CED'), 'cfh', null, null, 20);
+  [0.85, 0.90, 0.95, 1.00, 1.05].forEach(function (v) { o += ln(X(v), D1, X(v), D0, '#F2EEE8', 1.5) + mono(X(v).toFixed(1), D0 + 24, v.toFixed(2), '#6E655C', 14, 'middle'); });
+  [340, 380, 420].forEach(function (v) { o += ln(C0, Y(v), C1, Y(v), '#F2EEE8', 1.5) + mono(C0 - 8, Y(v) + 5, String(v), '#6E655C', 14, 'end'); });
+  o += rr(X(T.rho - T.rt).toFixed(1), Y(T.ced + T.ct).toFixed(1), (X(T.rho + T.rt) - X(T.rho - T.rt)).toFixed(1), (Y(T.ced - T.ct) - Y(T.ced + T.ct)).toFixed(1), 4, '#2E8B57', '#2E8B57', 2, ' fill-opacity=".16"') + mono(X(T.rho).toFixed(1), (Y(T.ced - T.ct) + 22).toFixed(1), __L('표적','target'), '#2E8B57', 14, 'middle', 700);
+  o += rr(C0, Y(T.ced + T.ct).toFixed(1), (X(T.rho - T.rt) - C0).toFixed(1), (Y(T.ced - T.ct) - Y(T.ced + T.ct)).toFixed(1), 0, '#4F7FB0', null, 0, ' fill-opacity=".07"');
+  W18.ehvi.forEach(function (e) {
+    var x = X(e[2]), y = Y(e[3]);
+    if (e[4]) o += dot(x, y, 9, '#4F7FB0', '#FFFFFF', 2); else o += ln(x - 8, y - 8, x + 8, y + 8, '#D9534F', 3) + ln(x - 8, y + 8, x + 8, y - 8, '#D9534F', 3);
+  });
+  o += mono(X(0.8649) + 4, Y(330) - 10, 'benz-2x1 · 1x1 · 1x2 · naph-2x9 ✕', '#4F7FB0', 14, 'start', 700);
+  o += mono(X(1.0486) - 12, Y(426) - 14, 'bt-1x4', '#4F7FB0', 14, 'middle', 700) + mono(X(0.9792), Y(426) - 14, 'naph-2x2', '#4F7FB0', 14, 'middle', 700);
+  o += dot(X(0.9893), Y(393.5), 9, '#E37F1A', '#FFFFFF', 2) + mono(X(0.9893) + 14, Y(393.5) + 5, __L('체비셰프 최선 dbt-2x6','Chebyshev best dbt-2x6'), '#C8610C', 14, 'start', 700);
+  o += ln(C0, D0, C1, D0, '#6E655C', 2) + ln(C0, D1, C0, D0, '#6E655C', 2);
+  o += tx((C0 + C1) / 2, D0 + 50, __L('밀도 (g/cm³) · 파란 띠 = CED 폭 안 · 밀도 폭 밖','density (g/cm³) · blue band = CED within tol · density outside tol'), 'cfmu', 'middle', null, 15);
+  svg.innerHTML = o;
+})();
+
+/* ===== 19장 · dbt-2x6 두 번 계산 ===== */
+(function () {
+  var svg = document.getElementById('w18-twice'); if (!svg) return;
+  var o = '', S = [{ t: __L('밀도 g/cm³ · 판정 폭 ±0.015','density g/cm³ · tolerance ±0.015'), lo: 0.96, hi: 1.01, a: 0.9817, b: 0.9893, tol: 0.015, f: 4, y: 40 }, { t: __L('CED MJ/m³ · 판정 폭 ±15','CED MJ/m³ · tolerance ±15'), lo: 370, hi: 415, a: 386.4, b: 393.5, tol: 15, f: 1, y: 260 }];
+  o += tx(20, 22, __L('dibenzothiophene-2x6 · 같은 후보 · 두 번의 MD','dibenzothiophene-2x6 · same candidate · two MD runs'), 'cfh', null, null, 20);
+  S.forEach(function (s) {
+    function X(v) { return 60 + (v - s.lo) / (s.hi - s.lo) * 740; }
+    o += tx(20, s.y + 34, s.t, 'cfs', null, null, 18);
+    o += rr(X(s.b - s.tol).toFixed(1), s.y + 52, (X(s.b + s.tol) - X(s.b - s.tol)).toFixed(1), 104, 8, '#2E8B57', '#2E8B57', 2, ' fill-opacity=".10" stroke-dasharray="6 5"');
+    o += dot(X(s.a), s.y + 84, 10, '#4F7FB0', '#FFFFFF', 2) + mono(X(s.a) - 14, s.y + 90, __L('W17 시험 ','W17 trial ') + s.a.toFixed(s.f), '#4F7FB0', 16, 'end', 700);
+    o += dot(X(s.b), s.y + 124, 10, '#E37F1A', '#FFFFFF', 2) + mono(X(s.b) + 14, s.y + 130, 'W18 r3_2 ' + s.b.toFixed(s.f), '#C8610C', 16, 'start', 700);
+    o += ln(60, s.y + 168, 800, s.y + 168, '#6E655C', 2) + mono(60, s.y + 190, String(s.lo), '#6E655C', 14, 'middle') + mono(800, s.y + 190, String(s.hi), '#6E655C', 14, 'middle');
+  });
+  o += mono(430, 462, __L('차 0.0076 · 7.1 → 두 값 모두 판정 폭 안','diff 0.0076 · 7.1 → both within tolerance'), '#2E8B57', 18, 'middle', 700);
+  svg.innerHTML = o;
+})();
+
+/* ===== 22장 · 볼트 그래프 ===== */
+(function () {
+  var svg = document.getElementById('w18-graph'); if (!svg) return;
+  var o = '', P = [], RU = [], RO = [], H = [[450, 250, __L('00_루프지도','00_loop map')], [350, 170, __L('밀도','density')], [350, 330, 'CED']];
+  for (var i = 0; i < 15; i++) { var b = (-0.42 + i * 0.84 / 14) * Math.PI; P.push([170 - 110 * Math.cos(b), 260 + 220 * Math.sin(b)]); }
+  for (i = 0; i < 12; i++) { var c = (-0.40 + i * 0.80 / 11) * Math.PI; RU.push([650 + 90 * Math.cos(c), 250 + 200 * Math.sin(c)]); }
+  for (i = 0; i < 4; i++) RO.push([812, 120 + i * 100]);
+  var cite = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+  RU.forEach(function (r, k) { cite.forEach(function (j) { o += ln(r[0], r[1], P[j][0], P[j][1], '#D3C6B5', 0.8, ' opacity=".55"'); }); });
+  P.forEach(function (p) { o += ln(p[0], p[1], H[0][0], H[0][1], '#E2D8CA', 1.2) + ln(p[0], p[1], H[1][0], H[1][1], '#E2D8CA', 1) + ln(p[0], p[1], H[2][0], H[2][1], '#E2D8CA', 1); });
+  var rnd = [0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 3, 3];
+  RU.forEach(function (r, k) { o += '<line class="tl" x1="' + r[0].toFixed(1) + '" y1="' + r[1].toFixed(1) + '" x2="' + RO[rnd[k]][0] + '" y2="' + RO[rnd[k]][1] + '" stroke-width="2.5"/>'; });
+  for (i = 0; i < 3; i++) o += ln(RO[i][0], RO[i][1], RO[i + 1][0], RO[i + 1][1], '#C8610C', 3);
+  P.forEach(function (p) { o += dot(p[0], p[1], 9, '#4F7FB0', '#FFFFFF', 2); });
+  H.forEach(function (h) { o += dot(h[0], h[1], 12, '#231F20', '#FFFFFF', 2) + mono(h[0] + 16, h[1] + 5, h[2], '#231F20', 15, 'start', 700); });
+  RU.forEach(function (r, k) { o += dot(r[0], r[1], 9, k === 11 ? '#231F20' : '#E37F1A', '#FFFFFF', 2); });
+  RO.forEach(function (r, k) { o += dot(r[0], r[1], 13, '#C8610C', '#FFFFFF', 2) + halo(r[0], r[1] - 20, 'round_' + k, '#C8610C', 15, 'middle'); });
+  o += mono(RU[11][0] + 14, RU[11][1] + 20, 'r3_2', '#231F20', 14, 'start', 700);
+  o += tx(30, 30, __L('파랑 = 논문 노트 15','blue = 15 paper notes'), 'cfmu', null, '#4F7FB0', 16) + tx(300, 30, __L('주황 = 실행 노트 12','orange = 12 run notes'), 'cfmu', null, '#C8610C', 16) + tx(560, 30, __L('진한 주황 = 라운드 4','dark orange = 4 rounds'), 'cfmu', null, '#C8610C', 16);
+  o += tx(450, 506, __L('실행 노트 1개 → 근거 문헌 15편 + 라운드 1개 · 라운드 = round_0 → round_3 사슬','1 run note → 15 evidence papers + 1 round · rounds = round_0 → round_3 chain'), 'cfmu', 'middle', null, 16);
+  svg.innerHTML = o;
+})();
+
+/* ===== 23장 · 왜 두 표적 안 = 0 ===== */
+(function () {
+  var svg = document.getElementById('w18-why'); if (!svg) return;
+  var o = '', T = W18.T, X0 = 90, X1 = 960, Y0 = 430, Y1 = 30;
+  function X(v) { return X0 + (v - 0.84) / 0.32 * (X1 - X0); } function Y(v) { return Y0 - (v - 320) / 180 * (Y0 - Y1); }
+  [0.85, 0.90, 0.95, 1.00, 1.05, 1.10, 1.15].forEach(function (v) { o += ln(X(v), Y1, X(v), Y0, '#F2EEE8', 1.5) + mono(X(v).toFixed(1), Y0 + 24, v.toFixed(2), '#6E655C', 14, 'middle'); });
+  [340, 380, 420, 460, 500].forEach(function (v) { o += ln(X0, Y(v), X1, Y(v), '#F2EEE8', 1.5) + mono(X0 - 8, Y(v) + 5, String(v), '#6E655C', 14, 'end'); });
+  o += rr(X(1.0), Y1, X1 - X(1.0), Y(405.3) - Y1, 0, '#E37F1A', null, 0, ' fill-opacity=".07"');
+  o += rr(X0, Y(374.2), X(0.9036) - X0, Y0 - Y(374.2), 0, '#4F7FB0', null, 0, ' fill-opacity=".07"');
+  o += rr(X(T.rho - T.rt).toFixed(1), Y(T.ced + T.ct).toFixed(1), (X(T.rho + T.rt) - X(T.rho - T.rt)).toFixed(1), (Y(T.ced - T.ct) - Y(T.ced + T.ct)).toFixed(1), 4, '#2E8B57', '#2E8B57', 3, ' fill-opacity=".18"');
+  o += mono(X(T.rho).toFixed(1), (Y(T.ced - T.ct) + 22).toFixed(1), __L('표적 상자','target box'), '#2E8B57', 15, 'middle', 700);
+  W18.w17.forEach(function (c) { o += dot(X(c[1]), Y(c[2]), 8, '#4F7FB0', '#FFFFFF', 2); });
+  W18.R.forEach(function (r) { o += dot(X(r[3]), Y(r[4]), 8, '#E37F1A', '#FFFFFF', 2); });
+  W18.val.forEach(function (v) { var x = X(v[1]), y = Y(v[2]); o += '<path d="M' + x.toFixed(1) + ' ' + (y - 10).toFixed(1) + ' L' + (x + 10).toFixed(1) + ' ' + y.toFixed(1) + ' L' + x.toFixed(1) + ' ' + (y + 10).toFixed(1) + ' L' + (x - 10).toFixed(1) + ' ' + y.toFixed(1) + ' Z" fill="#6E655C"/>'; });
+  o += dot(X(0.9893), Y(393.5), 15, 'none', '#231F20', 3) + mono(X(0.9893) - 18, Y(393.5) + 5, 'dbt-2x6', '#231F20', 15, 'end', 700);
+  o += mono(X(1.0) + 10, Y1 + 22, __L('밀도 ≥ 1.0 → CED ≥ 405.3','density ≥ 1.0 → CED ≥ 405.3'), '#C8610C', 16, 'start', 700);
+  o += mono(X0 + 10, Y0 - 12, __L('CED ≤ 374.2 → 밀도 ≤ 0.9036','CED ≤ 374.2 → density ≤ 0.9036'), '#4F7FB0', 16, 'start', 700);
+  o += ln(X0, Y0, X1, Y0, '#6E655C', 2) + ln(X0, Y1, X0, Y0, '#6E655C', 2);
+  o += tx((X0 + X1) / 2, Y0 + 50, __L('밀도 (g/cm³) · 주황 = 루프 12 · 파랑 = W17 후보 8 · 회색 ◆ = 검증 분자','density (g/cm³) · orange = loop 12 · blue = W17 candidates 8 · gray ◆ = validation molecules'), 'cfmu', 'middle', null, 16);
+  o += tx(26, (Y0 + Y1) / 2, 'CED (MJ/m³)', 'cfs', 'middle', null, 17).replace('<text ', '<text transform="rotate(-90 26 ' + ((Y0 + Y1) / 2) + ')" ');
+  svg.innerHTML = o;
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+ "code": {
+  "git": "12ac9aa",
+  "scripts": [
+   "curate.py",
+   "pareto.py",
+   "ehvi_select.py",
+   "md_vs_exp.py"
+  ]
+ },
+ "data": {
+  "core672_sha256": "224785c0cf59",
+  "features614_sha256": "701a34d20df3"
+ },
+ "model": {
+  "gp": "ConstantKernel × RBF(ARD 12) + White · sklearn 1.9.1",
+  "seed": 7,
+  "mc_samples": 512
+ },
+ "run": {
+  "python": "mdai 3.11",
+  "ref": [
+   1.0,
+   250
+  ],
+  "obs": 400,
+  "batch": 3
+ }
+}

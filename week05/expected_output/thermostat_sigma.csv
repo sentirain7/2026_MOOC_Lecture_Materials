@@ -1,0 +1,5 @@
+thermostat,T_mean_tail,sigma_T_tail,sigma_T_expected_canonical,reach_step
+none(NVE),216.93,5.63,30.62,
+rescale,300.0,0.0,30.62,0
+berendsen,300.76,8.77,30.62,174
+langevin,309.19,29.51,30.62,27

@@ -1,0 +1,13 @@
+id,round,cand,smiles,n_mol,n_atoms,density_gcm3,density_se,ced_MJm3,ced_se,ok,wall_s,mode
+r0_1,0,quinoline-2x3,CCCc1ccc2nc(CCC)ccc2c1,43,1505,0.9706,0.0031,415.0,5.6,True,511.9,live
+r0_2,0,tetralin-2x12,CCCCCCCCCCCCc1ccc2c(c1)CCCC2CCCCCCCCCCCC,16,1504,0.8577,0.0023,334.8,2.8,True,524.6,live
+r0_3,0,phenanthrene-1x1,Cc1ccc2c(ccc3ccccc32)c1,56,1512,1.1011,0.0005,487.3,2.9,True,506.8,live
+r0_4,0,benzene-1x9,CCCCCCCCCc1ccccc1,38,1482,0.8507,0.0013,343.7,2.9,True,456.8,live
+r0_5,0,benzothiophene-1x1,Cc1ccc2sccc2c1,83,1494,1.1304,0.0028,470.6,4.4,True,410.5,live
+r0_6,0,tetralin-2x1,Cc1ccc2c(c1)CCCC2C,54,1512,0.9447,0.0028,399.7,5.1,True,523.8,live
+r1_1,1,tetralin-1x1,Cc1ccc2c(c1)CCCC2,60,1500,0.9526,0.0027,411.2,4.7,True,464.0,live
+r1_2,1,benzene-1x3,CCCc1ccccc1,71,1491,0.8714,0.0034,352.1,3.6,True,435.9,live
+r2_1,2,dibenzothiophene-2x4,CCCCc1ccc2sc3ccc(CCCC)cc3c2c1,33,1485,1.0256,0.0033,407.0,3.5,True,445.2,live
+r2_2,2,phenanthrene-2x3,CCCc1ccc2c(ccc3cc(CCC)ccc32)c1,36,1512,1.0036,0.0012,422.1,1.5,True,472.4,live
+r3_1,3,dibenzothiophene-1x10,CCCCCCCCCCc1ccc2sc3ccccc3c2c1,29,1479,1.0099,0.0014,405.3,1.6,True,453.4,live
+r3_2,3,dibenzothiophene-2x6,CCCCCCc1ccc2sc3ccc(CCCCCC)cc3c2c1,26,1482,0.9893,0.0011,393.5,2.0,True,455.5,live

@@ -1,0 +1,26 @@
+{
+  "inputs": [
+    "md_corpus_267.csv",
+    "md_asphalt_literature_2021_2026.csv"
+  ],
+  "records": 534,
+  "unique_raw": 267,
+  "unique": 267,
+  "duplicates": 267,
+  "missing_doi": 0,
+  "top_duplicated": [
+    [
+      "10.1016/j.cis.2021.102565",
+      2
+    ],
+    [
+      "10.1016/j.jclepro.2021.126927",
+      2
+    ],
+    [
+      "10.1016/j.conbuildmat.2020.121299",
+      2
+    ]
+  ],
+  "rule": "strip·rstrip('.') → ^https?://(dx.)?doi.org/ 제거 → ^doi: 제거 → lower()"
+}

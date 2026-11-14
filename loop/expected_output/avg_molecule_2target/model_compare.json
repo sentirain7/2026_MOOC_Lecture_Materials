@@ -1,0 +1,33 @@
+{
+ "gp": {
+  "density": {
+   "rmse": 0.063,
+   "coverage_1sigma": 0.333
+  },
+  "ced": {
+   "rmse": 33.2371,
+   "coverage_1sigma": 0.5
+  }
+ },
+ "rf": {
+  "density": {
+   "rmse": 0.0607,
+   "coverage_1sigma": 0.583
+  },
+  "ced": {
+   "rmse": 27.9026,
+   "coverage_1sigma": 0.75
+  }
+ },
+ "xgb": {
+  "density": {
+   "rmse": 0.0654,
+   "coverage_1sigma": 0.0
+  },
+  "ced": {
+   "rmse": 33.8701,
+   "coverage_1sigma": 0.167
+  }
+ },
+ "n": 12
+}

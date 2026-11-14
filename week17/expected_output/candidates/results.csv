@@ -1,0 +1,9 @@
+id,S_wt,A_wt,R_wt,As_wt,S_act,A_act,R_act,As_act,n_mol,n_atoms,T_K,protocol,seed,threads,density_gcm3,density_se,ced_MJm3,ced_se,delta_MPa05,ok,ff,wall_s,source
+dbt-1x2,,,,,,,,,55,1485,298.0,standard,4928460,4,1.1378,0.0015,466.5,2.9,21.6,True,gaff2/am1-bcc (mdworkflow),430.9,
+quin-1x4,,,,,,,,,50,1450,298.0,standard,4928460,4,1.0062,0.001,444.7,2.4,21.09,True,gaff2/am1-bcc (mdworkflow),436.7,
+naph-1x4,,,,,,,,,50,1500,298.0,standard,4928460,4,0.9784,0.0018,420.6,3.8,20.51,True,gaff2/am1-bcc (mdworkflow),459.8,
+bt-1x6,,,,,,,,,45,1485,298.0,standard,4928460,4,1.0137,0.0026,408.1,1.9,20.2,True,gaff2/am1-bcc (mdworkflow),459.5,
+phen-1x4,,,,,,,,,42,1512,298.0,standard,4928460,4,1.0457,0.0014,453.4,2.5,21.29,True,gaff2/am1-bcc (mdworkflow),509.2,
+tet-1x8,,,,,,,,,32,1472,298.0,standard,4928460,4,0.8961,0.0012,369.1,1.6,19.21,True,gaff2/am1-bcc (mdworkflow),508.0,
+dbt-2x6,,,,,,,,,26,1482,298.0,standard,4928460,4,0.9817,0.0012,386.4,1.5,19.66,True,gaff2/am1-bcc (mdworkflow),475.5,
+naph-2x6,,,,,,,,,28,1512,298.0,standard,4928460,4,0.9036,0.0021,361.0,1.8,19.0,True,gaff2/am1-bcc (mdworkflow),491.6,

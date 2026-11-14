@@ -1,0 +1,19 @@
+# in.intra — MD 워크플로우 ⑤ CED 용 분자 내부 에너지 (생산 구간 좌표를 분자끼리 멀리 떼어 놓고 다시 계산)
+# 분자 사이 거리 ≥ 격자 간격 S − 분자 크기 > 전하 절단 → 분자 사이 상호작용 0 · 분자 안 상호작용은 벌크와 같은 규칙
+units          real
+atom_style     full
+boundary       f f f
+pair_style     lj/cut/coul/cut 12.0 ${rc}
+bond_style     harmonic
+angle_style    harmonic
+dihedral_style fourier
+improper_style cvff
+special_bonds  amber
+read_data      ${data}
+change_box     all x final 0 ${B} y final 0 ${B} z final 0 ${B} units box
+pair_modify    mix arithmetic tail no
+neighbor       2.0 bin
+neigh_modify   one 5000 page 500000
+thermo_style   custom step pe
+thermo         1
+rerun          ${dump} dump x y z box yes

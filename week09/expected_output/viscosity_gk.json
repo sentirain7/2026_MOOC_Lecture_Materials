@@ -1,0 +1,15 @@
+{
+ "n_samples": 4001,
+ "dt_fs": 5.0,
+ "t_total_ps": 20.0,
+ "V_mean_A3": 9066.3,
+ "T_K": 298.0,
+ "C0_atm2": 2693728.2,
+ "first_zero_fs": 15.0,
+ "eta_running_at_tmax_mPas": 0.2819,
+ "eta_max_mPas": 0.3639,
+ "tmax_fs": 1995.0,
+ "plateau_rel_slope_last20pct": -0.022,
+ "plateau_reached": true,
+ "note": "수십 ps 실행 — 러닝 적분의 형태(상승 → 흔들림)만 · 평탄 구간은 10~100 ns · 다중 시드에서(원본 06주차 #28)"
+}

@@ -1,0 +1,54 @@
+{
+ "p": 5,
+ "q": 3,
+ "nz": 2,
+ "Lx_A": 24.565,
+ "Ly_A": 25.529,
+ "Lz_A": 67.708,
+ "area_A2": 627.1,
+ "slab": {
+  "atoms": 540,
+  "thickness_A": 10.81,
+  "Si": 180,
+  "O": 360,
+  "charge_sum": 0.0
+ },
+ "water": {
+  "molecules": 0,
+  "atoms": 0,
+  "thickness_A": 0.0,
+  "z0": 13.31,
+  "z1": 13.31
+ },
+ "binder": {
+  "molecules": 60,
+  "atoms": 900,
+  "thickness_A": 24.4,
+  "z0": 13.31,
+  "z1": 37.71,
+  "rho0_g_cm3": 0.6,
+  "charge_sum": -6e-05
+ },
+ "vacuum_A": 30.0,
+ "gap_A": 2.5,
+ "boundary": "p p f",
+ "slab_correction": true,
+ "atoms_total": 1440,
+ "bonds": 900,
+ "angles": 1440,
+ "dihedrals": 1800,
+ "atom_types": [
+  "ClayFF st",
+  "ClayFF ob",
+  "GAFF2 c3",
+  "GAFF2 ca",
+  "GAFF2 ha",
+  "GAFF2 hc"
+ ],
+ "min_edge_over_2rc": 1.024,
+ "packmol": {
+  "tolerance": 2.0,
+  "seed": 20240908,
+  "success": true
+ }
+}

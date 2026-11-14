@@ -1,0 +1,112 @@
+{
+ "project": "out/example_project",
+ "score": 100,
+ "total": 100,
+ "items": [
+  {
+   "group": "문제 정의",
+   "points": 8,
+   "item": "표적 물성 2개 이상 · 방향 지정",
+   "ok": true,
+   "evidence": "targets 2"
+  },
+  {
+   "group": "문제 정의",
+   "points": 6,
+   "item": "제약 명시",
+   "ok": true,
+   "evidence": "constraints 3"
+  },
+  {
+   "group": "문제 정의",
+   "points": 6,
+   "item": "성공 기준 수치",
+   "ok": true,
+   "evidence": "EHVI 3개 배치의 실제 HV 증가 > 무작위 3개 평균 · 참조점 (1.0 GPa, 250 MJ/m3)"
+  },
+  {
+   "group": "계산 · 검증 설계",
+   "points": 10,
+   "item": "프로토콜(힘장 · 앙상블 · 길이)",
+   "ok": true,
+   "evidence": "forcefield,ensemble,length,error_report,split"
+  },
+  {
+   "group": "계산 · 검증 설계",
+   "points": 10,
+   "item": "오차 보고 방식(평균 ± SE · n)",
+   "ok": true,
+   "evidence": "평균 ± 블록 SE · n 병기 (W05)"
+  },
+  {
+   "group": "계산 · 검증 설계",
+   "points": 10,
+   "item": "분할 전략 · 실측 대조",
+   "ok": true,
+   "evidence": "split=관측 400 / 후보 212 (고정 난수 7) · 첨가제 홀드아웃은 확장 과제 · validation keys ['density', 'tg', 'mastercurve']"
+  },
+  {
+   "group": "탐색 결과",
+   "points": 8,
+   "item": "파레토 전선 · HV",
+   "ok": true,
+   "evidence": "front 6 · HV 871.28"
+  },
+  {
+   "group": "탐색 결과",
+   "points": 7,
+   "item": "회차별 HV 곡선",
+   "ok": true,
+   "evidence": "trajectory 47"
+  },
+  {
+   "group": "탐색 결과",
+   "points": 10,
+   "item": "추천 조성 ≥ 3 · 예측 ± 불확실성",
+   "ok": true,
+   "evidence": "rows 3"
+  },
+  {
+   "group": "재현성",
+   "points": 10,
+   "item": "매니페스트 4묶음(코드 · 데이터 · 모델 · 실행)",
+   "ok": true,
+   "evidence": "code,data,model,run"
+  },
+  {
+   "group": "재현성",
+   "points": 5,
+   "item": "데이터 해시 · 난수 시드",
+   "ok": true,
+   "evidence": "sha256 · seed"
+  },
+  {
+   "group": "한계 논의",
+   "points": 5,
+   "item": "한계 3개 이상(모델 · 힘장 · 데이터)",
+   "ok": true,
+   "evidence": "bullets 4"
+  },
+  {
+   "group": "한계 논의",
+   "points": 5,
+   "item": "실패한 시도와 원인",
+   "ok": true,
+   "evidence": "「실패」 절"
+  },
+  {
+   "group": "발표 형식",
+   "points": 0,
+   "item": "슬라이드 1~10장(10분 + 질의 5분)",
+   "ok": false,
+   "evidence": "slides 0"
+  }
+ ],
+ "rubric": {
+  "문제 정의": 20,
+  "계산 · 검증 설계": 30,
+  "탐색 결과": 25,
+  "재현성": 15,
+  "한계 논의": 10
+ }
+}

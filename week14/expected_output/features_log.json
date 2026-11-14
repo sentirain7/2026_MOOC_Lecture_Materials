@@ -1,0 +1,12 @@
+{
+ "raw_rows": 672,
+ "aging_missing": 0,
+ "ced_negative": 48,
+ "bulk_over_10GPa": 50,
+ "rows": 672,
+ "groups": 54,
+ "n_density": 670,
+ "n_ced": 613,
+ "n_bulk": 576,
+ "n_einter": 576
+}

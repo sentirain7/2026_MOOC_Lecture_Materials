@@ -1,0 +1,16 @@
+{
+ "id": "dbt-1x2",
+ "density_gcm3": 1.1378,
+ "density_se": 0.0015,
+ "density_half_diff_pct": 0.457,
+ "density_ok": true,
+ "n_thermo": 161,
+ "t_prod_ps": 40.0,
+ "ced_MJm3": 466.5,
+ "ced_se": 2.9,
+ "delta_MPa05": 21.6,
+ "n_frames": 17,
+ "n_molecules": 55,
+ "max_molecule_extent_A": 11.0,
+ "ced_note": "E_inter = E_bulk(PPPM · tail) − Σ E_분자(직접 합) · 생산 구간 앞 20 % 버림"
+}

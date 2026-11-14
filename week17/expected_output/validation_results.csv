@@ -1,0 +1,6 @@
+id,S_wt,A_wt,R_wt,As_wt,S_act,A_act,R_act,As_act,n_mol,n_atoms,T_K,protocol,seed,threads,density_gcm3,density_se,ced_MJm3,ced_se,delta_MPa05,ok,ff,wall_s,source
+tol100,,,,,,,,,100,1500,298.0,standard,4928460,4,0.8703,0.0024,352.3,2.2,18.77,True,gaff2/am1-bcc (mdworkflow),404.6,
+mnp72,,,,,,,,,72,1512,298.0,standard,4928460,4,1.0299,0.0012,452.9,3.1,21.28,True,gaff2/am1-bcc (mdworkflow),445.6,
+dec47,,,,,,,,,47,1504,298.0,standard,4928460,4,0.734,0.0014,303.0,2.0,17.41,True,gaff2/am1-bcc (mdworkflow),454.0,
+tol100_t2,,,,,,,,,100,1500,298.0,standard,4928460,2,0.8801,0.0013,362.6,4.9,19.04,True,gaff2/am1-bcc (mdworkflow),761.8,
+tol100_t4b,,,,,,,,,100,1500,298.0,standard,4928460,4,0.8724,0.0036,357.1,3.3,18.9,True,gaff2/am1-bcc (mdworkflow),461.7,

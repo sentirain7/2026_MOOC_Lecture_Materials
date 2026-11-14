@@ -1,0 +1,36 @@
+{
+ "row": {
+  "exp_id": "toluene50_w09",
+  "n_atoms": 750,
+  "n_mol": 50,
+  "T_K": 298,
+  "rho_gcc": 0.834,
+  "rho_se": 0.00621,
+  "rho_converged": false,
+  "ced_A_MJm3": 332.3,
+  "ced_B_MJm3": 374.9,
+  "ced_method_fixed": "B",
+  "delta_MPa05": 19.36,
+  "eta_gk_running_mPas": 0.2819,
+  "eta_plateau": true,
+  "Tg_K": 356.5,
+  "Tg_n_T": 4,
+  "t_total_ps": 50.0,
+  "scripts_version": "week09-v3",
+  "flags": "short-run;rho-not-converged"
+ },
+ "wall_s": 3.7,
+ "inputs": [
+  "data/toluene_eq.data",
+  "data/in.prod",
+  "data/in.tg",
+  "data/in.gas"
+ ],
+ "outputs": [
+  "out/density.json",
+  "out/ced.json",
+  "out/viscosity_gk.json",
+  "out/tg.json",
+  "out/results.csv"
+ ]
+}

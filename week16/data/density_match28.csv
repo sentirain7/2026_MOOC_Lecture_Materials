@@ -1,0 +1,29 @@
+doi,venue,additive,is_neat,exp_T_C,exp_T_K,exp_density,method,our_T_K,our_MD,abs_err,rel_err_%,signed
+10.1016/j.jtte.2021.02.008,Journal of Traffic and Transportation Engineering (English Edition),none,True,n/s(~25),298.1,0.94,,293,0.997,0.057,6.0,0.057
+10.1016/j.jtte.2021.02.008,Journal of Traffic and Transportation Engineering (English Edition),none,False,n/s(~25),298.1,1.02,,293,0.997,0.023,2.3,-0.023
+10.1016/j.conbuildmat.2021.125849,Construction and Building Materials,none,True,25,298.1,1.01,,293,0.997,0.013,1.3,-0.013
+10.1016/j.conbuildmat.2021.125849,Construction and Building Materials,none,True,25,298.1,1.04,,293,0.997,0.043,4.2,-0.043
+10.1016/j.fuel.2020.119175,Fuel,none,True,25,298.1,1.012,measured,293,0.997,0.015,1.5,-0.015
+10.1016/j.conbuildmat.2022.126360,Construction and Building Materials,none,True,25,298.1,1.012,measured,293,0.997,0.015,1.5,-0.015
+10.1016/j.matdes.2022.111141,Materials & Design,none,True,25,298.1,1.017,pycnometer,293,0.997,0.02,2.0,-0.02
+10.1016/j.matdes.2022.111141,Materials & Design,none,True,60,333.1,0.996,pycnometer,333,0.972,0.024,2.4,-0.024
+10.1016/j.molliq.2026.129761,Journal of Molecular Liquids,none,True,n/s(~25),298.1,1.0126,measured,293,0.997,0.016,1.6,-0.016
+10.1016/j.apsusc.2023.158851,Applied Surface Science,none,True,25.0,298.1,1.01,,293,0.997,0.013,1.3,-0.013
+10.1016/j.apsusc.2023.158851,Applied Surface Science,none,True,25.0,298.1,1.02,,293,0.997,0.023,2.3,-0.023
+10.1016/j.apsusc.2023.158851,Applied Surface Science,none,True,25.0,298.1,1.03,,293,0.997,0.033,3.2,-0.033
+10.1016/j.apsusc.2023.158851,Applied Surface Science,none,True,25.0,298.1,1.04,,293,0.997,0.043,4.2,-0.043
+10.1016/j.conbuildmat.2021.123898,Construction and Building Materials,none,True,25,298.1,0.95,measured,293,0.997,0.047,4.9,0.047
+10.1016/j.conbuildmat.2021.123898,Construction and Building Materials,none,True,25,298.1,1.08,measured,293,0.997,0.083,7.7,-0.083
+10.1016/j.conbuildmat.2024.138954,Construction and Building Materials,none,True,25,298.1,1.016,measured,293,0.997,0.019,1.9,-0.019
+10.1016/j.conbuildmat.2024.138954,Construction and Building Materials,none,True,25,298.1,1.005,measured,293,0.997,0.008,0.8,-0.008
+10.1016/j.conbuildmat.2024.138954,Construction and Building Materials,none,True,25,298.1,1.038,measured,293,0.997,0.041,4.0,-0.041
+10.1016/j.conbuildmat.2024.138954,Construction and Building Materials,SBS_3_7,False,25,298.1,1.015,measured,293,0.995,0.02,2.0,-0.02
+10.1016/j.cscm.2023.e02007,Case Studies in Construction Materials,none,True,60.0,333.1,1.03,measured,333,0.972,0.058,5.6,-0.058
+10.1016/j.cscm.2023.e02007,Case Studies in Construction Materials,none,True,60.0,333.1,1.02,measured,333,0.972,0.048,4.7,-0.048
+10.1016/j.cscm.2023.e02007,Case Studies in Construction Materials,none,True,60.0,333.1,0.99,measured,333,0.972,0.018,1.8,-0.018
+10.1016/j.matdes.2024.113327,Materials & Design,none,True,n/s(~25),298.1,1.019,,293,0.997,0.022,2.2,-0.022
+10.1016/j.matdes.2024.113327,Materials & Design,none,True,n/s(~25),298.1,1.042,,293,0.997,0.045,4.4,-0.045
+10.1016/j.matdes.2024.113327,Materials & Design,none,True,n/s(~25),298.1,1.041,,293,0.997,0.044,4.3,-0.044
+10.1016/j.matdes.2024.113327,Materials & Design,none,True,n/s(~25),298.1,1.051,,293,0.997,0.054,5.2,-0.054
+10.1016/j.matdes.2024.113327,Materials & Design,none,True,n/s(~25),298.1,1.07,,293,0.997,0.073,6.9,-0.073
+10.1016/j.conbuildmat.2022.128314,Construction and Building Materials,none,True,25,298.1,1.002,measured,293,0.997,0.005,0.5,-0.005

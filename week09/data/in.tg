@@ -1,0 +1,24 @@
+# in.tg — week09 · 온도별 NPT 짧은 실행 → 평형 부피 → V–T 두 직선 적합(Tg 꺾임 시연)
+units          real
+atom_style     full
+boundary       p p p
+pair_style     lj/cut/coul/long 12.0
+bond_style     harmonic
+angle_style    harmonic
+dihedral_style fourier
+special_bonds  amber
+read_data      ${data}
+pair_modify    mix arithmetic tail yes
+kspace_style   pppm 1.0e-4
+neighbor       2.0 bin
+neigh_modify   every 1 delay 0 check yes
+timestep       1.0
+velocity       all create ${T} ${seed} mom yes rot yes dist gaussian
+thermo_style   custom step temp press density pe vol
+thermo         100
+fix            npt all npt temp ${T} ${T} 100.0 iso 1.0 1.0 1000.0
+run            ${steps}
+variable       dens equal density
+variable       v equal vol
+fix            avg all ave/time 100 10 1000 v_dens v_v file ${out}/tg_T${T}.txt
+run            ${avg_steps}

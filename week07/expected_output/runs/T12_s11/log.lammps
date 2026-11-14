@@ -1,0 +1,92 @@
+LAMMPS (22 Jul 2025 - Update 6)
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread.
+  using 1 OpenMP thread(s) per MPI task
+# week07 · LJ 유체 템플릿 — 자리표시 1.2 11 0.005 1000 는 render_inputs.py 가 채운다 (run_id = T12_s11)
+units lj
+atom_style atomic
+lattice fcc 0.8
+Lattice spacing in x,y,z = 1.7099759 1.7099759 1.7099759
+region box block 0 5 0 5 0 5
+create_box 1 box
+Created orthogonal box = (0 0 0) to (8.5498797 8.5498797 8.5498797)
+  1 by 1 by 1 MPI processor grid
+create_atoms 1 box
+Created 500 atoms
+  using lattice units in orthogonal box = (0 0 0) to (8.5498797 8.5498797 8.5498797)
+  create_atoms CPU = 0.000 seconds
+mass 1 1.0
+velocity all create 1.2 11 dist gaussian
+pair_style lj/cut 2.5
+pair_coeff 1 1 1.0 1.0 2.5
+neighbor 0.3 bin
+fix 1 all nvt temp 1.2 1.2 0.5
+timestep 0.005
+thermo 50
+thermo_style custom step temp press pe etotal
+run 1000
+Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 2.8
+  ghost atom cutoff = 2.8
+  binsize = 1.4, bins = 7 7 7
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 3.145 | 3.145 | 3.145 Mbytes
+   Step          Temp          Press          PotEng         TotEng    
+         0   1.2           -5.2508866     -6.3647465     -4.5683465    
+        50   0.65963419    -0.40349481    -5.4768693     -4.4893969    
+       100   0.69572503    -0.15426283    -5.4195579     -4.3780576    
+       150   0.78033178     0.081800051   -5.3987106     -4.2305539    
+       200   0.82447101     0.68521233    -5.2967311     -4.062498     
+       250   0.884001       1.2959561     -5.199983      -3.8766335    
+       300   0.99989872     1.3851809     -5.1825472     -3.6856988    
+       350   1.0560513      1.8178516     -5.0800683     -3.4991595    
+       400   1.1357548      2.3207196     -5.0201583     -3.3199333    
+       450   1.2110665      2.4374459     -4.9729372     -3.1599706    
+       500   1.2437169      2.769101      -4.8974634     -3.0356192    
+       550   1.3242585      2.6372439     -4.9434228     -2.9610078    
+       600   1.2655453      2.990559      -4.8549115     -2.9603901    
+       650   1.2769693      2.7351171     -4.9354682     -3.0238451    
+       700   1.2131375      2.5746772     -4.9461529     -3.1300861    
+       750   1.2150998      2.0586722     -5.0413853     -3.2223809    
+       800   1.1726212      1.9975709     -5.0525858     -3.2971718    
+       850   1.09707        2.4305129     -4.9745094     -3.3321957    
+       900   1.1095628      2.3926199     -4.9692658     -3.3082502    
+       950   1.1588693      2.4437566     -4.9709412     -3.2361138    
+      1000   1.1966299      2.6942372     -4.9290119     -3.137657     
+Loop time of 0.320951 on 1 procs for 1000 steps with 500 atoms
+
+Performance: 1346001.165 tau/day, 3115.743 timesteps/s, 1.558 Matom-step/s
+3945.2% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.21187    | 0.21187    | 0.21187    |   0.0 | 66.01
+Neigh   | 0.089088   | 0.089088   | 0.089088   |   0.0 | 27.76
+Comm    | 0.0098482  | 0.0098482  | 0.0098482  |   0.0 |  3.07
+Output  | 8.9092e-05 | 8.9092e-05 | 8.9092e-05 |   0.0 |  0.03
+Modify  | 0.0078006  | 0.0078006  | 0.0078006  |   0.0 |  2.43
+Other   |            | 0.002253   |            |       |  0.70
+
+Nlocal:            500 ave         500 max         500 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           1737 ave        1737 max        1737 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:          17911 ave       17911 max       17911 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 17911
+Ave neighs/atom = 35.822
+Neighbor list builds = 127
+Dangerous builds = 0
+write_data final_T12_s11.data
+System init for write_data ...
+Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
+Total wall time: 0:00:00

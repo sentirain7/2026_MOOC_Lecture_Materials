@@ -1,0 +1,5 @@
+property,nominal_68,nominal_95,judgement,source
+Density,0.62,0.88,약한 과신,COMID claude_science_export/comid_reliability.md §2 · 원본 10주차 #23 · 보충A #23
+CED,0.71,0.92,양호,COMID claude_science_export/comid_reliability.md §2
+Bulk,0.73,0.94,양호,COMID claude_science_export/comid_reliability.md §2
+E_inter,0.60,0.87,약한 과신,COMID claude_science_export/comid_reliability.md §2

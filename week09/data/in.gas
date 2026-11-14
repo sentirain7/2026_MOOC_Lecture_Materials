@@ -1,0 +1,15 @@
+# in.gas — week09 · 단분자(기상) 에너지: Method A = 벌크 좌표 그대로 run 0 · Method B = 큰 상자 NVT 평균
+units          real
+atom_style     full
+boundary       p p p
+pair_style     lj/cut/coul/cut 12.0
+bond_style     harmonic
+angle_style    harmonic
+dihedral_style fourier
+special_bonds  amber
+read_data      ${data}
+pair_modify    mix arithmetic tail no
+neighbor       2.0 bin
+thermo_style   custom step temp pe ebond eangle edihed evdwl ecoul
+thermo         ${thermo}
+timestep       1.0

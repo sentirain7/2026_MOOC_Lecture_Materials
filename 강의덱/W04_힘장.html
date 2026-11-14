@@ -1,0 +1,879 @@
+<!doctype html>
+<html lang="ko" data-v="3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>W04 힘장 · 상수의 출처 · 전하 · 조합 규칙 · 경계조건과 장거리</title>
+<link rel="stylesheet" href="../common/deck.css">
+</head>
+<body>
+
+<!-- 1 표지 -->
+<section class="slide v3 cover">
+<div class="stop">
+<div class="ribbon"></div>
+<div class="cover-txt">
+<p class="eb a" style="--d:0"><span class="ko" data-i>건설소재 역설계 도구 개발을 위한 AI와 분자동역학 활용 · WEEK 04 · 모듈 M1 MD 기초 · 차시 4-1 ~ 4-4 · 50분</span><span class="en" data-i>AI and Molecular Dynamics for Inverse Design of Construction Materials · WEEK 04 · Module M1 MD basics · Sessions 4-1 ~ 4-4 · 50 min</span></p>
+<h1 class="cover-h a" style="--d:1"><span class="ko" data-i>힘장: 상수의 출처 · 전하 · 조합 규칙 · 경계조건과 장거리</span><span class="en" data-i>Force field: origin of constants · charge · combining rule · boundary conditions and long range</span></h1>
+<p class="cover-sub a" style="--d:2"><span class="ko" data-i>W03 의 U 5항에 들어가는 k · ε · σ · q 는 어디서 오고, 상자 밖은 어떻게 다루는가</span><span class="en" data-i>Where do k · ε · σ · q in the 5 terms of W03's U come from, and how is outside the box handled</span></p>
+<p class="who a" style="--d:3"><span class="ko" data-i><b>윤태영</b> 연구위원 · 한국건설기술연구원 도로교통연구본부 · 과학기술연합대학원대학교(UST) 교수</span><span class="en" data-i><b>Taeyoung Yun</b> Senior Research Fellow · Department of Highway & Transportation Research, Korea Institute of Civil Engineering and Building Technology (KICT) · Professor, University of Science and Technology (UST)</span></p>
+<div class="rel a" style="--d:4;justify-content:flex-start"><span><span class="ko" data-i>준비물 · Claude Code</span><span class="en" data-i>Prerequisites · Claude Code</span></span><span><span class="ko" data-i>conda 환경 mdai</span><span class="en" data-i>conda environment mdai</span></span><span><span class="ko" data-i>W03 결과 파일 없이 진행</span><span class="en" data-i>Proceed without W03 result files</span></span></div>
+</div>
+<div class="cover-fig"><div class="emb" data-emb="molvib" data-dur="12"></div></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 2 오늘 만들 것 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>오늘 만들 것 · 4차시 · 50분</span><span class="en" data-i>What we build today · 4 sessions · 50 min</span></p>
+<div class="hrow"><span class="hico" data-ico="package-check"></span><h2 class="h"><span class="ko" data-i>오늘의 완성물 2개: 내 분자의 타입 · 전하 표 · 이종쌍 표 + 컷오프 스캔</span><span class="en" data-i>2 deliverables today: type · charge table + unlike-pair table of my molecule + cutoff scan</span></h2></div>
+<p class="sub"><span class="ko" data-i>이번 주 노트북 = 독립 실행(W03 결과 없이 진행) · 선수 지식 = U 5항 · LJ 곡선 · 평균 2종</span><span class="en" data-i>This week's notebooks = standalone (proceed without W03 results) · background = 5 U terms · LJ curve · 2 kinds of averages</span></p>
+<div class="bd today">
+<div class="goal">
+<div class="it white a" style="--d:1">
+<div class="ih"><span class="icb" data-ico="braces"></span><div><p class="k"><span class="ko" data-i>완성물 ①</span><span class="en" data-i>Deliverable ①</span></p><h4><span class="ko" data-i>내 분자의 GAFF2 타입 · AM1-BCC 전하 표 (P4-1)</span><span class="en" data-i>GAFF2 type · AM1-BCC charge table of my molecule (P4-1)</span></h4></div></div>
+<div class="cb"><span class="fc"><span class="ko" data-i>톨루엔 <em>15</em>원자</span><span class="en" data-i>Toluene <em>15</em> atoms</span></span><span class="x">=</span><span class="fc or">ca <em>6</em></span><span class="x">+</span><span class="fc or">c3 <em>1</em></span><span class="x">+</span><span class="fc bl">ha <em>5</em></span><span class="x">+</span><span class="fc bl">hc <em>3</em></span><span class="tot nosum">Σq = 0</span></div>
+<p><span class="ko" data-i>상수 = 타입 단위 · 전하 = 분자당 1회 (10 · 15장)</span><span class="en" data-i>Constants = per type · charge = 1× per molecule (slides 10 · 15)</span></p>
+</div>
+<div class="it dark a" style="--d:2">
+<div class="ih"><span class="icb" data-ico="file-spreadsheet"></span><div><p class="k"><span class="ko" data-i>완성물 ②</span><span class="en" data-i>Deliverable ②</span></p><h4>mixing_table.csv · cutoff_scan.json</h4></div></div>
+<p class="mono-line"><span class="ko" data-i>36타입 × 3규칙 = 666쌍 · rc 8 Å 꼬리 보정 후 −0.10 % · 12 Å −0.003 %</span><span class="en" data-i>36 types × 3 rules = 666 pairs · after rc 8 Å tail correction −0.10 % · at 12 Å −0.003 %</span></p>
+<p><span class="ko" data-i>노트북 실행 2번(Claude Code) · 10분 · W06 in 파일의 근거 (22장)</span><span class="en" data-i>2 notebook runs (Claude Code) · 10 min · basis for W06 in file (slide 22)</span></p>
+</div>
+</div>
+<div class="plan">
+<div class="lines">
+<div class="ln a" style="--d:1"><span class="nn">4-1</span><div><h4><span class="ko" data-i>힘장 계보</span><span class="en" data-i>Force-field lineage</span></h4><p><span class="ko" data-i>5항의 움직임 · QM → 상수 · 계열 · 열 지도</span><span class="en" data-i>Motion of 5 terms · QM → constants · families · heat map</span></p></div><span class="min"><span class="ko" data-i>15분</span><span class="en" data-i>15 min</span></span></div>
+<div class="ln a" style="--d:2"><span class="nn">4-2</span><div><h4><span class="ko" data-i>전하 · 조합 규칙</span><span class="en" data-i>Charge · combining rule</span></h4><p><span class="ko" data-i>분자 준비 4단계 · 계산기 · P4-1</span><span class="en" data-i>4 steps of molecule preparation · calculator · P4-1</span></p></div><span class="min"><span class="ko" data-i>15분</span><span class="en" data-i>15 min</span></span></div>
+<div class="ln a" style="--d:3"><span class="nn">4-3</span><div><h4><span class="ko" data-i>경계조건 · 장거리</span><span class="en" data-i>Boundary conditions · long range</span></h4><p><span class="ko" data-i>주기경계 · 컷오프 · PPPM · 이웃 목록</span><span class="en" data-i>Periodic boundary · cutoff · PPPM · neighbor list</span></p></div><span class="min"><span class="ko" data-i>12분</span><span class="en" data-i>12 min</span></span></div>
+<div class="ln a" style="--d:4"><span class="nn">4-4</span><div><h4><span class="ko" data-i>만들어 보기</span><span class="en" data-i>Try it</span></h4><p><span class="ko" data-i>노트북 · P4-2 · P4-3 · 혼용 금지</span><span class="en" data-i>Notebooks · P4-2 · P4-3 · do not mix</span></p></div><span class="min"><span class="ko" data-i>12분</span><span class="en" data-i>12 min</span></span></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>운영 예제: <b>톨루엔 Cc1ccccc1</b>(GAFF2 · AM1-BCC · MD 워크플로우 = 참고 사례) · 비교 대상: <b>ClayFF</b> Si · O</span><span class="en" data-i>Working example: <b>toluene Cc1ccccc1</b> (GAFF2 · AM1-BCC · MD workflow = ref. case) · comparison: <b>ClayFF</b> Si · O</span></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>계획서 50분 · 수정 계획 2판 §2b W04 4차시 · 참고 사례 = 연구 플랫폼 결과(week04/data/Toluene_gaff2.json)</span><span class="en" data-i>Plan 50 min · revised plan v2 §2b W04 4 sessions · reference case = research platform result</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 3 4-1 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 4-1 · 15분 · 영상 1편</span><span class="en" data-i>Session 4-1 · 15 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="spline"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">1</p><p class="hubt"><span class="ko" data-i>힘장 계보</span><span class="en" data-i>Force-field lineage</span></p><p class="hubs"><span class="ko" data-i>상수 k · ε · σ · q 의 출처</span><span class="en" data-i>Origin of constants k · ε · σ · q</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>항별 상수 출처 한 줄</span><span class="en" data-i>One-line origin of constants for each term</span></h4></div></div><p><span class="ko" data-i>결합 2항 = QM + 결정 구조 · 이면각 = 잔차 · ε σ = 실험 · q = ESP · 「함께 적합」의 뜻</span><span class="en" data-i>2 bond terms = QM + crystal structure · dihedral = residual · ε σ = experiment · q = ESP · meaning of "fitted together"</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>W03 식 → 상수 → W06 data 파일</span><span class="en" data-i>W03 formula → constants → W06 data file</span></h4></div></div><p><span class="ko" data-i>식은 지난 주, 상수는 이번 주, 파일은 W06 · 이 강좌의 기준 힘장 = GAFF2</span><span class="en" data-i>Formula last week, constants this week, file in W06 · this course's reference force field = GAFF2</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 4 ANIM 5항의 움직임 -->
+<section class="slide v3" data-src="03주차#8,03주차#9">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>4-1 · 무엇</span><span class="en" data-i>4-1 · What</span></p>
+<div class="hrow"><span class="hico" data-ico="atom"></span><h2 class="h"><span class="ko" data-i>힘장 에너지 5항: 항마다 다른 움직임 · 다른 출처</span><span class="en" data-i>5 force-field energy terms: different motion · different origin per term</span></h2></div>
+<div class="w04-cf"><p class="f"><span class="ko" data-i>U = 결합 + 각 + 이면각 + 반데르발스 + 정전기</span><span class="en" data-i>U = bond + angle + dihedral + van der Waals + electrostatic</span></p><p class="rd"><span class="ko" data-i>말로 읽기: 분자 에너지 = 다섯 가지 움직임 에너지의 합 · 오른쪽 = 그 항의 상수 출처</span><span class="en" data-i>In words: molecular energy = sum of five motion energies · right = origin of that term's constants</span></p></div>
+<div class="bd w04-split">
+<div class="emb" data-emb="molvib" data-dur="12" data-steps="5" data-labels="① 결합|② 각|③ 이면각|④ LJ|⑤ 쿨롱" data-labels-en="① Bond|② Angle|③ Dihedral|④ LJ|⑤ Coulomb"></div>
+<div class="w04-terms">
+<div class="it"><p class="k"><span class="ko" data-i>① 결합 신축 · 강도 · 기준 길이</span><span class="en" data-i>① Bond stretching · strength · reference length</span></p><h4><span class="ko" data-i>QM 곡선 + 결정 구조 · IR</span><span class="en" data-i>QM curve + crystal structure · IR</span></h4><p><span class="ko" data-i>신뢰도 높음 · 거의 확정</span><span class="en" data-i>High confidence · nearly settled</span></p></div>
+<div class="it"><p class="k"><span class="ko" data-i>② 결합각 · 강도 · 기준 각</span><span class="en" data-i>② Bond angle · strength · reference angle</span></p><h4><span class="ko" data-i>QM 각도 스캔 + 결정 통계</span><span class="en" data-i>QM angle scan + crystal statistics</span></h4><p><span class="ko" data-i>신뢰도 높음</span><span class="en" data-i>High confidence</span></p></div>
+<div class="it"><p class="k"><span class="ko" data-i>③ 이면각 · 회전 장벽 높이 · 주기</span><span class="en" data-i>③ Dihedral · rotation barrier height · period</span></p><h4><span class="ko" data-i>QM 회전 곡선의 잔차에 적합</span><span class="en" data-i>Fitted to residual of QM rotation curve</span></h4><p><span class="ko" data-i>분해 비유일 · 중간</span><span class="en" data-i>Depends on decomposition · medium</span></p></div>
+<div class="it"><p class="k"><span class="ko" data-i>④ 반데르발스 · 세기 · 크기</span><span class="en" data-i>④ van der Waals · strength · size</span></p><h4><span class="ko" data-i>액체 밀도 · 증발열 실험값</span><span class="en" data-i>Experimental liquid density · heat of vaporization</span></h4><p><span class="ko" data-i>QM 만으로 곤란 · 물질군 안에서 높음</span><span class="en" data-i>Hard with QM alone · high within a compound class</span></p></div>
+<div class="it"><p class="k"><span class="ko" data-i>⑤ 정전기 · 부분전하</span><span class="en" data-i>⑤ Electrostatic · partial charge</span></p><h4><span class="ko" data-i>QM 정전기 퍼텐셜(ESP) 적합</span><span class="en" data-i>Fitted to QM electrostatic potential (ESP)</span></h4><p><span class="ko" data-i>형태 의존 · 분극 없음 · 중간</span><span class="en" data-i>Conformation-dependent · no polarization · medium</span></p></div>
+</div>
+</div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 03주차 덱 #8 · #9 · LJ 곡선은 W03 17장 · 식은 repo/week03/docs/motion_notes.md</span><span class="en" data-i>Original week-03 deck #8 · #9 · LJ curve in W03 slide 17 · formulas in repo/week03/docs/motion_notes.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 5 FIG QM → 적합 → 상수 -->
+<section class="slide v3" data-src="03주차#9">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>4-1 · 어떻게</span><span class="en" data-i>4-1 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="line-chart"></span><h2 class="h"><span class="ko" data-i>QM 곡선 → 2차 함수 적합 → 상수: 결합 항은 확정 · 나머지는 함께 적합</span><span class="en" data-i>QM curve → 2nd-degree function fit → constants: bonded terms settled · others fitted together</span></h2></div>
+<p class="sub"><span class="ko" data-i>QM 은 분자 하나를 정확히(수백 원자 · 수 ps) · MD 는 수십만 원자를 상수로 · 곡선을 상수 둘(r₀ · k)로 압축하는 것이 파라미터화</span><span class="en" data-i>QM treats one molecule accurately (hundreds of atoms · several ps) · MD treats hundreds of thousands of atoms with constants · compressing a curve into two constants (r₀ · k) is parameterization</span></p>
+<div class="bd">
+<div class="row">
+<div class="figw white fill"><svg viewBox="0 0 960 500" class="cfig">
+<line x1="90" y1="420" x2="900" y2="420" stroke="#6E655C" stroke-width="3"/><line x1="90" y1="420" x2="90" y2="50" stroke="#6E655C" stroke-width="3"/>
+<text x="495" y="468" class="cfs" text-anchor="middle"><tspan class="ko" data-i>결합 길이 r (Å) · QM 으로 r 을 바꿔 가며 에너지 계산</tspan><tspan class="en" data-i>Bond length r (Å) · QM computes energy while varying r</tspan></text><text x="40" y="240" class="cfs" text-anchor="middle" transform="rotate(-90 40 240)"><tspan class="ko" data-i>에너지 E(r)</tspan><tspan class="en" data-i>Energy E(r)</tspan></text>
+<path d="M130 80 C 260 420, 420 440, 560 300 S 820 150, 900 110" fill="none" stroke="#4F7FB0" stroke-width="3" stroke-dasharray="8 6"/>
+<g fill="#4F7FB0"><circle cx="160" cy="150" r="9"/><circle cx="230" cy="290" r="9"/><circle cx="300" cy="372" r="9"/><circle cx="370" cy="405" r="9"/><circle cx="440" cy="400" r="9"/><circle cx="510" cy="355" r="9"/><circle cx="580" cy="290" r="9"/><circle cx="660" cy="220" r="9"/><circle cx="760" cy="160" r="9"/></g>
+<path d="M250 230 Q 400 560 560 240" fill="none" stroke="#E37F1A" stroke-width="5"/>
+<line class="tl" x1="400" y1="408" x2="400" y2="420" stroke-width="4"/><circle class="pulse" cx="400" cy="408" r="10" fill="#C8610C"/>
+<text x="400" y="445" class="cfm" text-anchor="middle" font-size="22"><tspan class="ko" data-i>r₀ (최소점)</tspan><tspan class="en" data-i>r₀ (minimum)</tspan></text>
+<path d="M330 300 L 470 300" stroke="#C8610C" stroke-width="3" stroke-dasharray="6 5"/><text x="470" y="292" class="cfm" font-size="20"> <tspan class="ko" data-i>← 곡률 → k</tspan><tspan class="en" data-i>← curvature → k</tspan><tspan baseline-shift="sub" font-size="14">b</tspan></text>
+<text x="160" y="120" class="cfs" fill="#4F7FB0" font-weight="700"><tspan class="ko" data-i>QM 에너지 점 (Ĥψ = Eψ)</tspan><tspan class="en" data-i>QM energy points (Ĥψ = Eψ)</tspan></text>
+<text x="700" y="100" class="cfh" fill="#C8610C" font-size="22"><tspan class="ko" data-i>주황 = ½ k</tspan><tspan class="en" data-i>Orange = ½ k</tspan><tspan baseline-shift="sub" font-size="14">b</tspan><tspan class="ko" data-i>(r − r₀)² 적합</tspan><tspan class="en" data-i>(r − r₀)² fit</tspan></text>
+<text x="935" y="132" class="cfs" text-anchor="end"><tspan class="ko" data-i>최소점 근처만 유효 · 해리 → ReaxFF(W12)</tspan><tspan class="en" data-i>Valid only near minimum · dissociation → ReaxFF (W12)</tspan></text>
+<rect x="620" y="330" width="280" height="80" rx="12" fill="#FFF1E0"/><text x="760" y="362" class="cfh" text-anchor="middle" font-size="20">ca–ca: K 354.25 · r₀ 1.3986 Å</text><text x="760" y="392" class="cfmu" text-anchor="middle"><tspan class="ko" data-i>참고 사례(연구 플랫폼 결과) · Toluene_gaff2.json</tspan><tspan class="en" data-i>Reference case (research platform result) · Toluene_gaff2.json</tspan></text>
+</svg></div>
+<div class="col" style="width:520px;flex:none">
+<div class="it green a" style="--d:1"><div class="ih"><span class="icb" data-ico="check"></span><div><p class="k"><span class="ko" data-i>결합 · 각</span><span class="en" data-i>Bond · angle</span></p><h4><span class="ko" data-i>QM + 결정 구조 · IR/Raman</span><span class="en" data-i>QM + crystal structure · IR/Raman</span></h4></div></div><p><span class="ko" data-i>거의 확정 · 힘장이 달라도 비슷</span><span class="en" data-i>Nearly settled · similar across force fields</span></p></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="shuffle"></span><div><p class="k"><span class="ko" data-i>이면각</span><span class="en" data-i>Dihedral</span></p><h4><span class="ko" data-i>다른 항을 뺀 잔차에 적합</span><span class="en" data-i>Fitted to residual after subtracting other terms</span></h4></div></div><p><span class="ko" data-i>분해 방식 비유일 · 힘장별 상이</span><span class="en" data-i>Depends on decomposition · differs by force field</span></p></div>
+<div class="it dark a" style="--d:3"><div class="ih"><span class="icb" data-ico="flask-conical"></span><div><p class="k">ε σ · q</p><h4><span class="ko" data-i>실험 밀도 · 증발열 · ESP 에 함께 적합</span><span class="en" data-i>Fitted together to experimental density · heat of vaporization · ESP</span></h4></div></div><p><span class="ko" data-i>전하 ↑ → 응집 ↑ → ε 는 작게 · <b>한 벌</b></span><span class="en" data-i>Charge ↑ → cohesion ↑ → ε smaller · <b>one set</b></span></p></div>
+</div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>힘장 = <b>QM + 실험의 혼합물</b> → 한 항만 다른 힘장에서 차용 → 균형 붕괴 (W08 혼용 조건)</span><span class="en" data-i>Force field = <b>mixture of QM + experiment</b> · borrowing one term from another force field → balance breaks (W08 mixing conditions)</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 03주차 덱 #9 · 원본 02#16 노트의 ca–ca K 478.4 · r₀ 1.387 은 GAFF 1세대 값 (결정 16)</span><span class="en" data-i>Original week-03 deck #9 · ca–ca K 478.4 · r₀ 1.387 in original 02#16 note are GAFF generation-1 values (decision 16)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 6 FIG 계열 · 네 힘장 -->
+<section class="slide v3" data-src="03주차#10,03주차#11,03주차#12">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>4-1 · 어떻게</span><span class="en" data-i>4-1 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="git-compare"></span><h2 class="h"><span class="ko" data-i>반발 벽의 단단함: 힘장 계열마다 다른 곡선 · 상수 교환 불가</span><span class="en" data-i>Hardness of repulsive wall: different curve per force-field family · constants not exchangeable</span></h2></div>
+<p class="sub"><span class="ko" data-i>인력 꼴은 같음 · 차이 = 가까이 붙을 때의 반발 벽 · 같은 상수를 넣어도 곡선 상이 → 값 교환 불가</span><span class="en" data-i>Attractive form same · difference = repulsive wall at close approach · same constants give different curves → values not exchangeable</span></p>
+<div class="bd">
+<div class="row">
+<div class="figw white" style="width:640px;flex:none"><svg viewBox="0 0 640 500" class="cfig" id="w04-lj96"></svg></div>
+<div class="col fill">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="brick-wall"></span><div><p class="k">Class I · GAFF2 · OPLS-AA</p><h4><span class="ko" data-i>반발 벽 급함 (12-6)</span><span class="en" data-i>Steep repulsive wall (12-6)</span></h4></div></div><p><span class="ko" data-i>조화 결합 · 각 · 이 강좌 기준 계열</span><span class="en" data-i>Harmonic bond · angle · this course's reference family</span></p></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="waves"></span><div><p class="k">Class II · COMPASS</p><h4><span class="ko" data-i>반발 벽 완만 (9-6)</span><span class="en" data-i>Soft repulsive wall (9-6)</span></h4></div></div><p><span class="ko" data-i>비조화 결합 + 교차항 · 같은 상수 → 다른 접촉 거리</span><span class="en" data-i>Anharmonic bond + cross terms · same constants → different contact distance</span></p></div>
+<div class="it dark a" style="--d:3"><div class="ih"><span class="icb" data-ico="split"></span><div><p class="k"><span class="ko" data-i>조합 규칙 · 1-4 축소 · 전하 방법도 상이</span><span class="en" data-i>Combining rule · 1-4 scaling · charge method also differ</span></p><h4><span class="ko" data-i>상수 묶음 교환 불가</span><span class="en" data-i>Constant sets not exchangeable</span></h4></div></div><p><span class="ko" data-i>네 힘장 비교 표 = 저장소 docs/forcefield_tables.md</span><span class="en" data-i>Comparison table of four force fields = repository docs/forcefield_tables.md</span></p></div>
+<p class="note"><span class="ko" data-i>조합 규칙 · 1-4 축소가 다르면 같은 조성에서도 밀도 · CED 변화 → 데이터셋 전체 힘장 하나 · 실험 ID 에 힘장 이름</span><span class="en" data-i>If combining rule · 1-4 scaling differ, density · CED change even for same composition → one force field for entire dataset · force-field name in experiment ID</span></p>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 03주차 덱 #10 · #11 · #12 · 1-4 축소 값 = 참고 사례(연구 플랫폼 설정) ff_stack.py · CHARMM · PCFF · INTERFACE 등 전체 표 = repo/week04/docs/forcefield_tables.md</span><span class="en" data-i>Original week-03 deck #10 · #11 · #12 · 1-4 scaling values = reference case (research platform settings) ff_stack.py · full table of CHARMM · PCFF · INTERFACE etc. = repo/week04/docs/forcefield_tables.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 7 ANIM 열 지도 -->
+<section class="slide v3" data-src="03주차#16,03주차#17">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>4-1 · 확인</span><span class="en" data-i>4-1 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="grid-3x3"></span><h2 class="h"><span class="ko" data-i>반데르발스 상수 열 지도: 세기 차이 10⁵ 배 · 약한 쪽이 이종쌍 결정</span><span class="en" data-i>Heat map of van der Waals constants: 10⁵-fold strength difference · weaker side decides the unlike pair</span></h2></div>
+<p class="sub"><span class="ko" data-i>행 = 원자 타입 · 열 = ε · σ · ca(방향족 C)와의 이종쌍 · 색이 진할수록 큼 · 열 순차 강조 · 읽는 법 하단 표시</span><span class="en" data-i>Row = atom type · column = ε · σ · unlike pair with ca (aromatic C) · darker = larger · columns highlighted in sequence · how to read shown below</span></p>
+<div class="bd"><div class="emb" data-emb="heat" data-dur="10"></div></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>ε (kcal/mol) · σ (Å) = 참고 사례(연구 플랫폼 결과) gaff2_atom_types.csv · clayff_lj.csv (Cygan 2004) · 이종쌍 = 산술 LB · 원본 03주차 덱 #16 · #17</span><span class="en" data-i>ε (kcal/mol) · σ (Å) = reference case (research platform result) gaff2_atom_types.csv · clayff_lj.csv (Cygan 2004) · unlike pair = arithmetic LB · original week-03 deck #16 · #17</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 8 FIG 힘장 선택 -->
+<section class="slide v3" data-src="03주차#7,03주차#13">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>4-1 · 확인</span><span class="en" data-i>4-1 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="list-checks"></span><h2 class="h"><span class="ko" data-i>힘장 = 레시피 카드 묶음: 계의 종류마다 묶음 하나 · 섞지 않기</span><span class="en" data-i>Force field = bundle of recipe cards: one bundle per system type · do not mix</span></h2></div>
+<p class="sub"><span class="ko" data-i>레시피 카드 = 원자 사이 관계 상수 · 묶음마다 형식 상이 → 한 셀에 한 묶음 · 선택 기준 = <b>계의 종류</b></span><span class="en" data-i>Recipe card = relation constants between atoms · format differs per bundle → one bundle per cell · selection criterion = <b>system type</b></span></p>
+<div class="bd">
+<div class="grid c4">
+<div class="it hot a" style="--d:1"><div class="ih"><span class="icb" data-ico="droplet"></span><div><p class="k"><span class="ko" data-i>유기 · 이 강좌 기준</span><span class="en" data-i>Organic · this course's reference</span></p><h4>GAFF2</h4></div></div><div class="figw white" style="height:160px"><svg viewBox="0 0 320 160" class="cfig"><g stroke="#4A4540" stroke-width="4" fill="none"><path d="M70 50 L100 32 L130 50 L130 86 L100 104 L70 86 Z"/><line x1="130" y1="68" x2="170" y2="68"/><line x1="170" y1="68" x2="200" y2="48"/><line x1="200" y1="48" x2="230" y2="68"/><line x1="230" y1="68" x2="260" y2="48"/></g><g fill="#C8610C"><circle cx="70" cy="50" r="7"/><circle cx="100" cy="32" r="7"/><circle cx="130" cy="50" r="7"/><circle cx="130" cy="86" r="7"/><circle cx="100" cy="104" r="7"/><circle cx="70" cy="86" r="7"/></g><g fill="#E37F1A"><circle cx="170" cy="68" r="7"/><circle cx="200" cy="48" r="7"/><circle cx="230" cy="68" r="7"/><circle cx="260" cy="48" r="7"/></g><text x="160" y="142" text-anchor="middle" class="cfmu"><tspan class="ko" data-i>방향족 고리 + 사슬 · 결합 토폴로지 고정</tspan><tspan class="en" data-i>Aromatic rings + chains · bond topology fixed</tspan></text></svg></div><p><span class="ko" data-i>바인더 벌크 · 분자 13종 전부 · AM1-BCC 전하 · 비용 낮음</span><span class="en" data-i>Binder bulk · all 13 molecules · AM1-BCC charges · low cost</span></p></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="brick-wall"></span><div><p class="k"><span class="ko" data-i>무기 표면 · 계면</span><span class="en" data-i>Inorganic surface · interface</span></p><h4>ClayFF</h4></div></div><div class="figw white" style="height:160px"><svg viewBox="0 0 320 160" class="cfig"><g fill="#D9534F"><circle cx="50" cy="40" r="9"/><circle cx="110" cy="40" r="9"/><circle cx="170" cy="40" r="9"/><circle cx="230" cy="40" r="9"/><circle cx="290" cy="40" r="9"/><circle cx="80" cy="96" r="9"/><circle cx="140" cy="96" r="9"/><circle cx="200" cy="96" r="9"/><circle cx="260" cy="96" r="9"/></g><g fill="#9AA5B1"><circle cx="80" cy="68" r="7"/><circle cx="140" cy="68" r="7"/><circle cx="200" cy="68" r="7"/><circle cx="260" cy="68" r="7"/></g><text x="40" y="24" class="cfmu" font-size="15">O −1.05</text><text x="60" y="124" class="cfmu" font-size="15"><tspan class="ko" data-i>Si +2.1 · 결합 없음 · 점전하 + LJ</tspan><tspan class="en" data-i>Si +2.1 · no bonds · point charge + LJ</tspan></text><text x="160" y="150" text-anchor="middle" class="cfmu"><tspan class="ko" data-i>실리카 · 점토 표면 (W10)</tspan><tspan class="en" data-i>Silica · clay surface (W10)</tspan></text></svg></div><p><span class="ko" data-i>규산염 · 산화물 · 점토 · 집합체 · C-S-H · 이종쌍은 규칙으로 (W10)</span><span class="en" data-i>Silicate · oxide · clay · aggregate · C-S-H · unlike pairs by rule (W10)</span></p></div>
+<div class="it a" style="--d:3"><div class="ih"><span class="icb" data-ico="waves"></span><div><p class="k"><span class="ko" data-i>물 모델</span><span class="en" data-i>Water model</span></p><h4>SPC/E · TIP3P</h4></div></div><div class="figw white" style="height:160px"><svg viewBox="0 0 320 160" class="cfig"><g stroke="#4F7FB0" stroke-width="4"><line x1="70" y1="60" x2="48" y2="86"/><line x1="70" y1="60" x2="96" y2="84"/><line x1="170" y1="40" x2="148" y2="66"/><line x1="170" y1="40" x2="196" y2="64"/><line x1="250" y1="76" x2="228" y2="102"/><line x1="250" y1="76" x2="276" y2="100"/></g><g fill="#4F7FB0"><circle cx="70" cy="60" r="11"/><circle cx="170" cy="40" r="11"/><circle cx="250" cy="76" r="11"/></g><g fill="#FFFFFF" stroke="#4F7FB0" stroke-width="3"><circle cx="48" cy="86" r="7"/><circle cx="96" cy="84" r="7"/><circle cx="148" cy="66" r="7"/><circle cx="196" cy="64" r="7"/><circle cx="228" cy="102" r="7"/><circle cx="276" cy="100" r="7"/></g><line class="tl" x1="96" y1="84" x2="148" y2="66" stroke-width="3" stroke-dasharray="4 4"/><text x="160" y="142" text-anchor="middle" class="cfmu"><tspan class="ko" data-i>SPC/E O −0.8476 · H +0.4238 · 힘장에 맞춰 짝</tspan><tspan class="en" data-i>SPC/E O −0.8476 · H +0.4238 · paired to force field</tspan></text></svg></div><p><span class="ko" data-i>힘장에 맞춰 짝: ClayFF 스택 = SPC/E · 순수 유기 = TIP3P (참고 사례 관례)</span><span class="en" data-i>Paired to force field: ClayFF stack = SPC/E · pure organic = TIP3P (reference case convention)</span></p></div>
+<div class="it dark a" style="--d:4"><div class="ih"><span class="icb" data-ico="zap"></span><div><p class="k"><span class="ko" data-i>반응성 · 예고 W12</span><span class="en" data-i>Reactive · preview W12</span></p><h4>ReaxFF</h4></div></div><div class="figw white" style="height:160px"><svg viewBox="0 0 320 160" class="cfig"><line x1="60" y1="70" x2="130" y2="70" stroke="#4A4540" stroke-width="5"/><line x1="190" y1="70" x2="222" y2="70" stroke="#D9534F" stroke-width="5" stroke-dasharray="6 6"/><line x1="236" y1="70" x2="268" y2="70" stroke="#D9534F" stroke-width="5" stroke-dasharray="6 6"/><g fill="#4A4540"><circle cx="60" cy="70" r="11"/><circle cx="130" cy="70" r="11"/></g><g fill="#D9534F"><circle cx="190" cy="70" r="11"/><circle cx="268" cy="70" r="11"/></g><text x="95" y="40" text-anchor="middle" class="cfm" font-size="15">BO ≈ 1</text><text x="229" y="40" text-anchor="middle" class="cfm" font-size="15" fill="#D9534F"><tspan class="ko" data-i>BO → 0 · 절단</tspan><tspan class="en" data-i>BO → 0 · bond cleavage</tspan></text><text x="160" y="112" text-anchor="middle" class="cfmu"><tspan class="ko" data-i>결합 차수 · 전하 매 스텝 재계산</tspan><tspan class="en" data-i>Bond order · charge recomputed every step</tspan></text><text x="160" y="140" text-anchor="middle" class="cfmu"><tspan class="ko" data-i>산화 · 수화 반응 (W12 검증 경로)</tspan><tspan class="en" data-i>Oxidation · hydration reactions (W12 validation route)</tspan></text></svg></div><p><span class="ko" data-i>결합 차수 매 스텝 · 전하 재분배(QEq) · 시간 간격 0.5 fs · <b>고전 힘장과 혼용 불가</b> · 비용 10² 배</span><span class="en" data-i>Bond order every step · charge redistribution (QEq) · timestep 0.5 fs · <b>cannot be mixed with classical force fields</b> · cost 10² ×</span></p></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>데이터셋 전체 <b>힘장 하나</b> · 실험 ID 에 힘장 이름 기록 · ReaxFF = 생산 대신 <b>검증 경로</b>(밀도 · CED 이상치만 재계산)</span><span class="en" data-i><b>One force field</b> for the entire dataset · record force-field name in experiment ID · ReaxFF = <b>validation route</b> instead of production (recompute only density · CED outliers)</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 03주차 덱 #7 · #13 · 물 모델 짝 = 참고 사례(연구 플랫폼 설정) ff_stack.py · DECISION_RULES R1 · R4 · R6 · 8종 전체 표 = repo/week04/docs/forcefield_tables.md</span><span class="en" data-i>Original week-03 deck #7 · #13 · water-model pairing = reference case (research platform settings) ff_stack.py · DECISION_RULES R1 · R4 · R6 · full table of 8 = repo/week04/docs/forcefield_tables.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 9 4-2 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 4-2 · 15분 · 영상 1편</span><span class="en" data-i>Session 4-2 · 15 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="braces"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">2</p><p class="hubt"><span class="ko" data-i>전하 모델과 조합 규칙</span><span class="en" data-i>Charge model and combining rule</span></p><p class="hubs"><span class="ko" data-i>분자 하나를 계산 가능하게 만드는 절차</span><span class="en" data-i>Procedure to make one molecule computable</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>내 분자의 타입 · 전하 표 (P4-1)</span><span class="en" data-i>Type · charge table of my molecule (P4-1)</span></h4></div></div><p><span class="ko" data-i>톨루엔으로 먼저 · 기대 결과와 맞으면 내 재료의 분자로</span><span class="en" data-i>Start with toluene · if matching expected output, move to my material's molecule</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>타입 → 전하 → 이종쌍 → W06 data 파일</span><span class="en" data-i>Type → charge → unlike pair → W06 data file</span></h4></div></div><p><span class="ko" data-i>이종쌍 ε σ 규칙 · 1-4 축소 → W08 혼용 조건 · W10 계면</span><span class="en" data-i>Unlike-pair ε σ rule · 1-4 scaling → W08 mixing conditions · W10 interface</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 10 ANIM 분자 준비 4단계 -->
+<section class="slide v3" data-src="03주차#15">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>4-2 · 어떻게</span><span class="en" data-i>4-2 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="workflow"></span><h2 class="h"><span class="ko" data-i>분자 준비 4단계: SMILES → 입체 좌표 → 타입 → 전하 → data 파일</span><span class="en" data-i>Molecule preparation, 4 steps: SMILES → spatial coordinates → type → charge → data file</span></h2></div>
+<p class="sub"><span class="ko" data-i>톨루엔 Cc1ccccc1 · 15원자 · 분자당 1회 → 라이브러리 13종(Li &amp; Greenfield 12 + 고황 1 · W06) · 역설계 = 개수 비율만 변경</span><span class="en" data-i>Toluene Cc1ccccc1 · 15 atoms · 1× per molecule → library of 13 (Li &amp; Greenfield 12 + 1 high-sulfur · W06) · inverse design = change only count ratios</span></p>
+<div class="bd">
+<div class="exf w04-exs">
+<div class="exs"><span class="exi" data-ico="braces"></span><div><h4>① SMILES</h4><p><span class="ko" data-i>Cc1ccccc1 · 좌표 없음</span><span class="en" data-i>Cc1ccccc1 · no coordinates</span></p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="box"></span><div><h4><span class="ko" data-i>② 3D 좌표</span><span class="en" data-i>② 3D coordinates</span></h4><p><span class="ko" data-i>수소 부착 · 최소화 · 15 × (x,y,z)</span><span class="en" data-i>Add hydrogens · minimize · 15 × (x,y,z)</span></p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="hash"></span><div><h4><span class="ko" data-i>③ 원자 타입</span><span class="en" data-i>③ Atom type</span></h4><p><span class="ko" data-i>ca · c3 · ha · hc → 상수 결정</span><span class="en" data-i>ca · c3 · ha · hc → fix constants</span></p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="circle-dot"></span><div><h4><span class="ko" data-i>④ 부분전하</span><span class="en" data-i>④ Partial charge</span></h4><p><span class="ko" data-i>AM1-BCC · Σq = 0 → data 파일</span><span class="en" data-i>AM1-BCC · Σq = 0 → data file</span></p></div></div>
+</div>
+<div class="emb" data-emb="typing" data-dur="12" data-steps="4" data-labels="① SMILES|② 3D 좌표|③ 원자 타입|④ 전하" data-labels-en="① SMILES|② 3D coordinates|③ Atom type|④ Charge"></div>
+</div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 03주차 덱 #15 · 타입 · 전하 · ε · σ = 참고 사례 Toluene.json (antechamber AM1-BCC) = week04/data/Toluene_gaff2.json</span><span class="en" data-i>Original week-03 deck #15 · type · charge · ε · σ = reference case Toluene.json (antechamber AM1-BCC) = week04/data/Toluene_gaff2.json</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 11 DEF 5 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>용어 정의</span><span class="en" data-i>Key terms</span></p>
+<div class="hrow"><span class="hico" data-ico="book-marked"></span><h2 class="h"><span class="ko" data-i>새 용어 5: 원자 타입 · 조합 규칙 · 부분전하 · 1-4 축소 · 이웃 목록</span><span class="en" data-i>5 new terms: atom type · combining rule · partial charge · 1-4 scaling · neighbor list</span></h2></div>
+<p class="sub"><span class="ko" data-i>영어 병기 · 한 줄 정의 · 주기경계조건 · 컷오프는 17 · 18장 그림에서</span><span class="en" data-i>English given · one-line definition · periodic boundary condition · cutoff in figures on slides 17 · 18</span></p>
+<div class="bd">
+<div class="defs icon">
+<div class="defcard icon a" style="--d:1"><span class="lic" data-ico="hash"></span><p class="term"><span class="ko" data-i>원자 타입<em>atom type</em></span><span class="en" data-i>Atom type<em>atom type</em></span></p><p class="def"><span class="ko" data-i>원소 + 결합 환경으로 나눈 분류(ca · c3 · ha · hc) · 상수 = 원자 대신 타입 단위</span><span class="en" data-i>Classification by element + bonding environment (ca · c3 · ha · hc) · constants = per type, not per atom</span></p><p class="again">W06 · W08</p></div>
+<div class="defcard icon a" style="--d:2"><span class="lic" data-ico="merge"></span><p class="term"><span class="ko" data-i>조합 규칙<em>combining rule</em></span><span class="en" data-i>Combining rule<em>combining rule</em></span></p><p class="def"><span class="ko" data-i>같은 타입끼리의 상수로 이종쌍(unlike pair) 상수를 만드는 규칙 · GAFF2 = 산술 평균(LB)</span><span class="en" data-i>Rule that builds unlike-pair constants from same-type constants · GAFF2 = arithmetic mean (LB)</span></p><p class="again">W08 · W10</p></div>
+<div class="defcard icon a" style="--d:3"><span class="lic" data-ico="circle-dot"></span><p class="term"><span class="ko" data-i>부분전하<em>partial charge</em></span><span class="en" data-i>Partial charge<em>partial charge</em></span></p><p class="def"><span class="ko" data-i>원자마다 배정한 소수 전하(e 단위) · 분자 합 = 형식전하(formal charge) · 정전기 항의 입력</span><span class="en" data-i>Fractional charge assigned to each atom (in units of e) · molecular sum = formal charge · input of electrostatic term</span></p><p class="again">W06 · W10</p></div>
+<div class="defcard icon a" style="--d:4"><span class="lic" data-ico="shrink"></span><p class="term"><span class="ko" data-i>1-4 축소<em>1-4 scaling</em></span><span class="en" data-i>1-4 scaling<em>1-4 scaling</em></span></p><p class="def"><span class="ko" data-i>결합 3개 떨어진 원자쌍의 비결합 항에 곱하는 계수 · GAFF2 LJ 0.5 · 쿨롱 0.8333 · 계 전체 하나</span><span class="en" data-i>Factor multiplied to the nonbonded term of atom pairs 3 bonds apart · GAFF2 LJ 0.5 · Coulomb 0.8333 · one for the whole system</span></p><p class="again">W06 · W08</p></div>
+<div class="defcard icon a" style="--d:5"><span class="lic" data-ico="radar"></span><p class="term"><span class="ko" data-i>이웃 목록<em>neighbor list</em></span><span class="en" data-i>Neighbor list<em>neighbor list</em></span></p><p class="def"><span class="ko" data-i>컷오프 + skin 안의 원자 명단 · 몇 스텝 재사용 → 쌍 탐색 비용이 원자 수에 비례</span><span class="en" data-i>List of atoms within cutoff + skin · reused for a few steps → pair search cost proportional to atom count</span></p><p class="again">W06 · W07</p></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>정의 문구 = 저장소 GLOSSARY.md · 1-4 값 출처 참고 사례(연구 플랫폼 설정) ff_stack.py special_bonds</span><span class="en" data-i>Definition wording = repository GLOSSARY.md · source of 1-4 values: reference case (research platform settings) ff_stack.py special_bonds</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 12 SIM 조합 규칙 -->
+<section class="slide v3" data-src="03주차#17">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>4-2 · 확인 · 조작형</span><span class="en" data-i>4-2 · Check · interactive</span></p>
+<div class="hrow"><span class="hico" data-ico="sliders-horizontal"></span><h2 class="h"><span class="ko" data-i>조합 규칙: 두 원자 크기를 평균 내는 방법 · 힘장마다 다름</span><span class="en" data-i>Combining rule: how to average two atom sizes · differs by force field</span></h2></div>
+<p class="sub"><span class="ko" data-i>타입 두 개 선택 → 세 규칙의 이종쌍 크기 · 세기 · 곡선 동시 변화 · 크기 순서 = 기하 ≤ 산술 ≤ 6제곱 · GAFF2 = 산술</span><span class="en" data-i>Pick two types → unlike-pair size · strength · curve change for all three rules · size order = geometric ≤ arithmetic ≤ 6th-power · GAFF2 = arithmetic</span></p>
+<div class="bd">
+<div class="sim w04-sim" id="sim-mix">
+<div class="ctl">
+<label><span class="ko" data-i><b>타입 i</b></span><span class="en" data-i><b>Type i</b></span><div class="w04-chips" data-g="i"></div></label>
+<label><span class="ko" data-i><b>타입 j</b></span><span class="en" data-i><b>Type j</b></span><div class="w04-chips" data-g="j"></div></label>
+<label><span class="ko" data-i><b>곡선에 쓸 규칙</b></span><span class="en" data-i><b>Rule for the curve</b></span><div class="w04-chips" data-g="rule"><button type="button" data-rule="lb"><span class="ko" data-i>산술 · LB</span><span class="en" data-i>Arithmetic · LB</span></button><button type="button" data-rule="geo" class="alt"><span class="ko" data-i>기하</span><span class="en" data-i>Geometric</span></button><button type="button" data-rule="wh" class="alt"><span class="ko" data-i>6제곱 · WH</span><span class="en" data-i>6th-power · WH</span></button></div></label>
+<button type="button" data-act="fail"><span class="ko" data-i>실패 상태 (ca – ClayFF Si: ε ≈ 0)</span><span class="en" data-i>Failure state (ca – ClayFF Si: ε ≈ 0)</span></button>
+<button type="button" class="alt" data-act="reset"><span class="ko" data-i>초기값 (ca – hc)</span><span class="en" data-i>Initial values (ca – hc)</span></button>
+</div>
+<div class="view"><svg viewBox="0 0 1120 400" aria-label="세 규칙의 이종쌍 LJ 곡선"></svg>
+<div class="kpi"><div><span class="ko" data-i>산술 LB <b data-o="lb"> · </b></span><span class="en" data-i>Arithmetic LB <b data-o="lb"> · </b></span></div><div><span class="ko" data-i>기하 <b data-o="geo"> · </b></span><span class="en" data-i>Geometric <b data-o="geo"> · </b></span></div><div><span class="ko" data-i>6제곱 WH <b data-o="wh"> · </b></span><span class="en" data-i>6th-power WH <b data-o="wh"> · </b></span></div><div>r<sub>min</sub> <b data-o="rmin"> · </b></div></div></div>
+</div>
+<div class="foot a" style="--d:1"><span class="ko" data-i><b>숫자로 한 번</b> · ca–hc 규칙만 산술 → 6제곱: 접촉 거리 3.320 → 3.433 Å · 세기는 두 값의 곱에서 → 한쪽 ≈ 0 이면 인력 소실 · <b>표면 O(세기 0.155)</b> ↔ 유기 C/H 분산력 (W10)</span><span class="en" data-i><b>One example with numbers</b> · only the ca–hc rule changes arithmetic → 6th-power: contact distance 3.320 → 3.433 Å · strength comes from the product of two values → if one ≈ 0 the attraction vanishes · <b>surface O (strength 0.155)</b> ↔ organic C/H dispersion (W10)</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>ε · σ = 참고 사례(연구 플랫폼 결과) gaff2_atom_types.csv · clayff_lj.csv · 같은 계산: week04/live/mixing_rules.ipynb</span><span class="en" data-i>ε · σ = reference case (research platform result) gaff2_atom_types.csv · clayff_lj.csv · same calculation: week04/live/mixing_rules.ipynb</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 13 TWEAK 산술 ↔ 6제곱 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>4-2 · 왜</span><span class="en" data-i>4-2 · Why</span></p>
+<div class="hrow"><span class="hico" data-ico="scale"></span><h2 class="h"><span class="ko" data-i>힘장 선택이 바꾸는 결과: 밀도 오차 · 예측 오차 · 설정 오차</span><span class="en" data-i>What force-field choice changes: density error · prediction error · setup error</span></h2></div>
+<p class="sub"><span class="ko" data-i>이미 나온 실행값 셋 · 힘장 · 설정이 다른 결과끼리 비교 = 재료 차이와 힘장 차이 혼동</span><span class="en" data-i>Three existing run values · comparing results with different force fields · settings = confusing material differences with force-field differences</span></p>
+<div class="bd">
+<div class="grid c3">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="weight"></span><div><p class="k"><span class="ko" data-i>밀도 · 힘장 자체의 치우침</span><span class="en" data-i>Density · bias of force field itself</span></p><h4><span class="ko" data-i>GAFF2 비정질 MD</span><span class="en" data-i>GAFF2 amorphous MD</span></h4></div></div><div class="n md nosum"><span class="ko" data-i>실측보다 약 2.5 % 낮음</span><span class="en" data-i>About 2.5 % lower than measured</span></div><div class="bars w04-bars"><div class="bar"><div class="l"><span class="ko" data-i>실측</span><span class="en" data-i>Measured</span></div><div class="b gr" style="width:240px"></div><div class="v nosum"><span class="ko" data-i>기준</span><span class="en" data-i>Reference</span></div></div><div class="bar"><div class="l">GAFF2 MD</div><div class="b bl" style="width:234px"></div><div class="v nosum">−2.5 %</div></div></div><p><span class="ko" data-i>26/28점 · 계통 오차 보정 전 · 보고서 한계 줄에 기록 (W16)</span><span class="en" data-i>26/28 points · before systematic-error correction · record in limits line of report (W16)</span></p></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="database"></span><div><p class="k"><span class="ko" data-i>학습 데이터 · 힘장 혼합</span><span class="en" data-i>Training data · force-field mixture</span></p><h4><span class="ko" data-i>밀도 예측 RMSE</span><span class="en" data-i>Density prediction RMSE</span></h4></div></div><div class="n md nosum">0.0085 → 0.0109</div><div class="bars w04-bars"><div class="bar"><div class="l"><span class="ko" data-i>GAFF2 165건</span><span class="en" data-i>GAFF2 165 entries</span></div><div class="b gr" style="width:187px"></div><div class="v nosum">0.0085</div></div><div class="bar"><div class="l"><span class="ko" data-i>혼합</span><span class="en" data-i>Mixed</span></div><div class="b" style="width:240px"></div><div class="v nosum">0.0109</div></div></div><p><span class="ko" data-i>혼합 = COMPASS 5,346건 + GAFF2 165건 · 데이터가 늘어도 오차 증가 (W15)</span><span class="en" data-i>Mixed = COMPASS 5,346 entries + GAFF2 165 entries · error rises even as data grows (W15)</span></p></div>
+<div class="it a" style="--d:3"><div class="ih"><span class="icb" data-ico="scissors"></span><div><p class="k"><span class="ko" data-i>같은 힘장 · 설정 차이</span><span class="en" data-i>Same force field · setup difference</span></p><h4><span class="ko" data-i>6 Å 절단만</span><span class="en" data-i>6 Å cutoff only</span></h4></div></div><div class="n md nosum"><span class="ko" data-i>오차 30 %</span><span class="en" data-i>Error 30 %</span></div><div class="bars w04-bars"><div class="bar"><div class="l"><span class="ko" data-i>절단만 6 Å</span><span class="en" data-i>Cutoff only 6 Å</span></div><div class="b" style="width:240px"></div><div class="v nosum">30 %</div></div><div class="bar"><div class="l"><span class="ko" data-i>보정 후 8 Å</span><span class="en" data-i>After correction 8 Å</span></div><div class="b gr" style="width:4px"></div><div class="v nosum">−0.10 %</div></div></div><p><span class="ko" data-i>꼬리 보정 후 8 Å −0.10 % · 설정 하나로 차이 (20장)</span><span class="en" data-i>After tail correction 8 Å −0.10 % · difference from one setting (slide 20)</span></p></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i><b>현장 의미</b> · 밀도 수 % = 포장 무게 · 공극 계산의 차이 · 데이터셋 전체 힘장 하나 · 실험 ID 에 힘장 이름 · 설정 기록</span><span class="en" data-i><b>Practical meaning</b> · density of a few % = packing weight · void calculation difference · one force field for entire dataset · force-field name in experiment ID · record settings</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>수치 = repo/week16/expected_output/example_project/limits.md(26/28점) · W15 검증 장(GAFF2 165건 · 혼합) · 이 덱 20장 컷오프 스캔</span><span class="en" data-i>Values = repo/week16/expected_output/example_project/limits.md (26/28 points) · W15 validation slide (GAFF2 165 entries · mixed) · cutoff scan on slide 20 of this deck</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 14 FIG 부분전하 방법 · 결정 시점 -->
+<section class="slide v3" data-src="03주차#18,03주차#19">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>4-2 · 어떻게</span><span class="en" data-i>4-2 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="circle-dot"></span><h2 class="h"><span class="ko" data-i>부분전하 방법: 빠른 근사(AM1-BCC) 기본 · 고정 = 파일 · 재분배 = 매 스텝</span><span class="en" data-i>Partial-charge methods: fast approximation (AM1-BCC) default · fixed = file · redistributed = every step</span></h2></div>
+<p class="sub"><span class="ko" data-i>가로 = 비용 · 세로 = 근거의 수준 · 방법 상이 → 같은 분자라도 q 상이 · 한 데이터셋에는 한 방법</span><span class="en" data-i>Horizontal = cost · vertical = level of grounding · different method → different q even for same molecule · one method per dataset</span></p>
+<div class="bd">
+<div class="row">
+<div class="figw white fill"><svg viewBox="0 0 960 500" class="cfig">
+<line x1="100" y1="420" x2="900" y2="420" stroke="#6E655C" stroke-width="3"/><line x1="100" y1="420" x2="100" y2="50" stroke="#6E655C" stroke-width="3"/>
+<text x="500" y="468" class="cfs" text-anchor="middle"><tspan class="ko" data-i>비용 (분자 1개)</tspan><tspan class="en" data-i>Cost (per 1 molecule)</tspan></text><text x="44" y="240" class="cfs" text-anchor="middle" transform="rotate(-90 44 240)"><tspan class="ko" data-i>근거의 수준 · 전자 분포 반영</tspan><tspan class="en" data-i>Level of grounding · reflects electron distribution</tspan></text>
+<g class="cfm" text-anchor="middle" font-size="18"><text x="180" y="448"><tspan class="ko" data-i>즉시</tspan><tspan class="en" data-i>Instant</tspan></text><text x="360" y="448"><tspan class="ko" data-i>초</tspan><tspan class="en" data-i>Seconds</tspan></text><text x="540" y="448"><tspan class="ko" data-i>분 ~ 시간</tspan><tspan class="en" data-i>Minutes ~ hours</tspan></text><text x="720" y="448"><tspan class="ko" data-i>DFT 1회</tspan><tspan class="en" data-i>DFT 1 run</tspan></text><text x="880" y="448"><tspan class="ko" data-i>매 스텝</tspan><tspan class="en" data-i>Every step</tspan></text></g>
+<circle cx="180" cy="360" r="16" fill="#9AA5B1"/><text x="180" y="330" class="cft" text-anchor="middle">Gasteiger · MMFF94</text><text x="180" y="392" class="cfmu" text-anchor="middle"><tspan class="ko" data-i>전기음성도 균등화 · 선별용</tspan><tspan class="en" data-i>Electronegativity equalization · for screening</tspan></text>
+<circle cx="360" cy="190" r="22" fill="#E37F1A"/><circle class="pulse" cx="360" cy="190" r="22" fill="#E37F1A" opacity=".4"/><text x="360" y="150" class="cfh" text-anchor="middle" fill="#C8610C" font-size="22"><tspan class="ko" data-i>AM1-BCC · 이 강좌</tspan><tspan class="en" data-i>AM1-BCC · this course</tspan></text><text x="360" y="232" class="cfmu" text-anchor="middle"><tspan class="ko" data-i>반경험적 AM1 + 결합별 보정</tspan><tspan class="en" data-i>Semi-empirical AM1 + per-bond correction</tspan></text>
+<circle cx="540" cy="120" r="16" fill="#4F7FB0"/><text x="540" y="90" class="cft" text-anchor="middle">RESP (HF/6-31G*)</text><text x="540" y="152" class="cfmu" text-anchor="middle"><tspan class="ko" data-i>참조값 · 극성 분자</tspan><tspan class="en" data-i>Reference values · polar molecules</tspan></text>
+<circle cx="720" cy="100" r="16" fill="#2E8B57"/><text x="720" y="70" class="cft" text-anchor="middle">CM5 · Hirshfeld · DDEC6</text><text x="720" y="132" class="cfmu" text-anchor="middle"><tspan class="ko" data-i>전자밀도 분할 · C-S-H · 표면</tspan><tspan class="en" data-i>Electron-density partitioning · C-S-H · surface</tspan></text>
+<circle cx="880" cy="250" r="16" fill="#231F20"/><text x="880" y="220" class="cft" text-anchor="middle">QEq · EEM</text><text x="880" y="282" class="cfmu" text-anchor="middle"><tspan class="ko" data-i>계산 중 변동 · ReaxFF</tspan><tspan class="en" data-i>Varies during calculation · ReaxFF</tspan></text>
+<rect x="110" y="52" width="300" height="46" rx="10" fill="#FFF1E0"/><text x="260" y="82" class="cfh" text-anchor="middle" font-size="19"><tspan class="ko" data-i>고정전하 = 파일에 미리 (비용 0)</tspan><tspan class="en" data-i>Fixed charge = pre-set in file (cost 0)</tspan></text>
+<text x="260" y="124" class="cfmu" text-anchor="middle">ClayFF Si +2.1 · O −1.05 · SPC/E O −0.8476</text>
+</svg></div>
+<div class="col" style="width:520px;flex:none">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="lock"></span><div><p class="k"><span class="ko" data-i>고정전하 · 파일</span><span class="en" data-i>Fixed charge · file</span></p><h4><span class="ko" data-i>타입별 사전 지정</span><span class="en" data-i>Pre-assigned per type</span></h4></div></div><p><span class="ko" data-i>ClayFF · 물 모델 · 목록 밖 골격은 불가</span><span class="en" data-i>ClayFF · water model · skeletons outside the list not possible</span></p></div>
+<div class="it hot a" style="--d:2"><div class="ih"><span class="icb" data-ico="circle-dot"></span><div><p class="k"><span class="ko" data-i>AM1-BCC · 이 강좌</span><span class="en" data-i>AM1-BCC · this course</span></p><h4><span class="ko" data-i>분자 생성 때 1회 → 라이브러리</span><span class="en" data-i>1× at molecule generation → library</span></h4></div></div><p><span class="ko" data-i>antechamber 600 s → 실패 시 sqm_robust 1회 · 분극 없음 · 형태 의존</span><span class="en" data-i>antechamber 600 s → on failure sqm_robust 1 time · no polarization · conformation-dependent</span></p></div>
+<div class="it dark a" style="--d:3"><div class="ih"><span class="icb" data-ico="zap"></span><div><p class="k"><span class="ko" data-i>QEq · 매 스텝</span><span class="en" data-i>QEq · every step</span></p><h4><span class="ko" data-i>E(q) 최소화 · Σq = 0</span><span class="en" data-i>Minimize E(q) · Σq = 0</span></h4></div></div><p><span class="ko" data-i>ReaxFF 검증 경로 전용 · Δt 0.5 fs</span><span class="en" data-i>ReaxFF validation route only · Δt 0.5 fs</span></p></div>
+</div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>한 데이터셋 <b>한 방법</b> · 혼용 = 학습에서 복구 불가능한 편향 (W14) · 한 셀 안 전하 척도 통일 (W08)</span><span class="en" data-i><b>One method</b> per dataset · mixing = bias unrecoverable in training (W14) · unify charge scale within one cell (W08)</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 03주차 덱 #18 · #19 · 7종 표 · 플랫폼 재시도 규칙 = repo/week04/docs/forcefield_tables.md</span><span class="en" data-i>Original week-03 deck #18 · #19 · table of 7 · platform retry rules = repo/week04/docs/forcefield_tables.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 15 MAKE P4-1 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>4-2 · 만들어 보기</span><span class="en" data-i>4-2 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="pencil-ruler"></span><h2 class="h"><span class="ko" data-i>만들어 보기 P4-1: 내 분자의 GAFF2 타입 · AM1-BCC 전하 직접 생성</span><span class="en" data-i>Try it P4-1: generate GAFF2 types · AM1-BCC charges for my molecule</span></h2></div>
+<div class="bd">
+<div class="make">
+<div class="left a" style="--d:1">
+<pre class="code"><span class="c"><span class="ko" data-i># 환경: Claude Code · week04 폴더에서 claude</span><span class="en" data-i># Setup: Claude Code · claude in week04 folder</span></span>
+<span class="c"><span class="ko" data-i># 1. 톨루엔 그대로 붙여 넣기 → 아래 표와 비교</span><span class="en" data-i># 1. Paste toluene as is → compare with table below</span></span>
+<span class="c"><span class="ko" data-i># 2. [Toluene] → 내 재료 분자(--smiles) · 같은 대화에서 재지시</span><span class="en" data-i># 2. [Toluene] → my material's molecule (--smiles) · re-prompt in same chat</span></span>
+<span class="c"><span class="ko" data-i># 3. 결과 → out/P4-1_result.md (Claude Code 저장)</span><span class="en" data-i># 3. Result → out/P4-1_result.md (saved by Claude Code)</span></span></pre>
+<div class="prompt" data-id="P4-1"><span class="pid">P4-1</span><span class="ko" data-i>MD 워크플로우(../mdworkflow · M-1 · M-2)로 분자 [Toluene] 의 힘장을 직접 만들어라(목록 밖 분자 = --smiles [SMILES] 와 이름). ① python ../mdworkflow/mdwf.py mol [Toluene] ② python ../mdworkflow/mdwf.py ff [Toluene] ③ ../mdworkflow/ws/ff/&lt;이름&gt;_gaff2.json 으로 원자별 표(번호 · 원소 · GAFF2 타입 · q · ε · σ) · 전하 합과 형식전하 · ATTN(parmchk2 가 빌린 값) 개수 · 결합 · 각 · 이면각 종류 수 ④ 톨루엔이면 @data/Toluene_gaff2.json 과 타입 · 전하 · 결합 매개변수 비교(번호 순서 무관 · 타입별). mdwf/ 는 고치지 말고, 오류가 나면 마지막 오류 줄과 원인을 보고하고 멈춰라.</span><span class="en" data-i>Build the force field of molecule [Toluene] yourself with the MD workflow (../mdworkflow · M-1 · M-2; molecule not in list = --smiles [SMILES] and a name). ① python ../mdworkflow/mdwf.py mol [Toluene] ② python ../mdworkflow/mdwf.py ff [Toluene] ③ from ../mdworkflow/ws/ff/&lt;name&gt;_gaff2.json: per-atom table (number · element · GAFF2 type · q · ε · σ) · charge sum vs formal charge · ATTN count (values borrowed by parmchk2) · number of bond · angle · dihedral types ④ for toluene, compare types · charges · bond parameters with @data/Toluene_gaff2.json (atom order irrelevant · match by type). Do not edit mdwf/; on an error, report the last error line and cause, then stop.</span></div>
+</div>
+<div class="expect a" style="--d:2">
+<h4><span class="tic" data-ico="table"></span><span class="ko" data-i>기대 결과 · 톨루엔 15원자 · MD 워크플로우 = 참고 사례</span><span class="en" data-i>Expected output · toluene 15 atoms · MD workflow = reference case</span></h4>
+<table class="t"><thead><tr><th><span class="ko" data-i>원자</span><span class="en" data-i>Atom</span></th><th><span class="ko" data-i>타입</span><span class="en" data-i>Type</span></th><th>q (e)</th><th>ε · σ</th></tr></thead><tbody>
+<tr><td><span class="ko" data-i>고리 C (ipso) × 1</span><span class="en" data-i>Ring C (ipso) × 1</span></td><td class="mono">ca</td><td class="mono">−0.077</td><td class="mono">0.0988 · 3.315</td></tr>
+<tr><td><span class="ko" data-i>고리 C × 5</span><span class="en" data-i>Ring C × 5</span></td><td class="mono">ca</td><td class="mono">−0.127 ~ −0.135</td><td class="mono">0.0988 · 3.315</td></tr>
+<tr><td><span class="ko" data-i>메틸 C × 1</span><span class="en" data-i>Methyl C × 1</span></td><td class="mono">c3</td><td class="mono">−0.054</td><td class="mono">0.1078 · 3.398</td></tr>
+<tr><td><span class="ko" data-i>고리 H × 5</span><span class="en" data-i>Ring H × 5</span></td><td class="mono">ha</td><td class="mono">+0.130</td><td class="mono">0.0161 · 2.626</td></tr>
+<tr><td><span class="ko" data-i>메틸 H × 3</span><span class="en" data-i>Methyl H × 3</span></td><td class="mono">hc</td><td class="mono">+0.044</td><td class="mono">0.0208 · 2.600</td></tr></tbody></table>
+<div class="cb"><span class="fc">Σq</span><span class="x">=</span><span class="fc or"><em>−1 × 10⁻⁶</em> ≈ 0</span><span class="x">·</span><span class="fc"><span class="ko" data-i>결합 상수 <em>4</em>종</span><span class="en" data-i><em>4</em> bond constants</span></span><span class="fc"><span class="ko" data-i>각 <em>5</em></span><span class="en" data-i><em>5</em> angles</span></span><span class="fc"><span class="ko" data-i>이면각 <em>6</em></span><span class="en" data-i><em>6</em> dihedrals</span></span></div>
+<p class="cap"><span class="ko" data-i>소수 셋째 자리 차이 허용(AM1-BCC 버전 차이) · Σq · 타입 수 = 일치 필수</span><span class="en" data-i>Differences in third decimal allowed (AM1-BCC version differences) · Σq · type count = must match</span></p>
+</div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>Σq 가 형식전하(톨루엔 0)인가 · ca 6 · c3 1 · ha 5 · hc 3 · 15원자 전부에 타입이 있는가</span><span class="en" data-i>Is Σq the formal charge (toluene 0)? · ca 6 · c3 1 · ha 5 · hc 3 · does all 15 atoms have a type?</span></p><p><span class="ko" data-i>내 재료 분자에 ATTN(parmchk2 가 빌린 값)이 남으면 그 원자 환경을 적어 두고 W06 에서 라이브러리와 비교</span><span class="en" data-i>If ATTN (values borrowed by parmchk2) remains for my material's molecule, note its atomic environment and compare with the library in W06</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>지시문 원문: week04/prompts.md · P4-1 · 기대 결과 = week04/data/Toluene_gaff2.json(참고 사례 · 연구 플랫폼 결과) · MD 워크플로우 = repo/mdworkflow (M-1 · M-2)</span><span class="en" data-i>Prompt source: week04/prompts.md · P4-1 · expected output = week04/data/Toluene_gaff2.json (reference case · research platform result) · MD workflow = repo/mdworkflow (M-1 · M-2)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 16 4-3 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 4-3 · 12분 · 영상 1편</span><span class="en" data-i>Session 4-3 · 12 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="grid-3x3"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">3</p><p class="hubt"><span class="ko" data-i>경계조건과 장거리</span><span class="en" data-i>Boundary conditions and long range</span></p><p class="hubs"><span class="ko" data-i>상자 경계 · 먼 쌍 · 쌍 탐색</span><span class="en" data-i>Box boundary · distant pairs · pair search</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>in 파일 세 줄의 근거</span><span class="en" data-i>Basis for the three lines of the in file</span></h4></div></div><p>pair_style lj/cut/coul/long 12.0 · kspace_style pppm 1.0e-4 · neighbor 2.0 bin</p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>W03 노트북의 두 줄 → W06 in 파일</span><span class="en" data-i>Two lines in W03 notebook → W06 in file</span></h4></div></div><p><span class="ko" data-i>지난 주 코드가 쓴 컷오프 8.5 Å · 최소 이미지의 이유</span><span class="en" data-i>Cutoff 8.5 Å used by last week's code · reason for minimum image</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 17 ANIM 주기경계 -->
+<section class="slide v3" data-min="3" data-src="02주차#23,02주차#27">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>4-3 · 어떻게</span><span class="en" data-i>4-3 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="grid-3x3"></span><h2 class="h"><span class="ko" data-i>주기경계조건: 반대편 유입 · 최소 이미지 · 셀 한 변 ≥ 컷오프 2배</span><span class="en" data-i>Periodic boundary condition: inflow from opposite side · minimum image · cell edge ≥ 2× cutoff</span></h2></div>
+<p class="sub"><span class="ko" data-i>중앙 셀 + 복제 8개 = 표면 없는 벌크 · 나간 원자는 반대편으로, 거리는 가장 가까운 복제본까지</span><span class="en" data-i>Central cell + 8 replicas = bulk without surface · atom that leaves re-enters on opposite side, distance to nearest replica</span></p>
+<div class="bd w04-split" style="grid-template-columns:600px minmax(0,1fr)">
+<div class="emb" data-emb="pbc" data-dur="12" data-steps="3" data-labels="① 유입|② 최소 이미지|③ 셀 크기" data-labels-en="① Inflow|② Minimum image|③ Cell size"></div>
+<div class="w04-terms">
+<div class="it"><p class="k"><span class="ko" data-i>① 유입</span><span class="en" data-i>① Inflow</span></p><h4><span class="ko" data-i>나간 원자 → 반대편</span><span class="en" data-i>Exiting atom → opposite side</span></h4><p><span class="ko" data-i>원자 수 보존 · 표면 없음 · W06 data 파일 xlo xhi · 계면 슬랩은 z 만 비주기 (W10)</span><span class="en" data-i>Atom count conserved · no surface · W06 data file xlo xhi · interface slab is non-periodic in z only (W10)</span></p></div>
+<div class="it"><p class="k"><span class="ko" data-i>② 최소 이미지</span><span class="en" data-i>② Minimum image</span></p><h4><span class="ko" data-i>거리 = 가장 가까운 복제본</span><span class="en" data-i>Distance = nearest replica</span></h4><p><span class="ko" data-i>거리 보정 한 줄 = W03 노트북 · 식 = 저장소 docs</span><span class="en" data-i>One-line distance correction = W03 notebook · formula = repository docs</span></p></div>
+<div class="it"><p class="k"><span class="ko" data-i>③ 셀 크기</span><span class="en" data-i>③ Cell size</span></p><h4><span class="ko" data-i>한 변 &gt; 컷오프 2배</span><span class="en" data-i>Edge &gt; 2× cutoff</span></h4><p><span class="ko" data-i>컷오프 원이 자기 복제본에 닿으면 자기 상호작용 · 컷오프 12 Å → 24 Å 이상</span><span class="en" data-i>If the cutoff circle reaches its own replica, the atom interacts with itself · cutoff 12 Å → 24 Å or more</span></p></div>
+</div>
+</div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 02주차 덱 #23 · #27 · W03 LJ 상자(17.5 Å)에서 컷오프 12 Å 를 못 쓰는 이유 = 규칙 ③</span><span class="en" data-i>Original week-02 deck #23 · #27 · why cutoff 12 Å cannot be used in W03 LJ box (17.5 Å) = rule ③</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 18 ANIM 컷오프 · 분할 -->
+<section class="slide v3" data-min="3" data-src="02주차#24,02주차#25">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>4-3 · 왜</span><span class="en" data-i>4-3 · Why</span></p>
+<div class="hrow"><span class="hico" data-ico="scissors"></span><h2 class="h"><span class="ko" data-i>컷오프: 가까운 쌍만 직접 계산 · 먼 전하는 따로 묶어 계산</span><span class="en" data-i>Cutoff: compute only nearby pairs directly · bundle distant charges and compute separately</span></h2></div>
+<p class="sub"><span class="ko" data-i>반데르발스 = 멀어지면 빠르게 소멸 → 자르고 꼬리만 보정 · 정전기 = 멀리까지 남음 → 자르지 않고 근거리 · 원거리로 나눠 계산</span><span class="en" data-i>van der Waals = decays fast with distance → cut and correct only the tail · electrostatics = persists far → do not cut, split into near · far parts</span></p>
+<div class="bd w04-split" style="grid-template-columns:minmax(0,1fr) 520px">
+<div class="emb" data-emb="decay" data-dur="12" data-steps="3" data-labels="① 절단|② 꼬리 보정|③ Ewald 분할" data-labels-en="① Cutoff|② Tail correction|③ Ewald split"></div>
+<div class="w04-terms">
+<div class="it"><p class="k"><span class="ko" data-i>① 절단 · 컷오프 12 Å</span><span class="en" data-i>① Cutoff · 12 Å</span></p><h4><span class="ko" data-i>컷오프 밖의 쌍 = 계산 생략</span><span class="en" data-i>Pairs beyond cutoff = calculation skipped</span></h4><p><span class="ko" data-i>증상: 힘 불연속 → 에너지 드리프트 · 극성기 컷오프 부근 인위 배열</span><span class="en" data-i>Symptoms: force discontinuity → energy drift · artificial ordering of polar groups near cutoff</span></p></div>
+<div class="it"><p class="k"><span class="ko" data-i>② 꼬리 보정 · 반데르발스</span><span class="en" data-i>② Tail correction · van der Waals</span></p><h4><span class="ko" data-i>잘린 바깥 몫을 평균 밀도로 가산</span><span class="en" data-i>Add the cut-off outer share using average density</span></h4><p><span class="ko" data-i>8 Å 에서도 −0.10 % (20장) · 균일 밀도 가정</span><span class="en" data-i>−0.10 % even at 8 Å (slide 20) · assumes uniform density</span></p></div>
+<div class="it"><p class="k"><span class="ko" data-i>③ 나눠 계산 · 정전기 (Ewald · PPPM)</span><span class="en" data-i>③ Split calculation · electrostatics (Ewald · PPPM)</span></p><h4><span class="ko" data-i>근거리 = 직접 · 원거리 = 격자에 모아 한 번에</span><span class="en" data-i>Near = direct · far = gather on grid and compute at once</span></h4><p><span class="ko" data-i>PPPM = 격자 + FFT · 힘 오차 1e−4 · 원자 수가 늘어도 비용 완만</span><span class="en" data-i>PPPM = grid + FFT · force error 1e−4 · cost grows gently with atom count</span></p></div>
+</div>
+</div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 02주차 덱 #24 · #25 · 설정 = 참고 사례(연구 플랫폼 설정) ff_stack.py: pair_style lj/cut/coul/long 12.0 · kspace_style pppm 1.0e-4 · kspace_modify slab 3.0(층상 셀)</span><span class="en" data-i>Original week-02 deck #24 · #25 · settings = reference case (research platform settings) ff_stack.py: pair_style lj/cut/coul/long 12.0 · kspace_style pppm 1.0e-4 · kspace_modify slab 3.0 (layered cell)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 19 FIG 이웃 목록 · 계 크기 -->
+<section class="slide v3" data-min="2.5" data-src="02주차#26,02주차#27">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>4-3 · 어떻게</span><span class="en" data-i>4-3 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="radar"></span><h2 class="h"><span class="ko" data-i>이웃 목록: 가까운 원자 명단만 확인 · 계 크기는 물성별 상이</span><span class="en" data-i>Neighbor list: check only the nearby-atom list · system size differs by property</span></h2></div>
+<p class="sub"><span class="ko" data-i>원자마다 주변 명단 · 몇 스텝 재사용 · 명단 길이는 전체 원자 수와 무관 → 비용이 원자 수에 비례 · 권장 2만 ~ 10만 원자</span><span class="en" data-i>Per-atom neighbor list · reused for a few steps · list length independent of total atoms → cost proportional to atom count · recommended 20,000 ~ 100,000 atoms</span></p>
+<div class="bd">
+<div class="row">
+<div class="col" style="width:760px;flex:none">
+<pre class="code a" style="--d:1"><span class="k">neighbor</span>      2.0 bin        <span class="c"><span class="ko" data-i># skin 2.0 Å · 격자 탐색</span><span class="en" data-i># skin 2.0 Å · grid search</span></span>
+<span class="k">neigh_modify</span>  every 1 delay 0 check yes
+<span class="c"><span class="ko" data-i># check yes = 원자 이동 ≥ skin/2 일 때만 재구성</span><span class="en" data-i># check yes = rebuild only when atom moves ≥ skin/2</span></span></pre>
+<div class="figw white" style="height:250px"><svg viewBox="0 0 740 250" class="cfig">
+<circle cx="150" cy="125" r="100" fill="#FFF1E0" stroke="#E37F1A" stroke-width="3"/><circle cx="150" cy="125" r="76" fill="none" stroke="#C8610C" stroke-width="3" stroke-dasharray="8 6"/><circle cx="150" cy="125" r="10" fill="#C8610C"/>
+<g fill="#4F7FB0"><circle cx="110" cy="80" r="8"/><circle cx="200" cy="100" r="8"/><circle cx="170" cy="170" r="8"/><circle cx="95" cy="150" r="8"/><circle cx="215" cy="160" r="8"/></g><g fill="#9AA5B1"><circle cx="60" cy="60" r="8"/><circle cx="240" cy="60" r="8"/><circle cx="235" cy="205" r="8"/></g>
+<text x="12" y="22" class="cft"><tspan class="ko" data-i>컷오프(점선) + skin 2.0(주황) = 명단 범위</tspan><tspan class="en" data-i>Cutoff (dotted) + skin 2.0 (orange) = list range</tspan></text>
+<text x="300" y="100" class="cfs"><tspan class="ko" data-i>파랑 = 목록 안 · 회색 = 밖</tspan><tspan class="en" data-i>Blue = in list · gray = outside</tspan></text><text x="300" y="135" class="cfs"><tspan class="ko" data-i>N 10만 · 모든 쌍 = 50억 · 불가</tspan><tspan class="en" data-i>N 100,000 · all pairs = 5,000,000,000 · infeasible</tspan></text><text x="300" y="170" class="cfs"><tspan class="ko" data-i>bin = 인접 27칸만 탐색 (cell list)</tspan><tspan class="en" data-i>bin = search only adjacent 27 cells (cell list)</tspan></text><text x="300" y="215" class="cfm" fill="#D9534F" font-size="18"><tspan class="ko" data-i>skin 과소 → dangerous builds (W07)</tspan><tspan class="en" data-i>skin too small → dangerous builds (W07)</tspan></text>
+</svg></div>
+</div>
+<div class="it fill a" style="--d:2"><div class="ih"><span class="icb" data-ico="expand"></span><div><p class="k"><span class="ko" data-i>계 크기 · 유한 크기 효과</span><span class="en" data-i>System size · finite-size effect</span></p><h4><span class="ko" data-i>물성별 권장 원자 수</span><span class="en" data-i>Recommended atoms per property</span></h4></div></div>
+<div class="bars">
+<div class="bar"><div class="l"><span class="ko" data-i>밀도 · CED<small>국소 평균량</small></span><span class="en" data-i>Density · CED<small>local average quantity</small></span></div><div class="b gr" style="width:150px"></div><div class="v nosum"><span class="ko" data-i>2만 ~ 5만</span><span class="en" data-i>20,000 ~ 50,000</span></div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>점도 · 확산<small>장파장 요동</small></span><span class="en" data-i>Viscosity · diffusion<small>long-wavelength fluctuation</small></span></div><div class="b bl" style="width:300px"></div><div class="v nosum"><span class="ko" data-i>5만 ~ 10만</span><span class="en" data-i>50,000 ~ 100,000</span></div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>계면 분리일<small>두 슬랩 · 두께</small></span><span class="en" data-i>Interfacial work of separation<small>two slabs · thickness</small></span></div><div class="b" style="width:360px"></div><div class="v nosum"><span class="ko" data-i>10만 이상</span><span class="en" data-i>100,000 or more</span></div></div>
+</div>
+<p><span class="ko" data-i>검증 = 계 크기 <b>2배</b>로 재계산 · 차이가 통계 오차 이내 → 확정 · W06 실습은 작게(톨루엔 50분자 · 750원자)</span><span class="en" data-i>Check = recompute with system size <b>2×</b> · difference within statistical error → confirmed · W06 practice kept small (50 toluene molecules · 750 atoms)</span></p></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 02주차 덱 #26 · #27 · 인수 4종 표 = repo/week04/docs/forcefield_tables.md</span><span class="en" data-i>Original week-02 deck #26 · #27 · table of 4 arguments = repo/week04/docs/forcefield_tables.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 20 FIG 컷오프 스캔 -->
+<section class="slide v3" data-min="2.5">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>4-3 · 확인</span><span class="en" data-i>4-3 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="gauge"></span><h2 class="h"><span class="ko" data-i>컷오프 스캔: 꼬리 보정 하나로 오차 대폭 감소</span><span class="en" data-i>Cutoff scan: a single tail correction greatly reduces the error</span></h2></div>
+<p class="sub"><span class="ko" data-i>절단만 6 Å 30 % → 12 Å 3.9 % · 보정 후 8 Å −0.10 % · LJ 유체 216입자 · 상자 26.2 Å(컷오프 2배 조건 통과) · 22장 노트북 출력</span><span class="en" data-i>Cutoff only 6 Å 30 % → 12 Å 3.9 % · after correction 8 Å −0.10 % · LJ fluid 216 particles · box 26.2 Å (passes 2×-cutoff condition) · slide 22 notebook output</span></p>
+<div class="bd">
+<div class="w04-two">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="scissors"></span><div><p class="k"><span class="ko" data-i>절단만 · 기준 대비 오차</span><span class="en" data-i>Cutoff only · error vs reference</span></p><h4><span class="ko" data-i>r⁻⁶ 꼬리를 버리면</span><span class="en" data-i>If the r⁻⁶ tail is dropped</span></h4></div></div>
+<div class="bars">
+<div class="bar"><div class="l"><span class="ko" data-i>6 Å<small>쌍 1,106</small></span><span class="en" data-i>6 Å<small>1,106 pairs</small></span></div><div class="b" style="width:420px"></div><div class="v">30.2 %</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>8 Å<small>쌍 2,685</small></span><span class="en" data-i>8 Å<small>2,685 pairs</small></span></div><div class="b" style="width:181px"></div><div class="v">13.0 %</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>10 Å<small>쌍 5,373</small></span><span class="en" data-i>10 Å<small>5,373 pairs</small></span></div><div class="b" style="width:93px"></div><div class="v">6.7 %</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>12 Å<small>쌍 9,204</small></span><span class="en" data-i>12 Å<small>9,204 pairs</small></span></div><div class="b" style="width:54px"></div><div class="v">3.9 %</div></div>
+</div><p><span class="ko" data-i>r<sub>c</sub> 를 1.5배 늘려도 오차는 1/3 · 쌍 수는 3.4배</span><span class="en" data-i>Raising r<sub>c</sub> by 1.5× cuts error to 1/3 · pairs 3.4×</span></p></div>
+<div class="it green a" style="--d:2"><div class="ih"><span class="icb" data-ico="check"></span><div><p class="k"><span class="ko" data-i>꼬리 보정 후 · 기준 대비 오차</span><span class="en" data-i>After tail correction · error vs reference</span></p><h4><span class="ko" data-i>적분으로 가산하면</span><span class="en" data-i>If added by integral</span></h4></div></div>
+<div class="bars">
+<div class="bar"><div class="l">6 Å</div><div class="b gr" style="width:420px"></div><div class="v">−0.48 %</div></div>
+<div class="bar"><div class="l">8 Å</div><div class="b gr" style="width:88px"></div><div class="v">−0.10 %</div></div>
+<div class="bar"><div class="l">10 Å</div><div class="b gr" style="width:44px"></div><div class="v">−0.05 %</div></div>
+<div class="bar"><div class="l">12 Å</div><div class="b gr" style="width:8px"></div><div class="v">−0.003 %</div></div>
+</div><p><span class="ko" data-i>막대 길이 = 비례 눈금(왼쪽과 다름) · 8 Å 도 0.1 % · <b>LJ 만 있을 때</b> · 쿨롱은 분할(18장)</span><span class="en" data-i>Bar length = proportional scale (differs from left) · 8 Å also 0.1 % · <b>LJ only</b> · Coulomb is split (slide 18)</span></p></div>
+</div>
+<div class="foot a" style="--d:3"><span class="ko" data-i>기준 = r<sub>c</sub> L/2 + 꼬리 보정 U −54.52 · 12 Å + PPPM 이 기본값인 이유 = <b>쿨롱의 실공간 쪽도 12 Å 에서 자르기 때문</b></span><span class="en" data-i>Reference = r<sub>c</sub> L/2 + tail correction U −54.52 · why 12 Å + PPPM is the default = <b>Coulomb's real-space part is also cut at 12 Å</b></span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>수치 = week04/expected_output/cutoff_scan.json (ff_tools.py cutoff_scan · N 216)</span><span class="en" data-i>Values = week04/expected_output/cutoff_scan.json (ff_tools.py cutoff_scan · N 216)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 21 4-4 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 4-4 · 12분 · 영상 1편</span><span class="en" data-i>Session 4-4 · 12 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="pencil-ruler"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">4</p><p class="hubt"><span class="ko" data-i>만들어 보기 · 내 분자</span><span class="en" data-i>Try it · my molecule</span></p><p class="hubs"><span class="ko" data-i>이종쌍 표 · 컷오프 스캔 · 힘장 설정 표</span><span class="en" data-i>Unlike-pair table · cutoff scan · force-field setup table</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>mixing_table.csv · cutoff_scan.json · 힘장 설정 표</span><span class="en" data-i>mixing_table.csv · cutoff_scan.json · force-field setup table</span></h4></div></div><p><span class="ko" data-i>노트북 ▶ 두 번 + 프롬프트 P4-2 · P4-3</span><span class="en" data-i>Notebook ▶ twice + prompts P4-2 · P4-3</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>W06 in 파일 · data 파일의 입력</span><span class="en" data-i>Input for W06 in file · data file</span></h4></div></div><p><span class="ko" data-i>이 표의 값 → pair_coeff · special_bonds · kspace 줄에 그대로 입력</span><span class="en" data-i>Values of this table → enter as-is into pair_coeff · special_bonds · kspace lines</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 22 MAKE P4-2 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>4-4 · 만들어 보기</span><span class="en" data-i>4-4 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="play"></span><h2 class="h"><span class="ko" data-i>만들어 보기 P4-2: 노트북 실행 → 이종쌍 표 · 컷오프 스캔 → 최대 컷오프</span><span class="en" data-i>Try it P4-2: run notebooks → unlike-pair table · cutoff scan → maximum cutoff</span></h2></div>
+<div class="bd">
+<div class="make">
+<div class="left a" style="--d:1">
+<pre class="code"><span class="c"><span class="ko" data-i># 환경: Claude Code · week04 폴더에서 claude</span><span class="en" data-i># Setup: Claude Code · claude in week04 folder</span></span>
+python ../run_nb.py notebooks/01_mixing_rules.ipynb
+python ../run_nb.py notebooks/02_pbc_cutoff.ipynb
+<span class="c"><span class="ko" data-i># → out/ 3개 파일 · 같은 계산 = scripts/ff_tools.py</span><span class="en" data-i># → 3 files in out/ · same calculation = scripts/ff_tools.py</span></span></pre>
+<div class="prompt" data-id="P4-2"><span class="pid">P4-2</span><span class="ko" data-i>@notebooks/01_mixing_rules.ipynb 와 @notebooks/02_pbc_cutoff.ipynb 를 차례로 실행하고, 생긴 out/cutoff_scan.json 을 읽어라. ① 컷오프별 절단 오차(rel_diff_vs_ref_pct)와 꼬리 보정 후 오차(rel_diff_with_tail_pct)를 표로 정리해라. ② 셀 한 변 L_A 와 2 × 컷오프 조건으로 이 상자에서 쓸 수 있는 최대 컷오프를 답해라. ③ 꼬리 보정 후 오차가 1 % 이내인 가장 작은 컷오프를 답하고 근거 행을 인용해라. 파일에 없는 값은 계산하지 말고 「확인 필요」로 표시해라. 끝나면 out/ 의 세 파일을 expected_output/ 과 비교해라.</span><span class="en" data-i>Run @notebooks/01_mixing_rules.ipynb and @notebooks/02_pbc_cutoff.ipynb in order, and read the resulting out/cutoff_scan.json. ① Tabulate the truncation error per cutoff (rel_diff_vs_ref_pct) and the error after tail correction (rel_diff_with_tail_pct). ② Using cell edge L_A and the 2 × cutoff condition, state the maximum cutoff usable in this box. ③ State the smallest cutoff whose error after tail correction is within 1 % and cite the supporting row. Do not compute values not in the file; mark them "needs check". When done, compare the three files in out/ with expected_output/.</span></div>
+</div>
+<div class="expect a" style="--d:2">
+<h4><span class="tic" data-ico="terminal"></span><span class="ko" data-i>기대 결과 · 노트북 마지막 셀 · 답 2개</span><span class="en" data-i>Expected output · last cell of notebook · 2 answers</span></h4>
+<pre class="code"><span class="ko" data-i>mixing_table.csv  666 pairs · 부등식 위반 0
+ca-hc  LB σ 2.958 ε 0.0453 · WH σ 3.058
+cutoff_scan.json  N 216 · L 26.207 Å</span><span class="en" data-i>mixing_table.csv  666 pairs · inequality violations 0
+ca-hc  LB σ 2.958 ε 0.0453 · WH σ 3.058
+cutoff_scan.json  N 216 · L 26.207 Å</span>
+<span class="k"><span class="ko" data-i>✔ 최대 r_c 12 Å (24 &lt; 26.2) · 1 % 이내 최소 8 Å</span><span class="en" data-i>✔ Max r_c 12 Å (24 &lt; 26.2) · smallest within 1 %: 8 Å</span></span></pre>
+<table class="t"><thead><tr><th>r<sub>c</sub></th><th><span class="ko" data-i>절단 오차</span><span class="en" data-i>Truncation error</span></th><th><span class="ko" data-i>보정 후</span><span class="en" data-i>After correction</span></th><th>2 r<sub>c</sub> &lt; L</th></tr></thead><tbody>
+<tr><td class="mono">6 Å</td><td class="mono">30.2 %</td><td class="mono">−0.48 %</td><td><span class="ko" data-i>통과</span><span class="en" data-i>Pass</span></td></tr>
+<tr class="hl"><td class="mono">8 Å</td><td class="mono">13.0 %</td><td class="mono">−0.10 %</td><td><span class="ko" data-i>통과</span><span class="en" data-i>Pass</span></td></tr>
+<tr><td class="mono">12 Å</td><td class="mono">3.9 %</td><td class="mono">−0.003 %</td><td><span class="ko" data-i>통과 (24 &lt; 26.2)</span><span class="en" data-i>Pass (24 &lt; 26.2)</span></td></tr></tbody></table>
+<p class="cap"><span class="ko" data-i>W03 상자(L 17.5 Å)였다면 12 Å 는 실패 · 규칙 ③</span><span class="en" data-i>With the W03 box (L 17.5 Å), 12 Å would fail · rule ③</span></p>
+</div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>mixing_table 「부등식 위반 0」 · cutoff_scan 8 Å 보정 후 |오차| &lt; 1 %</span><span class="en" data-i>mixing_table "inequality violations 0" · cutoff_scan at 8 Å after correction |error| &lt; 1 %</span></p><p><span class="ko" data-i>Claude Code 답의 최대 컷오프가 파일의 L_A 로 계산되었는가 · 다른 L 을 지어낸 답 → 「확인 필요」 표시</span><span class="en" data-i>Was the max cutoff in Claude Code's answer computed from the file's L_A? · an answer that invents another L → mark "needs check"</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>week04/notebooks/01 · 02 · scripts/ff_tools.py · 지시문 원문 week04/prompts.md · P4-2 · 못 끝냈다면 expected_output/</span><span class="en" data-i>week04/notebooks/01 · 02 · scripts/ff_tools.py · prompt source week04/prompts.md · P4-2 · if unfinished, expected_output/</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 23 MAKE P4-3 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>4-4 · 만들어 보기</span><span class="en" data-i>4-4 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="file-code"></span><h2 class="h"><span class="ko" data-i>만들어 보기 P4-3: 내 재료 분자의 힘장 설정 표 · in 파일 네 줄 · 혼용 위험 점검</span><span class="en" data-i>Try it P4-3: force-field setup table for my material's molecules · four in file lines · mixing-risk check</span></h2></div>
+<div class="bd">
+<div class="make">
+<div class="left a" style="--d:1">
+<pre class="code"><span class="c"><span class="ko" data-i># 환경: Claude Code · [ ] 안 = 내 재료 · 분자 목록</span><span class="en" data-i># Setup: Claude Code · inside [ ] = my material · molecule list</span></span>
+<span class="c"><span class="ko" data-i># 결과 → out/P4-3_result.md (Claude Code 저장)</span><span class="en" data-i># Result → out/P4-3_result.md (saved by Claude Code)</span></span>
+<span class="c"><span class="ko" data-i># 네 줄은 W06 in 파일에 그대로 쓴다</span><span class="en" data-i># The four lines are used as-is in the W06 in file</span></span></pre>
+<div class="prompt" data-id="P4-3"><span class="pid">P4-3</span><span class="ko" data-i>내 재료 [SBS 개질 아스팔트 바인더]의 분자 목록 [아스팔텐 · 수지 · 방향족 · 포화분 대표 분자 + SBS 단량체]에 대해 ① 힘장(GAFF2) · 전하 방법(AM1-BCC) · 조합 규칙 · 1-4 축소 · 컷오프 · kspace 를 한 표로 ② LAMMPS in 파일의 pair_style · pair_modify · kspace_style · special_bonds 네 줄 ③ 다른 계열 힘장(ClayFF · COMPASS)이나 다른 전하 방법을 한 셀에 섞을 때 생기는 위험 3가지를 써라. 수치는 GAFF2 기본값을 쓰고 근거가 없으면 「확인 필요」로 표시해라. 컷오프 근거는 out/cutoff_scan.json(없으면 @expected_output/cutoff_scan.json)의 행을 인용해라.</span><span class="en" data-i>For my material [SBS-modified asphalt binder] with molecule list [asphaltene · resin · aromatic · saturate representative molecules + SBS monomer]: ① one table of force field (GAFF2) · charge method (AM1-BCC) · combining rule · 1-4 scaling · cutoff · kspace ② the four lines pair_style · pair_modify · kspace_style · special_bonds of the LAMMPS in file ③ 3 risks of mixing a force field from another family (ClayFF · COMPASS) or another charge method in one cell. Use GAFF2 defaults for values and mark them "needs check" if unsupported. For the cutoff basis, cite a row of out/cutoff_scan.json (or @expected_output/cutoff_scan.json if absent).</span></div>
+</div>
+<div class="expect a" style="--d:2">
+<h4><span class="tic" data-ico="table"></span><span class="ko" data-i>기대 결과 · 참고 사례(연구 플랫폼 기본 설정) = MD 워크플로우 설정</span><span class="en" data-i>Expected output · reference case (research platform defaults) = MD workflow settings</span></h4>
+<table class="t"><thead><tr><th><span class="ko" data-i>항목</span><span class="en" data-i>Item</span></th><th><span class="ko" data-i>값</span><span class="en" data-i>Value</span></th><th><span class="ko" data-i>근거</span><span class="en" data-i>Basis</span></th></tr></thead><tbody>
+<tr><td><span class="ko" data-i>힘장 · 전하</span><span class="en" data-i>Force field · charge</span></td><td>GAFF2 · AM1-BCC</td><td><span class="ko" data-i>유기 전부 한 경로</span><span class="en" data-i>All organic via one route</span></td></tr>
+<tr><td><span class="ko" data-i>조합 규칙</span><span class="en" data-i>Combining rule</span></td><td><span class="ko" data-i>산술 LB</span><span class="en" data-i>Arithmetic LB</span></td><td class="mono">pair_modify mix arithmetic</td></tr>
+<tr><td><span class="ko" data-i>1-4 축소</span><span class="en" data-i>1-4 scaling</span></td><td class="mono">lj 0.5 · coul 0.8333</td><td class="mono"><span class="ko" data-i>special_bonds 계 전체 하나</span><span class="en" data-i>special_bonds one for whole system</span></td></tr>
+<tr><td><span class="ko" data-i>컷오프 · kspace</span><span class="en" data-i>Cutoff · kspace</span></td><td class="mono">12 Å · pppm 1.0e-4</td><td><span class="ko" data-i>셀 한 변 &gt; 24 Å</span><span class="en" data-i>Cell edge &gt; 24 Å</span></td></tr></tbody></table>
+<pre class="code"><span class="k">pair_style</span>    lj/cut/coul/long 12.0
+<span class="k">pair_modify</span>   mix arithmetic
+<span class="k">kspace_style</span>  pppm 1.0e-4
+<span class="k">special_bonds</span> lj 0 0 0.5 coul 0 0 0.833333</pre>
+<p class="cap"><span class="ko" data-i>광물이 섞이면: ClayFF + 짝 물 모델(SPC/E) · 이종쌍은 규칙 · 전하 척도 통일 (W08 · W10)</span><span class="en" data-i>If minerals are mixed: ClayFF + paired water model (SPC/E) · unlike pairs by rule · unify charge scale (W08 · W10)</span></p>
+</div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>네 줄이 위와 같은가 · special_bonds 가 분자별 대신 계 전체 한 줄인가</span><span class="en" data-i>Are the four lines the same as above? · is special_bonds one line for the whole system instead of per molecule?</span></p><p><span class="ko" data-i>위험 3가지에 「접촉 거리 변화 · 응집 균형 붕괴 · 학습 편향」이 들어 있는가</span><span class="en" data-i>Do the 3 risks include "contact-distance change · cohesion balance breaks · training bias"?</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>지시문 원문: week04/prompts.md · P4-3 · 설정 출처 참고 사례 src/forcefield/ff_stack.py · src/protocols/lammps_force_field.py · 같은 네 줄 = mdworkflow/templates/in.protocol</span><span class="en" data-i>Prompt source: week04/prompts.md · P4-3 · setup source reference case src/forcefield/ff_stack.py · src/protocols/lammps_force_field.py · same four lines = mdworkflow/templates/in.protocol</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 24 TWEAK 컷오프 8 ↔ 12 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>4-4 · 바꿔 보기</span><span class="en" data-i>4-4 · Try changing</span></p>
+<div class="hrow"><span class="hico" data-ico="git-compare"></span><h2 class="h"><span class="ko" data-i>컷오프 늘리기: 정확도 이득 미미 · 비용 3.4배</span><span class="en" data-i>Raise cutoff: little accuracy gain · cost 3.4×</span></h2></div>
+<p class="sub"><span class="ko" data-i>8 → 12 Å · 보정 후 오차 −0.10 → −0.003 % · 같은 상자 · 같은 꼬리 보정 · 바뀐 것은 컷오프 하나 · 정확도는 1 % 안에서 이미 충분</span><span class="en" data-i>8 → 12 Å · error after correction −0.10 → −0.003 % · same box · same tail correction · only cutoff changed · accuracy already sufficient within 1 %</span></p>
+<div class="bd">
+<div class="tweak">
+<div class="pane before a" style="--d:1"><h3><span class="tic" data-ico="minus"></span><span class="ko" data-i>전 · r<sub>c</sub> 8 Å (W03 노트북의 8.5 Å 와 같은 급)</span><span class="en" data-i>Before · r<sub>c</sub> 8 Å (same class as 8.5 Å in W03 notebook)</span></h3>
+<div class="bars">
+<div class="bar"><div class="l"><span class="ko" data-i>절단만</span><span class="en" data-i>Cutoff only</span></div><div class="b" style="width:260px"></div><div class="v">13.0 %</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>꼬리 보정 후</span><span class="en" data-i>After tail correction</span></div><div class="b gr" style="width:40px"></div><div class="v">−0.10 %</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>컷오프 안 쌍 수</span><span class="en" data-i>Pairs within cutoff</span></div><div class="b mt" style="width:105px"></div><div class="v">2,685</div></div>
+</div>
+<div class="figw white w04-fig"><svg viewBox="0 0 700 220" class="cfig" data-rcbox="8"></svg></div>
+<p class="cap"><span class="ko" data-i>LJ 만 있는 계(W03 · W05 유체)는 8 Å + 꼬리 보정으로 충분</span><span class="en" data-i>LJ-only systems (W03 · W05 fluid) are fine with 8 Å + tail correction</span></p></div>
+<div class="pane after a" style="--d:2"><h3><span class="tic" data-ico="plus"></span><span class="ko" data-i>후 · r<sub>c</sub> 12 Å (참고 사례 · MD 워크플로우 기본값)</span><span class="en" data-i>After · r<sub>c</sub> 12 Å (reference case · MD workflow default)</span></h3>
+<div class="bars">
+<div class="bar"><div class="l"><span class="ko" data-i>절단만</span><span class="en" data-i>Cutoff only</span></div><div class="b" style="width:78px"></div><div class="v">3.9 %</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>꼬리 보정 후</span><span class="en" data-i>After tail correction</span></div><div class="b gr" style="width:6px"></div><div class="v">−0.003 %</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>컷오프 안 쌍 수</span><span class="en" data-i>Pairs within cutoff</span></div><div class="b mt" style="width:360px"></div><div class="v">9,204</div></div>
+</div>
+<div class="figw white w04-fig"><svg viewBox="0 0 700 220" class="cfig" data-rcbox="12"></svg></div>
+<p class="cap"><span class="ko" data-i>쿨롱 포함 시 coul/long 실공간 쪽도 12 Å 절단 → 12 Å 가 기본값 · 셀 &gt; 24 Å</span><span class="en" data-i>With Coulomb, coul/long real-space part is also cut at 12 Å → 12 Å is default · cell &gt; 24 Å</span></p></div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>노트북 02 에서 r<sub>c</sub> 를 10 Å 로 바꿔 보정 후 오차(−0.05 %)와 쌍 수(5,373)를 확인</span><span class="en" data-i>In notebook 02 change r<sub>c</sub> to 10 Å and check error after correction (−0.05 %) and pair count (5,373)</span></p><p><span class="ko" data-i>W03 상자(L 17.5 Å)에 12 Å 를 넣으면 valid_rc_le_L2 = False 가 뜨는가</span><span class="en" data-i>Does valid_rc_le_L2 = False appear if 12 Å is put in the W03 box (L 17.5 Å)?</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>수치 = week04/expected_output/cutoff_scan.json · 참고 사례 = 연구 플랫폼 결과</span><span class="en" data-i>Values = week04/expected_output/cutoff_scan.json · reference case = research platform result</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 25 FIG 혼용 금지 규칙 3 -->
+<section class="slide v3" data-src="03주차#16">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>4-4 · 확인</span><span class="en" data-i>4-4 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="shield-check"></span><h2 class="h"><span class="ko" data-i>확인: 한 계 안에서 힘장 하나 · 전하 방법 하나 · special_bonds 하나</span><span class="en" data-i>Check: one force field · one charge method · one special_bonds per system</span></h2></div>
+<p class="sub"><span class="ko" data-i>이종 분자 사이에 작동하는 항은 비결합 2항뿐 · vdW = 규칙으로 생성 · 쿨롱 = 곱(규칙 없음) · 전하 척도 통일 필수</span><span class="en" data-i>Only the 2 nonbonded terms act between different molecules · vdW = generated by rule · Coulomb = product (no rule) · unify charge scale</span></p>
+<div class="bd">
+<div class="figw white" style="height:230px"><svg viewBox="0 0 1500 230" class="cfig">
+<g stroke="#4A4540" stroke-width="5"><line x1="120" y1="120" x2="200" y2="70"/><line x1="200" y1="70" x2="290" y2="120"/><line x1="290" y1="120" x2="370" y2="70"/></g><g fill="#4A4540"><circle cx="120" cy="120" r="18"/><circle cx="200" cy="70" r="18"/><circle cx="290" cy="120" r="18"/><circle cx="370" cy="70" r="18"/></g>
+<g stroke="#4A4540" stroke-width="5"><line x1="1130" y1="90" x2="1210" y2="140"/><line x1="1210" y1="140" x2="1300" y2="90"/><line x1="1300" y1="90" x2="1380" y2="140"/></g><g fill="#4A4540"><circle cx="1130" cy="90" r="18"/><circle cx="1210" cy="140" r="18"/><circle cx="1300" cy="90" r="18"/><circle cx="1380" cy="140" r="18"/></g>
+<text x="245" y="190" class="cft" text-anchor="middle"><tspan class="ko" data-i>분자 A · 결합 항은 분자 안에서만</tspan><tspan class="en" data-i>Molecule A · bonded terms only within the molecule</tspan></text><text x="1255" y="195" class="cft" text-anchor="middle"><tspan class="ko" data-i>분자 B · special_bonds 는 계 전체 하나</tspan><tspan class="en" data-i>Molecule B · special_bonds is one for whole system</tspan></text>
+<line class="tl" x1="390" y1="70" x2="1110" y2="90" stroke-width="5" stroke-dasharray="14 10"/><line class="tl" x1="310" y1="120" x2="1190" y2="140" stroke-width="5" stroke-dasharray="14 10"/>
+<rect x="560" y="40" width="380" height="54" rx="12" fill="#FFF1E0"/><text x="750" y="75" class="cfh" text-anchor="middle" font-size="22">vdW: ε<tspan baseline-shift="sub" font-size="14">ij</tspan> σ<tspan baseline-shift="sub" font-size="14">ij</tspan> <tspan class="ko" data-i>는 조합 규칙으로</tspan><tspan class="en" data-i> set by combining rule</tspan></text>
+<rect x="560" y="130" width="380" height="54" rx="12" fill="#E8F3EC"/><text x="750" y="165" class="cfh" text-anchor="middle" font-size="22" fill="#2E8B57"><tspan class="ko" data-i>쿨롱: q</tspan><tspan class="en" data-i>Coulomb: q</tspan><tspan baseline-shift="sub" font-size="14">i</tspan>q<tspan baseline-shift="sub" font-size="14">j</tspan> <tspan class="ko" data-i>곱 · 규칙 없음 · 척도 일치</tspan><tspan class="en" data-i>Product · no rule · matching scale</tspan></text>
+</svg></div>
+<div class="grid c3">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="merge"></span><div><p class="k"><span class="ko" data-i>규칙 1</span><span class="en" data-i>Rule 1</span></p><h4><span class="ko" data-i>힘장 하나 · 조합 규칙 하나</span><span class="en" data-i>One force field · one combining rule</span></h4></div></div><p><span class="ko" data-i>Class I 과 II · 산술과 6제곱 혼용 → 접촉 거리 자체 변화 (12장)</span><span class="en" data-i>Class I and II · mixing arithmetic and 6th-power → contact distance itself changes (slide 12)</span></p></div>
+<div class="it hot a" style="--d:2"><div class="ih"><span class="icb" data-ico="circle-dot"></span><div><p class="k"><span class="ko" data-i>규칙 2</span><span class="en" data-i>Rule 2</span></p><h4><span class="ko" data-i>전하 방법 하나</span><span class="en" data-i>One charge method</span></h4></div></div><p><span class="ko" data-i>전하 ↑ → 응집 ↑ → ε 는 작게 적합된 <b>한 벌</b> · 척도가 다르면 응집 균형 붕괴</span><span class="en" data-i>Charge ↑ → cohesion ↑ → ε fitted smaller as <b>one set</b> · different scale breaks cohesion balance</span></p></div>
+<div class="it dark a" style="--d:3"><div class="ih"><span class="icb" data-ico="shrink"></span><div><p class="k"><span class="ko" data-i>규칙 3</span><span class="en" data-i>Rule 3</span></p><h4><span class="ko" data-i>special_bonds 계 전체 하나</span><span class="en" data-i>special_bonds one for whole system</span></h4></div></div><p><span class="ko" data-i>1-4 축소 0.5 / 0.8333 = 분자별 변경 불가 → 내부 항도 같은 힘장으로</span><span class="en" data-i>1-4 scaling 0.5 / 0.8333 = cannot change per molecule → internal terms also with the same force field</span></p></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>실험 ID 에 <b>힘장 이름 · 전하 방법</b>을 기록 · 섞인 데이터 = 학습(W14)에서 복구 불가능한 편향</span><span class="en" data-i>Record <b>force-field name · charge method</b> in experiment ID · mixed data = bias unrecoverable in training (W14)</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 03주차 덱 #16 · W08 혼용 조건 · W10 계면 이종쌍</span><span class="en" data-i>Original week-03 deck #16 · W08 mixing conditions · W10 interface unlike pairs</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 26 다음 주차로 -->
+<section class="slide v3 accent">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>다음 주차로 · W05 앙상블 · 평형화 · 오차</span><span class="en" data-i>Next: W05 ensemble · equilibration · error</span></p>
+<div class="hrow"><span class="hico" data-ico="arrow-right"></span><h2 class="h"><span class="ko" data-i>오늘의 산출물 3: 타입 · 전하 표 · 이종쌍 표 · 컷오프 스캔 → W05 입력</span><span class="en" data-i>Today's deliverables 3: type · charge table · unlike-pair table · cutoff scan → W05 input</span></h2></div>
+<p class="sub"><span class="ko" data-i>힘장 = QM + 실험 혼합물 · 상수는 타입에 · 이종쌍은 규칙으로 · 쿨롱은 자르지 않고 분할 · 쌍 탐색은 목록으로</span><span class="en" data-i>Force field = QM + experiment mixture · constants belong to types · unlike pairs by rule · Coulomb is split, not cut · pair search by list</span></p>
+<div class="bd">
+<div class="row">
+<div class="lines fill">
+<div class="ln a" style="--d:1"><span class="nn">01</span><div><h4><span class="ko" data-i>산출물</span><span class="en" data-i>Deliverables</span></h4><p><span class="file">week04/out/P4-1_result.md</span> · <span class="file">mixing_table.csv</span> · <span class="file">cutoff_scan.json</span> · <span class="file">P4-3_result.md</span></p></div></div>
+<div class="ln a" style="--d:2"><span class="nn">02</span><div><h4><span class="ko" data-i>다음 주 W05</span><span class="en" data-i>Next week W05</span></h4><p><span class="ko" data-i>같은 LJ 유체에 온도 · 압력 조절기 → 평형 판정 · 블록 평균 오차 · 준비물 없음</span><span class="en" data-i>Temperature · pressure control on the same LJ fluid → equilibrium judgment · block-average error · no prerequisites</span></p></div></div>
+<div class="ln a" style="--d:3"><span class="nn">03</span><div><h4><span class="ko" data-i>못 끝냈다면</span><span class="en" data-i>If unfinished</span></h4><p><span class="file">week04/expected_output/</span> <span class="ko" data-i>의 결과 파일로 W05 진행 가능 · W05 노트북 = 이 파일 미사용</span><span class="en" data-i>result file lets you proceed to W05 · W05 notebook = does not use this file</span></p></div></div>
+<div class="ln a" style="--d:4"><span class="nn">04</span><div><h4><span class="ko" data-i>퀴즈 · 용어</span><span class="en" data-i>Quiz · terms</span></h4><p><span class="file">week04/quiz.md</span> <span class="ko" data-i>5문항 ·</span><span class="en" data-i>5 questions ·</span> <span class="file">GLOSSARY.md</span> <span class="ko" data-i>· 8종 힘장 표</span><span class="en" data-i>· Table of 8 force fields</span> <span class="file">week04/docs/forcefield_tables.md</span></p></div></div>
+</div>
+<div class="figw w04-accfig"><div class="emb" data-emb="fill" data-dur="12"></div></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>오른쪽 = 이 상수들이 들어갈 상자(W06 예고): 톨루엔 50분자 · L 33.69 Å · ρ₀ 0.2 g/cm³ (build_toluene_box.py)</span><span class="en" data-i>Right = box these constants go into (W06 preview): 50 toluene molecules · L 33.69 Å · ρ₀ 0.2 g/cm³ (build_toluene_box.py)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<script src="../common/icons.js"></script>
+<script src="../common/deck.js"></script>
+<script>
+/* ===== W04 v3 EMB · 시간 함수 SVG 문자열 (참조 덱 방식) ===== */
+function stepOf(root) { var s = parseInt(root.dataset.step || '0', 10); return isNaN(s) ? 0 : s; }
+function icoIn(n, x, y, s, col) { return '<svg x="' + x + '" y="' + y + '" width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" stroke="' + col + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + (IC[n] || '') + '</svg>'; }
+function termSync(root, k) { var s = root.closest('section'); if (!s) return; var its = s.querySelectorAll('.w04-terms .it'); for (var i = 0; i < its.length; i++) its[i].classList.toggle('on', i === k); var ex = s.querySelectorAll('.w04-exs .exs'); for (i = 0; i < ex.length; i++) ex[i].classList.toggle('on', i === k); }
+function f2(v) { return (Math.round(v * 100) / 100).toFixed(2); }
+
+/* ---- molvib: 4원자 사슬 + 이웃 원자 · 항마다 다른 움직임 · 항별 에너지 막대 ---- */
+EMB["molvib"] = function (root, RAF) {
+  var compact = !root.dataset.steps, W = compact ? 560 : 1150, H = compact ? 560 : 578, t0 = CLK();
+  var names = [__L('결합','Bond'), __L('각','Angle'), __L('이면각','Dihedral'), 'LJ', __L('쿨롱','Coulomb')], cols = ['#4F7FB0', '#2E8B57', '#E37F1A', '#C8610C', '#D9534F'];
+  var mx = compact ? 215 : 520, my = compact ? 165 : 200, sc = compact ? 0.62 : 1;
+  function f(now) {
+    var st = stepOf(root), T = (now - t0) / 1000, k = st ? st - 1 : Math.floor(T / 2.4) % 5, ph = Math.sin(T * 2 * Math.PI / 2.4), o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    /* base positions (relative) */
+    var A = [-170, 40], B = [-60, -40], C = [50, 40], D = [160, -40], X = [330, 60];
+    var E = [0.42, 0.34, 0.28, 0.38, 0.46];
+    if (k === 0) { var ux = (B[0] - A[0]), uy = (B[1] - A[1]), L0 = Math.hypot(ux, uy); A = [A[0] - ux / L0 * 22 * ph, A[1] - uy / L0 * 22 * ph]; E[0] = 0.42 + 0.58 * ph * ph; }
+    if (k === 1) { var ang = Math.atan2(A[1] - B[1], A[0] - B[0]) + 0.26 * ph, r = Math.hypot(A[0] - B[0], A[1] - B[1]); A = [B[0] + r * Math.cos(ang), B[1] + r * Math.sin(ang)]; E[1] = 0.34 + 0.66 * ph * ph; }
+    if (k === 2) { D = [D[0], D[1] + 70 * ph]; E[2] = 0.28 + 0.72 * (1 - Math.cos(Math.PI * (1 + ph))) / 2; }
+    if (k === 3) { X = [X[0] - 60 * (0.5 + 0.5 * ph), X[1]]; var d = Math.hypot(X[0] - D[0], X[1] - D[1]) / 60, lj = 4 * (Math.pow(1.6 / d, 12) - Math.pow(1.6 / d, 6)); E[3] = 0.38 + 0.62 * Math.min(1, Math.abs(lj) / 1.2); }
+    if (k === 4) { X = [X[0] - 60 * (0.5 + 0.5 * ph), X[1]]; E[4] = 0.46 + 0.54 * Math.min(1, 1.2 / (Math.hypot(X[0] - D[0], X[1] - D[1]) / 60)); }
+    function P(p) { return [(mx + p[0] * sc).toFixed(1), (my + p[1] * sc).toFixed(1)]; }
+    var pts = [A, B, C, D].map(P), px = P(X);
+    o += '<rect x="' + (mx - 230 * sc) + '" y="' + (my - 150 * sc) + '" width="' + (640 * sc) + '" height="' + (300 * sc) + '" rx="18" fill="#FFFFFF" stroke="#E2D8CA" stroke-width="2"/>';
+    for (var i = 0; i < 3; i++) o += '<line x1="' + pts[i][0] + '" y1="' + pts[i][1] + '" x2="' + pts[i + 1][0] + '" y2="' + pts[i + 1][1] + '" stroke="' + (k === 0 && i === 0 ? cols[0] : (k === 1 && i < 2 ? cols[1] : (k === 2 ? cols[2] : '#6E655C'))) + '" stroke-width="' + ((k === 0 && i === 0) || (k === 1 && i < 2) || k === 2 ? 9 : 6) + '" stroke-linecap="round"/>';
+    if (k === 1) { var a0 = Math.atan2(A[1] - B[1], A[0] - B[0]), a1 = Math.atan2(C[1] - B[1], C[0] - B[0]), R = 40 * sc, b = P(B); o += '<path d="M' + (parseFloat(b[0]) + R * Math.cos(a0)).toFixed(1) + ' ' + (parseFloat(b[1]) + R * Math.sin(a0)).toFixed(1) + ' A' + R + ' ' + R + ' 0 0 ' + (a1 > a0 ? 1 : 0) + ' ' + (parseFloat(b[0]) + R * Math.cos(a1)).toFixed(1) + ' ' + (parseFloat(b[1]) + R * Math.sin(a1)).toFixed(1) + '" fill="none" stroke="' + cols[1] + '" stroke-width="4"/><text x="' + (parseFloat(b[0])) + '" y="' + (parseFloat(b[1]) + 70 * sc) + '" text-anchor="middle" class="cfm" fill="' + cols[1] + '">θ</text>'; }
+    if (k === 2) { var c0 = P(C); o += '<ellipse cx="' + P([160, -40])[0] + '" cy="' + P([160, -40])[1] + '" rx="' + (22 * sc) + '" ry="' + (70 * sc) + '" fill="none" stroke="' + cols[2] + '" stroke-width="3" stroke-dasharray="6 6"/><text x="' + (parseFloat(c0[0]) + 70 * sc) + '" y="' + (parseFloat(c0[1]) - 110 * sc) + '" class="cfm" fill="' + cols[2] + __L('">φ 회전</text>','">φ rotation</text>'); }
+    if (k >= 3) { o += '<line x1="' + pts[3][0] + '" y1="' + pts[3][1] + '" x2="' + px[0] + '" y2="' + px[1] + '" stroke="' + cols[k] + '" stroke-width="4" stroke-dasharray="10 8"/><text x="' + ((parseFloat(pts[3][0]) + parseFloat(px[0])) / 2) + '" y="' + (parseFloat(px[1]) + 34 * sc) + '" text-anchor="middle" class="cfm" fill="' + cols[k] + '">r</text>'; }
+    pts.forEach(function (p, i) { o += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="' + (20 * sc) + '" fill="' + (i === 0 && k < 2 ? cols[k] : '#4A4540') + '" stroke="#FFFDF9" stroke-width="3"/>'; });
+    o += '<circle cx="' + px[0] + '" cy="' + px[1] + '" r="' + (18 * sc) + '" fill="' + (k >= 3 ? cols[k] : '#B9AE9E') + '" stroke="#FFFDF9" stroke-width="3"/>';
+    if (k === 4) o += '<text x="' + pts[3][0] + '" y="' + (parseFloat(pts[3][1]) - 30 * sc) + '" text-anchor="middle" class="cfh" fill="' + cols[4] + '" font-size="22">δ−</text><text x="' + px[0] + '" y="' + (parseFloat(px[1]) - 28 * sc) + '" text-anchor="middle" class="cfh" fill="' + cols[4] + '" font-size="22">δ+</text>';
+    o += '<rect x="' + (mx - 230 * sc) + '" y="' + (my - 150 * sc) + '" width="' + (640 * sc) + '" height="' + (40 * sc + 6) + '" rx="12" fill="' + cols[k] + '"/><text x="' + (mx - 212 * sc) + '" y="' + (my - 150 * sc + 26 * sc + 4) + '" class="cfw" font-size="' + (compact ? 18 : 21) + '">' + [__L('① 결합 신축 · 용수철처럼 늘고 줄음','① Bond stretching · stretches and shrinks like a spring'), __L('② 결합각 · 경첩처럼 굽힘','② Bond angle · bends like a hinge'), __L('③ 이면각 V_n[1 + cos(nφ − γ)]','③ Dihedral V_n[1 + cos(nφ − γ)]'), __L('④ 반데르발스 · 가까우면 밀고 조금 멀면 당김','④ van der Waals · pushes when close, pulls when slightly farther'), __L('⑤ 정전기 · 전하끼리 밀고 당김','⑤ Electrostatic · charges push and pull')][k] + '</text>' + (compact ? '' : '<text x="' + (mx + 404 * sc) + '" y="' + (my - 150 * sc + 26 * sc + 4) + '" text-anchor="end" class="cfw" font-size="18" opacity=".9">' + (k < 3 ? __L('같은 분자 안 · 결합 항','Within same molecule · bonded terms') : __L('다른 분자 · 비결합 항','Other molecule · nonbonded terms')) + '</text>');
+    /* bars */
+    var bx = compact ? 40 : (mx - 230 * sc), by = compact ? 452 : 542, bw = compact ? 90 : 118, bh = compact ? 150 : 165;
+    o += '<text x="' + bx + '" y="' + (by - bh - 26) + __L('" class="cfs">항별 에너지 (상대값)</text>','" class="cfs">Energy per term (relative)</text>');
+    names.forEach(function (n, i) { var h = 8 + E[i] * (bh - 8), x = bx + i * (bw + 10); o += '<rect x="' + x + '" y="' + (by - bh) + '" width="' + bw + '" height="' + bh + '" rx="8" fill="#F6F0E7"/><rect x="' + x + '" y="' + (by - h).toFixed(1) + '" width="' + bw + '" height="' + h.toFixed(1) + '" rx="8" fill="' + (i === k ? cols[i] : '#D3C6B5') + '"/><text x="' + (x + bw / 2) + '" y="' + (by + 26) + '" text-anchor="middle" class="' + (i === k ? 'cfh' : 'cfs') + '" font-size="' + (compact ? 17 : 20) + '">' + ['①', '②', '③', '④', '⑤'][i] + ' ' + n + '</text>'; });
+
+    o += '</svg>'; root.innerHTML = o; if (!compact) termSync(root, k); RAF(f);
+  }
+  RAF(f);
+};
+
+/* ---- heat: LJ 상수 열 지도 (참조 덱 amapSVG 방식 · 열이 차례로 켜짐) ---- */
+EMB["heat"] = function (root, RAF) {
+  var rows = [['ca', __L('방향족 C','Aromatic C'), 0.0988, 3.3152], ['c3', 'sp³ C', 0.1078, 3.3977], ['ha', __L('방향족 H','Aromatic H'), 0.0161, 2.6255], ['hc', __L('지방족 H','Aliphatic H'), 0.0208, 2.6002], ['o', __L('카르보닐 O','Carbonyl O'), 0.1463, 3.0481], ['oh', __L('수산기 O','Hydroxyl O'), 0.0930, 3.2429], ['ss', __L('황','Sulfur'), 0.2824, 3.5324], ['O·Clay', __L('표면 O','Surface O'), 0.1554, 3.166], ['Si·Clay', 'Si', 1.8405e-6, 3.302]];
+  var ca = rows[0], cols = [[__L('세기 ε (kcal/mol)','Strength ε (kcal/mol)'), function (r) { return r[2]; }, true], [__L('크기 σ (Å)','Size σ (Å)'), function (r) { return r[3]; }, false], [__L('이종쌍 세기 · ca 와 (기하)','Unlike-pair strength · with ca (geometric)'), function (r) { return Math.sqrt(r[2] * ca[2]); }, true], [__L('이종쌍 크기 · ca 와 (산술)','Unlike-pair size · with ca (arithmetic)'), function (r) { return (r[3] + ca[3]) / 2; }, false], [__L('접촉 거리 · ca 와 (Å)','Contact distance · with ca (Å)'), function (r) { return Math.pow(2, 1 / 6) * (r[3] + ca[3]) / 2; }, false]];
+  var tips = [__L('세기: Si 1.8e−6 ~ ss 0.28 = 10⁵ 배 · 분산력','Strength: Si 1.8e−6 ~ ss 0.28 = 10⁵-fold · dispersion'), __L('크기: 2.6 ~ 3.5 Å · 좁은 범위','Size: 2.6 ~ 3.5 Å · narrow range'), __L('이종쌍 세기 = 기하 평균: 작은 쪽이 지배 → ca–Si 4.3e−4 · 광물 양이온은 분산력 없음','Unlike-pair strength = geometric mean: smaller side dominates → ca–Si 4.3e−4 · mineral cations have no dispersion'), __L('이종쌍 크기 = 산술 평균 → 범위 축소 2.96 ~ 3.42 Å','Unlike-pair size = arithmetic mean → range narrows to 2.96 ~ 3.42 Å'), __L('접촉 거리(우물 바닥) 3.3 ~ 3.8 Å · W06 Packmol 최소 거리(3.283 Å)의 근거','Contact distance (well bottom) 3.3 ~ 3.8 Å · basis of W06 Packmol minimum distance (3.283 Å)')];
+  var W = 1588, H = 578, x0 = 330, cw = 240, rh = 48, t0 = CLK();
+  function fmt(v, lg) { return lg ? (v < 1e-3 ? v.toExponential(1) : v.toFixed(4)) : v.toFixed(3); }
+  function f(now) {
+    var ci = Math.floor(((now - t0) / 1000) / 2) % cols.length, o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    cols.forEach(function (c, j) { var x = x0 + j * cw; o += '<text x="' + (x + cw / 2) + '" y="30" text-anchor="middle" class="' + (j === ci ? 'cfh' : 'cfs') + '" font-size="' + (j === ci ? 22 : 19) + '"' + (j === ci ? ' fill="#C8610C"' : '') + '>' + c[0] + '</text>'; });
+    o += '<rect x="' + (x0 + ci * cw + 2) + '" y="42" width="' + (cw - 4) + '" height="' + (rows.length * rh + 6) + '" rx="12" fill="none" stroke="#C8610C" stroke-width="3"/>';
+    cols.forEach(function (c, j) { var vals = rows.map(function (r) { return c[2] ? Math.log10(Math.max(c[1](r), 1e-7)) : c[1](r); }), mn = Math.min.apply(null, vals), mx = Math.max.apply(null, vals);
+      rows.forEach(function (r, i) { var a = (vals[i] - mn) / (mx - mn || 1), y = 46 + i * rh, x = x0 + j * cw; o += '<rect x="' + (x + 6) + '" y="' + (y + 4) + '" width="' + (cw - 12) + '" height="' + (rh - 6) + '" rx="8" fill="rgba(' + (c[2] ? '249,157,28' : '79,127,176') + ',' + (0.1 + 0.8 * a).toFixed(2) + ')"/><text x="' + (x + cw / 2) + '" y="' + (y + 32) + '" text-anchor="middle" class="cfm" fill="' + (a > 0.55 ? '#FFFDF9' : '#4A4540') + '" font-size="19">' + fmt(c[1](r), c[2]) + '</text>'; }); });
+    rows.forEach(function (r, i) { var y = 46 + i * rh; o += '<text x="' + (x0 - 24) + '" y="' + (y + 32) + '" text-anchor="end" class="cfh" font-size="21"' + (i >= 7 ? ' fill="#2E8B57"' : '') + '>' + r[0] + '</text><text x="' + (x0 - 120) + '" y="' + (y + 32) + '" text-anchor="end" class="cfmu">' + r[1] + '</text>'; });
+    o += '<rect x="40" y="' + (46 + rows.length * rh + 18) + '" width="' + (W - 80) + '" height="52" rx="12" fill="#FFF1E0"/><text x="' + (W / 2) + '" y="' + (46 + rows.length * rh + 52) + '" text-anchor="middle" class="cfh" font-size="22">' + tips[ci] + '</text></svg>';
+    root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ---- typing: 톨루엔 분자 준비 4단계 (SMILES → 좌표 → 타입 → 전하) ---- */
+EMB["typing"] = function (root, RAF) {
+  var W = 1588, H = 430, cx = 420, cy = 250, R = 85, t0 = CLK();
+  var ring = []; for (var i = 0; i < 6; i++) { var a = -Math.PI / 2 + i * Math.PI / 3; ring.push([cx + R * Math.cos(a), cy + R * Math.sin(a)]); }
+  var me = [cx + (R + 68) * Math.cos(-Math.PI / 2), cy + (R + 68) * Math.sin(-Math.PI / 2)];
+  var atoms = [{ p: ring[0], t: 'ca', q: -0.077 }, { p: ring[1], t: 'ca', q: -0.131 }, { p: ring[2], t: 'ca', q: -0.127 }, { p: ring[3], t: 'ca', q: -0.135 }, { p: ring[4], t: 'ca', q: -0.127 }, { p: ring[5], t: 'ca', q: -0.131 }, { p: me, t: 'c3', q: -0.054 }];
+  for (i = 1; i < 6; i++) { var a2 = -Math.PI / 2 + i * Math.PI / 3; atoms.push({ p: [cx + (R + 54) * Math.cos(a2), cy + (R + 54) * Math.sin(a2)], t: 'ha', q: 0.130, h: true }); }
+  [[-0.95, -0.4], [0.95, -0.4], [0, -1]].forEach(function (d) { atoms.push({ p: [me[0] + 46 * d[0], me[1] + 46 * d[1]], t: 'hc', q: 0.044, h: true }); });
+  var bonds = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0], [0, 6], [1, 7], [2, 8], [3, 9], [4, 10], [5, 11], [6, 12], [6, 13], [6, 14]];
+  var smi = 'Cc1ccccc1', tc = { ca: '#C8610C', c3: '#E37F1A', ha: '#4F7FB0', hc: '#2E8B57' };
+  function f(now) {
+    var st = stepOf(root), T = (now - t0) / 1000, k = st ? st - 1 : Math.floor(T / 3) % 4, u = st ? 0.999 : (T % 3) / 3, o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    o += '<rect x="30" y="20" width="800" height="390" rx="18" fill="#FFFFFF" stroke="#E2D8CA" stroke-width="2"/>';
+    if (k === 0) { var n = Math.min(smi.length, Math.floor(u * (smi.length + 2))); o += '<text x="420" y="200" text-anchor="middle" class="cfm" font-size="64">' + smi.slice(0, n) + (n < smi.length ? '|' : '') + __L('</text><text x="420" y="260" text-anchor="middle" class="cfs">좌표 없는 구조 문자열 · C(메틸) + 방향족 고리 c1ccccc1</text>','</text><text x="420" y="260" text-anchor="middle" class="cfs">Coordinate-free structure string · C (methyl) + aromatic ring c1ccccc1</text>'); }
+    else {
+      var nshow = k === 1 ? Math.floor(u * 16) : 15, nlab = k === 2 ? Math.floor(u * 16) : (k > 2 ? 15 : 0), nq = k === 3 ? Math.floor(u * 16) : 0;
+      bonds.forEach(function (b) { if (b[0] < nshow && b[1] < nshow) o += '<line x1="' + atoms[b[0]].p[0].toFixed(1) + '" y1="' + atoms[b[0]].p[1].toFixed(1) + '" x2="' + atoms[b[1]].p[0].toFixed(1) + '" y2="' + atoms[b[1]].p[1].toFixed(1) + '" stroke="#6E655C" stroke-width="5"/>'; });
+      atoms.forEach(function (a, i) { if (i >= nshow) return; var fill = i < nq ? (a.q < 0 ? 'rgba(79,127,176,' + Math.min(1, 0.3 + Math.abs(a.q) * 5).toFixed(2) + ')' : 'rgba(217,83,79,' + Math.min(1, 0.3 + a.q * 5).toFixed(2) + ')') : (a.h ? '#F6F0E7' : '#4A4540'); o += '<circle cx="' + a.p[0].toFixed(1) + '" cy="' + a.p[1].toFixed(1) + '" r="' + (a.h ? 14 : 20) + '" fill="' + fill + '" stroke="#FFFDF9" stroke-width="3"/>';
+        var ox = a.p[0] - (a.t === 'hc' ? me[0] : cx), oy = a.p[1] - (a.t === 'hc' ? me[1] : cy), on = Math.hypot(ox, oy) || 1; ox /= on; oy /= on; if (!a.h && a.t === 'ca') { ox = 0; oy = 0; }
+        var lab = i < nq ? a.t + ' ' + (a.q > 0 ? '+' : '') + a.q.toFixed(3) : (i < nlab ? a.t : ''), lx = a.p[0] + ox * (a.h ? 34 : 0) + (a.h ? 0 : 26), ly = a.p[1] + oy * (a.h ? 34 : 0) + 6, anc = a.h ? (ox > 0.3 ? 'start' : (ox < -0.3 ? 'end' : 'middle')) : 'start';
+        if (lab) o += '<text x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" text-anchor="' + anc + '" class="cfm" fill="' + (i < nq ? (a.q < 0 ? '#4F7FB0' : '#D9534F') : tc[a.t]) + '" font-size="17">' + lab + '</text>'; });
+      o += '<text x="60" y="398" class="cft">' + ['', __L('② 3D 좌표 · 수소 부착 · 에너지 최소화 · ','② 3D coordinates · add hydrogens · energy minimization · ') + nshow + __L(' / 15 원자',' / 15 atoms'), __L('③ GAFF2 타입 · ','③ GAFF2 type · ') + nlab + __L(' / 15 · 상수 = 타입 단위',' / 15 · constants = per type'), __L('④ AM1-BCC 전하 · ','④ AM1-BCC charge · ') + nq + __L(' / 15 · 파랑 −, 빨강 +',' / 15 · blue −, red +')][k] + '</text>';
+    }
+    /* right panel */
+    o += '<rect x="860" y="20" width="700" height="390" rx="18" fill="' + ['#F6F0E7', '#F6F0E7', '#FFF1E0', '#F6F0E7'][k] + '"/>';
+    var rp = [['① SMILES', __L('Cc1ccccc1 · 원자 종류와 연결만 · 좌표 없음','Cc1ccccc1 · atom kinds and connectivity only · no coordinates'), __L('RDKit 가 읽는 입력 · 라이브러리 13종의 식별 키','Input read by RDKit · identification key of 13 library molecules')], [__L('② 3D 좌표','② 3D coordinates'), __L('수소 부착 → 에너지 최소화 → 15 × (x, y, z)','Add hydrogens → energy minimization → 15 × (x, y, z)'), __L('data 파일 Atoms 열의 좌표','Coordinates of data file Atoms column')], [__L('③ 원자 타입','③ Atom type'), 'ca × 6 · c3 × 1 · ha × 5 · hc × 3', __L('타입 → 결합 4종 · 각 5종 · 이면각 6종 상수 결정','Type → fixes 4 bond · 5 angle · 6 dihedral constants')], [__L('④ 부분전하','④ Partial charge'), __L('고리 C −0.127 ~ −0.135 · ipso −0.077 · c3 −0.054','Ring C −0.127 ~ −0.135 · ipso −0.077 · c3 −0.054'), 'ha +0.130 · hc +0.044 · Σq = −1 × 10⁻⁶ ≈ 0']][k];
+    o += '<text x="890" y="70" class="cfh" font-size="26">' + rp[0] + '</text><text x="890" y="120" class="cfs" font-size="22">' + rp[1] + '</text><text x="890" y="160" class="cfs" font-size="22">' + rp[2] + '</text>';
+    if (k === 2) [__L('ca 방향족 C','ca aromatic C'), 'c3 sp³ C', __L('ha 방향족에 붙은 H','ha H attached to aromatic'), __L('hc sp³ C 에 붙은 H','hc H attached to sp³ C')].forEach(function (s, i) { var key = s.split(' ')[0]; o += '<rect x="' + (890 + (i % 2) * 330) + '" y="' + (200 + Math.floor(i / 2) * 70) + '" width="300" height="54" rx="10" fill="#FFFFFF"/><circle cx="' + (916 + (i % 2) * 330) + '" cy="' + (227 + Math.floor(i / 2) * 70) + '" r="10" fill="' + tc[key] + '"/><text x="' + (940 + (i % 2) * 330) + '" y="' + (234 + Math.floor(i / 2) * 70) + '" class="cfs" font-size="20">' + s + '</text>'; });
+    if (k === 3) o += __L('<rect x="890" y="200" width="640" height="130" rx="12" fill="#FFFFFF"/><text x="910" y="236" class="cfs" font-size="20">왼쪽 원의 진하기 = |q| · 합은 형식전하 0</text><text x="910" y="270" class="cfs" font-size="20">방법이 다르면(RESP · Gasteiger) 같은 분자라도 q 상이 → 한 데이터셋 한 방법</text><text x="910" y="304" class="cfm" font-size="19">→ LAMMPS data 파일: 타입 · 결합 목록 · 전하 · 좌표 (W06)</text>','<rect x="890" y="200" width="640" height="130" rx="12" fill="#FFFFFF"/><text x="910" y="236" class="cfs" font-size="20">Circle darkness at left = |q| · sum is formal charge 0</text><text x="910" y="270" class="cfs" font-size="20">Different method (RESP · Gasteiger) → different q even for same molecule → one method per dataset</text><text x="910" y="304" class="cfm" font-size="19">→ LAMMPS data file: type · bond list · charge · coordinates (W06)</text>');
+    if (k === 1) o += __L('<text x="890" y="230" class="cfmu">분자당 1회 · 라이브러리에 저장 · 역설계 = 개수 비율만 변경</text>','<text x="890" y="230" class="cfmu">1× per molecule · stored in library · inverse design = change only count ratios</text>');
+    o += __L('<text x="890" y="380" class="cfmu">참고 사례(연구 플랫폼 결과) Toluene.json = MD 워크플로우 ① mol → ② ff 결과 (P4-1)</text></svg>','<text x="890" y="380" class="cfmu">Reference case (research platform result) Toluene.json = MD workflow ① mol → ② ff output (P4-1)</text></svg>');
+    root.innerHTML = o; termSync(root, k); RAF(f);
+  }
+  RAF(f);
+};
+
+/* ---- pbc: 3×3 주기 셀 · 유입 · 최소 이미지 · 셀 > 2rc ---- */
+EMB["pbc"] = function (root, RAF) {
+  var W = 600, H = 578, L = 150, X0 = (W - 3 * L) / 2, Y0 = 26, seed = 7; function rnd() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+  var atoms = [], cols = ['#C8610C', '#4F7FB0', '#2E8B57', '#D9534F', '#E37F1A', '#6E655C', '#4F7FB0'];
+  for (var k = 0; k < 7; k++) atoms.push({ x: rnd() * L, y: rnd() * L, vx: (rnd() - 0.5) * 50, vy: (rnd() - 0.5) * 50, c: cols[k] });
+  atoms[0].x = L * 0.2; atoms[0].y = L * 0.5; atoms[1].x = L * 0.85; atoms[1].y = L * 0.45;
+  var last = CLK(), t0 = CLK(), flash = 0;
+  function f(now) {
+    var st = stepOf(root), dt = Math.min(0.05, (now - last) / 1000); last = now; var T = (now - t0) / 1000, k = st ? st - 1 : Math.floor(T / 4) % 3;
+    atoms.forEach(function (a, i) { if (k === 2 && i < 2) return; a.x += a.vx * dt; a.y += a.vy * dt; var w = false; if (a.x < 0) { a.x += L; w = true; } if (a.x >= L) { a.x -= L; w = true; } if (a.y < 0) { a.y += L; w = true; } if (a.y >= L) { a.y -= L; w = true; } if (w && k === 0) flash = 1; });
+    flash = Math.max(0, flash - dt * 1.5);
+    var o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    for (var i = 0; i < 3; i++) for (var j = 0; j < 3; j++) o += '<rect x="' + (X0 + i * L) + '" y="' + (Y0 + j * L) + '" width="' + L + '" height="' + L + '" fill="' + (i == 1 && j == 1 ? '#FFF4E3' : '#FFFFFF') + '" stroke="' + (i == 1 && j == 1 ? (flash > 0 ? '#D9534F' : '#F99D1C') : '#E2D8CA') + '" stroke-width="' + (i == 1 && j == 1 ? 4 : 2) + '"/>';
+    var a0 = atoms[0], a1 = atoms[1], c0 = [X0 + L + a0.x, Y0 + L + a0.y];
+    if (k === 1) { var dx = a1.x - a0.x, dy = a1.y - a0.y, mx = dx - L * Math.round(dx / L), my = dy - L * Math.round(dy / L); o += '<line x1="' + c0[0].toFixed(1) + '" y1="' + c0[1].toFixed(1) + '" x2="' + (X0 + L + a1.x).toFixed(1) + '" y2="' + (Y0 + L + a1.y).toFixed(1) + '" stroke="#B9AE9E" stroke-width="3" stroke-dasharray="8 6"/><line x1="' + c0[0].toFixed(1) + '" y1="' + c0[1].toFixed(1) + '" x2="' + (c0[0] + mx).toFixed(1) + '" y2="' + (c0[1] + my).toFixed(1) + '" stroke="#2E8B57" stroke-width="5"/>'; }
+    if (k === 2) { var rc = st ? 66 : (Math.floor(T / 2) % 2 ? 94 : 66), bad = 2 * rc > L; o += '<circle cx="' + c0[0].toFixed(1) + '" cy="' + c0[1].toFixed(1) + '" r="' + rc + '" fill="' + (bad ? 'rgba(217,83,79,.12)' : 'rgba(46,139,87,.12)') + '" stroke="' + (bad ? '#D9534F' : '#2E8B57') + '" stroke-width="3"/>'; [[-1, 0], [1, 0], [0, -1], [0, 1]].forEach(function (d) { o += '<circle cx="' + (c0[0] + d[0] * L).toFixed(1) + '" cy="' + (c0[1] + d[1] * L).toFixed(1) + '" r="' + rc + '" fill="none" stroke="' + (bad ? '#D9534F' : '#9AA5B1') + '" stroke-width="2" stroke-dasharray="6 6"/>'; }); }
+    atoms.forEach(function (a, i) { for (var p = 0; p < 3; p++) for (var q = 0; q < 3; q++) o += '<circle cx="' + (X0 + p * L + a.x).toFixed(1) + '" cy="' + (Y0 + q * L + a.y).toFixed(1) + '" r="' + (i < 2 && k > 0 ? 12 : 10) + '" fill="' + a.c + '" opacity="' + (p == 1 && q == 1 ? 1 : 0.3) + '"/>'; });
+    var msg = [[__L('① 나간 원자 → 반대편으로 유입 (셀 테두리가 붉어질 때)','① Exiting atom → re-enters on opposite side (when cell border turns red)'), __L('원자 수 보존 · 표면 없음','Atom count conserved · no surface')], [__L('② 최소 이미지: 초록 = 가장 가까운 복제본까지 · 회색 = 같은 셀 안 거리','② Minimum image: green = to nearest replica · gray = distance within same cell'), 'd −= L · round(d / L)'], [(st || Math.floor(T / 2) % 2 === 0) ? __L('③ 컷오프 원 · 복제본 원 분리 → 통과','③ cutoff circle · image circle separate → pass') : __L('③ 컷오프 확대 → 원 겹침 · 자기 상호작용 → 실패','③ Larger cutoff → circles overlap · self-interaction → failure'), __L('컷오프 12 Å → 셀 한 변 24 Å 이상','Cutoff 12 Å → cell edge 24 Å or more')]][k];
+    o += '<text x="' + (W / 2) + '" y="' + (Y0 + 3 * L + 40) + '" text-anchor="middle" class="cfh" font-size="20">' + msg[0] + '</text><text x="' + (W / 2) + '" y="' + (Y0 + 3 * L + 70) + '" text-anchor="middle" class="cfm" font-size="19">' + msg[1] + '</text></svg>';
+    root.innerHTML = o; termSync(root, k); RAF(f);
+  }
+  RAF(f);
+};
+
+/* ---- decay: r⁻⁶ 대 r⁻¹ · 절단 · 꼬리 보정 · Ewald 분할 ---- */
+EMB["decay"] = function (root, RAF) {
+  var W = 1040, H = 578, X0 = 80, X1 = W - 40, Y0 = H - 90, Y1 = 60, r0 = 3, r1 = 20, t0 = CLK();
+  function X(r) { return X0 + (r - r0) / (r1 - r0) * (X1 - X0); } function Y(u) { return Y0 - Math.max(0, Math.min(1.05, u)) * (Y0 - Y1); }
+  function erf(x) { var s = x < 0 ? -1 : 1; x = Math.abs(x); var t = 1 / (1 + 0.3275911 * x); return s * (1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x)); }
+  var f6 = function (r) { return Math.pow(3 / r, 6); }, f1 = function (r) { return 3 / r; }, al = 0.25;
+  function path(fn, a, b) { var d = ''; for (var i = 0; i <= 120; i++) { var r = a + (b - a) * i / 120; d += (i ? 'L' : 'M') + X(r).toFixed(1) + ' ' + Y(fn(r)).toFixed(1); } return d; }
+  function f(now) {
+    var st = stepOf(root), T = (now - t0) / 1000, k = st ? st - 1 : Math.floor(T / 4) % 3, u = st ? 0.75 : (T % 4) / 4, rc = k === 0 ? 8 + 4 * (0.5 - 0.5 * Math.cos(2 * Math.PI * u)) : 12, o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    o += '<line x1="' + X0 + '" y1="' + Y0 + '" x2="' + X1 + '" y2="' + Y0 + '" stroke="#6E655C" stroke-width="2"/><line x1="' + X0 + '" y1="' + Y1 + '" x2="' + X0 + '" y2="' + Y0 + '" stroke="#6E655C" stroke-width="2"/>';
+    [3, 5, 8, 10, 12, 16, 20].forEach(function (r) { o += '<text x="' + X(r) + '" y="' + (Y0 + 30) + '" text-anchor="middle" class="cfm" fill="#4A4540" font-size="18">' + r + '</text>'; });
+    o += '<text x="' + ((X0 + X1) / 2) + '" y="' + (Y0 + 62) + __L('" text-anchor="middle" class="cfs">거리 r (Å) · |U| 는 r = 3 Å 에서 1 로 정규화</text>','" text-anchor="middle" class="cfs">Distance r (Å) · |U| normalized to 1 at r = 3 Å</text>');
+    if (k === 1) { var d = 'M' + X(rc).toFixed(1) + ' ' + Y0; for (var i = 0; i <= 60; i++) { var r = rc + (r1 - rc) * i / 60; d += ' L' + X(r).toFixed(1) + ' ' + Y(f6(r)).toFixed(1); } d += ' L' + X1 + ' ' + Y0 + ' Z'; o += '<path d="' + d + '" fill="rgba(79,127,176,.25)"/><text x="' + X(14.5) + '" y="' + (Y0 - 40) + __L('" class="cfh" fill="#4F7FB0" font-size="20">꼬리 = ∫ U(r) 4πr² dr → 적분으로 가산</text>','" class="cfh" fill="#4F7FB0" font-size="20">Tail = ∫ U(r) 4πr² dr → add by integral</text>'); }
+    if (k < 2) { o += '<path d="' + path(f6, r0, r1) + '" fill="none" stroke="#4F7FB0" stroke-width="4"/><path d="' + path(f1, r0, r1) + '" fill="none" stroke="#D9534F" stroke-width="4"/>'; o += '<text x="' + X(4.6) + '" y="' + (Y(f6(4.6)) - 14) + __L('" class="cfh" fill="#4F7FB0" font-size="20">반데르발스 · 빠르게 소멸</text><text x="','" class="cfh" fill="#4F7FB0" font-size="20">van der Waals · decays fast</text><text x="') + X(12.5) + '" y="' + (Y(f1(12.5)) - 14) + __L('" class="cfh" fill="#D9534F" font-size="20">정전기 · 멀리까지 남음</text>','" class="cfh" fill="#D9534F" font-size="20">Electrostatic · persists far</text>'); }
+    else { var fs = function (r) { return 3 / r * (1 - erf(al * r)); }, fl = function (r) { return 3 / r * erf(al * r); }; o += '<path d="' + path(f1, r0, r1) + '" fill="none" stroke="#D9534F" stroke-width="3" stroke-dasharray="6 6"/><path d="' + path(fs, r0, r1) + '" fill="none" stroke="#E37F1A" stroke-width="5"/><path d="' + path(fl, r0, r1) + '" fill="none" stroke="#2E8B57" stroke-width="5"/>'; o += '<text x="' + X(4.5) + '" y="' + (Y(fs(4.5)) - 14) + __L('" class="cfh" fill="#E37F1A" font-size="20">근거리 몫 · 직접 계산 · 컷오프 안</text><text x="','" class="cfh" fill="#E37F1A" font-size="20">Near part · direct calculation · within cutoff</text><text x="') + X(9) + '" y="' + (Y(fl(9)) - 40) + __L('" class="cfh" fill="#2E8B57" font-size="20">원거리 몫 · 매끄러움 → 격자 FFT</text><text x="','" class="cfh" fill="#2E8B57" font-size="20">Far part · smooth → grid FFT</text><text x="') + X(14) + '" y="' + (Y(f1(14)) + 36) + __L('" class="cfs" fill="#D9534F">점선 = 두 몫의 합 = 원래 정전기</text>','" class="cfs" fill="#D9534F">Dotted = sum of two parts = original electrostatics</text>'); }
+    o += '<line x1="' + X(rc).toFixed(1) + '" y1="' + Y1 + '" x2="' + X(rc).toFixed(1) + '" y2="' + Y0 + '" stroke="#F99D1C" stroke-width="3" stroke-dasharray="8 6"/><text x="' + (X(rc) + 10).toFixed(1) + '" y="' + (Y1 + 24) + __L('" class="cfh" fill="#C8610C" font-size="20">컷오프 ','" class="cfh" fill="#C8610C" font-size="20">Cutoff ') + rc.toFixed(1) + ' Å</text>';
+    if (k < 2) o += '<circle cx="' + X(rc).toFixed(1) + '" cy="' + Y(f6(rc)).toFixed(1) + '" r="8" fill="#4F7FB0"/><text x="' + (X(rc) + 14).toFixed(1) + '" y="' + (Y(f6(rc)) - 10).toFixed(1) + '" class="cfm" fill="#4F7FB0">' + f6(rc).toExponential(1) + '</text><circle cx="' + X(rc).toFixed(1) + '" cy="' + Y(f1(rc)).toFixed(1) + '" r="8" fill="#D9534F"/><text x="' + (X(rc) + 14).toFixed(1) + '" y="' + (Y(f1(rc)) + 30).toFixed(1) + '" class="cfm" fill="#D9534F">' + f1(rc).toFixed(2) + __L(' 잔존</text>',' remaining</text>');
+    else o += '<text x="' + (X(rc) + 10).toFixed(1) + '" y="' + (Y1 + 52) + __L('" class="cfm" fill="#E37F1A">컷오프에서 근거리 몫 ≈ 2.2 × 10⁻⁵</text>','" class="cfm" fill="#E37F1A">Near part at cutoff ≈ 2.2 × 10⁻⁵</text>');
+    o += '</svg>'; root.innerHTML = o; termSync(root, k); RAF(f);
+  }
+  RAF(f);
+};
+
+/* ---- fill: 톨루엔 상자 채우기 (W06 예고) ---- */
+EMB["fill"] = function (root, RAF) {
+  var W = 520, H = 520, S = 420, X0 = 50, Y0 = 30, N = 50, seed = 3, pos = []; function rnd() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+  for (var i = 0; i < N; i++) { var ok = false, tries = 0, p; while (!ok && tries < 200) { p = [X0 + 24 + rnd() * (S - 48), Y0 + 24 + rnd() * (S - 48), rnd() * Math.PI]; ok = pos.every(function (q) { return Math.hypot(q[0] - p[0], q[1] - p[1]) > 44; }); tries++; } pos.push(p); }
+  var t0 = CLK();
+  function hex(x, y, a, r) { var d = ''; for (var i = 0; i < 6; i++) { var b = a + i * Math.PI / 3; d += (i ? 'L' : 'M') + (x + r * Math.cos(b)).toFixed(1) + ' ' + (y + r * Math.sin(b)).toFixed(1); } return d + 'Z'; }
+  function f(now) {
+    var T = (now - t0) / 1000, n = Math.min(N, Math.floor(T / 0.18)), o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    o += '<rect x="' + X0 + '" y="' + Y0 + '" width="' + S + '" height="' + S + '" fill="#FFFFFF" stroke="#C8610C" stroke-width="4" stroke-dasharray="10 8"/>';
+    for (var i = 0; i < n; i++) { var p = pos[i]; o += '<path d="' + hex(p[0], p[1], p[2], 15) + '" fill="none" stroke="#4A4540" stroke-width="3"/><line x1="' + p[0].toFixed(1) + '" y1="' + p[1].toFixed(1) + '" x2="' + (p[0] + 26 * Math.cos(p[2])).toFixed(1) + '" y2="' + (p[1] + 26 * Math.sin(p[2])).toFixed(1) + '" stroke="#E37F1A" stroke-width="4" stroke-linecap="round"/>'; }
+    o += '<text x="' + (X0 + S / 2) + '" y="' + (Y0 + S + 34) + __L('" text-anchor="middle" class="cfh" font-size="22">톨루엔 ','" text-anchor="middle" class="cfh" font-size="22">Toluene ') + n + __L(' / 50 분자 · L 33.69 Å</text>',' / 50 molecules · L 33.69 Å</text>');
+    o += '<text x="' + (X0 + S / 2) + '" y="' + (Y0 + S + 62) + '" text-anchor="middle" class="cfs" font-size="19">' + (n >= N ? __L('750 원자 · 750 결합 · 1200 각 · 1500 이면각 → W06 data 파일','750 atoms · 750 bonds · 1200 angles · 1500 dihedrals → W06 data file') : __L('Packmol 최소 거리 3.283 Å · ρ₀ 0.2 g/cm³','Packmol minimum distance 3.283 Å · ρ₀ 0.2 g/cm³')) + '</text></svg>';
+    root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ---- (이전 13장 TWEAK 곡선 · 12장으로 통합 후 대상 없음) ---- */
+(function () {
+  document.querySelectorAll('svg[data-ljcurve]').forEach(function (svg) {
+    var a = svg.dataset.ljcurve.split(','), s = +a[0], e = +a[1], col = a[2], X0 = 70, X1 = 680, Y0 = 250, Y1 = 30, r0 = 2.4, r1 = 7, o = '';
+    function X(r) { return X0 + (r - r0) / (r1 - r0) * (X1 - X0); } function Y(u) { return Y0 - (u + 0.055) / 0.11 * (Y0 - Y1); }
+    o += '<line x1="' + X0 + '" y1="' + Y(0) + '" x2="' + X1 + '" y2="' + Y(0) + '" stroke="#6E655C" stroke-width="2"/>';
+    [3, 4, 5, 6, 7].forEach(function (r) { o += '<text x="' + X(r) + '" y="' + (Y0 + 28) + '" text-anchor="middle" class="cfm" fill="#4A4540" font-size="17">' + r + ' Å</text>'; });
+    var d = ''; for (var i = 0; i <= 200; i++) { var r = r0 + (r1 - r0) * i / 200, u = 4 * e * (Math.pow(s / r, 12) - Math.pow(s / r, 6)); u = Math.min(u, 0.055); d += (i ? 'L' : 'M') + X(r).toFixed(1) + ' ' + Y(u).toFixed(1); }
+    var rm = Math.pow(2, 1 / 6) * s;
+    o += '<path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="5"/><line x1="' + X(rm).toFixed(1) + '" y1="' + Y(0) + '" x2="' + X(rm).toFixed(1) + '" y2="' + Y(-e).toFixed(1) + '" stroke="#C8610C" stroke-width="2" stroke-dasharray="5 4"/><circle cx="' + X(rm).toFixed(1) + '" cy="' + Y(-e).toFixed(1) + '" r="8" fill="#C8610C"/><text x="' + (X(rm) + 14).toFixed(1) + '" y="' + (Y(-e) + 6).toFixed(1) + '" class="cfm" fill="#C8610C">r_min ' + rm.toFixed(3) + ' · −ε ' + e.toFixed(4) + '</text><text x="' + X0 + '" y="' + (Y1 + 2) + '" class="cfs" font-size="18">U_ij (kcal/mol) · ca – hc</text>';
+    svg.innerHTML = o;
+  });
+})();
+
+/* ---- 6장 12-6 대 9-6 곡선 (정적) ---- */
+(function () {
+  var svg = document.getElementById('w04-lj96'); if (!svg) return;
+  var X0 = 70, X1 = 610, Y0 = 400, Y1 = 40, r0 = 0.88, r1 = 2.6, o = '';
+  function X(r) { return X0 + (r - r0) / (r1 - r0) * (X1 - X0); } function Y(u) { return Y0 - (u + 1.1) / 2.3 * (Y0 - Y1); }
+  o += '<line x1="' + X0 + '" y1="' + Y(0) + '" x2="' + X1 + '" y2="' + Y(0) + '" stroke="#6E655C" stroke-width="2"/><line x1="' + X0 + '" y1="' + Y1 + '" x2="' + X0 + '" y2="' + Y0 + '" stroke="#6E655C" stroke-width="2"/>';
+  function curve(fn, col, w) { var d = ''; for (var i = 0; i <= 200; i++) { var r = r0 + (r1 - r0) * i / 200, u = Math.min(1.2, fn(r)); d += (i ? 'L' : 'M') + X(r).toFixed(1) + ' ' + Y(u).toFixed(1); } return '<path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="' + w + '"/>'; }
+  var rm = Math.pow(2, 1 / 6);
+  o += curve(function (r) { return 4 * (Math.pow(1 / r, 12) - Math.pow(1 / r, 6)); }, '#4F7FB0', 5) + curve(function (r) { var x = rm / r; return 2 * Math.pow(x, 9) - 3 * Math.pow(x, 6); }, '#E37F1A', 5);
+  o += '<text x="' + X(1.05) + '" y="' + (Y(1.0)) + '" class="cfh" fill="#4F7FB0" font-size="20">12-6 · Class I (GAFF2)</text><text x="' + X(1.55) + '" y="' + (Y(-0.75)) + '" class="cfh" fill="#E37F1A" font-size="20">9-6 · Class II (COMPASS)</text>';
+  o += '<text x="' + X(1.0) + '" y="' + (Y(0.45)) + __L('" class="cfs" font-size="18">반발 벽: 12-6 급함 · 9-6 완만</text><text x="','" class="cfs" font-size="18">Repulsive wall: 12-6 steep · 9-6 soft</text><text x="') + X(1.7) + '" y="' + (Y(-0.25)) + __L('" class="cfs" font-size="18">같은 우물 깊이 · 인력 꼴 동일</text>','" class="cfs" font-size="18">Same well depth · same attractive form</text>');
+  o += '<text x="' + ((X0 + X1) / 2) + '" y="' + (Y0 + 40) + __L('" text-anchor="middle" class="cfs">원자 사이 거리 (같은 상수로 그림)</text><text x="','" text-anchor="middle" class="cfs">Distance between atoms (drawn with the same constants)</text><text x="') + X0 + '" y="' + (Y1 - 10) + __L('" class="cfs" font-size="18">에너지</text>','" class="cfs" font-size="18">Energy</text>');
+  svg.innerHTML = o;
+})();
+
+/* ---- 24장 TWEAK 상자 안 컷오프 원 (정적) ---- */
+(function () {
+  document.querySelectorAll('svg[data-rcbox]').forEach(function (svg) {
+    var rc = +svg.dataset.rcbox, L = 26.2, S = 200, X0 = 40, Y0 = 10, k = S / L, seed = 5, o = ''; function rnd() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+    o += '<rect x="' + X0 + '" y="' + Y0 + '" width="' + S + '" height="' + S + '" fill="#F6F0E7" stroke="#6E655C" stroke-width="2"/>';
+    var cx = X0 + S / 2, cy = Y0 + S / 2, n = 0, N = 60, pts = [];
+    for (var i = 0; i < N; i++) pts.push([X0 + 6 + rnd() * (S - 12), Y0 + 6 + rnd() * (S - 12)]);
+    o += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (rc * k).toFixed(1) + '" fill="rgba(249,157,28,.18)" stroke="#E37F1A" stroke-width="3"/>';
+    pts.forEach(function (p) { var inside = Math.hypot(p[0] - cx, p[1] - cy) < rc * k; if (inside) n++; o += '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="4" fill="' + (inside ? '#C8610C' : '#B9AE9E') + '"/>'; });
+    o += '<circle cx="' + cx + '" cy="' + cy + '" r="7" fill="#231F20"/>';
+    o += __L('<text x="290" y="60" class="cfh" font-size="22">컷오프 ','<text x="290" y="60" class="cfh" font-size="22">Cutoff ') + rc + __L(' Å · 상자 26.2 Å</text><text x="290" y="100" class="cfs">원 안 = 함께 계산하는 이웃 · 60개 중 ',' Å · box 26.2 Å</text><text x="290" y="100" class="cfs">Circle = neighbors computed together · of 60: ') + n + __L('개</text><text x="290" y="135" class="cfs">컷오프 2배 = ',' </text><text x="290" y="135" class="cfs">2× cutoff = ') + (2 * rc) + ' Å ' + (2 * rc < L ? __L('< 상자 → 통과','< box → pass') : __L('> 상자 → 실패','> box → fail')) + __L('</text><text x="290" y="175" class="cfmu">쌍 수 = 컷오프 부피에 비례 → 8 → 12 Å 는 약 3.4배</text>','</text><text x="290" y="175" class="cfmu">Pairs ∝ cutoff volume → 8 → 12 Å is about 3.4×</text>');
+    svg.innerHTML = o;
+  });
+})();
+
+/* ===== 12장 조작형: 조합 규칙 3종 계산기 ===== */
+(function () {
+  var root = document.getElementById('sim-mix'); if (!root) return;
+  var T = [{ id: 'ca', e: 0.0988, s: 3.3152 }, { id: 'c3', e: 0.1078, s: 3.3977 }, { id: 'ha', e: 0.0161, s: 2.6255 }, { id: 'hc', e: 0.0208, s: 2.6002 }, { id: 'o', e: 0.1463, s: 3.0481 }, { id: 'oh', e: 0.0930, s: 3.2429 }, { id: 'ss', e: 0.2824, s: 3.5324 }, { id: 'O_clay', e: 0.1554, s: 3.166 }, { id: 'Si_clay', e: 1.8405e-6, s: 3.302 }];
+  var st = { i: 'ca', j: 'hc', rule: 'lb' }, svg = root.querySelector('svg');
+  function get(id) { for (var k = 0; k < T.length; k++) if (T[k].id === id) return T[k]; }
+  function mix(a, b) { var s6a = Math.pow(a.s, 6), s6b = Math.pow(b.s, 6); return { lb: { s: (a.s + b.s) / 2, e: Math.sqrt(a.e * b.e) }, geo: { s: Math.sqrt(a.s * b.s), e: Math.sqrt(a.e * b.e) }, wh: { s: Math.pow((s6a + s6b) / 2, 1 / 6), e: 2 * Math.sqrt(a.e * b.e) * Math.pow(a.s, 3) * Math.pow(b.s, 3) / (s6a + s6b) } }; }
+  ['i', 'j'].forEach(function (g) { var box = root.querySelector('.w04-chips[data-g=' + g + ']'); T.forEach(function (t) { var b = document.createElement('button'); b.type = 'button'; b.textContent = t.id.replace('_clay', '·Clay'); b.dataset.t = t.id; b.onclick = function () { st[g] = t.id; draw(); }; box.appendChild(b); }); });
+  root.querySelectorAll('.w04-chips[data-g=rule] button').forEach(function (b) { b.onclick = function () { st.rule = b.dataset.rule; draw(); }; });
+  function fmt(m) { return m.s.toFixed(3) + ' Å · ' + (m.e < 1e-3 ? m.e.toExponential(1) : m.e.toFixed(4)); }
+  function draw() {
+    var a = get(st.i), b = get(st.j), M = mix(a, b);
+    root.querySelectorAll('.w04-chips[data-g=i] button').forEach(function (x) { x.className = x.dataset.t === st.i ? '' : 'alt'; });
+    root.querySelectorAll('.w04-chips[data-g=j] button').forEach(function (x) { x.className = x.dataset.t === st.j ? '' : 'alt'; });
+    root.querySelectorAll('.w04-chips[data-g=rule] button').forEach(function (x) { x.className = x.dataset.rule === st.rule ? '' : 'alt'; });
+    root.querySelector('[data-o=lb]').textContent = fmt(M.lb); root.querySelector('[data-o=geo]').textContent = fmt(M.geo); root.querySelector('[data-o=wh]').textContent = fmt(M.wh);
+    root.querySelector('[data-o=rmin]').textContent = (Math.pow(2, 1 / 6) * M[st.rule].s).toFixed(3) + ' Å';
+    var X0 = 80, X1 = 1090, Y0 = 350, Y1 = 30, r0 = 2.2, r1 = 8, emax = Math.max(M.lb.e, M.geo.e, M.wh.e, 1e-4), umin = -emax * 1.15, umax = emax, o = '';
+    function X(r) { return X0 + (r - r0) / (r1 - r0) * (X1 - X0); } function Y(u) { return Y0 - (u - umin) / (umax - umin) * (Y0 - Y1); }
+    o += '<line x1="' + X0 + '" y1="' + Y(0) + '" x2="' + X1 + '" y2="' + Y(0) + '" stroke="#6E655C" stroke-width="2"/><line x1="' + X0 + '" y1="' + Y1 + '" x2="' + X0 + '" y2="' + Y0 + '" stroke="#6E655C" stroke-width="2"/>';
+    [3, 4, 5, 6, 7, 8].forEach(function (r) { o += '<text x="' + X(r) + '" y="' + (Y0 + 30) + '" text-anchor="middle" class="cfm" fill="#4A4540" font-size="18">' + r + ' Å</text>'; });
+    o += '<text x="' + ((X0 + X1) / 2) + '" y="' + (Y1 + 8) + '" text-anchor="middle" class="cfs" font-size="19">U_ij (kcal/mol) · ' + a.id + ' – ' + b.id + (emax < 1e-3 ? __L(' · 세기 ≈ 0 → 인력 소실',' · strength ≈ 0 → attraction lost') : '') + '</text>';
+    var cols = { lb: '#F99D1C', geo: '#4F7FB0', wh: '#2E8B57' }, names = { lb: __L('산술 LB','Arithmetic LB'), geo: __L('기하','Geometric'), wh: __L('6제곱 WH','6th-power WH') };
+    ['geo', 'wh', 'lb'].forEach(function (k) { var m = M[k], d = ''; for (var i = 0; i <= 240; i++) { var r = r0 + (r1 - r0) * i / 240, u = 4 * m.e * (Math.pow(m.s / r, 12) - Math.pow(m.s / r, 6)); u = Math.min(u, umax); d += (i ? 'L' : 'M') + X(r).toFixed(1) + ' ' + Y(u).toFixed(1); } o += '<path d="' + d + '" fill="none" stroke="' + cols[k] + '" stroke-width="' + (k === st.rule ? 5 : 2.5) + '" opacity="' + (k === st.rule ? 1 : 0.6) + '"/>'; var rm = Math.pow(2, 1 / 6) * m.s; o += '<circle cx="' + X(rm) + '" cy="' + Y(-m.e) + '" r="7" fill="' + cols[k] + '"/>'; });
+    var ly = Y1 + 40; Object.keys(names).forEach(function (k, i) { o += '<rect x="' + (X1 - 290) + '" y="' + (ly + i * 30 - 12) + '" width="26" height="8" fill="' + cols[k] + '"/><text x="' + (X1 - 254) + '" y="' + (ly + i * 30 - 2) + '" class="cfs" font-size="19">' + names[k] + ' σ ' + M[k].s.toFixed(3) + '</text>'; });
+    svg.innerHTML = o;
+  }
+  root.querySelector('[data-act=fail]').onclick = function () { st.i = 'ca'; st.j = 'Si_clay'; draw(); };
+  root.querySelector('[data-act=reset]').onclick = function () { st.i = 'ca'; st.j = 'hc'; st.rule = 'lb'; draw(); };
+  draw();
+})();
+</script>
+</body>
+</html>

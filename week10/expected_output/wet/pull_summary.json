@@ -1,0 +1,22 @@
+{
+ "tag": "wet",
+ "cell": "wet",
+ "atoms": 2067,
+ "n_slab": 540,
+ "n_water": 627,
+ "n_binder": 900,
+ "area_A2": 627.1,
+ "v_A_per_fs": 0.0025,
+ "v_m_per_s": 250.0,
+ "steps": 4000,
+ "displacement_A": 10.0,
+ "grip_thickness_A": 6.0,
+ "grip_z_min_A": 47.01,
+ "binder_z_range_A": [
+  21.54,
+  53.01
+ ],
+ "strain_rate_per_s": 79443338815.33853,
+ "stress_unit": "sigma_MPa = -F_grip(kcal/mol/A) * 69.4786 / A(A^2) * 100",
+ "rows": 201
+}

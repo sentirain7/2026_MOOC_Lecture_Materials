@@ -1,0 +1,163 @@
+{
+ "round": 3,
+ "history": [
+  {
+   "round": 0,
+   "ids": [
+    "r0_1",
+    "r0_2",
+    "r0_3",
+    "r0_4",
+    "r0_5",
+    "r0_6"
+   ],
+   "cands": [
+    "quinoline-2x3",
+    "tetralin-2x12",
+    "phenanthrene-1x1",
+    "benzene-1x9",
+    "benzothiophene-1x1",
+    "tetralin-2x1"
+   ],
+   "mode": "live",
+   "model": "gp",
+   "acq": "ehvi",
+   "best": "r0_1",
+   "best_cand": "quinoline-2x3",
+   "best_dist": 3.04
+  },
+  {
+   "round": 1,
+   "ids": [
+    "r1_1",
+    "r1_2"
+   ],
+   "cands": [
+    "benzothiophene-1x4",
+    "benzene-2x1"
+   ],
+   "mode": "live",
+   "model": "gp",
+   "acq": "ehvi",
+   "n_obs": 6,
+   "picks": [
+    {
+     "cand": "benzothiophene-1x4",
+     "score": 2.224361,
+     "mu": [
+      1.0241,
+      432.2072
+     ],
+     "sd": [
+      0.0057,
+      1.1189
+     ]
+    },
+    {
+     "cand": "benzene-2x1",
+     "score": 1.346098,
+     "mu": [
+      0.9822,
+      412.8064
+     ],
+     "sd": [
+      0.0072,
+      2.0186
+     ]
+    }
+   ],
+   "best": "r0_1",
+   "best_cand": "quinoline-2x3",
+   "best_dist": 3.04
+  },
+  {
+   "round": 2,
+   "ids": [
+    "r2_1",
+    "r2_2"
+   ],
+   "cands": [
+    "benzene-1x1",
+    "benzene-1x2"
+   ],
+   "mode": "live",
+   "model": "gp",
+   "acq": "ehvi",
+   "n_obs": 8,
+   "picks": [
+    {
+     "cand": "benzene-1x1",
+     "score": 5.303557,
+     "mu": [
+      0.9713,
+      367.5974
+     ],
+     "sd": [
+      0.0491,
+      9.7908
+     ]
+    },
+    {
+     "cand": "benzene-1x2",
+     "score": 3.332776,
+     "mu": [
+      0.9337,
+      350.3359
+     ],
+     "sd": [
+      0.0479,
+      0.887
+     ]
+    }
+   ],
+   "best": "r0_1",
+   "best_cand": "quinoline-2x3",
+   "best_dist": 3.04
+  },
+  {
+   "round": 3,
+   "ids": [
+    "r3_1",
+    "r3_2"
+   ],
+   "cands": [
+    "naphthalene-2x2",
+    "naphthalene-2x9"
+   ],
+   "mode": "live",
+   "model": "gp",
+   "acq": "ehvi",
+   "n_obs": 10,
+   "picks": [
+    {
+     "cand": "naphthalene-2x2",
+     "score": 2.663558,
+     "mu": [
+      1.0196,
+      411.8761
+     ],
+     "sd": [
+      0.0186,
+      2.4672
+     ]
+    },
+    {
+     "cand": "naphthalene-2x9",
+     "score": 1.608886,
+     "mu": [
+      0.8803,
+      355.3229
+     ],
+     "sd": [
+      0.1148,
+      8.4988
+     ]
+    }
+   ],
+   "best": "r0_1",
+   "best_cand": "quinoline-2x3",
+   "best_dist": 3.04
+  }
+ ],
+ "done": true
+}

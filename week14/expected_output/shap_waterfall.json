@@ -1,0 +1,472 @@
+[
+ {
+  "group_id": "AAA1|none|U",
+  "T": 293,
+  "base": 1.0108171701431274,
+  "pred": 1.0102547407150269,
+  "md": 1.01088164585,
+  "contrib": [
+   {
+    "feature": "temperature_K",
+    "ko": "온도",
+    "phi": 0.0287
+   },
+   {
+    "feature": "add_density",
+    "ko": "첨가제 밀도",
+    "phi": -0.01031
+   },
+   {
+    "feature": "b_logP",
+    "ko": "바인더 logP",
+    "phi": -0.00902
+   },
+   {
+    "feature": "b_O_frac",
+    "ko": "바인더 O 분율",
+    "phi": -0.00761
+   },
+   {
+    "feature": "b_aro_frac",
+    "ko": "바인더 방향족 분율",
+    "phi": -0.00271
+   },
+   {
+    "feature": "add_stiffness",
+    "ko": "첨가제 강성",
+    "phi": -0.00199
+   },
+   {
+    "feature": "add_aspect",
+    "ko": "첨가제 종횡비",
+    "phi": 0.00156
+   },
+   {
+    "feature": "b_HC_ratio",
+    "ko": "바인더 H/C",
+    "phi": 0.00141
+   },
+   {
+    "feature": "b_n_heavy",
+    "ko": "바인더 분자 크기",
+    "phi": -0.00062
+   },
+   {
+    "feature": "b_Rg",
+    "ko": "바인더 회전반경",
+    "phi": 0.00044
+   },
+   {
+    "feature": "b_hetero_frac",
+    "ko": "바인더 헤테로 분율",
+    "phi": -0.00043
+   },
+   {
+    "feature": "add_polymer",
+    "ko": "첨가제 고분자",
+    "phi": -0.00035
+   },
+   {
+    "feature": "b_MW",
+    "ko": "바인더 분자량",
+    "phi": 0.00015
+   },
+   {
+    "feature": "b_aspect",
+    "ko": "바인더 종횡비",
+    "phi": 0.00014
+   },
+   {
+    "feature": "b_TPSA",
+    "ko": "바인더 TPSA",
+    "phi": 0.00011
+   },
+   {
+    "feature": "add_inorganic",
+    "ko": "첨가제 무기",
+    "phi": -2e-05
+   },
+   {
+    "feature": "add_nano",
+    "ko": "첨가제 나노",
+    "phi": -1e-05
+   }
+  ]
+ },
+ {
+  "group_id": "AAA1|none|L",
+  "T": 293,
+  "base": 1.0108171701431274,
+  "pred": 1.0678633451461792,
+  "md": 1.0681402005,
+  "contrib": [
+   {
+    "feature": "temperature_K",
+    "ko": "온도",
+    "phi": 0.02417
+   },
+   {
+    "feature": "b_logP",
+    "ko": "바인더 logP",
+    "phi": 0.024
+   },
+   {
+    "feature": "b_O_frac",
+    "ko": "바인더 O 분율",
+    "phi": 0.00959
+   },
+   {
+    "feature": "add_density",
+    "ko": "첨가제 밀도",
+    "phi": -0.00921
+   },
+   {
+    "feature": "b_aro_frac",
+    "ko": "바인더 방향족 분율",
+    "phi": 0.00494
+   },
+   {
+    "feature": "b_n_heavy",
+    "ko": "바인더 분자 크기",
+    "phi": 0.00297
+   },
+   {
+    "feature": "add_stiffness",
+    "ko": "첨가제 강성",
+    "phi": -0.0019
+   },
+   {
+    "feature": "add_aspect",
+    "ko": "첨가제 종횡비",
+    "phi": 0.00118
+   },
+   {
+    "feature": "b_Rg",
+    "ko": "바인더 회전반경",
+    "phi": 0.00038
+   },
+   {
+    "feature": "b_hetero_frac",
+    "ko": "바인더 헤테로 분율",
+    "phi": 0.00033
+   },
+   {
+    "feature": "b_aspect",
+    "ko": "바인더 종횡비",
+    "phi": 0.00031
+   },
+   {
+    "feature": "b_MW",
+    "ko": "바인더 분자량",
+    "phi": 0.00029
+   },
+   {
+    "feature": "b_HC_ratio",
+    "ko": "바인더 H/C",
+    "phi": 0.00015
+   },
+   {
+    "feature": "add_polymer",
+    "ko": "첨가제 고분자",
+    "phi": -6e-05
+   },
+   {
+    "feature": "add_inorganic",
+    "ko": "첨가제 무기",
+    "phi": -6e-05
+   },
+   {
+    "feature": "b_TPSA",
+    "ko": "바인더 TPSA",
+    "phi": -1e-05
+   },
+   {
+    "feature": "add_nano",
+    "ko": "첨가제 나노",
+    "phi": -1e-05
+   }
+  ]
+ },
+ {
+  "group_id": "AAA1|SiO2|L",
+  "T": 293,
+  "base": 1.0108171701431274,
+  "pred": 1.1030950546264648,
+  "md": 1.101934221,
+  "contrib": [
+   {
+    "feature": "b_logP",
+    "ko": "바인더 logP",
+    "phi": 0.02453
+   },
+   {
+    "feature": "temperature_K",
+    "ko": "온도",
+    "phi": 0.02379
+   },
+   {
+    "feature": "add_density",
+    "ko": "첨가제 밀도",
+    "phi": 0.02024
+   },
+   {
+    "feature": "b_O_frac",
+    "ko": "바인더 O 분율",
+    "phi": 0.00943
+   },
+   {
+    "feature": "b_aro_frac",
+    "ko": "바인더 방향족 분율",
+    "phi": 0.00403
+   },
+   {
+    "feature": "add_aspect",
+    "ko": "첨가제 종횡비",
+    "phi": 0.0038
+   },
+   {
+    "feature": "b_n_heavy",
+    "ko": "바인더 분자 크기",
+    "phi": 0.0032
+   },
+   {
+    "feature": "add_stiffness",
+    "ko": "첨가제 강성",
+    "phi": 0.00111
+   },
+   {
+    "feature": "b_HC_ratio",
+    "ko": "바인더 H/C",
+    "phi": 0.00069
+   },
+   {
+    "feature": "b_hetero_frac",
+    "ko": "바인더 헤테로 분율",
+    "phi": 0.0004
+   },
+   {
+    "feature": "b_Rg",
+    "ko": "바인더 회전반경",
+    "phi": 0.00033
+   },
+   {
+    "feature": "b_MW",
+    "ko": "바인더 분자량",
+    "phi": 0.00033
+   },
+   {
+    "feature": "b_aspect",
+    "ko": "바인더 종횡비",
+    "phi": 0.00028
+   },
+   {
+    "feature": "add_inorganic",
+    "ko": "첨가제 무기",
+    "phi": 0.00015
+   },
+   {
+    "feature": "add_polymer",
+    "ko": "첨가제 고분자",
+    "phi": -3e-05
+   },
+   {
+    "feature": "add_nano",
+    "ko": "첨가제 나노",
+    "phi": 1e-05
+   },
+   {
+    "feature": "b_TPSA",
+    "ko": "바인더 TPSA",
+    "phi": -1e-05
+   }
+  ]
+ },
+ {
+  "group_id": "AAM1|Carbon_Nano_Tube|U",
+  "T": 413,
+  "base": 1.0108171701431274,
+  "pred": 0.9231000542640686,
+  "md": 0.9228787473,
+  "contrib": [
+   {
+    "feature": "temperature_K",
+    "ko": "온도",
+    "phi": -0.04922
+   },
+   {
+    "feature": "b_logP",
+    "ko": "바인더 logP",
+    "phi": -0.02377
+   },
+   {
+    "feature": "b_O_frac",
+    "ko": "바인더 O 분율",
+    "phi": -0.00943
+   },
+   {
+    "feature": "b_n_heavy",
+    "ko": "바인더 분자 크기",
+    "phi": -0.0035
+   },
+   {
+    "feature": "add_aspect",
+    "ko": "첨가제 종횡비",
+    "phi": -0.00311
+   },
+   {
+    "feature": "b_aro_frac",
+    "ko": "바인더 방향족 분율",
+    "phi": 0.00188
+   },
+   {
+    "feature": "b_HC_ratio",
+    "ko": "바인더 H/C",
+    "phi": 0.00099
+   },
+   {
+    "feature": "add_density",
+    "ko": "첨가제 밀도",
+    "phi": -0.00076
+   },
+   {
+    "feature": "add_stiffness",
+    "ko": "첨가제 강성",
+    "phi": 0.00063
+   },
+   {
+    "feature": "add_polymer",
+    "ko": "첨가제 고분자",
+    "phi": -0.00055
+   },
+   {
+    "feature": "b_hetero_frac",
+    "ko": "바인더 헤테로 분율",
+    "phi": -0.00053
+   },
+   {
+    "feature": "b_Rg",
+    "ko": "바인더 회전반경",
+    "phi": -0.00025
+   },
+   {
+    "feature": "b_aspect",
+    "ko": "바인더 종횡비",
+    "phi": -0.00013
+   },
+   {
+    "feature": "b_MW",
+    "ko": "바인더 분자량",
+    "phi": 3e-05
+   },
+   {
+    "feature": "b_TPSA",
+    "ko": "바인더 TPSA",
+    "phi": -1e-05
+   },
+   {
+    "feature": "add_nano",
+    "ko": "첨가제 나노",
+    "phi": 1e-05
+   },
+   {
+    "feature": "add_inorganic",
+    "ko": "첨가제 무기",
+    "phi": 0.0
+   }
+  ]
+ },
+ {
+  "group_id": "AAM1|Graphine|L",
+  "T": 333,
+  "base": 1.0108171701431274,
+  "pred": 1.0418950319290161,
+  "md": 1.0418195989999999,
+  "contrib": [
+   {
+    "feature": "b_logP",
+    "ko": "바인더 logP",
+    "phi": 0.01374
+   },
+   {
+    "feature": "b_O_frac",
+    "ko": "바인더 O 분율",
+    "phi": 0.00937
+   },
+   {
+    "feature": "b_aro_frac",
+    "ko": "바인더 방향족 분율",
+    "phi": 0.00475
+   },
+   {
+    "feature": "temperature_K",
+    "ko": "온도",
+    "phi": 0.00416
+   },
+   {
+    "feature": "add_aspect",
+    "ko": "첨가제 종횡비",
+    "phi": -0.00367
+   },
+   {
+    "feature": "add_density",
+    "ko": "첨가제 밀도",
+    "phi": -0.00148
+   },
+   {
+    "feature": "b_n_heavy",
+    "ko": "바인더 분자 크기",
+    "phi": 0.00148
+   },
+   {
+    "feature": "b_HC_ratio",
+    "ko": "바인더 H/C",
+    "phi": 0.00136
+   },
+   {
+    "feature": "add_stiffness",
+    "ko": "첨가제 강성",
+    "phi": 0.00085
+   },
+   {
+    "feature": "b_hetero_frac",
+    "ko": "바인더 헤테로 분율",
+    "phi": 0.00043
+   },
+   {
+    "feature": "b_aspect",
+    "ko": "바인더 종횡비",
+    "phi": 0.00042
+   },
+   {
+    "feature": "add_polymer",
+    "ko": "첨가제 고분자",
+    "phi": -0.0003
+   },
+   {
+    "feature": "b_MW",
+    "ko": "바인더 분자량",
+    "phi": -7e-05
+   },
+   {
+    "feature": "add_inorganic",
+    "ko": "첨가제 무기",
+    "phi": 3e-05
+   },
+   {
+    "feature": "add_nano",
+    "ko": "첨가제 나노",
+    "phi": 3e-05
+   },
+   {
+    "feature": "b_Rg",
+    "ko": "바인더 회전반경",
+    "phi": -1e-05
+   },
+   {
+    "feature": "b_TPSA",
+    "ko": "바인더 TPSA",
+    "phi": 0.0
+   }
+  ]
+ }
+]

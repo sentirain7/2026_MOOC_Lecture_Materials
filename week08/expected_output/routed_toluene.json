@@ -1,0 +1,338 @@
+{
+ "source_topology": "topology_toluene.json",
+ "role": "organic",
+ "structure_hash": "55209c995c52",
+ "n_atoms": 15,
+ "n_bonds": 15,
+ "stack": "clayff_gaff2_v1",
+ "routes": [
+  {
+   "id": 1,
+   "el": "C",
+   "gaff2": {
+    "type": "ca",
+    "eps": 0.0988,
+    "sig": 3.3152,
+    "q": -0.0773
+   },
+   "compass": {
+    "type": "c3a",
+    "status": "blocked",
+    "why": "9-6 함수형 · 6제곱 조합 규칙 → 12-6 ClayFF 와 이종쌍 정의 불가"
+   },
+   "reaxff": {
+    "type": "C",
+    "q": "QEq (매 스텝)",
+    "status": "research_only",
+    "why": "고정 타입 · 전하 없음 → 고전 힘장과 한 셀 혼용 불가 · 영역 분할만"
+   }
+  },
+  {
+   "id": 2,
+   "el": "C",
+   "gaff2": {
+    "type": "ca",
+    "eps": 0.0988,
+    "sig": 3.3152,
+    "q": -0.131
+   },
+   "compass": {
+    "type": "c3a",
+    "status": "blocked",
+    "why": "9-6 함수형 · 6제곱 조합 규칙 → 12-6 ClayFF 와 이종쌍 정의 불가"
+   },
+   "reaxff": {
+    "type": "C",
+    "q": "QEq (매 스텝)",
+    "status": "research_only",
+    "why": "고정 타입 · 전하 없음 → 고전 힘장과 한 셀 혼용 불가 · 영역 분할만"
+   }
+  },
+  {
+   "id": 3,
+   "el": "C",
+   "gaff2": {
+    "type": "ca",
+    "eps": 0.0988,
+    "sig": 3.3152,
+    "q": -0.127
+   },
+   "compass": {
+    "type": "c3a",
+    "status": "blocked",
+    "why": "9-6 함수형 · 6제곱 조합 규칙 → 12-6 ClayFF 와 이종쌍 정의 불가"
+   },
+   "reaxff": {
+    "type": "C",
+    "q": "QEq (매 스텝)",
+    "status": "research_only",
+    "why": "고정 타입 · 전하 없음 → 고전 힘장과 한 셀 혼용 불가 · 영역 분할만"
+   }
+  },
+  {
+   "id": 4,
+   "el": "C",
+   "gaff2": {
+    "type": "ca",
+    "eps": 0.0988,
+    "sig": 3.3152,
+    "q": -0.135
+   },
+   "compass": {
+    "type": "c3a",
+    "status": "blocked",
+    "why": "9-6 함수형 · 6제곱 조합 규칙 → 12-6 ClayFF 와 이종쌍 정의 불가"
+   },
+   "reaxff": {
+    "type": "C",
+    "q": "QEq (매 스텝)",
+    "status": "research_only",
+    "why": "고정 타입 · 전하 없음 → 고전 힘장과 한 셀 혼용 불가 · 영역 분할만"
+   }
+  },
+  {
+   "id": 5,
+   "el": "C",
+   "gaff2": {
+    "type": "ca",
+    "eps": 0.0988,
+    "sig": 3.3152,
+    "q": -0.127
+   },
+   "compass": {
+    "type": "c3a",
+    "status": "blocked",
+    "why": "9-6 함수형 · 6제곱 조합 규칙 → 12-6 ClayFF 와 이종쌍 정의 불가"
+   },
+   "reaxff": {
+    "type": "C",
+    "q": "QEq (매 스텝)",
+    "status": "research_only",
+    "why": "고정 타입 · 전하 없음 → 고전 힘장과 한 셀 혼용 불가 · 영역 분할만"
+   }
+  },
+  {
+   "id": 6,
+   "el": "C",
+   "gaff2": {
+    "type": "ca",
+    "eps": 0.0988,
+    "sig": 3.3152,
+    "q": -0.131
+   },
+   "compass": {
+    "type": "c3a",
+    "status": "blocked",
+    "why": "9-6 함수형 · 6제곱 조합 규칙 → 12-6 ClayFF 와 이종쌍 정의 불가"
+   },
+   "reaxff": {
+    "type": "C",
+    "q": "QEq (매 스텝)",
+    "status": "research_only",
+    "why": "고정 타입 · 전하 없음 → 고전 힘장과 한 셀 혼용 불가 · 영역 분할만"
+   }
+  },
+  {
+   "id": 7,
+   "el": "C",
+   "gaff2": {
+    "type": "c3",
+    "eps": 0.1078,
+    "sig": 3.3977,
+    "q": -0.0538
+   },
+   "compass": {
+    "type": "c4",
+    "status": "blocked",
+    "why": "9-6 함수형 · 6제곱 조합 규칙 → 12-6 ClayFF 와 이종쌍 정의 불가"
+   },
+   "reaxff": {
+    "type": "C",
+    "q": "QEq (매 스텝)",
+    "status": "research_only",
+    "why": "고정 타입 · 전하 없음 → 고전 힘장과 한 셀 혼용 불가 · 영역 분할만"
+   }
+  },
+  {
+   "id": 8,
+   "el": "H",
+   "gaff2": {
+    "type": "ha",
+    "eps": 0.0161,
+    "sig": 2.6255,
+    "q": 0.13
+   },
+   "compass": {
+    "type": "h1",
+    "status": "blocked",
+    "why": "9-6 함수형 · 6제곱 조합 규칙 → 12-6 ClayFF 와 이종쌍 정의 불가"
+   },
+   "reaxff": {
+    "type": "H",
+    "q": "QEq (매 스텝)",
+    "status": "research_only",
+    "why": "고정 타입 · 전하 없음 → 고전 힘장과 한 셀 혼용 불가 · 영역 분할만"
+   }
+  },
+  {
+   "id": 9,
+   "el": "H",
+   "gaff2": {
+    "type": "ha",
+    "eps": 0.0161,
+    "sig": 2.6255,
+    "q": 0.13
+   },
+   "compass": {
+    "type": "h1",
+    "status": "blocked",
+    "why": "9-6 함수형 · 6제곱 조합 규칙 → 12-6 ClayFF 와 이종쌍 정의 불가"
+   },
+   "reaxff": {
+    "type": "H",
+    "q": "QEq (매 스텝)",
+    "status": "research_only",
+    "why": "고정 타입 · 전하 없음 → 고전 힘장과 한 셀 혼용 불가 · 영역 분할만"
+   }
+  },
+  {
+   "id": 10,
+   "el": "H",
+   "gaff2": {
+    "type": "ha",
+    "eps": 0.0161,
+    "sig": 2.6255,
+    "q": 0.13
+   },
+   "compass": {
+    "type": "h1",
+    "status": "blocked",
+    "why": "9-6 함수형 · 6제곱 조합 규칙 → 12-6 ClayFF 와 이종쌍 정의 불가"
+   },
+   "reaxff": {
+    "type": "H",
+    "q": "QEq (매 스텝)",
+    "status": "research_only",
+    "why": "고정 타입 · 전하 없음 → 고전 힘장과 한 셀 혼용 불가 · 영역 분할만"
+   }
+  },
+  {
+   "id": 11,
+   "el": "H",
+   "gaff2": {
+    "type": "ha",
+    "eps": 0.0161,
+    "sig": 2.6255,
+    "q": 0.13
+   },
+   "compass": {
+    "type": "h1",
+    "status": "blocked",
+    "why": "9-6 함수형 · 6제곱 조합 규칙 → 12-6 ClayFF 와 이종쌍 정의 불가"
+   },
+   "reaxff": {
+    "type": "H",
+    "q": "QEq (매 스텝)",
+    "status": "research_only",
+    "why": "고정 타입 · 전하 없음 → 고전 힘장과 한 셀 혼용 불가 · 영역 분할만"
+   }
+  },
+  {
+   "id": 12,
+   "el": "H",
+   "gaff2": {
+    "type": "ha",
+    "eps": 0.0161,
+    "sig": 2.6255,
+    "q": 0.13
+   },
+   "compass": {
+    "type": "h1",
+    "status": "blocked",
+    "why": "9-6 함수형 · 6제곱 조합 규칙 → 12-6 ClayFF 와 이종쌍 정의 불가"
+   },
+   "reaxff": {
+    "type": "H",
+    "q": "QEq (매 스텝)",
+    "status": "research_only",
+    "why": "고정 타입 · 전하 없음 → 고전 힘장과 한 셀 혼용 불가 · 영역 분할만"
+   }
+  },
+  {
+   "id": 13,
+   "el": "H",
+   "gaff2": {
+    "type": "hc",
+    "eps": 0.0208,
+    "sig": 2.6002,
+    "q": 0.044033
+   },
+   "compass": {
+    "type": "h1",
+    "status": "blocked",
+    "why": "9-6 함수형 · 6제곱 조합 규칙 → 12-6 ClayFF 와 이종쌍 정의 불가"
+   },
+   "reaxff": {
+    "type": "H",
+    "q": "QEq (매 스텝)",
+    "status": "research_only",
+    "why": "고정 타입 · 전하 없음 → 고전 힘장과 한 셀 혼용 불가 · 영역 분할만"
+   }
+  },
+  {
+   "id": 14,
+   "el": "H",
+   "gaff2": {
+    "type": "hc",
+    "eps": 0.0208,
+    "sig": 2.6002,
+    "q": 0.044033
+   },
+   "compass": {
+    "type": "h1",
+    "status": "blocked",
+    "why": "9-6 함수형 · 6제곱 조합 규칙 → 12-6 ClayFF 와 이종쌍 정의 불가"
+   },
+   "reaxff": {
+    "type": "H",
+    "q": "QEq (매 스텝)",
+    "status": "research_only",
+    "why": "고정 타입 · 전하 없음 → 고전 힘장과 한 셀 혼용 불가 · 영역 분할만"
+   }
+  },
+  {
+   "id": 15,
+   "el": "H",
+   "gaff2": {
+    "type": "hc",
+    "eps": 0.0208,
+    "sig": 2.6002,
+    "q": 0.044033
+   },
+   "compass": {
+    "type": "h1",
+    "status": "blocked",
+    "why": "9-6 함수형 · 6제곱 조합 규칙 → 12-6 ClayFF 와 이종쌍 정의 불가"
+   },
+   "reaxff": {
+    "type": "H",
+    "q": "QEq (매 스텝)",
+    "status": "research_only",
+    "why": "고정 타입 · 전하 없음 → 고전 힘장과 한 셀 혼용 불가 · 영역 분할만"
+   }
+  }
+ ],
+ "type_counts": {
+  "gaff2": {
+   "ca": 6,
+   "c3": 1,
+   "ha": 5,
+   "hc": 3
+  }
+ },
+ "artifact_check": {
+  "artifact": "week06/data/Toluene_gaff2.json",
+  "type_mismatch": [],
+  "all_match": true
+ }
+}

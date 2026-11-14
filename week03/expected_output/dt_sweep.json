@@ -1,0 +1,42 @@
+{
+  "period_fs": 24.3,
+  "stability_dt_fs": 7.75,
+  "rows": [
+    {
+      "dt_fs": 0.5,
+      "omega_dt": 0.129,
+      "max_rel_energy_error": 0.00417,
+      "diverged": false
+    },
+    {
+      "dt_fs": 1,
+      "omega_dt": 0.258,
+      "max_rel_energy_error": 0.01666,
+      "diverged": false
+    },
+    {
+      "dt_fs": 2,
+      "omega_dt": 0.516,
+      "max_rel_energy_error": 0.06666,
+      "diverged": false
+    },
+    {
+      "dt_fs": 4,
+      "omega_dt": 1.033,
+      "max_rel_energy_error": 0.26646,
+      "diverged": false
+    },
+    {
+      "dt_fs": 6,
+      "omega_dt": 1.549,
+      "max_rel_energy_error": 0.59928,
+      "diverged": false
+    },
+    {
+      "dt_fs": 8,
+      "omega_dt": 2.065,
+      "max_rel_energy_error": null,
+      "diverged": true
+    }
+  ]
+}

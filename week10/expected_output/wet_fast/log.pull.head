@@ -1,0 +1,120 @@
+LAMMPS (22 Jul 2025 - Update 6)
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread.
+  using 1 OpenMP thread(s) per MPI task
+# in.pull — week10 계면 인장 · 석영(고정) | 물 | 톨루엔(그립 정속 당김) · COMID clayff_gaff2_v1 설정 · 교육용 축소 프로토콜
+units          real
+atom_style     full
+boundary       p p f
+pair_style     lj/cut/coul/long 12.0
+bond_style     harmonic
+angle_style    harmonic
+dihedral_style fourier
+special_bonds  lj 0.0 0.0 0.5 coul 0.0 0.0 0.833333
+read_data      wet_final.data
+Reading data file ...
+  orthogonal box = (0 0 -2) to (24.565 25.5287 80.2081)
+  1 by 1 by 1 MPI processor grid
+  reading atoms ...
+  2067 atoms
+  reading velocities ...
+  2067 velocities
+  scanning bonds ...
+  3 = max bonds/atom
+  scanning angles ...
+  6 = max angles/atom
+  scanning dihedrals ...
+  11 = max dihedrals/atom
+  orthogonal box = (0 0 -2) to (24.565 25.5287 80.2081)
+  1 by 1 by 1 MPI processor grid
+  reading bonds ...
+  1318 bonds
+  reading angles ...
+  1649 angles
+  reading dihedrals ...
+  1800 dihedrals
+Finding 1-2 1-3 1-4 neighbors ...
+  special bond factors lj:    0        0        0.5     
+  special bond factors coul:  0        0        0.833333
+     4 = max # of 1-2 neighbors
+     7 = max # of 1-3 neighbors
+    11 = max # of 1-4 neighbors
+    13 = max # of special neighbors
+  special bonds CPU = 0.001 seconds
+  read_data CPU = 0.036 seconds
+pair_modify    mix arithmetic
+kspace_style   pppm 1.0e-4
+kspace_modify  slab 3.0
+neighbor       2.0 bin
+neigh_modify   every 1 delay 0 check yes
+
+group          slab id 1:540
+540 atoms in group slab
+group          binder id 1168:2067
+900 atoms in group binder
+group          water id 541:1167
+627 atoms in group water
+fix            shk water shake 1.0e-4 20 0 b 1 a 1
+Finding SHAKE clusters ...
+       0 = # of size 2 clusters
+       0 = # of size 3 clusters
+       0 = # of size 4 clusters
+     209 = # of frozen angles
+  find clusters CPU = 0.000 seconds
+compute        zw water reduce ave z
+region         top block INF INF INF INF 47.01 INF units box
+group          topg region top
+148 atoms in group topg
+group          grip intersect binder topg
+148 atoms in group grip
+group          mobile subtract all slab grip
+1379 atoms in group mobile
+region         near block INF INF INF INF INF 27.54 units box
+compute        tm mobile temp
+compute        zb binder reduce ave z
+compute        fg grip reduce sum fz
+fix            fav grip ave/time 1 20 20 c_fg
+variable       disp equal step*dt*0.005
+variable       nb_near equal count(binder,near)
+
+fix            frz slab setforce 0.0 0.0 0.0
+velocity       mobile create 298.0 4928459 mom yes rot yes dist gaussian
+fix            nvt mobile nvt temp 298.0 298.0 100.0
+fix_modify     nvt temp tm
+WARNING: Temperature for fix modify is not for group all (src/fix_nh.cpp:1402)
+fix            pull grip move linear 0.0 0.0 0.005 units box
+timestep       1.0
+thermo_style   custom step v_disp f_fav pe c_tm c_zb c_zw v_nb_near
+thermo_modify  format float %14.4f
+thermo         20
+dump           d1 all custom 500 pull.dump id mol type q x y z
+dump_modify    d1 sort id
+run            2000
+PPPM initialization ...
+WARNING: System is not charge neutral, net charge = -6e-05
+For more information see https://docs.lammps.org/err0029 (src/kspace.cpp:332)
+  using 12-bit tables for long-range coulomb
+  G vector (1/distance) = 0.22255603
+  grid = 12 15 72
+  stencil order = 5
+  estimated absolute RMS force accuracy = 0.029935589
+  estimated relative force accuracy = 9.0150136e-05
+  using double precision FFTW3
+  3d grid and FFT values/proc = 27676 12960
+Generated 28 of 28 mixed pair_coeff terms from arithmetic mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 14
+  ghost atom cutoff = 14
+  binsize = 7, bins = 4 4 12
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut/coul/long, perpetual
+      attributes: half, newton on
+      pair build: half/bin/newton
+      stencil: half/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 19.26 | 19.26 | 19.26 Mbytes
+   Step         v_disp         f_fav          PotEng          c_tm           c_zb           c_zw        v_nb_near   
+         0          0.0000         0.0000   -135194.2442       298.0000        38.8583        17.7389        59.0000
+        20          0.1000      -203.1271   -135255.3421       274.6586        38.8735        17.7380        58.0000
+        40          0.2000      -213.6016   -135225.0794       277.7569        38.9036        17.7370        58.0000

@@ -1,0 +1,16 @@
+# 나쁜 예 (교육용) — 한 셀에 GAFF2(12-6) 톨루엔 + COMPASS(9-6) 물 + Buckingham 광물을 hybrid 로 겹치고 축소 계수도 둘
+units          real
+atom_style     full
+boundary       p p f
+pair_style     hybrid lj/cut/coul/long 12.0 lj/class2/coul/long 12.0 buck/coul/long 12.0
+pair_modify    mix arithmetic
+pair_modify    mix sixthpower
+kspace_style   pppm 1.0e-4
+special_bonds  lj 0.0 0.0 0.5 coul 0.0 0.0 0.833333
+special_bonds  lj/coul 0.0 0.0 1.0
+read_data      mixed.data
+pair_coeff     * * coul/long
+pair_coeff     1*4 1*4 lj/cut/coul/long
+pair_coeff     5*6 5*6 lj/class2/coul/long
+pair_coeff     7*8 7*8 buck/coul/long 1388.77 0.3623 175.0
+run            100

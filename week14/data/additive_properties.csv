@@ -1,0 +1,7 @@
+additive_type,add_density,add_inorganic,add_polymer,add_aspect,add_stiffness,add_nano
+Carbon_Nano_Tube,2.1,1,0,100.0,2,1
+Graphine,2.27,1,0,50.0,2,1
+Lignin,1.3,0,1,3.0,1,0
+SBS_3_7,0.94,0,1,10.0,0,0
+SiO2,2.65,1,0,1.0,2,1
+none,0.0,0,0,0.0,0,0

@@ -1,0 +1,16 @@
+{
+ "id": "tol100_t2",
+ "density_gcm3": 0.8801,
+ "density_se": 0.0013,
+ "density_half_diff_pct": 0.584,
+ "density_ok": true,
+ "n_thermo": 161,
+ "t_prod_ps": 40.0,
+ "ced_MJm3": 362.6,
+ "ced_se": 4.9,
+ "delta_MPa05": 19.04,
+ "n_frames": 17,
+ "n_molecules": 100,
+ "max_molecule_extent_A": 6.1,
+ "ced_note": "E_inter = E_bulk(PPPM · tail) − Σ E_분자(직접 합) · 생산 구간 앞 20 % 버림"
+}

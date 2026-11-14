@@ -1,0 +1,151 @@
+{
+ "source_topology": "topology_quartz.json",
+ "role": "mineral",
+ "structure_hash": "3d382589d977",
+ "n_atoms": 9,
+ "n_bonds": 7,
+ "stack": "clayff_gaff2_v1",
+ "routes": [
+  {
+   "id": 1,
+   "el": "Si",
+   "clayff": {
+    "type": "st",
+    "eps": 1.8405e-06,
+    "sig": 3.302,
+    "q": 2.1
+   },
+   "compass": {
+    "type": "si4z/o2z (PCFF-IFF)",
+    "status": "blocked",
+    "why": "pcff_iff_v1 미구현 · 9-6"
+   }
+  },
+  {
+   "id": 2,
+   "el": "Si",
+   "clayff": {
+    "type": "st",
+    "eps": 1.8405e-06,
+    "sig": 3.302,
+    "q": 2.1
+   },
+   "compass": {
+    "type": "si4z/o2z (PCFF-IFF)",
+    "status": "blocked",
+    "why": "pcff_iff_v1 미구현 · 9-6"
+   }
+  },
+  {
+   "id": 3,
+   "el": "Si",
+   "clayff": {
+    "type": "st",
+    "eps": 1.8405e-06,
+    "sig": 3.302,
+    "q": 2.1
+   },
+   "compass": {
+    "type": "si4z/o2z (PCFF-IFF)",
+    "status": "blocked",
+    "why": "pcff_iff_v1 미구현 · 9-6"
+   }
+  },
+  {
+   "id": 4,
+   "el": "O",
+   "clayff": {
+    "type": "ob",
+    "eps": 0.1554,
+    "sig": 3.166,
+    "q": -1.05
+   },
+   "compass": {
+    "type": "si4z/o2z (PCFF-IFF)",
+    "status": "blocked",
+    "why": "pcff_iff_v1 미구현 · 9-6"
+   }
+  },
+  {
+   "id": 5,
+   "el": "O",
+   "clayff": {
+    "type": "ob",
+    "eps": 0.1554,
+    "sig": 3.166,
+    "q": -1.05
+   },
+   "compass": {
+    "type": "si4z/o2z (PCFF-IFF)",
+    "status": "blocked",
+    "why": "pcff_iff_v1 미구현 · 9-6"
+   }
+  },
+  {
+   "id": 6,
+   "el": "O",
+   "clayff": {
+    "type": "ob",
+    "eps": 0.1554,
+    "sig": 3.166,
+    "q": -1.05
+   },
+   "compass": {
+    "type": "si4z/o2z (PCFF-IFF)",
+    "status": "blocked",
+    "why": "pcff_iff_v1 미구현 · 9-6"
+   }
+  },
+  {
+   "id": 7,
+   "el": "O",
+   "clayff": {
+    "type": "ob",
+    "eps": 0.1554,
+    "sig": 3.166,
+    "q": -1.05
+   },
+   "compass": {
+    "type": "si4z/o2z (PCFF-IFF)",
+    "status": "blocked",
+    "why": "pcff_iff_v1 미구현 · 9-6"
+   }
+  },
+  {
+   "id": 8,
+   "el": "O",
+   "clayff": {
+    "type": "ob",
+    "eps": 0.1554,
+    "sig": 3.166,
+    "q": -1.05
+   },
+   "compass": {
+    "type": "si4z/o2z (PCFF-IFF)",
+    "status": "blocked",
+    "why": "pcff_iff_v1 미구현 · 9-6"
+   }
+  },
+  {
+   "id": 9,
+   "el": "O",
+   "clayff": {
+    "type": "ob",
+    "eps": 0.1554,
+    "sig": 3.166,
+    "q": -1.05
+   },
+   "compass": {
+    "type": "si4z/o2z (PCFF-IFF)",
+    "status": "blocked",
+    "why": "pcff_iff_v1 미구현 · 9-6"
+   }
+  }
+ ],
+ "type_counts": {
+  "clayff": {
+   "st": 3,
+   "ob": 6
+  }
+ }
+}

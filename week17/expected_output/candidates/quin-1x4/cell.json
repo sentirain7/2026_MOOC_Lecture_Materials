@@ -1,0 +1,34 @@
+{
+ "id": "quin-1x4",
+ "comp": {
+  "quin-1x4": 50
+ },
+ "sara": null,
+ "mass_gmol": 9263.5,
+ "rho0": 0.5,
+ "L_A": 31.334,
+ "tolerance": 2.0,
+ "gate": {
+  "attempt": 1,
+  "seed": 1,
+  "packmol_success": true,
+  "atom_count_ok": true,
+  "min_intermolecular_A": 2.19,
+  "threshold_A": 1.8,
+  "pass": true
+ },
+ "data": {
+  "atoms": 1450,
+  "molecules": 50,
+  "atom_types": 6,
+  "bond_types": 7,
+  "angle_types": 12,
+  "dihedral_types": 18,
+  "improper_types": 5,
+  "charge_sum": -0.0
+ },
+ "ff_files": {
+  "quin-1x4": "ff/quin-1x4_gaff2.json"
+ },
+ "charge_ok": true
+}

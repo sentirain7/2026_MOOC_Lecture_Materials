@@ -1,0 +1,1029 @@
+<!doctype html>
+<html lang="ko" data-v="3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>W17 MD 워크플로우 조립 · 분자에서 물성까지</title>
+<link rel="stylesheet" href="../common/deck.css">
+</head>
+<body>
+
+<!-- 1 표지 -->
+<section class="slide v3 cover">
+<div class="stop">
+<div class="ribbon"></div>
+<div class="cover-txt">
+<p class="eb a" style="--d:0"><span class="ko" data-i>건설소재 역설계 도구 개발을 위한 AI와 분자동역학 활용 · WEEK 17 · 모듈 M5 파이프라인 · 차시 17-1 ~ 17-4 · 54분</span><span class="en" data-i>AI and Molecular Dynamics for Inverse Design of Construction Materials · WEEK 17 · Module M5 Pipeline · sessions 17-1 ~ 17-4 · 54 min</span></p>
+<h1 class="cover-h a" style="--d:1"><span class="ko" data-i>MD 워크플로우 조립: 분자에서 물성까지</span><span class="en" data-i>Assembling the MD workflow: from molecule to properties</span></h1>
+<p class="cover-sub a" style="--d:2"><span class="ko" data-i>SMILES 한 줄 → 힘장 → 상자 → LAMMPS → 밀도 · CED → 결과 표 한 줄</span><span class="en" data-i>One SMILES line → force field → box → LAMMPS → density · CED → one row in the results table</span></p>
+<p class="who a" style="--d:3"><span class="ko" data-i><b>윤태영</b> 연구위원 · 한국건설기술연구원 도로교통연구본부 · 과학기술연합대학원대학교(UST) 교수</span><span class="en" data-i><b>Taeyoung Yun</b> Senior Research Fellow · Department of Highway & Transportation Research, Korea Institute of Civil Engineering and Building Technology (KICT) · Professor, University of Science and Technology (UST)</span></p>
+<div class="rel a" style="--d:4;justify-content:flex-start"><span><span class="ko" data-i>준비물 · 터미널 + Claude Code</span><span class="en" data-i>Prerequisites · terminal + Claude Code</span></span><span>conda mdai</span><span>repo/mdworkflow · week17</span></div>
+</div>
+<div class="cover-fig"><div class="emb" data-emb="pipec" data-dur="13"></div></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 2 오늘 만들 것 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>오늘 만들 것 · 4차시 · 54분</span><span class="en" data-i>Today's deliverables · 4 sessions · 54 min</span></p>
+<div class="hrow"><span class="hico" data-ico="package-check"></span><h2 class="h"><span class="ko" data-i>오늘의 완성물 3개: 힘장 JSON · 상자 실행 기록 · 결과 표 한 줄</span><span class="en" data-i>3 deliverables today: FF JSON · box run record · one results row</span></h2></div>
+<p class="sub"><span class="ko" data-i>재료 = SMILES 한 줄 <b>Cc1ccccc1</b> · 명령 = mdwf.py 6단계 · 실행 1번 약 5분(4코어) · 지시 M-1 ~ M-6</span><span class="en" data-i>Input = one SMILES line <b>Cc1ccccc1</b> · command = mdwf.py 6 steps · 1 run approx. 5 min (4 cores) · prompts M-1 ~ M-6</span></p>
+<div class="bd today">
+<div class="goal">
+<div class="it white a" style="--d:1"><div class="ih"><span class="icb" data-ico="file-json"></span><div><p class="k"><span class="ko" data-i>완성물 ① · 17-2</span><span class="en" data-i>Deliverable ① · 17-2</span></p><h4><span class="ko" data-i>Toluene_gaff2.json · 원자 15 · 타입 4 · ATTN 0</span><span class="en" data-i>Toluene_gaff2.json · 15 atoms · 4 types · ATTN 0</span></h4></div></div><p><span class="ko" data-i>GAFF2 타입 · AM1-BCC 전하 · W04 참고 결과와 같은 값</span><span class="en" data-i>GAFF2 types · AM1-BCC charges · same values as W04 reference</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="cpu"></span><div><p class="k"><span class="ko" data-i>완성물 ② · 17-3</span><span class="en" data-i>Deliverable ② · 17-3</span></p><h4><span class="ko" data-i>runs/tol100 · 1,500 원자 · 130 ps · status.json</span><span class="en" data-i>runs/tol100 · 1,500 atoms · 130 ps · status.json</span></h4></div></div><p><span class="ko" data-i>톨루엔 100분자 상자 · 실패 규칙 R1 · R2 기록</span><span class="en" data-i>Box of 100 toluene molecules · failure rules R1 · R2 logged</span></p></div>
+<div class="it white a" style="--d:3"><div class="ih"><span class="icb" data-ico="table"></span><div><p class="k"><span class="ko" data-i>완성물 ③ · 17-4</span><span class="en" data-i>Deliverable ③ · 17-4</span></p><h4><span class="ko" data-i>results.csv 한 줄 · ρ 0.8703 · CED 352.3</span><span class="en" data-i>One results.csv row · ρ 0.8703 · CED 352.3</span></h4></div></div><p><span class="ko" data-i>NIST 대조 · 반복 판정 폭 · W18 폐루프의 관측 1개</span><span class="en" data-i>NIST check · repeat tolerance · 1 observation for the W18 loop</span></p></div>
+</div>
+<div class="plan">
+<div class="lines">
+<div class="ln a" style="--d:1"><span class="nn">17-1</span><div><h4><span class="ko" data-i>왜 워크플로우인가</span><span class="en" data-i>Why a workflow</span></h4><p><span class="ko" data-i>6단계 지도 · 파일 · 참고 사례와 차이</span><span class="en" data-i>6-step map · files · vs. reference case</span></p></div><span class="min"><span class="ko" data-i>12분</span><span class="en" data-i>12 min</span></span></div>
+<div class="ln a" style="--d:2"><span class="nn">17-2</span><div><h4><span class="ko" data-i>분자와 힘장</span><span class="en" data-i>Molecule and force field</span></h4><p>3D → GAFF2 · AM1-BCC · M-1 · M-2</p></div><span class="min"><span class="ko" data-i>12.5분</span><span class="en" data-i>12.5 min</span></span></div>
+<div class="ln a" style="--d:3"><span class="nn">17-3</span><div><h4><span class="ko" data-i>상자와 실행</span><span class="en" data-i>Box and run</span></h4><p>ρ0 → L · 130 ps · R1 · R2 · M-3 · M-4</p></div><span class="min"><span class="ko" data-i>12.5분</span><span class="en" data-i>12.5 min</span></span></div>
+<div class="ln a" style="--d:4"><span class="nn">17-4</span><div><h4><span class="ko" data-i>물성 · 검증 · 다음 주</span><span class="en" data-i>Properties · validation · next week</span></h4><p><span class="ko" data-i>CED · NIST · 반복 · 후보 8 · M-5 · M-6</span><span class="en" data-i>CED · NIST · repeats · 8 candidates · M-5 · M-6</span></p></div><span class="min"><span class="ko" data-i>17분</span><span class="en" data-i>17 min</span></span></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>준비물: <b>터미널 + Claude Code</b> · conda mdai · 저장소 week17</span><span class="en" data-i>Needed: <b>terminal + Claude Code</b> · conda mdai · repo week17</span></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>수치 = repo/week17/expected_output (2026-11-14 · mdai · LAMMPS 22 Jul 2025 - Update 6 · 4코어 실제 실행) · 도구 = repo/mdworkflow</span><span class="en" data-i>Values = repo/week17/expected_output (2026-11-14 · mdai · LAMMPS 22 Jul 2025 - Update 6 · real runs on 4 cores) · tool = repo/mdworkflow</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 3 차시 17-1 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 17-1 · 12분 · 영상 1편</span><span class="en" data-i>Session 17-1 · 12 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="workflow"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">1</p><p class="hubt"><span class="ko" data-i>왜 워크플로우인가</span><span class="en" data-i>Why a workflow</span></p><p class="hubs"><span class="ko" data-i>6단계 지도 · 파일 · 앞 주차와 연결</span><span class="en" data-i>6-step map · files · links to earlier weeks</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>6단계 지도: 단계별 입력 · 출력 파일 · 자동 확인</span><span class="en" data-i>6-step map: input · output files · auto checks per step</span></h4></div></div><p><span class="ko" data-i>mol → ff → build → run → analyze → store · 명령 하나 mdwf.py</span><span class="en" data-i>mol → ff → build → run → analyze → store · one command mdwf.py</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>W03 ~ W09 의 조각 → 한 줄 조립</span><span class="en" data-i>Pieces from W03 ~ W09 → one assembled line</span></h4></div></div><p><span class="ko" data-i>W17 = 계산 한 건을 끝까지 · W18 = 그 계산을 반복하는 폐루프</span><span class="en" data-i>W17 = one calculation end to end · W18 = closed loop repeating it</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 4 ANIM 6단계 흐름 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>17-1 · 무엇 · 동적</span><span class="en" data-i>17-1 · What · animated</span></p>
+<div class="hrow"><span class="hico" data-ico="workflow"></span><h2 class="h"><span class="ko" data-i>MD 워크플로우 6단계: 분자 → 힘장 → 상자 → 실행 → 물성 → 기록</span><span class="en" data-i>MD workflow in 6 steps: molecule → FF → box → run → properties → record</span></h2></div>
+<p class="sub"><span class="ko" data-i>명령 하나 <b>mdwf.py 단계 이름</b> · 앞 단계 출력 = 다음 단계 입력 · 중간 결과 전부 out/ws 의 파일</span><span class="en" data-i>One command <b>mdwf.py step name</b> · output of one step = input of the next · all intermediate results as files in out/ws</span></p>
+<div class="bd"><div class="emb" data-emb="pipe6" data-dur="16" data-steps="6" data-labels="① mol 분자|② ff 힘장|③ build 상자|④ run 실행|⑤ analyze 물성|⑥ store 기록" data-labels-en="① mol molecule|② ff force field|③ build box|④ run run|⑤ analyze properties|⑥ store record"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>repo/mdworkflow/README.md 「여섯 단계」 표 · mdwf/*.py 머리 주석 · 시간 = expected_output/Toluene_gaff2.json timing_s · 표준 프로토콜</span><span class="en" data-i>repo/mdworkflow/README.md "six steps" table · header comments of mdwf/*.py · time = expected_output/Toluene_gaff2.json timing_s · standard protocol</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 5 FIG 강좌 안의 위치 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>17-1 · 왜</span><span class="en" data-i>17-1 · Why</span></p>
+<div class="hrow"><span class="hico" data-ico="map"></span><h2 class="h"><span class="ko" data-i>강좌 안의 위치: 앞 주차의 조각 → W17 한 줄 조립 → W18 폐루프</span><span class="en" data-i>Where this fits: pieces from earlier weeks → W17 assembly → W18 loop</span></h2></div>
+<p class="sub"><span class="ko" data-i>단계마다 처음 배운 주차 · 새 물리 없음 · 배운 도구를 파일로 연결</span><span class="en" data-i>Week each step was first taught · no new physics · learned tools linked by files</span></p>
+<div class="bd">
+<div class="figw white fill"><svg viewBox="0 0 1588 560" class="cfig">
+<g font-family="JetBrains Mono, monospace" font-size="19" font-weight="700" text-anchor="middle">
+<rect x="0" y="16" width="80" height="62" rx="10" fill="#FFFFFF" stroke="#6E655C" stroke-width="2"/><text x="40" y="44" fill="#231F20">W01</text>
+<rect x="88" y="16" width="80" height="62" rx="10" fill="#FFFFFF" stroke="#6E655C" stroke-width="2"/><text x="128" y="44" fill="#231F20">W02</text>
+<rect x="176" y="16" width="80" height="62" rx="10" fill="#EAF1F8" stroke="#4F7FB0" stroke-width="3"/><text x="216" y="44" fill="#231F20">W03</text>
+<rect x="264" y="16" width="80" height="62" rx="10" fill="#EAF1F8" stroke="#4F7FB0" stroke-width="3"/><text x="304" y="44" fill="#231F20">W04</text>
+<rect x="352" y="16" width="80" height="62" rx="10" fill="#EAF1F8" stroke="#4F7FB0" stroke-width="3"/><text x="392" y="44" fill="#231F20">W05</text>
+<rect x="440" y="16" width="80" height="62" rx="10" fill="#FFF1E0" stroke="#E37F1A" stroke-width="3"/><text x="480" y="44" fill="#231F20">W06</text>
+<rect x="528" y="16" width="80" height="62" rx="10" fill="#FFF1E0" stroke="#E37F1A" stroke-width="3"/><text x="568" y="44" fill="#231F20">W07</text>
+<rect x="616" y="16" width="80" height="62" rx="10" fill="#FFFFFF" stroke="#E37F1A" stroke-width="2"/><text x="656" y="44" fill="#231F20">W08</text>
+<rect x="704" y="16" width="80" height="62" rx="10" fill="#E8F3EC" stroke="#2E8B57" stroke-width="3"/><text x="744" y="44" fill="#231F20">W09</text>
+<rect x="792" y="16" width="80" height="62" rx="10" fill="#FFFFFF" stroke="#2E8B57" stroke-width="2"/><text x="832" y="44" fill="#231F20">W10</text>
+<rect x="880" y="16" width="80" height="62" rx="10" fill="#FFFFFF" stroke="#2E8B57" stroke-width="2"/><text x="920" y="44" fill="#231F20">W11</text>
+<rect x="968" y="16" width="80" height="62" rx="10" fill="#FFFFFF" stroke="#2E8B57" stroke-width="2"/><text x="1008" y="44" fill="#231F20">W12</text>
+<rect x="1056" y="16" width="80" height="62" rx="10" fill="#F2EEE8" stroke="#231F20" stroke-width="3"/><text x="1096" y="44" fill="#231F20">W13</text>
+<rect x="1144" y="16" width="80" height="62" rx="10" fill="#F2EEE8" stroke="#231F20" stroke-width="2"/><text x="1184" y="44" fill="#231F20">W14</text>
+<rect x="1232" y="16" width="80" height="62" rx="10" fill="#F2EEE8" stroke="#231F20" stroke-width="2"/><text x="1272" y="44" fill="#231F20">W15</text>
+<rect x="1320" y="16" width="80" height="62" rx="10" fill="#F2EEE8" stroke="#231F20" stroke-width="2"/><text x="1360" y="44" fill="#231F20">W16</text>
+<rect x="1408" y="16" width="80" height="62" rx="10" fill="#F99D1C" stroke="#C8610C" stroke-width="3"/><text x="1448" y="44" fill="#231F20">W17</text>
+<rect x="1496" y="16" width="88" height="62" rx="10" fill="#231F20" stroke="#231F20" stroke-width="2"/><text x="1540" y="44" fill="#FBB44E">W18</text>
+</g>
+<g class="cfmu" font-size="15" text-anchor="middle"><text x="40" y="68"><tspan class="ko" data-i>개요</tspan><tspan class="en" data-i>Intro</tspan></text><text x="128" y="68"><tspan class="ko" data-i>환경</tspan><tspan class="en" data-i>Setup</tspan></text><text x="216" y="68"><tspan class="ko" data-i>원자</tspan><tspan class="en" data-i>Atoms</tspan></text><text x="304" y="68"><tspan class="ko" data-i>힘장</tspan><tspan class="en" data-i>FF</tspan></text><text x="392" y="68"><tspan class="ko" data-i>앙상블</tspan><tspan class="en" data-i>Ens.</tspan></text><text x="480" y="68"><tspan class="ko" data-i>입력</tspan><tspan class="en" data-i>Input</tspan></text><text x="568" y="68"><tspan class="ko" data-i>자동화</tspan><tspan class="en" data-i>Auto</tspan></text><text x="656" y="68"><tspan class="ko" data-i>다층</tspan><tspan class="en" data-i>Layers</tspan></text><text x="744" y="68"><tspan class="ko" data-i>물성</tspan><tspan class="en" data-i>Props</tspan></text><text x="832" y="68"><tspan class="ko" data-i>계면</tspan><tspan class="en" data-i>Interf.</tspan></text><text x="920" y="68"><tspan class="ko" data-i>아스팔트</tspan><tspan class="en" data-i>Asphalt</tspan></text><text x="1008" y="68"><tspan class="ko" data-i>시멘트</tspan><tspan class="en" data-i>Cement</tspan></text><text x="1096" y="68">ML</text><text x="1184" y="68"><tspan class="ko" data-i>대리</tspan><tspan class="en" data-i>Surr.</tspan></text><text x="1272" y="68"><tspan class="ko" data-i>불확실</tspan><tspan class="en" data-i>UQ</tspan></text><text x="1360" y="68"><tspan class="ko" data-i>파이프</tspan><tspan class="en" data-i>Pipe</tspan></text><text x="1448" y="68" fill="#231F20"><tspan class="ko" data-i>조립</tspan><tspan class="en" data-i>Build</tspan></text><text x="1540" y="68" fill="#FBB44E"><tspan class="ko" data-i>폐루프</tspan><tspan class="en" data-i>Loop</tspan></text></g>
+<g fill="none" stroke-width="3" stroke-linecap="round">
+<path class="flow" d="M216 78 C 216 180, 115 200, 115 300" stroke="#4F7FB0" stroke-dasharray="8 7"/>
+<path class="flow" d="M304 78 C 304 190, 140 210, 130 300" stroke="#4F7FB0" stroke-dasharray="8 7"/>
+<path class="flow" d="M304 78 C 304 190, 385 200, 385 300" stroke="#4F7FB0" stroke-dasharray="8 7"/>
+<path class="flow" d="M480 78 C 480 190, 655 200, 655 300" stroke="#E37F1A" stroke-dasharray="8 7"/>
+<path class="flow" d="M392 78 C 392 200, 905 190, 915 300" stroke="#4F7FB0" stroke-dasharray="8 7"/>
+<path class="flow" d="M480 78 C 480 210, 925 200, 925 300" stroke="#E37F1A" stroke-dasharray="8 7"/>
+<path class="flow" d="M568 78 C 568 190, 935 210, 935 300" stroke="#E37F1A" stroke-dasharray="8 7"/>
+<path class="flow" d="M392 78 C 392 230, 1180 200, 1185 300" stroke="#4F7FB0" stroke-dasharray="8 7"/>
+<path class="flow" d="M744 78 C 744 190, 1195 200, 1195 300" stroke="#2E8B57" stroke-dasharray="8 7"/>
+<path class="flow" d="M744 78 C 744 200, 1450 190, 1455 300" stroke="#2E8B57" stroke-dasharray="8 7"/>
+<path class="flow" d="M1096 78 C 1096 190, 1470 200, 1470 300" stroke="#231F20" stroke-dasharray="8 7"/>
+</g>
+<rect x="2" y="284" width="1584" height="166" rx="22" fill="none" stroke="#F99D1C" stroke-width="3" stroke-dasharray="12 8"/>
+<text x="800" y="440" text-anchor="middle" class="cfm"><tspan class="ko" data-i>W17 = 6단계 한 줄 조립</tspan><tspan class="en" data-i>W17 = 6 steps assembled in one line</tspan></text>
+<g>
+<rect x="20" y="300" width="230" height="110" rx="16" fill="#FFF1E0" stroke="#F99D1C" stroke-width="2"/><text x="135" y="340" text-anchor="middle" class="cfh">① mol</text><text x="135" y="374" text-anchor="middle" class="cfs">SMILES → 3D</text><text x="135" y="400" text-anchor="middle" class="cfmu">W03 · W04</text>
+<rect x="290" y="300" width="230" height="110" rx="16" fill="#FFF1E0" stroke="#F99D1C" stroke-width="2"/><text x="405" y="340" text-anchor="middle" class="cfh">② ff</text><text x="405" y="374" text-anchor="middle" class="cfs"><tspan class="ko" data-i>타입 · 부분전하</tspan><tspan class="en" data-i>Types · partial charges</tspan></text><text x="405" y="400" text-anchor="middle" class="cfmu">W04</text>
+<rect x="560" y="300" width="230" height="110" rx="16" fill="#FFF1E0" stroke="#F99D1C" stroke-width="2"/><text x="675" y="340" text-anchor="middle" class="cfh">③ build</text><text x="675" y="374" text-anchor="middle" class="cfs"><tspan class="ko" data-i>Packmol 상자</tspan><tspan class="en" data-i>Packmol box</tspan></text><text x="675" y="400" text-anchor="middle" class="cfmu">W06</text>
+<rect x="830" y="300" width="230" height="110" rx="16" fill="#FFF1E0" stroke="#F99D1C" stroke-width="2"/><text x="945" y="340" text-anchor="middle" class="cfh">④ run</text><text x="945" y="374" text-anchor="middle" class="cfs"><tspan class="ko" data-i>프로토콜 · 실패 규칙</tspan><tspan class="en" data-i>Protocol · failure rules</tspan></text><text x="945" y="400" text-anchor="middle" class="cfmu">W05 · W06 · W07</text>
+<rect x="1100" y="300" width="230" height="110" rx="16" fill="#FFF1E0" stroke="#F99D1C" stroke-width="2"/><text x="1215" y="340" text-anchor="middle" class="cfh">⑤ analyze</text><text x="1215" y="374" text-anchor="middle" class="cfs"><tspan class="ko" data-i>밀도 · CED ± 오차</tspan><tspan class="en" data-i>Density · CED ± error</tspan></text><text x="1215" y="400" text-anchor="middle" class="cfmu">W05 · W09</text>
+<rect x="1370" y="300" width="200" height="110" rx="16" fill="#FFF1E0" stroke="#F99D1C" stroke-width="2"/><text x="1470" y="340" text-anchor="middle" class="cfh">⑥ store</text><text x="1470" y="374" text-anchor="middle" class="cfs"><tspan class="ko" data-i>결과 표 한 줄</tspan><tspan class="en" data-i>One results row</tspan></text><text x="1470" y="400" text-anchor="middle" class="cfmu">W09 · W13</text>
+</g>
+<g stroke="#C8610C" stroke-width="3" fill="#C8610C"><line x1="252" y1="355" x2="282" y2="355"/><line x1="522" y1="355" x2="552" y2="355"/><line x1="792" y1="355" x2="822" y2="355"/><line x1="1062" y1="355" x2="1092" y2="355"/><line x1="1332" y1="355" x2="1362" y2="355"/></g>
+<path class="tl" d="M1470 412 C 1470 530, 1300 540, 800 540 S 135 530, 135 418" fill="none" stroke-width="4" stroke-dasharray="10 8"/>
+<path d="M125 428 L135 412 L145 428 Z" fill="#E37F1A"/>
+<text x="800" y="522" text-anchor="middle" class="cfm"><tspan class="ko" data-i>W18 폐루프: 결과 표 → 대리모델(W14 · W15) → 체비셰프 EI(W15 · W16) → 다음 후보 → ① 로</tspan><tspan class="en" data-i>W18 loop: results → surrogate (W14 · W15) → Chebyshev EI (W15 · W16) → next candidate → ①</tspan></text>
+</svg></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>주차 = 18주 편성(W17 · W18 신설) · 단계별 첫 주차 = repo/mdworkflow/README.md 「처음 배우는 주차」 열</span><span class="en" data-i>Weeks = 18-week plan (W17 · W18 new) · first week per step = repo/mdworkflow/README.md "first taught" column</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 6 FIG 참고 사례와 다른 점 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>17-1 · 왜</span><span class="en" data-i>17-1 · Why</span></p>
+<div class="hrow"><span class="hico" data-ico="git-compare"></span><h2 class="h"><span class="ko" data-i>참고 사례(연구 플랫폼) ↔ MD 워크플로우: 같은 절차 · 다른 규모</span><span class="en" data-i>Reference case (research platform) ↔ MD workflow: same procedure · different scale</span></h2></div>
+<p class="sub"><span class="ko" data-i>차이 3축 = 규모 · 자동화 · 검증 깊이 · 절차는 그대로 · 규모만 축소</span><span class="en" data-i>3 axes of difference = scale · automation · validation depth · same procedure · scale reduced</span></p>
+<div class="bd">
+<div class="grid c3">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="ruler"></span><div><p class="k"><span class="ko" data-i>① 규모</span><span class="en" data-i>① Scale</span></p><h4><span class="ko" data-i>단분자 상자 · 1,500 원자 · 130 ps</span><span class="en" data-i>Single-component box · 1,500 atoms · 130 ps</span></h4></div></div>
+<div class="cb plain"><span class="fc or"><span class="ko" data-i>강좌</span><span class="en" data-i>Course</span></span><span class="fc"><span class="ko" data-i>한 분자 N 개 · GAFF2 하나</span><span class="en" data-i>N copies of one molecule · one GAFF2</span></span></div>
+<div class="cb plain"><span class="fc dk"><span class="ko" data-i>연구 플랫폼</span><span class="en" data-i>Research platform</span></span><span class="fc"><span class="ko" data-i>혼합 · 계면 셀 · ns</span><span class="en" data-i>Mixtures · interface cells · ns</span></span></div>
+<p><span class="ko" data-i>힘장 스택 · 계면 = W08 · W10</span><span class="en" data-i>FF stack · interfaces = W08 · W10</span></p></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="refresh-cw"></span><div><p class="k"><span class="ko" data-i>② 자동화</span><span class="en" data-i>② Automation</span></p><h4><span class="ko" data-i>명령 6개 · 단계마다 사람 확인</span><span class="en" data-i>6 commands · human check at each step</span></h4></div></div>
+<div class="cb plain"><span class="fc or"><span class="ko" data-i>강좌</span><span class="en" data-i>Course</span></span><span class="fc"><span class="ko" data-i>파일 → 파일 · 지시 M-1 ~ M-6</span><span class="en" data-i>File → file · prompts M-1 ~ M-6</span></span></div>
+<div class="cb plain"><span class="fc dk"><span class="ko" data-i>연구 플랫폼</span><span class="en" data-i>Research platform</span></span><span class="fc"><span class="ko" data-i>작업 큐 · 자동 재시도 · DB</span><span class="en" data-i>Job queue · auto retry · DB</span></span></div>
+<p><span class="ko" data-i>작업 큐 · 데이터베이스 = W07 · W16</span><span class="en" data-i>Job queue · database = W07 · W16</span></p></div>
+<div class="it a" style="--d:3"><div class="ih"><span class="icb" data-ico="shield-check"></span><div><p class="k"><span class="ko" data-i>③ 검증 깊이</span><span class="en" data-i>③ Validation depth</span></p><h4><span class="ko" data-i>자동 검사 4 · NIST 2종 · 반복 3회</span><span class="en" data-i>4 auto checks · 2 NIST cases · 3 repeats</span></h4></div></div>
+<div class="cb plain"><span class="fc or"><span class="ko" data-i>강좌</span><span class="en" data-i>Course</span></span><span class="fc"><span class="ko" data-i>전하 합 · 게이트 · 판정 폭</span><span class="en" data-i>Charge sum · gate · tolerance</span></span></div>
+<div class="cb plain"><span class="fc dk"><span class="ko" data-i>연구 플랫폼</span><span class="en" data-i>Research platform</span></span><span class="fc"><span class="ko" data-i>채택 검사 · 다중 시드</span><span class="en" data-i>Adoption check · multiple seeds</span></span></div>
+<p><span class="ko" data-i>실측 대조 · 삼각 대조 = W16</span><span class="en" data-i>Experiment check · triangulation = W16</span></p></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>같은 6단계 · 작은 상자 · 짧은 실행 → 값 = <b>후보 간 비교용</b> · 절대값 보고 = 긴 실행 + 실측 대조 뒤</span><span class="en" data-i>Same 6 steps · small box · short run → values = <b>for comparing candidates</b> · report absolute values = only after long runs + experiment check</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>연구 플랫폼 = 참고 사례(형식 · 절차만) · 강좌 범위 = repo/mdworkflow/README.md 「범위」 · 「확장(강의 밖)」</span><span class="en" data-i>Research platform = reference case (format · procedure only) · course scope = repo/mdworkflow/README.md "Scope" · "Extensions (outside lectures)"</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 7 DEF 용어 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>용어 정의</span><span class="en" data-i>Key terms</span></p>
+<div class="hrow"><span class="hico" data-ico="book-marked"></span><h2 class="h"><span class="ko" data-i>새 용어 6: 조립 · 계산 · 판정의 말</span><span class="en" data-i>6 new terms: assembly · calculation · judgment</span></h2></div>
+<p class="sub"><span class="ko" data-i>영어 병기 · 한 줄 정의 · 다시 나오는 곳</span><span class="en" data-i>English term · one-line definition · where it returns</span></p>
+<div class="bd">
+<div class="defs icon" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+<div class="defcard icon a" style="--d:1"><span class="lic" data-ico="workflow"></span><p class="term"><span class="ko" data-i>워크플로우<em>workflow</em></span><span class="en" data-i>Workflow<em>workflow</em></span></p><p class="def"><span class="ko" data-i>입력 · 출력 파일이 정해진 계산 단계의 사슬</span><span class="en" data-i>Chain of calculation steps with defined input · output files</span></p><p class="again">17-1 · W18</p></div>
+<div class="defcard icon a" style="--d:1"><span class="lic" data-ico="zap"></span><p class="term"><span class="ko" data-i>부분전하 할당<em>charge assignment</em></span><span class="en" data-i>Charge assignment<em>charge assignment</em></span></p><p class="def"><span class="ko" data-i>원자마다 전하 값을 정하는 계산 · 이 강좌 = AM1-BCC</span><span class="en" data-i>Calculation giving each atom a charge value · this course = AM1-BCC</span></p><p class="again">17-2 · W04</p></div>
+<div class="defcard icon a" style="--d:2"><span class="lic" data-ico="link"></span><p class="term"><span class="ko" data-i>빌린 매개변수<em>borrowed parameter · ATTN</em></span><span class="en" data-i>Borrowed parameter<em>borrowed parameter · ATTN</em></span></p><p class="def"><span class="ko" data-i>표에 없는 결합 · 각 · 이면각 값을 비슷한 타입에서 가져옴</span><span class="en" data-i>Bond · angle · dihedral value missing from the table, taken from a similar type</span></p><p class="again">17-2</p></div>
+<div class="defcard icon a" style="--d:2"><span class="lic" data-ico="timer"></span><p class="term"><span class="ko" data-i>생산 구간<em>production run</em></span><span class="en" data-i>Production run<em>production run</em></span></p><p class="def"><span class="ko" data-i>평형 뒤 물성 계산에만 쓰는 마지막 구간 · P 40 ps</span><span class="en" data-i>Final segment after equilibrium, used only for properties · P 40 ps</span></p><p class="again">17-3 · 17-4</p></div>
+<div class="defcard icon a" style="--d:3"><span class="lic" data-ico="rotate-cw"></span><p class="term"><span class="ko" data-i>재계산<em>rerun</em></span><span class="en" data-i>Rerun<em>rerun</em></span></p><p class="def"><span class="ko" data-i>저장한 좌표로 에너지만 다시 구하는 LAMMPS 실행</span><span class="en" data-i>LAMMPS run recomputing only energies from saved coordinates</span></p><p class="again">17-4</p></div>
+<div class="defcard icon a" style="--d:3"><span class="lic" data-ico="repeat"></span><p class="term"><span class="ko" data-i>반복 흔들림<em>run-to-run scatter</em></span><span class="en" data-i>Run-to-run scatter<em>run-to-run scatter</em></span></p><p class="def"><span class="ko" data-i>같은 입력 재실행 결과의 차 · 판정 폭의 근거</span><span class="en" data-i>Difference between reruns of the same input · basis of the tolerance</span></p><p class="again">17-4 · W18</p></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>정의 문구 = GLOSSARY.md · ATTN = parmchk2 가 frcmod 에 남기는 표시</span><span class="en" data-i>Definitions = GLOSSARY.md · ATTN = marker parmchk2 leaves in frcmod</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 8 차시 17-2 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 17-2 · 12.5분 · 영상 1편</span><span class="en" data-i>Session 17-2 · 12.5 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="atom"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">2</p><p class="hubt"><span class="ko" data-i>분자와 힘장</span><span class="en" data-i>Molecule and force field</span></p><p class="hubs"><span class="ko" data-i>SMILES 한 줄 → 힘장 JSON 한 장</span><span class="en" data-i>One SMILES line → one FF JSON</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>Toluene_gaff2.json · 자동 검사 4 통과</span><span class="en" data-i>Toluene_gaff2.json · passes 4 auto checks</span></h4></div></div><p><span class="ko" data-i>out/ws/mol · out/ws/ff · 도구 로그 = ff/Toluene/</span><span class="en" data-i>out/ws/mol · out/ws/ff · tool logs = ff/Toluene/</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>W04 힘장 · 부분전하 → 직접 생성</span><span class="en" data-i>W04 force field · partial charges → generate yourself</span></h4></div></div><p><span class="ko" data-i>W04 = 참고 결과 읽기 · W17 = 같은 결과를 내 컴퓨터에서</span><span class="en" data-i>W04 = read reference result · W17 = same result on my computer</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 9 ANIM 분자 → 힘장 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>17-2 · 어떻게 · 동적</span><span class="en" data-i>17-2 · How · animated</span></p>
+<div class="hrow"><span class="hico" data-ico="atom"></span><h2 class="h"><span class="ko" data-i>분자 → 힘장 5단계: 3D · 타입과 전하 · 빌린 값 · 매개변수 · JSON</span><span class="en" data-i>Molecule → FF in 5 steps: 3D · types and charges · borrowed values · parameters · JSON</span></h2></div>
+<p class="sub"><span class="ko" data-i>① = mol 단계(RDKit) · ② ~ ⑤ = ff 단계(AmberTools · parmed) · 결과 = 강좌 JSON 한 장(W04 와 같은 형식)</span><span class="en" data-i>① = mol step (RDKit) · ② ~ ⑤ = ff step (AmberTools · parmed) · result = one course JSON (same format as W04)</span></p>
+<div class="bd"><div class="emb" data-emb="ffchain" data-dur="15" data-steps="5" data-labels="① SMILES → 3D|② antechamber 타입 · 전하|③ parmchk2 빌린 값|④ tleap 매개변수|⑤ parmed → JSON" data-labels-en="① SMILES → 3D|② antechamber types · charges|③ parmchk2 borrowed|④ tleap parameters|⑤ parmed → JSON"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>mdwf/molecule.py · mdwf/forcefield.py · 값 = week17/expected_output/Toluene_gaff2.json (atoms · checks · timing_s)</span><span class="en" data-i>mdwf/molecule.py · mdwf/forcefield.py · values = week17/expected_output/Toluene_gaff2.json (atoms · checks · timing_s)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 10 FIG JSON + 자동 검사 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>17-2 · 확인</span><span class="en" data-i>17-2 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="list-checks"></span><h2 class="h"><span class="ko" data-i>강좌 JSON 한 장 + 자동 검사 4: 전하 합 · 타입 빠짐 · 빌린 값 · 개수</span><span class="en" data-i>One course JSON + 4 auto checks: charge sum · missing type · borrowed · counts</span></h2></div>
+<p class="sub"><span class="ko" data-i>검사 결과 = JSON 의 checks · pass = 4항목 모두 통과 · 실패 → 다음 단계(build) 진행 금지</span><span class="en" data-i>Check result = checks in the JSON · pass = all 4 items pass · failure → do not proceed to next step (build)</span></p>
+<div class="bd">
+<div class="row">
+<div class="doc a" style="--d:1;width:700px;flex:none">
+<p class="doc-pub">out/ws/ff/Toluene_gaff2.json</p>
+<pre class="code doccode">{ "mol_id": "Toluene",
+  "ff_family": "gaff2",
+  "charge_model": "am1_bcc",
+  "formal_charge": 0, "charge_sum": -1e-06,
+  "styles": { "dihedral": "fourier",
+              "improper": "cvff", … },
+  "atoms": [ { "ff_type": "c3",
+               "charge": -0.0538,
+               "sigma": 3.39771, … }, … 15 ],
+  "checks": { "charge_sum_ok": true,
+              "no_dummy_type": true,
+              "attn_borrowed": 0,
+              "pass": true },
+  "timing_s": { "antechamber_s": 0.2 } }</pre>
+</div>
+<div class="grid c2 fill">
+<div class="it green a" style="--d:1"><div class="ih"><span class="icb" data-ico="scale"></span><div><p class="k"><span class="ko" data-i>① 전하 합</span><span class="en" data-i>① Charge sum</span></p><h4><span class="ko" data-i>= 형식전하 0</span><span class="en" data-i>= formal charge 0</span></h4></div></div><p><span class="ko" data-i>차 &lt; 0.001 · 톨루엔 −0.000001 · 반올림 찌꺼기 = 원자 수로 나눠 보정</span><span class="en" data-i>Diff &lt; 0.001 · toluene −0.000001 · rounding residue = spread over atoms</span></p></div>
+<div class="it green a" style="--d:2"><div class="ih"><span class="icb" data-ico="scan-search"></span><div><p class="k"><span class="ko" data-i>② 타입 빠짐</span><span class="en" data-i>② Missing type</span></p><h4><span class="ko" data-i>DU 타입 0개</span><span class="en" data-i>0 DU types</span></h4></div></div><p><span class="ko" data-i>DU = 타입을 못 정한 원자 · 1개라도 있으면 실패</span><span class="en" data-i>DU = atom with no assigned type · even 1 means failure</span></p></div>
+<div class="it warm a" style="--d:3"><div class="ih"><span class="icb" data-ico="link"></span><div><p class="k"><span class="ko" data-i>③ 빌린 값</span><span class="en" data-i>③ Borrowed values</span></p><h4><span class="ko" data-i>ATTN 0개 · 개수 기록</span><span class="en" data-i>ATTN 0 · count logged</span></h4></div></div><p><span class="ko" data-i>있으면 실패 대신 출처 타입 확인 대상</span><span class="en" data-i>If present: not a failure · check source type</span></p></div>
+<div class="it green a" style="--d:4"><div class="ih"><span class="icb" data-ico="hash"></span><div><p class="k"><span class="ko" data-i>④ 개수 일치</span><span class="en" data-i>④ Count match</span></p><h4>JSON = prmtop</h4></div></div><p><span class="ko" data-i>결합 15 · 각 24 · 이면각 30 · 비정규 이면각 6 기록</span><span class="en" data-i>Logs 15 bonds · 24 angles · 30 dihedrals · 6 impropers</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>mdwf/forcefield.py checks() · week17/expected_output/Toluene_gaff2.json · 형식 = mdwf-ff-1(LAMMPS harmonic · fourier · cvff)</span><span class="en" data-i>mdwf/forcefield.py checks() · week17/expected_output/Toluene_gaff2.json · format = mdwf-ff-1 (LAMMPS harmonic · fourier · cvff)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 11 FIG 톨루엔 = W04 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>17-2 · 확인</span><span class="en" data-i>17-2 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="git-compare"></span><h2 class="h"><span class="ko" data-i>톨루엔 대조: 내가 만든 힘장 = W04 참고 결과 · 타입 · 전하 · 결합 값 일치</span><span class="en" data-i>Toluene check: my force field = W04 reference · types · charges · bond values match</span></h2></div>
+<p class="sub"><span class="ko" data-i>차이 = 원자 순서뿐(W04 = 고리 먼저 · W17 = SMILES 순서) · 같은 도구 · 같은 전하 모델 → 같은 값</span><span class="en" data-i>Only difference = atom order (W04 = ring first · W17 = SMILES order) · same tool · same charge model → same values</span></p>
+<div class="bd">
+<div class="row">
+<div class="figw white" style="width:640px;flex:none"><svg viewBox="0 0 640 520" class="cfig">
+<g stroke="#6E655C" stroke-width="4" fill="none"><polygon points="320,170 398,215 398,305 320,350 242,305 242,215"/><line x1="320" y1="170" x2="320" y2="92"/></g>
+<circle cx="320" cy="260" r="52" fill="none" stroke="#B9AE9E" stroke-width="3" stroke-dasharray="6 6"/>
+<g stroke="#B9AE9E" stroke-width="2"><line x1="398" y1="215" x2="446" y2="187"/><line x1="398" y1="305" x2="446" y2="333"/><line x1="320" y1="350" x2="320" y2="405"/><line x1="242" y1="305" x2="194" y2="333"/><line x1="242" y1="215" x2="194" y2="187"/><line x1="320" y1="92" x2="268" y2="66"/><line x1="320" y1="92" x2="372" y2="66"/><line x1="320" y1="92" x2="320" y2="40"/></g>
+<g fill="#4F7FB0"><circle cx="320" cy="170" r="14"/><circle cx="398" cy="215" r="14"/><circle cx="398" cy="305" r="14"/><circle cx="320" cy="350" r="14"/><circle cx="242" cy="305" r="14"/><circle cx="242" cy="215" r="14"/></g>
+<circle cx="320" cy="92" r="14" fill="#C8610C"/>
+<g fill="#D3C6B5"><circle cx="446" cy="187" r="9"/><circle cx="446" cy="333" r="9"/><circle cx="320" cy="405" r="9"/><circle cx="194" cy="333" r="9"/><circle cx="194" cy="187" r="9"/><circle cx="268" cy="66" r="9"/><circle cx="372" cy="66" r="9"/><circle cx="320" cy="40" r="9"/></g>
+<g font-family="JetBrains Mono, monospace" font-size="17" font-weight="700">
+<text x="346" y="100" fill="#C8610C">c3 −0.0538</text>
+<text x="340" y="160" fill="#4F7FB0">ca −0.0773</text>
+<text x="414" y="232" fill="#4F7FB0">ca −0.131</text>
+<text x="414" y="300" fill="#4F7FB0">ca −0.127</text>
+<text x="340" y="385" fill="#4F7FB0">ca −0.135</text>
+<text x="96" y="300" fill="#4F7FB0">ca −0.127</text>
+<text x="96" y="232" fill="#4F7FB0">ca −0.131</text>
+<text x="462" y="180" fill="#6E655C">ha +0.13</text>
+<text x="390" y="56" fill="#6E655C">hc +0.044</text>
+</g>
+<text x="320" y="460" text-anchor="middle" class="cfm"><tspan class="ko" data-i>원자 15 · 타입 4 · Σq −0.000001</tspan><tspan class="en" data-i>15 atoms · 4 types · Σq −0.000001</tspan></text>
+<text x="320" y="494" text-anchor="middle" class="cfmu"><tspan class="ko" data-i>파랑 = 방향족 탄소 ca · 주황 = 메틸 탄소 c3 · 회색 = 수소</tspan><tspan class="en" data-i>Blue = aromatic carbon ca · orange = methyl carbon c3 · gray = hydrogen</tspan></text>
+</svg></div>
+<table class="t a" style="--d:2;flex:1">
+<thead><tr><th><span class="ko" data-i>항목</span><span class="en" data-i>Item</span></th><th><span class="ko" data-i>W04 참고 결과</span><span class="en" data-i>W04 reference</span></th><th><span class="ko" data-i>W17 생성</span><span class="en" data-i>W17 generated</span></th></tr></thead>
+<tbody>
+<tr><td><span class="ko" data-i>타입 4종</span><span class="en" data-i>4 types</span></td><td class="mono">ca 6 · c3 1 · ha 5 · hc 3</td><td class="mono">ca 6 · c3 1 · ha 5 · hc 3</td></tr>
+<tr><td><span class="ko" data-i>전하 c3 · ha</span><span class="en" data-i>Charge c3 · ha</span></td><td class="mono">−0.0538 · 0.13</td><td class="mono">−0.0538 · 0.13</td></tr>
+<tr><td><span class="ko" data-i>결합 ca–ca</span><span class="en" data-i>Bond ca–ca</span></td><td class="mono">k 354.25 · r0 1.3986</td><td class="mono">k 354.25 · r0 1.3986</td></tr>
+<tr><td><span class="ko" data-i>결합 ca–c3</span><span class="en" data-i>Bond ca–c3</span></td><td class="mono">k 243.91 · r0 1.5147</td><td class="mono">k 243.91 · r0 1.5147</td></tr>
+<tr><td><span class="ko" data-i>비정규 이면각</span><span class="en" data-i>Improper</span></td><td class="mono">K 1.1 · d −1 · n 2</td><td class="mono">K 1.1 · d −1 · n 2</td></tr>
+<tr class="hl"><td><span class="ko" data-i>전하 합</span><span class="en" data-i>Charge sum</span></td><td class="mono">−0.000001</td><td class="mono">−0.000001</td></tr>
+</tbody></table>
+</div>
+<div class="foot a" style="--d:3"><span class="ko" data-i>W04 = 「명령만 보고 결과 읽기」 → W17 = <b>같은 명령을 내 컴퓨터에서 실행 · 같은 값</b> 확인</span><span class="en" data-i>W04 = "read commands and results only" → W17 = <b>run the same commands on my computer · same values</b> confirmed</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>week04/data/Toluene_gaff2.json ↔ week17/expected_output/Toluene_gaff2.json (bond_types · angle_types · improper_types · atoms 비교)</span><span class="en" data-i>week04/data/Toluene_gaff2.json ↔ week17/expected_output/Toluene_gaff2.json (compare bond_types · angle_types · improper_types · atoms)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 12 FIG AM1-BCC 시간 · 틀리기 쉬운 곳 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>17-2 · 어떻게</span><span class="en" data-i>17-2 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="timer"></span><h2 class="h"><span class="ko" data-i>부분전하 할당 시간: 원자 수 ↑ → AM1-BCC 시간 ↑ · 후보 분자 8 ~ 57 s</span><span class="en" data-i>Charge assignment time: more atoms → longer AM1-BCC · candidates 8 ~ 57 s</span></h2></div>
+<p class="sub"><span class="ko" data-i>AM1-BCC = 반경험 양자 계산(sqm) + 결합 보정 · 분자 1종당 1회 · 상자의 100개 분자에 같은 값 복사</span><span class="en" data-i>AM1-BCC = semi-empirical QM (sqm) + bond correction · once per molecule type · same values copied to 100 molecules in the box</span></p>
+<div class="bd">
+<div class="row">
+<div class="figw white fill"><svg viewBox="0 0 900 480" class="cfig">
+<line x1="110" y1="400" x2="870" y2="400" stroke="#6E655C" stroke-width="3"/><line x1="110" y1="400" x2="110" y2="30" stroke="#6E655C" stroke-width="3"/>
+<g class="cfmu" text-anchor="end"><text x="100" y="406">0.1</text><text x="100" y="306">1</text><text x="100" y="206">10</text><text x="100" y="106">100</text></g>
+<g stroke="#E2D8CA" stroke-width="1.5"><line x1="110" y1="300" x2="870" y2="300"/><line x1="110" y1="200" x2="870" y2="200"/><line x1="110" y1="100" x2="870" y2="100"/></g>
+<g class="cfmu" text-anchor="middle"><text x="110" y="428">0</text><text x="300" y="428">25</text><text x="490" y="428">50</text><text x="680" y="428">75</text><text x="870" y="428">100</text></g>
+<text x="490" y="466" text-anchor="middle" class="cfs"><tspan class="ko" data-i>분자 하나의 원자 수 (수소 포함)</tspan><tspan class="en" data-i>Atoms per molecule (incl. hydrogen)</tspan></text>
+<text x="40" y="215" text-anchor="middle" class="cfs" transform="rotate(-90 40 215)"><tspan class="ko" data-i>AM1-BCC 시간 (s · 로그)</tspan><tspan class="en" data-i>AM1-BCC time (s · log)</tspan></text>
+<rect x="315" y="125" width="228" height="85" rx="8" fill="#F99D1C" fill-opacity=".22" stroke="#E37F1A" stroke-width="2"/>
+<text x="429" y="112" text-anchor="middle" class="cfm"><tspan class="ko" data-i>후보 8개 · 원자 27 ~ 57 · 8 ~ 57 s</tspan><tspan class="en" data-i>8 candidates · 27 ~ 57 atoms · 8 ~ 57 s</tspan></text>
+<circle class="pulse" cx="224" cy="370" r="10" fill="#C8610C"/><text x="244" y="377" class="cfm"><tspan class="ko" data-i>톨루엔 15 원자 · 0.2 s</tspan><tspan class="en" data-i>Toluene 15 atoms · 0.2 s</tspan></text>
+<circle cx="353" cy="235" r="10" fill="#4F7FB0"/><text x="372" y="262" class="cfm" fill="#4F7FB0"><tspan class="ko" data-i>n-데칸 32 원자 · 4.5 s</tspan><tspan class="en" data-i>n-Decane 32 atoms · 4.5 s</tspan></text>
+<line x1="224" y1="62" x2="840" y2="62" stroke="#2E8B57" stroke-width="4"/><line x1="224" y1="52" x2="224" y2="72" stroke="#2E8B57" stroke-width="4"/><line x1="840" y1="52" x2="840" y2="72" stroke="#2E8B57" stroke-width="4"/>
+<text x="532" y="46" text-anchor="middle" class="cfm" fill="#2E8B57"><tspan class="ko" data-i>W18 후보 168개 · 원자 15 ~ 96</tspan><tspan class="en" data-i>W18: 168 candidates · 15 ~ 96 atoms</tspan></text>
+</svg></div>
+<div class="col" style="width:600px;flex:none">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="triangle-alert"></span><div><p class="k"><span class="ko" data-i>틀리기 쉬운 곳 ①</span><span class="en" data-i>Common pitfall ①</span></p><h4><span class="ko" data-i>형식전하 오입력</span><span class="en" data-i>Wrong formal charge</span></h4></div></div><p><span class="ko" data-i>mol 단계 json 의 형식전하를 ff 가 그대로 사용 · 전하 합 검사가 잡음</span><span class="en" data-i>ff reuses the formal charge from the mol json · caught by charge-sum check</span></p></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="triangle-alert"></span><div><p class="k"><span class="ko" data-i>틀리기 쉬운 곳 ②</span><span class="en" data-i>Common pitfall ②</span></p><h4><span class="ko" data-i>입체(@ · @@) 뒤바뀜</span><span class="en" data-i>Flipped stereo (@ · @@)</span></h4></div></div><p><span class="ko" data-i>입체 중심 수: SMILES ↔ 3D 비교</span><span class="en" data-i>Stereocenter count: SMILES ↔ 3D</span></p></div>
+<div class="it a" style="--d:3"><div class="ih"><span class="icb" data-ico="triangle-alert"></span><div><p class="k"><span class="ko" data-i>틀리기 쉬운 곳 ③</span><span class="en" data-i>Common pitfall ③</span></p><h4><span class="ko" data-i>빌린 값 그대로 신뢰</span><span class="en" data-i>Trusting borrowed values</span></h4></div></div><p><span class="ko" data-i>ATTN 개수 기록 · 출처 타입 확인</span><span class="en" data-i>Log ATTN count · check source type</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>시간 = Toluene_gaff2.json · Decane_gaff2.json timing_s · 후보 8개 시험(4코어) · W18 후보 표 = repo/loop library.csv · 틀리기 쉬운 곳 = mdworkflow/README.md</span><span class="en" data-i>Time = Toluene_gaff2.json · Decane_gaff2.json timing_s · 8 candidate trials (4 cores) · W18 candidate table = repo/loop library.csv · pitfalls = mdworkflow/README.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 13 MAKE M-1 · M-2 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>17-2 · 만들어 보기</span><span class="en" data-i>17-2 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="pencil-ruler"></span><h2 class="h"><span class="ko" data-i>만들어 보기 M-1 · M-2: 톨루엔 3D → GAFF2 · AM1-BCC JSON → 검사 표</span><span class="en" data-i>Try it M-1 · M-2: toluene 3D → GAFF2 · AM1-BCC JSON → check table</span></h2></div>
+<div class="bd">
+<div class="make" style="grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
+<pre class="code a" style="--d:1;grid-column:1/-1;margin:0"><span class="c"><span class="ko" data-i># 환경: mdai · cd week17 · claude · 작업 폴더 = out/ws</span><span class="en" data-i># Env: mdai · cd week17 · claude · work folder = out/ws</span></span>
+python ../mdworkflow/mdwf.py mol Toluene --ws out/ws  <span class="c"># M-1</span>
+python ../mdworkflow/mdwf.py ff Toluene --ws out/ws   <span class="c"># M-2 · AM1-BCC 0.2 s</span></pre>
+<div class="left a" style="--d:2">
+<div class="prompt" data-id="M-1"><span class="ko" data-i>python ../mdworkflow/mdwf.py mol [Toluene] --ws out/ws 를 실행해라(목록에 없는 분자 = [이름] --smiles [SMILES]). out/ws/mol/&lt;이름&gt;.json 의 원자 수 · 분자식 · 분자량 · 형식전하 · 입체 중심 수 · MMFF 수렴을 표로 적고, 수소 추가 전후 원자 수 차이의 이유를 한 줄로 써라. → out/M-1_result.md</span><span class="en" data-i>Run python ../mdworkflow/mdwf.py mol [Toluene] --ws out/ws (molecule not in the list = [name] --smiles [SMILES]). From out/ws/mol/&lt;name&gt;.json, tabulate atom count · formula · molecular weight · formal charge · stereocenter count · MMFF convergence, and explain in one line why the atom count differs before and after adding hydrogens. → out/M-1_result.md</span></div>
+<div class="cb wrap"><span class="fc or"><span class="ko" data-i>원자 <em>15</em></span><span class="en" data-i>Atoms <em>15</em></span></span><span class="fc"><span class="ko" data-i>무거운 원자 7 + 수소 8</span><span class="en" data-i>7 heavy atoms + 8 hydrogens</span></span><span class="fc">M <em>92.141</em></span><span class="fc"><span class="ko" data-i>형식전하 <em>0</em></span><span class="en" data-i>Formal charge <em>0</em></span></span></div>
+</div>
+<div class="expect a" style="--d:3">
+<div class="prompt" data-id="M-2"><span class="ko" data-i>python ../mdworkflow/mdwf.py ff [Toluene] --ws out/ws 를 실행해라. out/ws/ff/&lt;이름&gt;_gaff2.json 과 로그를 읽어 ① 원자별 GAFF2 타입 · 전하 ② 전하 합 ③ 빌린 값(ATTN) 개수 ④ 결합 · 각 · 이면각 개수를 표로 적고, 톨루엔이면 @../week04/data/Toluene_gaff2.json 과 타입 · 전하를 비교해라. ../mdworkflow/mdwf/ 는 고치지 마라. → out/M-2_result.md</span><span class="en" data-i>Run python ../mdworkflow/mdwf.py ff [Toluene] --ws out/ws. Read out/ws/ff/&lt;name&gt;_gaff2.json and the logs, tabulate ① GAFF2 type · charge per atom ② charge sum ③ number of borrowed values (ATTN) ④ bond · angle · dihedral counts, and for toluene compare types · charges with @../week04/data/Toluene_gaff2.json. Do not modify ../mdworkflow/mdwf/. → out/M-2_result.md</span></div>
+<div class="cb wrap"><span class="fc gr">pass <em>true</em></span><span class="fc">Σq <em>−0.000001</em></span><span class="fc">ATTN <em>0</em></span><span class="fc"><span class="ko" data-i>결합 · 각 · 이면각 <em>15 · 24 · 30</em></span><span class="en" data-i>Bonds · angles · dihedrals <em>15 · 24 · 30</em></span></span></div>
+</div>
+</div>
+<div class="check a" style="--d:4"><p><span class="ko" data-i>checks 4값이 expected_output/Toluene_gaff2.json 과 같은가</span><span class="en" data-i>Do the 4 checks values match expected_output/Toluene_gaff2.json</span></p><p><span class="ko" data-i>W04 대조: 타입 · 전하 차 0 · 원자 순서만 다름</span><span class="en" data-i>W04 check: type · charge diff 0 · only atom order differs</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>지시문 원문 week17/prompts.md · M-1 · M-2 (기준 = repo/mdworkflow/prompts.md) · 기대 결과 = week17/expected_output/Toluene_gaff2.json</span><span class="en" data-i>Prompt source week17/prompts.md · M-1 · M-2 (basis = repo/mdworkflow/prompts.md) · expected = week17/expected_output/Toluene_gaff2.json</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 14 차시 17-3 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 17-3 · 12.5분 · 영상 1편</span><span class="en" data-i>Session 17-3 · 12.5 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="box"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">3</p><p class="hubt"><span class="ko" data-i>상자와 실행</span><span class="en" data-i>Box and run</span></p><p class="hubs"><span class="ko" data-i>분자 N 개 상자 → 130 ps 실행</span><span class="en" data-i>Box of N molecules → 130 ps run</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>tol100 상자 · 실행 기록 status.json</span><span class="en" data-i>tol100 box · run record status.json</span></h4></div></div><p><span class="ko" data-i>톨루엔 100분자 · 1,500 원자 · 4코어 약 5분</span><span class="en" data-i>100 toluene molecules · 1,500 atoms · 4 cores approx. 5 min</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>W06 Packmol 상자 + W07 실패 규칙</span><span class="en" data-i>W06 Packmol box + W07 failure rules</span></h4></div></div><p><span class="ko" data-i>W06 = 손 조립 · W17 = 명령 하나 · 게이트 · 규칙 자동</span><span class="en" data-i>W06 = hand assembly · W17 = one command · gate · rules automatic</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 15 EQ 상자 크기 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>17-3 · 무엇 · 핵심 식</span><span class="en" data-i>17-3 · What · key equation</span></p>
+<div class="hrow"><span class="hico" data-ico="box"></span><h2 class="h"><span class="ko" data-i>단분자 상자 크기: 초기 밀도 ρ0 → 한 변 L · 일부러 묽게 → 배치 쉬움</span><span class="en" data-i>Single-component box size: initial density ρ0 → side L · deliberately dilute → easy packing</span></h2></div>
+<p class="sub"><span class="ko" data-i>ρ0 = 0.5 g/cm³ (결과 밀도 0.8703 보다 묽게) · 압축 구간 B 에서 액체 밀도로 · 배치 뒤 품질 게이트</span><span class="en" data-i>ρ0 = 0.5 g/cm³ (more dilute than final density 0.8703) · compression segment B brings it to liquid density · quality gate after packing</span></p>
+<div class="bd">
+<div class="eqfig" style="grid-template-rows:auto auto minmax(0,1fr)">
+<div class="eqbox a" style="--d:1"><p class="eq">L = ( N · M ÷ ( ρ<sub>0</sub> · N<sub>A</sub> ) )<sup>1/3</sup></p></div>
+<table class="t eqt"><tbody><tr><td><span class="ko" data-i>말로 읽기</span><span class="en" data-i>In words</span></td><td><span class="ko" data-i>분자 N 개 질량 ÷ 초기 밀도 = 부피 · 세제곱근 = 한 변 · 톨루엔 100 = 9,214.1 g/mol · ρ0 0.5 → L 31.278 Å</span><span class="en" data-i>Mass of N molecules ÷ initial density = volume · cube root = side · toluene 100 = 9,214.1 g/mol · ρ0 0.5 → L 31.278 Å</span></td></tr></tbody></table>
+<div class="fig a" style="--d:2"><svg viewBox="0 -30 1588 390" class="cfig">
+<rect x="0" y="-30" width="1588" height="390" rx="16" fill="#FFFFFF"/>
+<rect x="60" y="50" width="250" height="250" fill="#FFF8EE" stroke="#F99D1C" stroke-width="3" stroke-dasharray="10 8"/>
+<g fill="#4F7FB0" fill-opacity=".25" stroke="#4F7FB0" stroke-width="2">
+<polygon points="100,90 112,83 124,90 124,104 112,111 100,104"/><polygon points="180,80 192,73 204,80 204,94 192,101 180,94"/><polygon points="260,96 272,89 284,96 284,110 272,117 260,110"/>
+<polygon points="90,170 102,163 114,170 114,184 102,191 90,184"/><polygon points="150,150 162,143 174,150 174,164 162,171 150,164"/><polygon points="230,170 242,163 254,170 254,184 242,191 230,184"/>
+<polygon points="110,240 122,233 134,240 134,254 122,261 110,254"/><polygon points="190,225 202,218 214,225 214,239 202,246 190,239"/><polygon points="265,250 277,243 289,250 289,264 277,271 265,264"/>
+</g>
+<text x="185" y="38" text-anchor="middle" class="cfm">L = 31.278 Å</text>
+<text x="185" y="322" text-anchor="middle" class="cfmu"><tspan class="ko" data-i>ρ0 0.5 · 분자 100 · 원자 1,500</tspan><tspan class="en" data-i>ρ0 0.5 · 100 molecules · 1,500 atoms</tspan></text>
+<line class="tl" x1="340" y1="175" x2="470" y2="175" stroke-width="4"/><path d="M470 165 L490 175 L470 185 Z" fill="#E37F1A"/>
+<text x="415" y="160" text-anchor="middle" class="cfs"><tspan class="ko" data-i>B 압축</tspan><tspan class="en" data-i>B compress</tspan></text><text x="415" y="205" text-anchor="middle" class="cfmu">1000 atm · 500 K</text>
+<rect x="520" y="72" width="208" height="208" fill="#EAF1F8" stroke="#4F7FB0" stroke-width="3"/>
+<g fill="#4F7FB0" fill-opacity=".35"><circle cx="552" cy="104" r="11"/><circle cx="590" cy="98" r="11"/><circle cx="632" cy="108" r="11"/><circle cx="676" cy="100" r="11"/><circle cx="700" cy="140" r="11"/><circle cx="560" cy="146" r="11"/><circle cx="606" cy="140" r="11"/><circle cx="650" cy="150" r="11"/><circle cx="548" cy="190" r="11"/><circle cx="592" cy="186" r="11"/><circle cx="636" cy="196" r="11"/><circle cx="684" cy="190" r="11"/><circle cx="560" cy="240" r="11"/><circle cx="606" cy="236" r="11"/><circle cx="652" cy="246" r="11"/><circle cx="698" cy="238" r="11"/></g>
+<text x="624" y="58" text-anchor="middle" class="cfm" fill="#4F7FB0"><tspan class="ko" data-i>생산 구간 ρ 0.8703</tspan><tspan class="en" data-i>Production ρ 0.8703</tspan></text>
+<text x="624" y="314" text-anchor="middle" class="cfmu"><tspan class="ko" data-i>같은 분자 수 · 작아진 상자</tspan><tspan class="en" data-i>Same molecule count · smaller box</tspan></text>
+<line x1="790" y1="20" x2="790" y2="310" stroke="#E2D8CA" stroke-width="2"/>
+<text x="830" y="40" class="cfh"><tspan class="ko" data-i>Packmol 게이트: 분자간 최소 거리 ≥ 0.9 × 2.0 Å</tspan><tspan class="en" data-i>Packmol gate: min intermolecular distance ≥ 0.9 × 2.0 Å</tspan></text>
+<g font-family="JetBrains Mono, monospace" font-size="18" text-anchor="end" fill="#4A4540"><text x="950" y="96">tol100</text><text x="950" y="146">dec47</text><text x="950" y="196">mnp72</text><text x="950" y="246">naph-1x4</text></g>
+<g stroke="#E2D8CA" stroke-width="1.5"><line x1="964" y1="64" x2="964" y2="262"/></g><text x="964" y="282" text-anchor="middle" class="cfmu">1.5 Å</text>
+<g fill="#2E8B57"><rect x="964" y="78" width="400" height="26" rx="6"/><rect x="964" y="128" width="373" height="26" rx="6"/><rect x="964" y="178" width="378" height="26" rx="6"/><rect x="964" y="228" width="299" height="26" rx="6"/></g>
+<line x1="1144" y1="64" x2="1144" y2="262" stroke="#D9534F" stroke-width="3" stroke-dasharray="8 6"/><text x="1138" y="290" text-anchor="end" class="cfm" fill="#D9534F"><tspan class="ko" data-i>기준 1.8 Å</tspan><tspan class="en" data-i>Limit 1.8 Å</tspan></text>
+<line x1="1264" y1="64" x2="1264" y2="262" stroke="#6E655C" stroke-width="2" stroke-dasharray="4 5"/><text x="1270" y="290" class="cfmu">tolerance 2.0 Å</text>
+<g font-family="JetBrains Mono, monospace" font-size="18" font-weight="700" fill="#231F20"><text x="1374" y="97">2.166 Å</text><text x="1347" y="147">2.122 Å</text><text x="1352" y="197">2.13 Å</text><text x="1273" y="247">1.998 Å</text></g>
+<text x="1190" y="322" text-anchor="middle" class="cfmu"><tspan class="ko" data-i>4개 상자 모두 1번째 시도 통과 · 실패 시 seed + 1 로 최대 3회</tspan><tspan class="en" data-i>All 4 boxes pass on 1st try · on failure seed + 1, up to 3 tries</tspan></text>
+</svg></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>mdwf/builder.py build() · min_inter() · cell.json (tol100 · dec47 · mnp72 · candidates/naph-1x4) · 여백 1 Å · 전하 합 판정 |Σq| &lt; 0.01</span><span class="en" data-i>mdwf/builder.py build() · min_inter() · cell.json (tol100 · dec47 · mnp72 · candidates/naph-1x4) · margin 1 Å · charge sum test |Σq| &lt; 0.01</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 16 ANIM 표준 프로토콜 시계 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>17-3 · 어떻게 · 동적</span><span class="en" data-i>17-3 · How · animated</span></p>
+<div class="hrow"><span class="hico" data-ico="clock"></span><h2 class="h"><span class="ko" data-i>표준 프로토콜 130 ps: 최소화 → 섞기 → 압축 → 이완 → 냉각 → 평형 → 생산</span><span class="en" data-i>Standard protocol 130 ps: minimize → mix → compress → relax → cool → equilibrate → produce</span></h2></div>
+<p class="sub"><span class="ko" data-i>시간 간격 1 fs · 500 K 에서 섞고 압축 · 298 K 로 식힌 뒤 <b>생산 40 ps</b> 만 물성에 사용</span><span class="en" data-i>Timestep 1 fs · mix and compress at 500 K · cool to 298 K · only <b>production 40 ps</b> used for properties</span></p>
+<div class="bd"><div class="emb" data-emb="clock7" data-dur="14" data-steps="7" data-labels="① 최소화|② A 섞기|③ B 압축|④ C 이완|⑤ D 냉각|⑥ E 평형|⑦ P 생산" data-labels-en="① minimize|② A mix|③ B compress|④ C relax|⑤ D cool|⑥ E equilibrate|⑦ P produce"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>mdworkflow/templates/in.protocol · runner.py PROTOCOLS standard (스텝 10,000 · 20,000 × 4 · 40,000) · 조절 상수 100 fs · 1000 fs · lj/cut/coul/long 12 Å · PPPM 1e-4</span><span class="en" data-i>mdworkflow/templates/in.protocol · runner.py PROTOCOLS standard (steps 10,000 · 20,000 × 4 · 40,000) · damping 100 fs · 1000 fs · lj/cut/coul/long 12 Å · PPPM 1e-4</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 17 FIG 실패 규칙 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>17-3 · 어떻게</span><span class="en" data-i>17-3 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="git-branch"></span><h2 class="h"><span class="ko" data-i>실패 규칙 2개: R1 원자 잃음 계열 → 시간 간격 절반 1회 · R2 그 밖 → 멈춤</span><span class="en" data-i>2 failure rules: R1 lost-atom type → half timestep once · R2 anything else → stop</span></h2></div>
+<p class="sub"><span class="ko" data-i>W07 실패 감지의 축소판 · 규칙 = runner.py 한 곳 · 모든 시도 = status.json 의 attempts</span><span class="en" data-i>Reduced version of W07 failure detection · rules in one place = runner.py · every attempt = attempts in status.json</span></p>
+<div class="bd">
+<div class="row">
+<div class="figw white fill"><svg viewBox="0 0 900 480" class="cfig">
+<rect x="300" y="8" width="300" height="56" rx="14" fill="#231F20"/><text x="450" y="44" text-anchor="middle" class="cfw" font-size="22"><tspan class="ko" data-i>lmp 실행 끝</tspan><tspan class="en" data-i>lmp run ends</tspan></text>
+<line x1="450" y1="64" x2="450" y2="104" stroke="#6E655C" stroke-width="3"/>
+<rect x="210" y="104" width="480" height="70" rx="14" fill="#F6F0E7" stroke="#E2D8CA" stroke-width="2"/><text x="450" y="135" text-anchor="middle" class="cfh" font-size="21"><tspan class="ko" data-i>종료 코드 0 + 「Total wall time」</tspan><tspan class="en" data-i>Exit code 0 + "Total wall time"</tspan></text><text x="450" y="162" text-anchor="middle" class="cfmu"><tspan class="ko" data-i>로그 끝 줄 확인</tspan><tspan class="en" data-i>Check last log line</tspan></text>
+<line x1="690" y1="139" x2="730" y2="139" stroke="#2E8B57" stroke-width="3"/><text x="710" y="128" text-anchor="middle" class="cfm" fill="#2E8B57"><tspan class="ko" data-i>예</tspan><tspan class="en" data-i>Yes</tspan></text>
+<rect x="730" y="104" width="166" height="70" rx="14" fill="#E8F3EC" stroke="#2E8B57" stroke-width="2"/><text x="813" y="135" text-anchor="middle" class="cfh" font-size="21" fill="#2E8B57"><tspan class="ko" data-i>성공</tspan><tspan class="en" data-i>Success</tspan></text><text x="813" y="162" text-anchor="middle" class="cfmu"><tspan class="ko" data-i>프레임 수 기록</tspan><tspan class="en" data-i>Log frame count</tspan></text>
+<line x1="450" y1="174" x2="450" y2="216" stroke="#6E655C" stroke-width="3"/><text x="470" y="200" class="cfm" fill="#D9534F"><tspan class="ko" data-i>아니오</tspan><tspan class="en" data-i>No</tspan></text>
+<rect x="110" y="216" width="680" height="84" rx="14" fill="#F6F0E7" stroke="#E2D8CA" stroke-width="2"/><text x="450" y="248" text-anchor="middle" class="cfh" font-size="21"><tspan class="ko" data-i>ERROR 줄 = 원자 잃음 계열 + 첫 시도</tspan><tspan class="en" data-i>ERROR line = lost-atom type + first attempt</tspan></text><text x="450" y="280" text-anchor="middle" class="cfm" font-size="16">Lost atoms · Bond atoms missing · Out of range atoms</text>
+<path d="M300 300 L220 352" stroke="#E37F1A" stroke-width="3" fill="none"/><text x="236" y="322" class="cfm" fill="#E37F1A"><tspan class="ko" data-i>예</tspan><tspan class="en" data-i>Yes</tspan></text>
+<path d="M600 300 L680 352" stroke="#D9534F" stroke-width="3" fill="none"/><text x="652" y="322" class="cfm" fill="#D9534F"><tspan class="ko" data-i>아니오</tspan><tspan class="en" data-i>No</tspan></text>
+<rect x="10" y="352" width="420" height="118" rx="16" fill="#FFF1E0" stroke="#F99D1C" stroke-width="3"/><text x="30" y="388" class="cfh" fill="#C8610C"><tspan class="ko" data-i>R1 · 다시 1회</tspan><tspan class="en" data-i>R1 · retry once</tspan></text><text x="30" y="420" class="cfs"><tspan class="ko" data-i>Δt 1 → 0.5 fs · 스텝 수 2배</tspan><tspan class="en" data-i>Δt 1 → 0.5 fs · 2× steps</tspan></text><text x="30" y="450" class="cfs"><tspan class="ko" data-i>같은 물리 시간 130 ps 유지</tspan><tspan class="en" data-i>Same physical time 130 ps</tspan></text>
+<rect x="470" y="352" width="420" height="118" rx="16" fill="#FBEAE8" stroke="#D9534F" stroke-width="3"/><text x="490" y="388" class="cfh" fill="#D9534F"><tspan class="ko" data-i>R2 · 멈춤</tspan><tspan class="en" data-i>R2 · stop</tspan></text><text x="490" y="420" class="cfs"><tspan class="ko" data-i>마지막 ERROR 줄 보고</tspan><tspan class="en" data-i>Report last ERROR line</tspan></text><text x="490" y="450" class="cfs"><tspan class="ko" data-i>원인 판단 = 사람 몫</tspan><tspan class="en" data-i>Diagnosis = human</tspan></text>
+</svg></div>
+<div class="doc a" style="--d:2;width:560px;flex:none">
+<p class="doc-pub">runs/tol100/status.json</p>
+<pre class="code doccode">{ "protocol": "standard", "T": 298.0,
+  "seed": 4928460, "threads": 4,
+  "attempts": [ { "dt_fs": 1.0, "exit": 0,
+     "wall_s": 404.6, "ok": true,
+     "error": null } ],
+  "ok": true, "frames": 21,
+  "lammps_version":
+     "22 Jul 2025 - Update 6" }</pre>
+<p class="doc-m"><span class="ko" data-i>실패해도 지우지 않음 · ok false 와 error 줄 보존</span><span class="en" data-i>Never deleted on failure · ok false and error line kept</span></p>
+</div>
+</div>
+<div class="foot a" style="--d:3"><span class="ko" data-i>검증 5회 · 후보 8회 = <b>모두 시도 1번에 성공</b> · R1 · R2 미발동 · 발동 시 규칙 이름이 status.json 의 rule 에 기록</span><span class="en" data-i>5 validation + 8 candidate runs = <b>all succeeded on the 1st attempt</b> · R1 · R2 not triggered · if triggered, the rule name goes to rule in status.json</span></div>
+</div>
+<div class="meta"><p class="ft src">mdwf/runner.py FATAL_RETRY · execute() · week17/expected_output/*/status.json · candidates/*/status.json</p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 18 FIG 실행 시간 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>17-3 · 확인</span><span class="en" data-i>17-3 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="timer"></span><h2 class="h"><span class="ko" data-i>실행 시간: 4코어 단독 약 5분 · 동시 실행 405 ~ 509 s · 2코어 761.8 s</span><span class="en" data-i>Run time: 4 cores alone approx. 5 min · concurrent 405 ~ 509 s · 2 cores 761.8 s</span></h2></div>
+<p class="sub"><span class="ko" data-i>벽시계 = 코어 수 · 동시 실행 수로 결정 · 물성 값은 반복 흔들림 범위 안(17-4)</span><span class="en" data-i>Wall time = set by core count · number of concurrent runs · property values within run-to-run scatter (17-4)</span></p>
+<div class="bd">
+<div class="row">
+<div class="figw white fill"><svg id="w17-wall" viewBox="0 0 1000 500" class="cfig"></svg></div>
+<div class="col" style="width:540px;flex:none">
+<div class="it a" style="--d:1"><p class="k"><span class="ko" data-i>물리 시간</span><span class="en" data-i>Physical time</span></p><p class="n md nosum">130 ps</p><p><span class="ko" data-i>= 130,000 스텝 · Δt 1 fs · 1,500 원자</span><span class="en" data-i>= 130,000 steps · Δt 1 fs · 1,500 atoms</span></p></div>
+<div class="it a" style="--d:2"><p class="k"><span class="ko" data-i>단독 속도 · 4코어</span><span class="en" data-i>Speed alone · 4 cores</span></p><p class="n md nosum"><span class="ko" data-i>455 스텝/s</span><span class="en" data-i>455 steps/s</span></p><p><span class="ko" data-i>약 5분 · OpenMP 4스레드</span><span class="en" data-i>Approx. 5 min · OpenMP 4 threads</span></p></div>
+<div class="it dark a" style="--d:3"><p class="k"><span class="ko" data-i>코어 수 비교 · 같은 상자</span><span class="en" data-i>Core count · same box</span></p><p class="n md nosum">761.8 s</p><p><span class="ko" data-i>2코어 · 4코어 반복 = 461.7 s</span><span class="en" data-i>2 cores · 4-core repeat = 461.7 s</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>벽시계 = week17/expected_output/*/status.json wall_s_total · validation_results.csv · candidates/results.csv · 455 스텝/s = 0단계 단독 측정</span><span class="en" data-i>Wall time = week17/expected_output/*/status.json wall_s_total · validation_results.csv · candidates/results.csv · 455 steps/s = stage-0 standalone measurement</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 19 MAKE M-3 · M-4 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>17-3 · 만들어 보기</span><span class="en" data-i>17-3 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="play"></span><h2 class="h"><span class="ko" data-i>만들어 보기 M-3 · M-4: 톨루엔 100 상자 → 130 ps 실행 기록</span><span class="en" data-i>Try it M-3 · M-4: box of 100 toluene → 130 ps run record</span></h2></div>
+<div class="bd">
+<div class="make" style="grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
+<pre class="code a" style="--d:1;grid-column:1/-1;margin:0"><span class="c"><span class="ko" data-i># 환경: mdai · cd week17 · claude · M-2 를 건너뛰었으면 expected_output/Toluene_gaff2.json → out/ws/ff/</span><span class="en" data-i># Env: mdai · cd week17 · claude · skipped M-2: expected_output/Toluene_gaff2.json → out/ws/ff/</span></span>
+python ../mdworkflow/mdwf.py build --id tol100 --comp Toluene=100 --ws out/ws  <span class="c"># M-3</span>
+python ../mdworkflow/mdwf.py run tol100 --threads 4 --seed 4928460 --ws out/ws <span class="c"><span class="ko" data-i># M-4 · 약 5분</span><span class="en" data-i># M-4 · approx. 5 min</span></span></pre>
+<div class="left a" style="--d:2">
+<div class="prompt" data-id="M-3"><span class="ko" data-i>python ../mdworkflow/mdwf.py build --id [tol100] --comp [Toluene=100] --ws out/ws 를 실행해라. cell.json 의 분자 수 · 원자 수 · ρ0 · 한 변 L · Packmol 시도 · 분자간 최소 거리 · 전하 합을 표로 적고, L = (N·M/(ρ0·N_A))^(1/3) 손계산 값과 비교해라. → out/M-3_result.md</span><span class="en" data-i>Run python ../mdworkflow/mdwf.py build --id [tol100] --comp [Toluene=100] --ws out/ws. Tabulate from cell.json the molecule count · atom count · ρ0 · side L · Packmol attempts · min intermolecular distance · charge sum, and compare with L = (N·M/(ρ0·N_A))^(1/3) computed by hand. → out/M-3_result.md</span></div>
+<div class="cb wrap"><span class="fc or">L <em>31.278 Å</em></span><span class="fc"><span class="ko" data-i>원자 <em>1,500</em></span><span class="en" data-i>Atoms <em>1,500</em></span></span><span class="fc"><span class="ko" data-i>시도 <em>1</em></span><span class="en" data-i>Attempts <em>1</em></span></span><span class="fc"><span class="ko" data-i>최소 거리 <em>2.166 Å</em></span><span class="en" data-i>Min distance <em>2.166 Å</em></span></span><span class="fc">Σq <em>−0.0001</em></span></div>
+</div>
+<div class="expect a" style="--d:3">
+<div class="prompt" data-id="M-4"><span class="ko" data-i>python ../mdworkflow/mdwf.py run [tol100] --threads [4] --seed 4928460 --ws out/ws 를 실행해라(약 5분). status.json · log.lammps 를 읽어 구간 A ~ P 의 끝 온도 · 압력 · 밀도와 벽시계 · 코어 수 · 실패 규칙 사용 여부를 표로 적어라. 오류면 마지막 ERROR 줄과 R1 · R2 판정만 쓰고 멈춰라. → out/M-4_result.md</span><span class="en" data-i>Run python ../mdworkflow/mdwf.py run [tol100] --threads [4] --seed 4928460 --ws out/ws (approx. 5 min). Read status.json · log.lammps and tabulate end temperature · pressure · density for segments A ~ P, plus wall time · core count · whether a failure rule was used. On error, write only the last ERROR line and the R1 · R2 verdict, then stop. → out/M-4_result.md</span></div>
+<div class="cb wrap"><span class="fc gr">ok <em>true</em></span><span class="fc"><span class="ko" data-i>시도 <em>1</em></span><span class="en" data-i>Attempts <em>1</em></span></span><span class="fc">exit <em>0</em></span><span class="fc"><span class="ko" data-i>프레임 <em>21</em></span><span class="en" data-i>Frames <em>21</em></span></span><span class="fc"><span class="ko" data-i>벽시계 <em>404.6 s</em></span><span class="en" data-i>Wall <em>404.6 s</em></span></span></div>
+</div>
+</div>
+<div class="check a" style="--d:4"><p><span class="ko" data-i>cell.json 의 L = 손계산 L (소수 셋째 자리)</span><span class="en" data-i>L in cell.json = hand-computed L (to the third decimal)</span></p><p><span class="ko" data-i>attempts 1개 · ok true · 아니면 R1 · R2 중 어느 쪽</span><span class="en" data-i>1 attempt · ok true · otherwise which of R1 · R2</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>지시문 원문 week17/prompts.md · M-3 · M-4 · 기대 결과 = week17/expected_output/tol100/cell.json · status.json (벽시계 = 3개 동시 실행)</span><span class="en" data-i>Prompt source week17/prompts.md · M-3 · M-4 · expected = week17/expected_output/tol100/cell.json · status.json (wall time = 3 concurrent runs)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 20 차시 17-4 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 17-4 · 17분 · 영상 1편</span><span class="en" data-i>Session 17-4 · 17 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="gauge"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">4</p><p class="hubt"><span class="ko" data-i>물성 · 검증 · 다음 주</span><span class="en" data-i>Properties · validation · next week</span></p><p class="hubs"><span class="ko" data-i>밀도 · CED → 검증 → 후보 8개</span><span class="en" data-i>Density · CED → validation → 8 candidates</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>props.json · results.csv 한 줄 · 판정 표</span><span class="en" data-i>props.json · one results.csv row · verdict table</span></h4></div></div><p><span class="ko" data-i>밀도 ± 블록 표준오차 · CED ± · δ · 실측 대비 %</span><span class="en" data-i>Density ± block SE · CED ± · δ · % vs. experiment</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>W09 물성 산출 → 자동 · W18 의 관측</span><span class="en" data-i>W09 property calculation → automatic · observation for W18</span></h4></div></div><p><span class="ko" data-i>같은 판정 폭으로 내 결과 ↔ 기준 결과 비교</span><span class="en" data-i>Same tolerance for my result ↔ reference result</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 21 ANIM CED rerun -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>17-4 · 어떻게 · 동적</span><span class="en" data-i>17-4 · How · animated</span></p>
+<div class="hrow"><span class="hico" data-ico="rotate-cw"></span><h2 class="h"><span class="ko" data-i>CED 계산: 벌크 에너지 − 분자 하나씩 에너지 합 · 120 Å 격자로 떼어 재계산</span><span class="en" data-i>CED: bulk energy − sum of single-molecule energies · rerun on a 120 Å grid</span></h2></div>
+<p class="sub"><span class="ko" data-i>같은 좌표 · 같은 힘장 → 분자 사이 항만 남김 · 생산 프레임 17개 평균 · 정의 = W09 Method A</span><span class="en" data-i>Same coordinates · same FF → only intermolecular terms remain · mean of 17 production frames · definition = W09 Method A</span></p>
+<div class="bd"><div class="emb" data-emb="rerun" data-dur="13" data-steps="4" data-labels="① 벌크 프레임 에너지|② 분자를 격자로|③ 재계산 · 분자 합|④ 차 ÷ 부피 = CED" data-labels-en="① bulk frame energy|② molecules onto grid|③ rerun · molecule sum|④ diff ÷ volume = CED"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>mdwf/analyze.py spread_dump() · templates/in.intra · 값 = week17/expected_output/tol100/ced_frames.csv 첫 행(step 8000) · 환산 6,947.7 = common.py</span><span class="en" data-i>mdwf/analyze.py spread_dump() · templates/in.intra · values = week17/expected_output/tol100/ced_frames.csv first row (step 8000) · conversion 6,947.7 = common.py</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 22 FIG 밀도 · CED 결과 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>17-4 · 확인</span><span class="en" data-i>17-4 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="gauge"></span><h2 class="h"><span class="ko" data-i>톨루엔 100 결과: 밀도 0.8703 ± 0.0024 · CED 352.3 ± 2.2</span><span class="en" data-i>Toluene 100 result: density 0.8703 ± 0.0024 · CED 352.3 ± 2.2</span></h2></div>
+<p class="sub"><span class="ko" data-i>생산 구간 뒤 80 % · 밀도 = thermo 161개 · CED = 프레임 17개 · 둘 다 블록 5개 표준오차(W05)</span><span class="en" data-i>Last 80 % of production · density = 161 thermo rows · CED = 17 frames · both with 5-block SE (W05)</span></p>
+<div class="bd">
+<div class="row">
+<div class="figw white fill"><svg id="w17-ced" viewBox="0 0 1000 500" class="cfig"></svg></div>
+<div class="col" style="width:540px;flex:none">
+<div class="it a" style="--d:1"><p class="k"><span class="ko" data-i>밀도 · g/cm³</span><span class="en" data-i>Density · g/cm³</span></p><p class="n md nosum">0.8703<small>± 0.0024</small></p><p><span class="ko" data-i>전반 · 후반 차 0.72 % &lt; 1 % → 통과</span><span class="en" data-i>First/second-half diff 0.72 % &lt; 1 % → pass</span></p></div>
+<div class="it a" style="--d:2"><p class="k">CED · MJ/m³</p><p class="n md nosum">352.3<small>± 2.2</small></p><p><span class="ko" data-i>δ = √CED = 18.77 MPa<sup>0.5</sup> · 분자 크기 6.1 Å</span><span class="en" data-i>δ = √CED = 18.77 MPa<sup>0.5</sup> · molecule size 6.1 Å</span></p></div>
+<div class="it dark a" style="--d:3"><p class="k"><span class="ko" data-i>블록 표준오차의 범위</span><span class="en" data-i>Scope of block SE</span></p><p><span class="ko" data-i>한 실행 안의 흔들림만 · 실행 사이 흔들림 = 다음 장</span><span class="en" data-i>Scatter within one run only · run-to-run scatter = next slide</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>week17/expected_output/tol100/props.json · ced_frames.csv · mdwf/analyze.py block_se(5블록)</span><span class="en" data-i>week17/expected_output/tol100/props.json · ced_frames.csv · mdwf/analyze.py block_se (5 blocks)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 23 FIG NIST · 반복 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>17-4 · 검증</span><span class="en" data-i>17-4 · Validation</span></p>
+<div class="hrow"><span class="hico" data-ico="shield-check"></span><h2 class="h"><span class="ko" data-i>힘장 검증: 밀도 +1 % 안 · CED 방향족 +6 % · 포화 +21 %</span><span class="en" data-i>FF validation: density within +1 % · CED aromatic +6 % · saturated +21 %</span></h2></div>
+<p class="sub"><span class="ko" data-i>실측 = NIST 298 K · 실측 CED = (ΔvapH − RT) ÷ Vm · 반복 흔들림 = 톨루엔 100 · 같은 seed 3회</span><span class="en" data-i>Experiment = NIST 298 K · experimental CED = (ΔvapH − RT) ÷ Vm · run-to-run scatter = toluene 100 · same seed 3 times</span></p>
+<div class="bd">
+<div class="grid c2 fill">
+<div class="it white a" style="--d:1"><div class="ih"><span class="icb" data-ico="flask-conical"></span><div><p class="k"><span class="ko" data-i>① NIST 대조</span><span class="en" data-i>① NIST check</span></p><h4><span class="ko" data-i>MD − 실측 · 차이 %</span><span class="en" data-i>MD − experiment · % difference</span></h4></div></div><div class="figw fill"><svg id="w17-nist" viewBox="0 0 760 330" class="cfig"></svg></div></div>
+<div class="it white a" style="--d:2"><div class="ih"><span class="icb" data-ico="repeat"></span><div><p class="k"><span class="ko" data-i>② 반복 3회</span><span class="en" data-i>② 3 repeats</span></p><h4><span class="ko" data-i>판정 폭 밀도 ±0.015 · CED ±15</span><span class="en" data-i>Tolerance density ±0.015 · CED ±15</span></h4></div></div><div class="figw fill"><svg id="w17-rep" viewBox="0 0 760 330" class="cfig"></svg></div></div>
+</div>
+<div class="foot a" style="--d:3"><span class="ko" data-i>같은 결과 = <b>판정 폭 안</b> · 비트 단위 동일 ≠ 목표(OpenMP 합산 순서) · 실행 사이 흔들림 &gt; 블록 표준오차</span><span class="en" data-i>Same result = <b>within tolerance</b> · bitwise identical ≠ goal (OpenMP summation order) · run-to-run scatter &gt; block SE</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>validation_results.csv · tol100 · tol100_t4b · tol100_t2 · NIST Chemistry WebBook(톨루엔 · n-데칸 · Lemmon &amp; Span 2006 · Majer–Svoboda 식) · mdworkflow/README.md</span><span class="en" data-i>validation_results.csv · tol100 · tol100_t4b · tol100_t2 · NIST Chemistry WebBook (toluene · n-decane · Lemmon &amp; Span 2006 · Majer–Svoboda eq.) · mdworkflow/README.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 24 SIM 후보 8개 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>17-4 · 확인 · 조작형</span><span class="en" data-i>17-4 · Check · interactive</span></p>
+<div class="hrow"><span class="hico" data-ico="target"></span><h2 class="h"><span class="ko" data-i>후보 8개 시험: 표적 상자 1.018 ± 0.02 · 354.2 ± 20 안 = 0개</span><span class="en" data-i>8 candidate trials: inside target box 1.018 ± 0.02 · 354.2 ± 20 = 0</span></h2></div>
+<p class="sub"><span class="ko" data-i>후보 = 방향족 핵 + 알킬 사슬(평균 분자) · 4코어 · 8개 동시 431 ~ 509 s · 슬라이더 = 판정 폭 배수 · 이름 = 값</span><span class="en" data-i>Candidate = aromatic core + alkyl chains (average molecule) · 4 cores · 8 concurrent 431 ~ 509 s · slider = tolerance multiplier · name = values</span></p>
+<div class="bd">
+<div class="sim" id="sim-cand">
+<div class="ctl">
+<label><span class="ko" data-i><b>판정 폭 배수 <output data-o="k">×1</output></b></span><span class="en" data-i><b>Tolerance multiplier <output data-o="k">×1</output></b></span><input type="range" min="1" max="3" value="1" step="0.5" data-k="k"></label>
+<div class="chips"><button type="button" class="alt" data-c="0">naph-1x4</button><button type="button" class="alt" data-c="1">naph-2x6</button><button type="button" class="alt" data-c="2">phen-1x4</button><button type="button" class="alt" data-c="3">dbt-1x2</button><button type="button" class="alt" data-c="4">dbt-2x6</button><button type="button" class="alt" data-c="5">bt-1x6</button><button type="button" class="alt" data-c="6">quin-1x4</button><button type="button" class="alt" data-c="7">tet-1x8</button></div>
+<button type="button" data-act="val"><span class="ko" data-i>검증 분자 표시 · 끔</span><span class="en" data-i>Show validation molecules · off</span></button>
+<button type="button" class="alt" data-act="reset"><span class="ko" data-i>처음 상태 (×1)</span><span class="en" data-i>Reset (×1)</span></button>
+</div>
+<div class="view"><svg viewBox="0 0 1160 430" aria-label="밀도–CED 산점"></svg>
+<div class="kpi"><div><span class="ko" data-i>상자 안 <b data-o="in">0 / 8</b></span><span class="en" data-i>In box <b data-o="in">0 / 8</b></span></div><div><span class="ko" data-i>선택 <b data-o="sel"> · </b></span><span class="en" data-i>Selected <b data-o="sel"> · </b></span></div><div><span class="ko" data-i>표적까지 <b data-o="d"> · </b></span><span class="en" data-i>To target <b data-o="d"> · </b></span></div></div>
+</div>
+</div>
+<div class="foot a" style="--d:3"><span class="ko" data-i>밀도 폭 안 2개(bt-1x6 · quin-1x4) CED 408.1 · 444.7 · CED 폭 안 2개(naph-2x6 · tet-1x8) 밀도 0.9036 · 0.8961</span><span class="en" data-i>Density within tol: 2 (bt-1x6 · quin-1x4) CED 408.1 · 444.7 · CED within tol: 2 (naph-2x6 · tet-1x8) density 0.9036 · 0.8961</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>week17/expected_output/candidates/results.csv · 표적 = 문헌 11편 실측 22개 중앙값 1.018 · 바인더 값 7개 중앙값 354.2 · 이름 = 핵-사슬 수 x 탄소 수</span><span class="en" data-i>week17/expected_output/candidates/results.csv · target = median of 22 measurements in 11 papers 1.018 · median of 7 binder values 354.2 · name = core-number of chains x carbons</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 25 MAKE M-5 · M-6 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>17-4 · 만들어 보기</span><span class="en" data-i>17-4 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="table"></span><h2 class="h"><span class="ko" data-i>만들어 보기 M-5 · M-6: 판정 폭 · NIST 대조 → 결과 표 한 줄</span><span class="en" data-i>Try it M-5 · M-6: tolerance · NIST check → one results row</span></h2></div>
+<div class="bd">
+<div class="make" style="grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
+<pre class="code a" style="--d:1;grid-column:1/-1;margin:0"><span class="c"><span class="ko" data-i># 환경: mdai · cd week17 · claude · M-4 를 못 돌렸으면 expected_output/tol100/props.json 으로 표만</span><span class="en" data-i># Env: mdai · cd week17 · claude · M-4 skipped: read expected_output/tol100/props.json</span></span>
+python ../mdworkflow/mdwf.py analyze tol100 --ws out/ws                       <span class="c"># M-5</span>
+python ../mdworkflow/mdwf.py store tol100 --source nist_toluene --ws out/ws   <span class="c"># M-6</span></pre>
+<div class="left a" style="--d:2">
+<div class="prompt" data-id="M-5"><span class="ko" data-i>python ../mdworkflow/mdwf.py analyze [tol100] --ws out/ws 를 실행해라. props.json · ced_frames.csv 의 밀도 ± · 전반/후반 차 · CED ± · δ 를 적고, expected_output/[tol100]/props.json 과의 차를 판정 폭(밀도 ±0.015 · CED ±15)으로, NIST 실측(0.86238 g/cm³ · 332.5 MJ/m³)과의 차를 % 로 적어라. 차이의 이유 두 줄. → out/M-5_result.md</span><span class="en" data-i>Run python ../mdworkflow/mdwf.py analyze [tol100] --ws out/ws. From props.json · ced_frames.csv report density ± · first/second-half diff · CED ± · δ, the difference from expected_output/[tol100]/props.json against the tolerance (density ±0.015 · CED ±15), and the % difference from NIST experiment (0.86238 g/cm³ · 332.5 MJ/m³). Two lines on the reasons for the difference. → out/M-5_result.md</span></div>
+<div class="cb wrap"><span class="fc or">ρ <em>0.8703 ± 0.0024</em></span><span class="fc or">CED <em>352.3 ± 2.2</em></span><span class="fc">δ <em>18.77</em></span><span class="fc">NIST <em>+0.9 % · +6 %</em></span></div>
+</div>
+<div class="expect a" style="--d:3">
+<div class="prompt" data-id="M-6"><span class="ko" data-i>python ../mdworkflow/mdwf.py store [tol100] --source [nist_toluene] --ws out/ws 를 실행하고 out/ws/db/results.csv 를 표로 보여 줘라. expected_output/validation_results.csv 의 같은 id 줄과 비교하고, 같은 id 재기록 거부 · 실패 기록 보존의 이유를 한 줄씩 써라. → out/M-6_result.md</span><span class="en" data-i>Run python ../mdworkflow/mdwf.py store [tol100] --source [nist_toluene] --ws out/ws and show out/ws/db/results.csv as a table. Compare with the row of the same id in expected_output/validation_results.csv, and give one line each on why re-recording the same id is refused · why failure records are kept. → out/M-6_result.md</span></div>
+<div class="cb wrap"><span class="fc gr">ok <em>True</em></span><span class="fc"><span class="ko" data-i>열 <em>24</em></span><span class="en" data-i>Columns <em>24</em></span></span><span class="fc">n_atoms <em>1500</em></span><span class="fc">seed <em>4928460</em></span><span class="fc">source <em>nist_toluene</em></span></div>
+</div>
+</div>
+<div class="check a" style="--d:4"><p><span class="ko" data-i>내 값 − 기준 값: 밀도 ±0.015 · CED ±15 안 · 밖이면 코어 수 · seed · 프로토콜부터 확인</span><span class="en" data-i>Mine − reference: within density ±0.015 · CED ±15 · if outside, check core count · seed · protocol first</span></p><p><span class="ko" data-i>같은 id 재기록 → 거부 메시지 · 새 id 로 기록</span><span class="en" data-i>Re-record same id → refusal message · record under a new id</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>지시문 원문 week17/prompts.md · M-5 · M-6 · 기대 결과 = week17/expected_output/tol100/props.json · validation_results.csv · mdwf/store.py COLS</span><span class="en" data-i>Prompt source week17/prompts.md · M-5 · M-6 · expected = week17/expected_output/tol100/props.json · validation_results.csv · mdwf/store.py COLS</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 26 FIG 확인 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>17-4 · 확인</span><span class="en" data-i>17-4 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="circle-help"></span><h2 class="h"><span class="ko" data-i>확인 4문항: 단계 입력 · 빌린 값 · 판정 폭 · 표적 상자</span><span class="en" data-i>Check 4 questions: step input · borrowed values · tolerance · target box</span></h2></div>
+<p class="sub"><span class="ko" data-i>답 = 이번 주 화면의 숫자 · 해설과 추가 문항 = repo/week17/quiz.md</span><span class="en" data-i>Answers = numbers on this week's slides · explanations and more questions = repo/week17/quiz.md</span></p>
+<div class="bd">
+<div class="grid c2 fill">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="box"></span><div><p class="k">Q1 · 17-1</p><h4><span class="ko" data-i>build 단계의 입력 2가지</span><span class="en" data-i>2 inputs of the build step</span></h4></div></div><p><span class="ko" data-i><b>답</b> ff/이름_gaff2.json · --comp 분자 개수(이름=개수)</span><span class="en" data-i><b>Answer</b> ff/name_gaff2.json · --comp molecule count (name=count)</span></p><p><span class="ko" data-i>근거 = 4장 ③ build 의 넣는 것</span><span class="en" data-i>Basis = slide 4 ③ build inputs</span></p></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="link"></span><div><p class="k">Q2 · 17-2</p><h4><span class="ko" data-i>ATTN 3 이 찍힌 JSON → 다음 행동</span><span class="en" data-i>JSON with ATTN 3 → next action</span></h4></div></div><p><span class="ko" data-i><b>답</b> 빌린 값 3개의 출처 타입 확인 · 기록 뒤 사용 여부 결정</span><span class="en" data-i><b>Answer</b> check source types of the 3 borrowed values · log, then decide whether to use</span></p><p><span class="ko" data-i>근거 = 10장 검사 ③</span><span class="en" data-i>Basis = slide 10 check ③</span></p></div>
+<div class="it a" style="--d:3"><div class="ih"><span class="icb" data-ico="repeat"></span><div><p class="k">Q3 · 17-4</p><h4><span class="ko" data-i>3회(2코어) 0.8801 · 362.6 ↔ 1회 0.8703 · 352.3</span><span class="en" data-i>Run 3 (2 cores) 0.8801 · 362.6 ↔ run 1 0.8703 · 352.3</span></h4></div></div><p><span class="ko" data-i><b>답</b> 차 0.0098 · 10.3 → 판정 폭 ±0.015 · ±15 안 → 같은 결과</span><span class="en" data-i><b>Answer</b> diff 0.0098 · 10.3 → within tolerance ±0.015 · ±15 → same result</span></p><p><span class="ko" data-i>근거 = 23장 반복 3회</span><span class="en" data-i>Basis = slide 23, 3 repeats</span></p></div>
+<div class="it a" style="--d:4"><div class="ih"><span class="icb" data-ico="target"></span><div><p class="k">Q4 · 17-4</p><h4><span class="ko" data-i>bt-1x6 · 1.0137 · 408.1 → 표적 상자 안팎</span><span class="en" data-i>bt-1x6 · 1.0137 · 408.1 → inside or outside target box</span></h4></div></div><p><span class="ko" data-i><b>답</b> 밀도 폭 안 · CED 408.1 &gt; 374.2 → 상자 밖</span><span class="en" data-i><b>Answer</b> density within tol · CED 408.1 &gt; 374.2 → outside box</span></p><p><span class="ko" data-i>근거 = 24장 표적 상자</span><span class="en" data-i>Basis = slide 24 target box</span></p></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>문항 = 4 · 9 · 10 · 23 · 24장 숫자 · 표적 상자 위 끝 = 354.2 + 20</span><span class="en" data-i>Questions = numbers from slides 4 · 9 · 10 · 23 · 24 · upper edge of target box = 354.2 + 20</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 27 다음 주차로 -->
+<section class="slide v3 accent">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>다음 주차로 · W18 폐루프 통합 실습</span><span class="en" data-i>Next week · W18 closed-loop integration lab</span></p>
+<div class="hrow"><span class="hico" data-ico="arrow-right"></span><h2 class="h"><span class="ko" data-i>오늘의 산출물 3: 힘장 JSON · 실행 기록 · results.csv 한 줄 → W18 계산 칸</span><span class="en" data-i>3 outputs today: FF JSON · run record · one results.csv row → W18 compute slot</span></h2></div>
+<p class="sub"><span class="ko" data-i>W17 = 후보 1개를 끝까지 · W18 = 168개 중 다음 계산을 고르는 폐루프 · 표적 = 밀도 1.018 · CED 354.2</span><span class="en" data-i>W17 = one candidate end to end · W18 = loop choosing the next calculation among 168 · targets = density 1.018 · CED 354.2</span></p>
+<div class="bd">
+<div class="lines">
+<div class="ln a" style="--d:1"><span class="nn">01</span><div><h4><span class="ko" data-i>산출물</span><span class="en" data-i>Outputs</span></h4><p><span class="file">out/ws/ff/Toluene_gaff2.json</span> · <span class="file">runs/tol100/props.json</span> · <span class="file">db/results.csv</span> <span class="ko" data-i>· M-1 ~ M-6 결과</span><span class="en" data-i>· M-1 ~ M-6 results</span></p></div></div>
+<div class="ln a" style="--d:2"><span class="nn">02</span><div><h4><span class="ko" data-i>다음 주 W18</span><span class="en" data-i>Next week W18</span></h4><p><span class="ko" data-i>문헌 → 표적 2개 → 후보 168 → MD 워크플로우 → 대리모델(gp · rf · xgb) → 체비셰프 EI → 실행 노트 환류</span><span class="en" data-i>Literature → 2 targets → 168 candidates → MD workflow → surrogate (gp · rf · xgb) → Chebyshev EI → run notes fed back</span></p></div></div>
+<div class="ln a" style="--d:3"><span class="nn">03</span><div><h4><span class="ko" data-i>못 끝냈다면</span><span class="en" data-i>If unfinished</span></h4><p><span class="file">week17/expected_output/</span> <span class="ko" data-i>의 JSON · CSV 로 W18 진행 가능 · W18 재생 모드 = 기준 MD 값 사용</span><span class="en" data-i>JSON · CSV let you continue with W18 · W18 replay mode = uses reference MD values</span></p></div></div>
+<div class="ln a" style="--d:4"><span class="nn">04</span><div><h4><span class="ko" data-i>퀴즈 · 용어 · 보충</span><span class="en" data-i>Quiz · key terms · supplements</span></h4><p><span class="file">week17/quiz.md</span> · <span class="file">GLOSSARY.md</span> <span class="ko" data-i>용어 6 ·</span><span class="en" data-i>6 terms ·</span> <span class="file">mdworkflow/README.md</span></p></div></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>W18 = repo/loop (지시문 L-1 ~ L-8) · 기준 사례 폐루프 결과 = W18 덱</span><span class="en" data-i>W18 = repo/loop (prompts L-1 ~ L-8) · reference closed-loop results = W18 deck</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<script src="../common/icons.js"></script>
+<script src="../common/deck.js"></script>
+<script>
+function stepOf(root) { var s = parseInt(root.dataset.step || '0', 10); return isNaN(s) ? 0 : s; }
+function icoIn(n, x, y, s, col) { return '<svg x="' + x + '" y="' + y + '" width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" stroke="' + col + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + (IC[n] || '') + '</svg>'; }
+function mono(x, y, s, col, size, anchor, w) { return '<text x="' + x + '" y="' + y + '" font-family="JetBrains Mono, monospace" font-size="' + (size || 18) + '" fill="' + col + '"' + (anchor ? ' text-anchor="' + anchor + '"' : '') + (w ? ' font-weight="' + w + '"' : '') + '>' + s + '</text>'; }
+function tx(x, y, s, cls, anchor, fill, size) { return '<text x="' + x + '" y="' + y + '"' + (cls ? ' class="' + cls + '"' : '') + (anchor ? ' text-anchor="' + anchor + '"' : '') + (fill ? ' fill="' + fill + '"' : '') + (size ? ' font-size="' + size + '"' : '') + '>' + s + '</text>'; }
+function rr(x, y, w, h, r, fill, stroke, sw, extra) { return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="' + r + '" fill="' + fill + '"' + (stroke ? ' stroke="' + stroke + '" stroke-width="' + (sw || 2) + '"' : '') + (extra || '') + '/>'; }
+function ez(u) { u = Math.max(0, Math.min(1, u)); return 1 - Math.pow(1 - u, 3); }
+function cl(u) { return Math.max(0, Math.min(1, u)); }
+function mn(s) { return String(s).replace(/-/g, '−'); }
+function comma(n) { return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+function hexMol(x, y, r, ang, col, op) { var p = []; for (var k = 0; k < 6; k++) { var a = ang + k * Math.PI / 3; p.push((x + r * Math.cos(a)).toFixed(1) + ',' + (y + r * Math.sin(a)).toFixed(1)); } var mx = x + r * 1.8 * Math.cos(ang), my = y + r * 1.8 * Math.sin(ang); return '<g opacity="' + (op == null ? 1 : op) + '"><polygon points="' + p.join(' ') + '" fill="' + col + '" fill-opacity=".2" stroke="' + col + '" stroke-width="2"/><line x1="' + (x + r * Math.cos(ang)).toFixed(1) + '" y1="' + (y + r * Math.sin(ang)).toFixed(1) + '" x2="' + mx.toFixed(1) + '" y2="' + my.toFixed(1) + '" stroke="' + col + '" stroke-width="2"/></g>'; }
+var RND = (function () { var s = 17; return function () { s = (s * 9301 + 49297) % 233280; return s / 233280; }; })();
+
+/* ===== 데이터 = repo/week17/expected_output ===== */
+var W17 = {
+  cand: [
+    { id: 'naph-1x4', full: 'naphthalene-1x4', rho: 0.9784, ced: 420.6, dx: 14, dy: -10 },
+    { id: 'naph-2x6', full: 'naphthalene-2x6', rho: 0.9036, ced: 361.0, dx: 14, dy: 6 },
+    { id: 'phen-1x4', full: 'phenanthrene-1x4', rho: 1.0457, ced: 453.4, dx: 14, dy: -6 },
+    { id: 'dbt-1x2', full: 'dibenzothiophene-1x2', rho: 1.1378, ced: 466.5, dx: -14, dy: 22 },
+    { id: 'dbt-2x6', full: 'dibenzothiophene-2x6', rho: 0.9817, ced: 386.4, dx: 14, dy: 18 },
+    { id: 'bt-1x6', full: 'benzothiophene-1x6', rho: 1.0137, ced: 408.1, dx: 14, dy: 6 },
+    { id: 'quin-1x4', full: 'quinoline-1x4', rho: 1.0062, ced: 444.7, dx: -14, dy: -8 },
+    { id: 'tet-1x8', full: 'tetralin-1x8', rho: 0.8961, ced: 369.1, dx: -14, dy: -12 }],
+  val: [
+    { id: 'tol100', name: __L('톨루엔','toluene'), rho: 0.8703, ced: 352.3, nr: 0.86238, nc: 332.5 },
+    { id: 'mnp72', name: __L('1-메틸나프탈렌','1-methylnaphthalene'), rho: 1.0299, ced: 452.9 },
+    { id: 'dec47', name: __L('n-데칸','n-decane'), rho: 0.734, ced: 303.0, nr: 0.72664, nc: 249.7 }],
+  rep: [
+    { lab: __L('1회 · 4코어','run 1 · 4 cores'), rho: 0.8703, rse: 0.0024, ced: 352.3, cse: 2.2 },
+    { lab: __L('2회 · 4코어','run 2 · 4 cores'), rho: 0.8724, rse: 0.0036, ced: 357.1, cse: 3.3 },
+    { lab: __L('3회 · 2코어','run 3 · 2 cores'), rho: 0.8801, rse: 0.0013, ced: 362.6, cse: 4.9 }],
+  target: { rho: 1.018, rt: 0.02, ced: 354.2, ct: 20 },
+  cedf: { ps: [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40],
+    v: [350.4206, 344.4609, 371.5413, 362.3524, 347.0488, 353.958, 357.226, 346.2836, 339.5574, 365.1351, 352.8871, 344.059, 344.8123, 335.9457, 352.38, 365.6108, 355.9965] },
+  wall: [
+    { g: __L('검증 3개 동시 · 4코어','3 validation runs concurrent · 4 cores'), c: '#4F7FB0', rows: [['tol100', 404.6], ['mnp72', 445.6], ['dec47', 454.0]] },
+    { g: __L('반복 실행 · 톨루엔 100','Repeat runs · toluene 100'), c: '#6E655C', rows: [[__L('tol100_t4b · 4코어','tol100_t4b · 4 cores'), 461.7], [__L('tol100_t2 · 2코어','tol100_t2 · 2 cores'), 761.8]] },
+    { g: __L('후보 8개 동시 · 4코어','8 candidates concurrent · 4 cores'), c: '#E37F1A', rows: [['dbt-1x2', 430.9], ['quin-1x4', 436.7], ['bt-1x6', 459.5], ['naph-1x4', 459.8], ['dbt-2x6', 475.5], ['naph-2x6', 491.6], ['tet-1x8', 508.0], ['phen-1x4', 509.2]] }]
+};
+
+/* ===== 표지 · 6단계 세로 흐름 ===== */
+var PIPE = [
+  { k: '① mol', s: 'mol', tool: 'RDKit', ico: 'atom', t: '', inp: ['SMILES  Cc1ccccc1'], out: ['mol/Toluene.mol', 'mol/Toluene.pdb', 'mol/Toluene.json'], short: __L('Toluene.mol · 원자 15','Toluene.mol · 15 atoms'), chk: __L('원자 수 · 입체 중심 수 · MMFF 수렴','atom count · stereocenter count · MMFF convergence'), risk: __L('수소 누락 · 입체 뒤바뀜 · 형식전하','missing H · flipped stereo · formal charge') },
+  { k: '② ff', s: 'ff', tool: 'AmberTools', ico: 'magnet', t: 'AM1-BCC 0.2 s', inp: ['mol/Toluene.mol'], out: ['ff/Toluene_gaff2.json', __L('ff/Toluene/ 로그 · frcmod · prmtop','ff/Toluene/ logs · frcmod · prmtop')], short: 'Toluene_gaff2.json · ATTN 0', chk: __L('전하 합 = 형식전하 · 타입 빠짐 0 · ATTN 개수','charge sum = formal charge · 0 missing types · ATTN count'), risk: __L('형식전하 오입력 · 빌린 값 그대로 사용','wrong formal charge · trusting borrowed values') },
+  { k: '③ build', s: 'build', tool: 'Packmol', ico: 'box', t: '', inp: ['ff/Toluene_gaff2.json', '--comp Toluene=100'], out: ['cells/tol100/system.data', 'cells/tol100/cell.json'], short: __L('system.data · 1,500 원자','system.data · 1,500 atoms'), chk: __L('Packmol 성공 · 최소 거리 ≥ 1.8 Å · 전하 합 ≈ 0','Packmol success · min distance ≥ 1.8 Å · charge sum ≈ 0'), risk: __L('초기 밀도 과대 → 배치 실패','initial density too high → packing fails') },
+  { k: '④ run', s: 'run', tool: 'LAMMPS', ico: 'cpu', t: __L('약 5분 · 4코어','approx. 5 min · 4 cores'), inp: ['cells/tol100/system.data', 'templates/in.protocol'], out: ['runs/tol100/log.lammps', 'runs/tol100/prod.lammpstrj', 'runs/tol100/status.json'], short: 'status.json · 130 ps', chk: __L('종료 코드 0 · 실패 규칙 R1 · R2','exit code 0 · failure rules R1 · R2'), risk: __L('짧은 실행 = 수렴 전 값','short run = pre-convergence values') },
+  { k: '⑤ analyze', s: 'analyze', tool: 'LAMMPS rerun', ico: 'gauge', t: '', inp: ['runs/tol100/log.lammps', 'runs/tol100/prod.lammpstrj'], out: ['runs/tol100/props.json', 'runs/tol100/ced_frames.csv'], short: 'props.json · ρ · CED', chk: __L('전반 · 후반 밀도 차 < 1 % · 분자 크기 < 절단','first/second-half density diff < 1 % · molecule size < cutoff'), risk: __L('평형 전 구간 포함 · 프레임 부족','pre-equilibrium span included · too few frames') },
+  { k: '⑥ store', s: 'store', tool: 'csv', ico: 'database', t: '', inp: ['cell.json · status.json · props.json'], out: ['db/results.csv  +1'], short: __L('results.csv · 한 줄 추가','results.csv · one row appended'), chk: __L('같은 id 거부 · 실패도 ok=False 로 기록','same id refused · failures kept as ok=False'), risk: __L('같은 id 두 번 · 실패 기록 삭제','same id twice · failure record deleted') }];
+
+EMB["pipec"] = function (root, RAF) {
+  var t0 = CLK();
+  function f(now) {
+    var t = ((now - t0) / 1000) % 13, k = Math.min(5, Math.floor(t / 2)), u = (t % 2) / 2, o = '<svg viewBox="0 0 560 560" class="cfig">';
+    o += tx(280, 46, __L('SMILES → 결과 표 한 줄','SMILES → one results row'), 'cfh', 'middle');
+    o += '<line x1="70" y1="95" x2="70" y2="485" stroke="#E2D8CA" stroke-width="6" stroke-linecap="round"/>';
+    o += '<line x1="70" y1="95" x2="70" y2="' + (95 + Math.min(390, (k + (k < 5 ? ez(u) : 1)) * 78)).toFixed(1) + '" stroke="#F99D1C" stroke-width="6" stroke-linecap="round"/>';
+    for (var i = 0; i < 6; i++) {
+      var y = 95 + i * 78, on = i === k, done = i < k || (k === 5 && i === 5 && u > 0.6);
+      o += '<circle cx="70" cy="' + y + '" r="26" fill="' + (on ? '#C8610C' : (done ? '#F99D1C' : '#FFFFFF')) + '" stroke="' + (on || done ? '#C8610C' : '#D3C6B5') + '" stroke-width="3"/>' + icoIn(PIPE[i].ico, 56, y - 14, 28, on ? '#FFFFFF' : (done ? '#231F20' : '#B9AE9E'));
+      o += mono(116, y - 4, PIPE[i].s, on || done ? '#231F20' : '#9A9088', 24, null, 700);
+      o += '<g opacity="' + (i < k || on ? (on ? ez(u * 2).toFixed(2) : 1) : 0.25) + '">' + tx(116, y + 24, PIPE[i].short, 'cfs', null, null, 18) + '</g>';
+    }
+    if (k === 5 && u > 0.5) o += '<g opacity="' + ez((u - 0.5) * 3).toFixed(2) + '">' + mono(280, 540, 'ρ 0.8703 · CED 352.3', '#C8610C', 22, 'middle', 700) + '</g>';
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 4장 · 6단계 흐름 · 파일 생성 ===== */
+EMB["pipe6"] = function (root, RAF) {
+  var W = 1588, H = 560, t0 = CLK(), D = 2.6, tree = [['mol/', 'Toluene.mol · .pdb · .json', 0], ['ff/', 'Toluene_gaff2.json · Toluene/', 1], ['cells/tol100/', 'system.data · cell.json', 2], ['runs/tol100/', 'log.lammps · prod.lammpstrj · status.json', 3], ['runs/tol100/', '+ props.json · ced_frames.csv', 4], ['db/', 'results.csv', 5]];
+  function f(now) {
+    var st = stepOf(root), t = st ? (st - 1) * D + D * 0.98 : ((now - t0) / 1000) % (6 * D), k = Math.min(5, Math.floor(t / D)), u = (t % D) / D, S = PIPE[k], o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    for (var i = 0; i < 6; i++) {
+      var x = i * 270, on = i === k, done = i < k, s = PIPE[i];
+      o += rr(x, 6, 236, 150, 18, on ? '#FFF1E0' : (done ? '#F6F0E7' : '#FFFFFF'), on ? '#F99D1C' : '#E2D8CA', on ? 3 : 2);
+      o += icoIn(s.ico, x + 18, 24, 40, on || done ? '#C8610C' : '#B9AE9E') + mono(x + 70, 54, s.k, on || done ? '#231F20' : '#9A9088', 22, null, 700);
+      o += tx(x + 18, 98, s.tool, 'cfs', null, on || done ? null : '#9A9088', 20);
+      if (s.t) o += mono(x + 18, 134, s.t, '#C8610C', 17, null, 700);
+      if (i < 5) o += '<line x1="' + (x + 238) + '" y1="81" x2="' + (x + 266) + '" y2="81" stroke="' + (done ? '#E37F1A' : '#D3C6B5') + '" stroke-width="4"/>';
+    }
+    var tk = k * 270 + 118 + (k < 5 && u > 0.8 ? ez((u - 0.8) / 0.2) * 270 : 0);
+    o += '<line x1="118" y1="178" x2="1468" y2="178" stroke="#E2D8CA" stroke-width="4"/><line x1="118" y1="178" x2="' + tk.toFixed(1) + '" y2="178" stroke="#F99D1C" stroke-width="4"/><circle cx="' + tk.toFixed(1) + '" cy="178" r="11" fill="#C8610C"/>';
+    /* 넣는 것 → 나오는 것 */
+    o += rr(0, 204, 1000, 350, 18, '#F6F0E7');
+    o += tx(28, 244, S.k + ' · ' + S.tool, 'cfh');
+    o += tx(28, 280, __L('넣는 것','In'), 'cfmu') + tx(560, 280, __L('나오는 것','Out'), 'cfmu');
+    S.inp.forEach(function (n, j) { o += rr(28, 292 + j * 54, 420, 44, 10, '#FFFFFF', '#E2D8CA', 2) + mono(44, 320 + j * 54, n, '#4A4540', 17); });
+    o += '<line x1="462" y1="330" x2="532" y2="330" stroke="#C8610C" stroke-width="4"/><path d="M532 320 L548 330 L532 340 Z" fill="#C8610C"/>';
+    S.out.forEach(function (n, j) { var a = ez((u - 0.15 - j * 0.12) / 0.3); o += '<g opacity="' + a.toFixed(2) + '">' + rr(560, 292 + j * 54, 420, 44, 10, '#FFF1E0', '#F99D1C', 2) + mono(576, 320 + j * 54, n, '#231F20', 17, null, 700) + '</g>'; });
+    o += icoIn('circle-check', 28, 462, 28, '#2E8B57') + tx(66, 484, __L('확인(자동): ','Auto check: ') + S.chk, 'cfs', null, null, 20);
+    o += icoIn('triangle-alert', 28, 506, 28, '#D9534F') + tx(66, 528, __L('틀리기 쉬운 곳: ','Pitfall: ') + S.risk, 'cfs', null, null, 20);
+    /* 폴더 나무 */
+    o += rr(1030, 204, 558, 350, 18, '#231F20') + mono(1054, 240, 'out/ws/', '#FBB44E', 21, null, 700);
+    tree.forEach(function (r, j) {
+      var y = 276 + j * 46, vis = r[2] < k ? 1 : (r[2] === k ? ez(u * 2) : 0), on = r[2] === k;
+      if (on) o += rr(1046, y - 20, 526, 44, 8, '#3A322D', '#F99D1C', 2);
+      o += mono(1062, y - 2, r[0], vis > 0 ? '#F4EEE6' : '#6E655C', 18, null, 700);
+      o += '<g opacity="' + (0.15 + 0.85 * vis).toFixed(2) + '">' + mono(1080, y + 18, r[1], on ? '#FBB44E' : '#CFC5B8', 15) + '</g>';
+    });
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 9장 · 분자 → 힘장 5단계 ===== */
+EMB["ffchain"] = function (root, RAF) {
+  var W = 1588, H = 560, t0 = CLK(), D = 3.0, cx = 270, cy = 300, R = 82, P = [], i;
+  for (i = 0; i < 6; i++) { var a = (-90 + 60 * i) * Math.PI / 180; P.push([cx + R * Math.cos(a), cy + R * Math.sin(a)]); }
+  var C1 = [cx, cy - R - 72], atoms = [C1].concat(P), HS = [];
+  [-150, -90, -30].forEach(function (d) { var a = d * Math.PI / 180; HS.push([C1[0] + 46 * Math.cos(a), C1[1] + 46 * Math.sin(a), 0]); });
+  for (i = 1; i < 6; i++) { var b = (-90 + 60 * i) * Math.PI / 180; HS.push([cx + (R + 54) * Math.cos(b), cy + (R + 54) * Math.sin(b), i + 1]); }
+  var TY = ['c3', 'ca', 'ca', 'ca', 'ca', 'ca', 'ca', 'hc', 'hc', 'hc', 'ha', 'ha', 'ha', 'ha', 'ha'], Q = [-0.0538, -0.0773, -0.131, -0.127, -0.135, -0.127, -0.131, 0.044033, 0.044033, 0.044033, 0.13, 0.13, 0.13, 0.13, 0.13];
+  var CARD = [['① RDKit', 'Toluene.mol · .pdb', __L('원자 15 · 형식전하 0','15 atoms · formal charge 0')], ['② antechamber', 'Toluene.mol2', __L('타입 4 · 전하 15개 · 0.2 s','4 types · 15 charges · 0.2 s')], ['③ parmchk2', 'Toluene.frcmod', __L('빌린 값(ATTN) 0','borrowed (ATTN) 0')], ['④ tleap', 'Toluene.prmtop', __L('결합 15 · 각 24 · 이면각 30 · 비정규 6','15 bonds · 24 angles · 30 dihedrals · 6 impropers')], ['⑤ parmed', 'Toluene_gaff2.json', 'checks.pass true']];
+  var CAP = [__L('RDKit · 수소 추가 → ETKDG 3D(seed 7) → MMFF94 정리','RDKit · add H → ETKDG 3D (seed 7) → MMFF94 cleanup'), __L('antechamber · GAFF2 타입 4종 · AM1-BCC 전하','antechamber · 4 GAFF2 types · AM1-BCC charges'), __L('parmchk2 · gaff2.dat 에 없는 조합 검색 · 빌린 값 0','parmchk2 · search combos missing from gaff2.dat · 0 borrowed'), __L('tleap · 결합 · 각 · 이면각 · 비정규 이면각에 수치','tleap · values for bonds · angles · dihedrals · impropers'), __L('parmed → 강좌 JSON · harmonic · fourier · cvff','parmed → course JSON · harmonic · fourier · cvff')];
+  function f(now) {
+    var st = stepOf(root), t = st ? (st - 1) * D + D * 0.98 : ((now - t0) / 1000) % (5 * D), k = Math.min(4, Math.floor(t / D)), u = (t % D) / D, o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    /* 왼쪽: 분자 */
+    o += rr(0, 0, 560, 560, 18, '#FFFFFF', '#E2D8CA', 2);
+    var smi = 'Cc1ccccc1', nch = k === 0 ? Math.min(smi.length, Math.floor(u * 40)) : smi.length;
+    o += mono(24, 44, 'SMILES ' + smi.slice(0, nch), '#C8610C', 22, null, 700);
+    var hOp = k === 0 ? cl((u - 0.45) / 0.25) : 1, glow = k === 3;
+    HS.forEach(function (h, j) { var p = atoms[h[2]]; o += '<g opacity="' + hOp.toFixed(2) + '"><line x1="' + p[0].toFixed(1) + '" y1="' + p[1].toFixed(1) + '" x2="' + h[0].toFixed(1) + '" y2="' + h[1].toFixed(1) + '" stroke="' + (glow ? '#F99D1C' : '#B9AE9E') + '" stroke-width="2.5"/><circle cx="' + h[0].toFixed(1) + '" cy="' + h[1].toFixed(1) + '" r="9" fill="#D3C6B5"/></g>'; });
+    var bonds = [[0, 1]]; for (i = 1; i <= 6; i++) bonds.push([i, i % 6 + 1]);
+    bonds.forEach(function (b, j) { var on = glow && u * 9 > j; o += '<line x1="' + atoms[b[0]][0].toFixed(1) + '" y1="' + atoms[b[0]][1].toFixed(1) + '" x2="' + atoms[b[1]][0].toFixed(1) + '" y2="' + atoms[b[1]][1].toFixed(1) + '" stroke="' + (on ? '#F99D1C' : '#6E655C') + '" stroke-width="' + (on ? 6 : 4) + '"/>'; });
+    o += '<circle cx="' + cx + '" cy="' + cy + '" r="48" fill="none" stroke="#B9AE9E" stroke-width="2" stroke-dasharray="5 6"/>';
+    atoms.forEach(function (p, j) { o += '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="14" fill="' + (j === 0 ? '#C8610C' : '#4F7FB0') + '"/>'; });
+    if (k >= 1) {
+      var lo = k === 1 ? ez(u * 2) : 1;
+      o += '<g opacity="' + lo.toFixed(2) + '" font-family="JetBrains Mono, monospace" font-weight="700" font-size="16">';
+      atoms.forEach(function (p, j) { var dx = p[0] - cx, dy = p[1] - cy, L = Math.hypot(dx, dy) || 1; o += '<text x="' + (p[0] - dx / L * 34).toFixed(1) + '" y="' + (p[1] - dy / L * 34 + 6).toFixed(1) + '" text-anchor="middle" fill="' + (j === 0 ? '#C8610C' : '#4F7FB0') + '">' + TY[j] + '</text>'; });
+      HS.forEach(function (h, j) { o += '<text x="' + (h[0] + (h[0] >= cx ? 14 : -14)).toFixed(1) + '" y="' + (h[1] - 10).toFixed(1) + '" text-anchor="' + (h[0] >= cx ? 'start' : 'end') + '" fill="#6E655C" font-size="14">' + TY[7 + j] + '</text>'; });
+      o += '</g>';
+    }
+    o += mono(280, 488, k === 0 && u < 0.45 ? 'atoms 7' : 'atoms 15 = 7 + H 8', '#231F20', 20, 'middle', 700);
+    o += tx(280, 530, CAP[k], 'cfs', 'middle', null, 18);
+    /* 가운데: 전하 막대 */
+    o += rr(584, 0, 580, 560, 18, '#F6F0E7');
+    o += tx(604, 34, __L('AM1-BCC 부분전하 q (e) · 원자 15개','AM1-BCC partial charge q (e) · 15 atoms'), 'cfh', null, null, 21);
+    o += '<line x1="900" y1="52" x2="900" y2="490" stroke="#6E655C" stroke-width="2"/>';
+    var sum = 0, full = true;
+    for (i = 0; i < 15; i++) {
+      var y = 60 + i * 28.5, g = k === 1 ? ez(u * 2.2 - i * 0.07) : (k > 1 ? 1 : 0), w = Q[i] * 1100 * g; if (g < 1) full = false; sum += Q[i] * g;
+      o += mono(604, y + 16, String(i + 1).padStart(2, ' ') + ' ' + TY[i], g > 0 ? '#231F20' : '#B9AE9E', 16);
+      if (g > 0) { o += '<rect x="' + (w < 0 ? 900 + w : 900).toFixed(1) + '" y="' + y + '" width="' + Math.abs(w).toFixed(1) + '" height="20" rx="4" fill="' + (Q[i] < 0 ? '#4F7FB0' : '#E37F1A') + '"/>'; o += mono(w < 0 ? 900 + w - 8 : 900 + w + 8, y + 16, mn(Q[i].toFixed(4)), '#4A4540', 15, w < 0 ? 'end' : 'start'); }
+    }
+    if (k === 0) o += tx(874, 280, __L('② 단계에서 계산','computed in step ②'), 'cfmu', 'middle', null, 22);
+    else o += mono(874, 532, 'Σq = ' + (full ? '−0.000001' : mn(sum.toFixed(4))) + __L('   (형식전하 0)','   (formal charge 0)'), full ? '#2E8B57' : '#C8610C', 20, 'middle', 700);
+    /* 오른쪽: 도구 카드 */
+    CARD.forEach(function (c, j) {
+      var y = 4 + j * 111, on = j === k, done = j < k;
+      o += rr(1188, y, 400, 100, 16, on ? '#FFF1E0' : (done ? '#FFFFFF' : '#FBF7F1'), on ? '#F99D1C' : '#E2D8CA', on ? 3 : 2);
+      o += tx(1206, y + 32, c[0], 'cfh', null, on || done ? null : '#9A9088', 21) + mono(1206, y + 60, c[1], on || done ? '#C8610C' : '#B9AE9E', 16, null, 700);
+      if (done || (on && u > 0.45)) o += tx(1206, y + 87, c[2], 'cfs', null, '#2E8B57', 17);
+    });
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 16장 · 표준 프로토콜 시계 ===== */
+var PROT = [
+  { k: __L('최소화','minimize'), ens: __L('에너지 최소화','energy minimization'), T: '', P: '', ps: 0, cmd: 'minimize 1.0e-4 1.0e-6 2000 20000', why: __L('겹침 제거 · 최대 힘 유한 · 시간 0','remove overlaps · finite max force · time 0') },
+  { k: __L('A 섞기','A mix'), ens: 'NVT', T: '500 K', P: '', ps: 10, cmd: 'run 10000', why: __L('초기 배치 흔적 지우기 · 고온 확산','erase traces of initial packing · hot diffusion') },
+  { k: __L('B 압축','B compress'), ens: 'NPT', T: '500 K', P: '1000 atm', ps: 20, cmd: 'run 20000', why: __L('묽은 상자(ρ0 0.5) → 액체 밀도','dilute box (ρ0 0.5) → liquid density') },
+  { k: __L('C 이완','C relax'), ens: 'NPT', T: '500 K', P: '1 atm', ps: 20, cmd: 'run 20000', why: __L('고압 응력 풀기','release high-pressure stress') },
+  { k: __L('D 냉각','D cool'), ens: 'NPT', T: '500 → 298 K', P: '1 atm', ps: 20, cmd: 'run 20000', why: __L('상온으로 천천히 · 갑작스러운 수축 방지','slowly to room temperature · avoid abrupt shrink') },
+  { k: __L('E 평형','E equilibrate'), ens: 'NPT', T: '298 K', P: '1 atm', ps: 20, cmd: 'run 20000 · write_data equil.data', why: __L('추세 소멸 · 평형 상자 저장','trend gone · save equilibrated box') },
+  { k: __L('P 생산','P produce'), ens: 'NPT', T: '298 K', P: '1 atm', ps: 40, cmd: 'run 40000 · dump 2000', why: __L('물성 = 이 구간만 · 앞 20 % 버림 · 좌표 21 프레임','properties = this span only · drop first 20 % · 21 coordinate frames') }];
+EMB["clock7"] = function (root, RAF) {
+  var W = 1588, H = 560, t0 = CLK(), X0 = 300, Y0 = 280, R1 = 240, R0 = 150, MINA = 12, SEGC = ['#B9AE9E', '#F2A65A', '#E37F1A', '#F0B477', '#C9A27E', '#7FA3C6', '#2E8B57'];
+  var A = [0]; PROT.forEach(function (p, i) { A.push(A[i] + (i === 0 ? MINA : (360 - MINA) * p.ps / 130)); });
+  function pt(a, r) { var t = (a - 90) * Math.PI / 180; return [X0 + r * Math.cos(t), Y0 + r * Math.sin(t)]; }
+  function sector(a0, a1) { var p0 = pt(a0, R1), p1 = pt(a1, R1), p2 = pt(a1, R0), p3 = pt(a0, R0), lg = a1 - a0 > 180 ? 1 : 0; return 'M' + p0[0].toFixed(1) + ' ' + p0[1].toFixed(1) + ' A' + R1 + ' ' + R1 + ' 0 ' + lg + ' 1 ' + p1[0].toFixed(1) + ' ' + p1[1].toFixed(1) + ' L' + p2[0].toFixed(1) + ' ' + p2[1].toFixed(1) + ' A' + R0 + ' ' + R0 + ' 0 ' + lg + ' 0 ' + p3[0].toFixed(1) + ' ' + p3[1].toFixed(1) + ' Z'; }
+  var TX0 = 680, TX1 = 1560, MW = 40; function tX(ps) { return TX0 + MW + ps / 130 * (TX1 - TX0 - MW); }
+  function f(now) {
+    var st = stepOf(root), ang = st ? A[st] - 0.6 : (((now - t0) / 1000) % 14) / 14 * 360, k = 0; while (k < 6 && ang >= A[k + 1]) k++;
+    var ps = st ? PROT.slice(1, st).reduce(function (a, q) { return a + q.ps; }, 0) : (ang < MINA ? 0 : (ang - MINA) / (360 - MINA) * 130), S = PROT[k], o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    PROT.forEach(function (p, i) { o += '<path d="' + sector(A[i] + 0.6, A[i + 1] - 0.6) + '" fill="' + SEGC[i] + '" opacity="' + (i <= k ? 1 : 0.28) + '"/>'; var m = pt((A[i] + A[i + 1]) / 2, (R0 + R1) / 2); o += mono(m[0].toFixed(1), (m[1] + 8).toFixed(1), i === 0 ? '' : p.k.charAt(0), '#FFFFFF', 26, 'middle', 700); });
+    var mp = pt(MINA / 2, R1 + 22); o += tx(mp[0].toFixed(1), mp[1].toFixed(1), __L('최소화','minimize'), 'cfmu', 'middle');
+    var hp = pt(ang, R1 + 6); o += '<line x1="' + X0 + '" y1="' + Y0 + '" x2="' + hp[0].toFixed(1) + '" y2="' + hp[1].toFixed(1) + '" stroke="#231F20" stroke-width="5" stroke-linecap="round"/><circle cx="' + X0 + '" cy="' + Y0 + '" r="12" fill="#231F20"/>';
+    o += '<circle cx="' + X0 + '" cy="' + Y0 + '" r="118" fill="#FFFFFF"/>' + mono(X0, Y0 - 6, ps.toFixed(0) + ' ps', '#C8610C', 46, 'middle', 700) + mono(X0, Y0 + 34, comma(ps * 1000) + ' steps', '#4A4540', 19, 'middle') + mono(X0, Y0 + 64, '/ 130 ps', '#9A9088', 18, 'middle');
+    /* 오른쪽 카드 */
+    o += rr(640, 10, 948, 280, 18, '#FFF1E0', '#F99D1C', 3) + tx(668, 64, S.k, 'cfh', null, null, 36);
+    var cx = 668; [S.ens, S.T, S.P, S.ps + ' ps'].forEach(function (c) { if (!c) return; var w = c.length * 15 + 40; o += rr(cx, 92, w, 44, 22, '#FFFFFF', '#E2D8CA', 2) + tx(cx + w / 2, 122, c, 'cfs', 'middle', null, 21); cx += w + 12; });
+    o += tx(668, 190, S.why, 'cfs', null, null, 23) + mono(668, 246, S.cmd, '#C8610C', 19, null, 700);
+    /* 아래: 온도 띠 */
+    o += rr(640, 310, 948, 244, 18, '#F6F0E7');
+    var yT = function (T) { return 470 - (T - 298) / (500 - 298) * 110; };
+    o += '<rect x="' + tX(90).toFixed(1) + '" y="340" width="' + (tX(130) - tX(90)).toFixed(1) + '" height="160" fill="#2E8B57" fill-opacity=".10"/>' + tx(((tX(90) + tX(130)) / 2).toFixed(1), 356, __L('물성 = 이 구간','properties = this span'), 'cfmu', 'middle', '#2E8B57');
+    o += '<rect x="' + tX(10).toFixed(1) + '" y="340" width="' + (tX(30) - tX(10)).toFixed(1) + '" height="20" rx="4" fill="#E37F1A" fill-opacity=".35"/>' + mono(((tX(10) + tX(30)) / 2).toFixed(1), 355, '1000 atm', '#7A3306', 14, 'middle', 700);
+    o += '<path d="M' + tX(0).toFixed(1) + ' ' + yT(500) + ' L' + tX(50).toFixed(1) + ' ' + yT(500) + ' L' + tX(70).toFixed(1) + ' ' + yT(298) + ' L' + tX(130).toFixed(1) + ' ' + yT(298) + '" fill="none" stroke="#D9534F" stroke-width="4"/>';
+    o += mono(TX0 - 8, yT(500) + 6, '500 K', '#D9534F', 16, 'end', 700) + mono(TX0 - 8, yT(298) + 6, '298 K', '#D9534F', 16, 'end', 700);
+    o += '<line x1="' + TX0 + '" y1="500" x2="' + TX1 + '" y2="500" stroke="#6E655C" stroke-width="2"/>';
+    PROT.forEach(function (p, i) { var a = i === 0 ? TX0 : tX(A[i] === MINA ? 0 : PROT.slice(1, i).reduce(function (s, q) { return s + q.ps; }, 0)), b = i === 0 ? TX0 + MW : tX(PROT.slice(1, i + 1).reduce(function (s, q) { return s + q.ps; }, 0)); o += '<line x1="' + b.toFixed(1) + '" y1="494" x2="' + b.toFixed(1) + '" y2="506" stroke="#6E655C" stroke-width="2"/>' + mono(((a + b) / 2).toFixed(1), 530, i === 0 ? 'min' : p.k.charAt(0), i === k ? '#C8610C' : '#6E655C', 17, 'middle', 700); });
+    var cxp = ang < MINA ? TX0 + MW * ang / MINA : tX(ps); o += '<line x1="' + cxp.toFixed(1) + '" y1="330" x2="' + cxp.toFixed(1) + '" y2="510" stroke="#C8610C" stroke-width="3" stroke-dasharray="6 5"/>';
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 21장 · CED 재계산 · 분자를 격자로 ===== */
+EMB["rerun"] = function (root, RAF) {
+  var W = 1588, H = 560, t0 = CLK(), D = 3.2, M = [], i;
+  for (i = 0; i < 20; i++) { var c = i % 5, r = Math.floor(i / 5); M.push({ x: 30 + 50 + c * 80 + (RND() - 0.5) * 26, y: 40 + 60 + r * 100 + (RND() - 0.5) * 30, a: RND() * 6.28, gx: 540 + c * 112, gy: 92 + r * 112 }); }
+  function f(now) {
+    var st = stepOf(root), t = st ? (st - 1) * D + D * 0.98 : ((now - t0) / 1000) % (4 * D), k = Math.min(3, Math.floor(t / D)), u = (t % D) / D, o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    var mv = k === 0 ? 0 : (k === 1 ? ez(u * 1.4) : 1);
+    o += '<g opacity="' + (1 - 0.6 * mv).toFixed(2) + '">' + rr(30, 40, 420, 420, 6, '#FFF8EE', '#F99D1C', 3) + '</g>' + tx(240, 28, __L('벌크 프레임 · step 8000','bulk frame · step 8000'), 'cfh', 'middle', null, 21);
+    if (k >= 1) { o += '<line x1="540" y1="44" x2="652" y2="44" stroke="#4F7FB0" stroke-width="3"/><line x1="540" y1="36" x2="540" y2="52" stroke="#4F7FB0" stroke-width="3"/><line x1="652" y1="36" x2="652" y2="52" stroke="#4F7FB0" stroke-width="3"/>' + mono(596, 30, '120 Å', '#4F7FB0', 18, 'middle', 700); }
+    M.forEach(function (m, j) {
+      var jit = k === 0 ? Math.sin(now / 160 + j) * 3 : 0, x = m.x + (m.gx - m.x) * mv + jit, y = m.y + (m.gy - m.y) * mv - jit;
+      if (k === 2) { var ph = cl(u * 2.2 - j * 0.05); if (ph > 0 && ph < 1) o += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + (20 + 22 * ph).toFixed(1) + '" fill="none" stroke="#2E8B57" stroke-width="3" opacity="' + (1 - ph).toFixed(2) + '"/>'; }
+      o += hexMol(x, y, 15, m.a, k >= 1 ? '#2E8B57' : '#4F7FB0');
+    });
+    o += tx(240, 492, 'E_bulk 393.9 kcal/mol · V 17,762.7 Å³', 'cfm', 'middle', null, 19) + tx(240, 522, __L('PPPM 장거리 전하 · LJ 꼬리 보정 포함','incl. PPPM long-range charges · LJ tail correction'), 'cfmu', 'middle');
+    if (k >= 1) o += '<g opacity="' + mv.toFixed(2) + '">' + tx(764, 492, __L('격자 120 Å · 분자 크기 6.1 Å · 전하 절단 55 Å','grid 120 Å · molecule size 6.1 Å · charge cutoff 55 Å'), 'cfm', 'middle', '#4F7FB0', 18) + tx(764, 522, __L('분자 사이 거리 > 절단 → 분자 사이 항 0 · 그림 = 100개 중 20개','intermolecular distance > cutoff → intermolecular terms 0 · drawn = 20 of 100'), 'cfmu', 'middle') + '</g>';
+    /* 오른쪽 계산 카드 */
+    var cards = [
+      [__L('E_inter = E_bulk − Σ E_분자','E_inter = E_bulk − Σ E_mol'), k >= 2 ? '393.9 − 1,289.8' : '393.9 − · ', k >= 3 ? '= −895.9 kcal/mol' : ''],
+      ['CED = −E_inter ÷ V', k >= 3 ? '895.9 ÷ 17,762.7 Å³' : '', k >= 3 ? '× 6,947.7 → 350.4 MJ/m³' : ''],
+      [__L('프레임 17개 평균','mean of 17 frames'), k >= 3 && u > 0.45 ? '352.3 ± 2.2 MJ/m³' : '', k >= 3 && u > 0.45 ? 'δ = √CED = 18.77 MPa^0.5' : '']];
+    cards.forEach(function (c, j) {
+      var y = 20 + j * 178, on = (k === 3) || (k === 2 && j === 0);
+      o += rr(1080, y, 508, 160, 16, on ? '#FFF1E0' : '#F6F0E7', on ? '#F99D1C' : '#E2D8CA', on ? 3 : 2);
+      o += (j === 2 ? tx(1102, y + 40, c[0], 'cfh', null, null, 22) : mono(1102, y + 40, c[0], '#231F20', 19, null, 700)) + mono(1102, y + 90, c[1], '#4A4540', 20) + mono(1102, y + 132, c[2], '#C8610C', 21, null, 700);
+    });
+    if (k === 2) o += tx(764, 30, __L('LAMMPS rerun 1회 · Σ E_분자 1,289.8 kcal/mol','LAMMPS rerun once · Σ E_mol 1,289.8 kcal/mol'), 'cfm', 'middle', '#2E8B57', 18);
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 18장 · 벽시계 막대 ===== */
+(function () {
+  var svg = document.getElementById('w17-wall'); if (!svg) return;
+  var X0 = 250, SC = 0.86, y = 36, o = '';
+  function X(s) { return X0 + s * SC; }
+  o += '<line x1="' + X(300).toFixed(1) + '" y1="22" x2="' + X(300).toFixed(1) + '" y2="462" stroke="#2E8B57" stroke-width="3" stroke-dasharray="8 6"/>' + tx(X(300).toFixed(1), 14, __L('단독 약 5분','alone approx. 5 min'), 'cfm', 'middle', '#2E8B57', 17);
+  W17.wall.forEach(function (g) {
+    o += tx(10, y + 8, g.g, 'cfh', null, g.c, 19); y += 24;
+    g.rows.forEach(function (r) { o += mono(X0 - 10, y + 14, r[0], '#4A4540', 15, 'end') + rr(X0, y, (r[1] * SC).toFixed(1), 19, 4, g.c) + mono(X(r[1]) + 8, y + 15, r[1].toFixed(1) + ' s', '#231F20', 15, null, 700); y += 23; });
+    y += 16;
+  });
+  o += '<line x1="' + X0 + '" y1="466" x2="' + X(800) + '" y2="466" stroke="#6E655C" stroke-width="2"/>';
+  [0, 200, 400, 600, 800].forEach(function (s) { o += '<line x1="' + X(s) + '" y1="466" x2="' + X(s) + '" y2="474" stroke="#6E655C" stroke-width="2"/>' + mono(X(s), 492, String(s), '#6E655C', 15, 'middle'); });
+  o += tx(X(700), 492, __L('벽시계 (s)','wall time (s)'), 'cfmu', 'middle');
+  svg.innerHTML = o;
+})();
+
+/* ===== 22장 · CED 프레임값 ===== */
+(function () {
+  var svg = document.getElementById('w17-ced'); if (!svg) return;
+  var d = W17.cedf, X0 = 100, X1 = 960, Y0 = 420, Y1 = 50, cmin = 330, cmax = 375, o = '';
+  function X(p) { return X0 + p / 40 * (X1 - X0); } function Y(v) { return Y0 - (v - cmin) / (cmax - cmin) * (Y0 - Y1); }
+  o += '<rect x="' + X0 + '" y="' + Y1 + '" width="' + (X(8) - X0).toFixed(1) + '" height="' + (Y0 - Y1) + '" fill="#E2D8CA" opacity=".45"/>' + tx(((X0 + X(8)) / 2).toFixed(1), Y1 + 26, __L('버림','dropped'), 'cfmu', 'middle') + tx(((X0 + X(8)) / 2).toFixed(1), Y1 + 48, __L('앞 20 %','first 20 %'), 'cfmu', 'middle');
+  o += '<rect x="' + X(8).toFixed(1) + '" y="' + Y(354.5).toFixed(1) + '" width="' + (X1 - X(8)).toFixed(1) + '" height="' + (Y(350.1) - Y(354.5)).toFixed(1) + '" fill="#F99D1C" opacity=".22"/>';
+  o += '<line x1="' + X(8).toFixed(1) + '" y1="' + Y(352.3).toFixed(1) + '" x2="' + X1 + '" y2="' + Y(352.3).toFixed(1) + '" stroke="#C8610C" stroke-width="3" stroke-dasharray="10 6"/>' + mono(X0 + 10, Y(352.3) + 6, '352.3 ± 2.2', '#C8610C', 17, null, 700);
+  for (var b = 0; b < 5; b++) { var s = 0; for (var q = 0; q < 3; q++) s += d.v[b * 3 + q]; var m = s / 3, xa = X(d.ps[b * 3]) - 8, xb = X(d.ps[b * 3 + 2]) + 8; o += '<rect x="' + xa.toFixed(1) + '" y="' + (Y1 + 2) + '" width="' + (xb - xa).toFixed(1) + '" height="' + (Y0 - Y1 - 4) + '" fill="' + (b % 2 ? '#F6F0E7' : '#FFFFFF') + '" opacity=".0"/>' + '<line x1="' + xa.toFixed(1) + '" y1="' + Y(m).toFixed(1) + '" x2="' + xb.toFixed(1) + '" y2="' + Y(m).toFixed(1) + '" stroke="#231F20" stroke-width="5" stroke-linecap="round" opacity=".55"/>' + mono(((xa + xb) / 2).toFixed(1), Y0 + 50, 'B' + (b + 1), '#6E655C', 15, 'middle', 700); }
+  var p = ''; d.v.forEach(function (v, i) { p += (i ? 'L' : 'M') + X(d.ps[i]).toFixed(1) + ' ' + Y(v).toFixed(1); }); o += '<path d="' + p + '" fill="none" stroke="#4F7FB0" stroke-width="2.5"/>';
+  d.v.forEach(function (v, i) { o += '<circle cx="' + X(d.ps[i]).toFixed(1) + '" cy="' + Y(v).toFixed(1) + '" r="6" fill="#4F7FB0"/>'; });
+  o += '<line x1="' + X0 + '" y1="' + Y0 + '" x2="' + X1 + '" y2="' + Y0 + '" stroke="#6E655C" stroke-width="2"/><line x1="' + X0 + '" y1="' + Y1 + '" x2="' + X0 + '" y2="' + Y0 + '" stroke="#6E655C" stroke-width="2"/>';
+  [0, 10, 20, 30, 40].forEach(function (t) { o += mono(X(t), Y0 + 24, String(t), '#6E655C', 15, 'middle'); });
+  [340, 350, 360, 370].forEach(function (v) { o += mono(X0 - 10, Y(v) + 5, String(v), '#6E655C', 15, 'end'); });
+  o += tx(X0, 32, __L('CED 프레임값 (MJ/m³) · 생산 구간 40 ps · 2 ps 간격','CED per frame (MJ/m³) · production 40 ps · every 2 ps'), 'cfs', null, null, 19);
+  o += tx(530, 496, __L('생산 구간 시간 (ps) · 굵은 선 = 블록 평균 5개 · 띠 = 평균 ± 블록 표준오차','production time (ps) · thick line = 5 block means · band = mean ± block SE'), 'cfmu', 'middle');
+  svg.innerHTML = o;
+})();
+
+/* ===== 23장 · NIST 대조 · 반복 3회 ===== */
+(function () {
+  var s1 = document.getElementById('w17-nist'), s2 = document.getElementById('w17-rep'); if (!s1 || !s2) return;
+  var o = '', X0 = 250, SC = 17.6, rows = [[__L('톨루엔 · 밀도','toluene · density'), 0.8703, 0.86238, 1, '#4F7FB0'], [__L('톨루엔 · CED','toluene · CED'), 352.3, 332.5, 0, '#E37F1A'], [__L('n-데칸 · 밀도','n-decane · density'), 0.734, 0.72664, 1, '#4F7FB0'], [__L('n-데칸 · CED','n-decane · CED'), 303.0, 249.7, 0, '#E37F1A']];
+  rows.forEach(function (r, i) {
+    var y = 10 + i * 60, pct = (r[1] / r[2] - 1) * 100, w = pct * SC;
+    o += tx(X0 - 12, y + 20, r[0], 'cfh', 'end', null, 19) + mono(X0 - 12, y + 42, 'MD ' + r[1] + ' · NIST ' + r[2], '#6E655C', 13, 'end');
+    o += rr(X0, y + 6, w.toFixed(1), 30, 6, r[4]) + mono(X0 + w + 10, y + 28, '+' + pct.toFixed(r[3] ? 1 : 0) + ' %', '#231F20', 20, null, 700);
+  });
+  o += '<line x1="' + X0 + '" y1="6" x2="' + X0 + '" y2="252" stroke="#6E655C" stroke-width="2"/>';
+  o += tx(20, 282, __L('1-메틸나프탈렌 72 · ρ 1.0299 · CED 452.9 · NIST 밀도 없음 → 참고점','1-methylnaphthalene 72 · ρ 1.0299 · CED 452.9 · no NIST density → reference point'), 'cfmu', null, null, 16);
+  o += tx(20, 316, __L('CED 과대: 방향족 +6 % · 포화 +21 % → 긴 알킬 사슬 후보 주의','CED too high: aromatic +6 % · saturated +21 % → caution for long alkyl chains'), 'cfs', null, '#C8610C', 18);
+  s1.innerHTML = o;
+  var p = '', strips = [{ key: 'rho', se: 'rse', lo: 0.85, hi: 0.895, tol: 0.015, y: 22, t: __L('밀도 g/cm³ · 판정 폭 = 1회 값 ± 0.015','density g/cm³ · tolerance = run 1 ± 0.015'), f: 4 }, { key: 'ced', se: 'cse', lo: 330, hi: 380, tol: 15, y: 182, t: __L('CED MJ/m³ · 판정 폭 = 1회 값 ± 15','CED MJ/m³ · tolerance = run 1 ± 15'), f: 1 }];
+  strips.forEach(function (S) {
+    var X = function (v) { return 150 + (v - S.lo) / (S.hi - S.lo) * 590; }, ref = W17.rep[0][S.key];
+    p += tx(20, S.y, S.t, 'cfs', null, null, 18);
+    p += '<rect x="' + X(ref - S.tol).toFixed(1) + '" y="' + (S.y + 12) + '" width="' + (X(ref + S.tol) - X(ref - S.tol)).toFixed(1) + '" height="108" rx="8" fill="#2E8B57" fill-opacity=".10" stroke="#2E8B57" stroke-width="2" stroke-dasharray="6 5"/>';
+    W17.rep.forEach(function (r, i) {
+      var yy = S.y + 44 + i * 34, v = r[S.key], e = r[S.se];
+      p += tx(20, yy + 6, r.lab, 'cfmu', null, null, 15);
+      p += '<line x1="' + X(v - e).toFixed(1) + '" y1="' + yy + '" x2="' + X(v + e).toFixed(1) + '" y2="' + yy + '" stroke="#231F20" stroke-width="3"/><circle cx="' + X(v).toFixed(1) + '" cy="' + yy + '" r="7" fill="' + (i === 2 ? '#E37F1A' : '#4F7FB0') + '"/>' + mono(X(v), yy - 11, v.toFixed(S.f) + ' ± ' + e, '#231F20', 14, 'middle', 700);
+    });
+    p += '<line x1="' + X(S.lo) + '" y1="' + (S.y + 126) + '" x2="' + X(S.hi) + '" y2="' + (S.y + 126) + '" stroke="#6E655C" stroke-width="2"/>' + mono(X(S.lo), S.y + 144, String(S.lo), '#6E655C', 13, 'middle') + mono(X(S.hi), S.y + 144, String(S.hi), '#6E655C', 13, 'middle');
+  });
+  s2.innerHTML = p;
+})();
+
+/* ===== 24장 · SIM 후보 8개 · 표적 상자 ===== */
+(function () {
+  var root = document.getElementById('sim-cand'); if (!root) return;
+  var svg = root.querySelector('svg'), st = { k: 1, sel: -1, val: false }, T = W17.target, C = W17.cand;
+  var X0 = 90, X1 = 1130, Y0 = 370, Y1 = 30, r0 = 0.86, r1 = 1.16, c0 = 290, c1 = 480;
+  function X(v) { return X0 + (v - r0) / (r1 - r0) * (X1 - X0); } function Y(v) { return Y0 - (v - c0) / (c1 - c0) * (Y0 - Y1); }
+  function inside(c, k) { return Math.abs(c.rho - T.rho) <= k * T.rt && Math.abs(c.ced - T.ced) <= k * T.ct; }
+  function sg(v) { return (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(1); }
+  function draw() {
+    var o = '', k = st.k, n = 0;
+    [0.9, 0.95, 1.0, 1.05, 1.1, 1.15].forEach(function (v) { o += '<line x1="' + X(v).toFixed(1) + '" y1="' + Y1 + '" x2="' + X(v).toFixed(1) + '" y2="' + Y0 + '" stroke="#F2EEE8" stroke-width="2"/>' + mono(X(v).toFixed(1), Y0 + 24, v.toFixed(2), '#6E655C', 15, 'middle'); });
+    [300, 350, 400, 450].forEach(function (v) { o += '<line x1="' + X0 + '" y1="' + Y(v).toFixed(1) + '" x2="' + X1 + '" y2="' + Y(v).toFixed(1) + '" stroke="#F2EEE8" stroke-width="2"/>' + mono(X0 - 10, Y(v) + 5, String(v), '#6E655C', 15, 'end'); });
+    o += '<line x1="' + X0 + '" y1="' + Y0 + '" x2="' + X1 + '" y2="' + Y0 + '" stroke="#6E655C" stroke-width="2"/><line x1="' + X0 + '" y1="' + Y1 + '" x2="' + X0 + '" y2="' + Y0 + '" stroke="#6E655C" stroke-width="2"/>';
+    o += tx((X0 + X1) / 2, Y0 + 52, __L('밀도 (g/cm³)','density (g/cm³)'), 'cfs', 'middle', null, 18) + tx(30, (Y0 + Y1) / 2, 'CED (MJ/m³)', 'cfs', 'middle', null, 18).replace('<text ', '<text transform="rotate(-90 30 ' + ((Y0 + Y1) / 2) + ')" ');
+    var bx0 = X(T.rho - k * T.rt), bx1 = X(T.rho + k * T.rt), by0 = Y(T.ced + k * T.ct), by1 = Y(T.ced - k * T.ct);
+    o += '<rect x="' + bx0.toFixed(1) + '" y="' + by0.toFixed(1) + '" width="' + (bx1 - bx0).toFixed(1) + '" height="' + (by1 - by0).toFixed(1) + '" rx="6" fill="#2E8B57" fill-opacity=".10" stroke="#2E8B57" stroke-width="3"/>';
+    o += '<line x1="' + X(T.rho).toFixed(1) + '" y1="' + (Y(T.ced) - 10).toFixed(1) + '" x2="' + X(T.rho).toFixed(1) + '" y2="' + (Y(T.ced) + 10).toFixed(1) + '" stroke="#2E8B57" stroke-width="2"/><line x1="' + (X(T.rho) - 10).toFixed(1) + '" y1="' + Y(T.ced).toFixed(1) + '" x2="' + (X(T.rho) + 10).toFixed(1) + '" y2="' + Y(T.ced).toFixed(1) + '" stroke="#2E8B57" stroke-width="2"/>';
+    o += mono((bx1 + 8).toFixed(1), (by1 - 6).toFixed(1), '×' + k, '#2E8B57', 17, null, 700);
+    o += mono(X(T.rho).toFixed(1), (Y(T.ced) + 30).toFixed(1), '1.018 · 354.2', '#2E8B57', 14, 'middle', 700);
+    if (st.val) W17.val.forEach(function (v) { if (v.rho < r0) { o += mono(X0 + 8, Y(v.ced) + 5, '← ' + v.name + ' ' + v.rho + ' · ' + v.ced, '#6E655C', 14); return; } var x = X(v.rho), y = Y(v.ced); o += '<path d="M' + x.toFixed(1) + ' ' + (y - 10).toFixed(1) + ' L' + (x + 10).toFixed(1) + ' ' + y.toFixed(1) + ' L' + x.toFixed(1) + ' ' + (y + 10).toFixed(1) + ' L' + (x - 10).toFixed(1) + ' ' + y.toFixed(1) + ' Z" fill="#9A9088"/>' + tx(x, y + 30, v.name, 'cfmu', 'middle', null, 14); });
+    C.forEach(function (c, i) {
+      var x = X(c.rho), y = Y(c.ced), inn = inside(c, k), on = i === st.sel; if (inn) n++;
+      if (on) o += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="17" fill="none" stroke="#231F20" stroke-width="3"/>';
+      o += '<circle data-c="' + i + '" cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="10" fill="' + (inn ? '#2E8B57' : '#E37F1A') + '" stroke="#FFFFFF" stroke-width="2" style="cursor:pointer"/>';
+      o += mono((x + c.dx).toFixed(1), (y + c.dy).toFixed(1), c.id, on ? '#231F20' : '#4A4540', 15, c.dx < 0 ? 'end' : null, on ? 700 : null);
+    });
+    svg.innerHTML = o;
+    root.querySelector('[data-o=k]').textContent = '×' + k;
+    root.querySelector('[data-o=in]').textContent = n + ' / 8';
+    var s = C[st.sel];
+    root.querySelector('[data-o=sel]').textContent = s ? s.full + ' · ' + s.rho + ' · ' + s.ced : ' · ';
+    root.querySelector('[data-o=d]').textContent = s ? 'Δρ ' + sg((s.rho - T.rho) / T.rt) + ' · ΔCED ' + sg((s.ced - T.ced) / T.ct) + __L(' (폭 단위)',' (tol units)') : ' · ';
+    root.querySelectorAll('[data-c]').forEach(function (b) { if (b.tagName === 'BUTTON') b.classList.toggle('alt', +b.dataset.c !== st.sel); });
+    root.querySelector('[data-act=val]').textContent = st.val ? __L('검증 분자 표시 · 켬','Show validation molecules · on') : __L('검증 분자 표시 · 끔','Show validation molecules · off');
+  }
+  root.querySelector('input[data-k=k]').addEventListener('input', function (e) { st.k = +e.target.value; draw(); });
+  root.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-c],[data-act]'); if (!t || !root.contains(t)) return;
+    if (t.dataset.c != null) { st.sel = +t.dataset.c === st.sel ? -1 : +t.dataset.c; }
+    else if (t.dataset.act === 'val') st.val = !st.val;
+    else if (t.dataset.act === 'reset') { st.k = 1; st.sel = -1; st.val = false; root.querySelector('input[data-k=k]').value = 1; }
+    draw();
+  });
+  draw();
+})();
+</script>
+</body>
+</html>

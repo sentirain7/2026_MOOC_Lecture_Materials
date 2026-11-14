@@ -1,0 +1,31 @@
+citekey,doi,role,property,value,unit,raw,condition,evidence,room_T,used_for_target
+ai2024properties,10.1016/j.conbuildmat.2024.138954,target,density,1.016,g/cm3,밀도 1.016 g/cm³,25 °C (298 K) · 무첨가 바인더 · 실측값,논문이 인용한 실측 · 강좌 week16/data/density_match28.csv,True,True
+ai2024properties,10.1016/j.conbuildmat.2024.138954,target,density,1.005,g/cm3,밀도 1.005 g/cm³,25 °C (298 K) · 무첨가 바인더 · 실측값,논문이 인용한 실측 · 강좌 week16/data/density_match28.csv,True,True
+ai2024properties,10.1016/j.conbuildmat.2024.138954,target,density,1.038,g/cm3,밀도 1.038 g/cm³,25 °C (298 K) · 무첨가 바인더 · 실측값,논문이 인용한 실측 · 강좌 week16/data/density_match28.csv,True,True
+assaf2024predicting,10.1016/j.matdes.2024.113327,target,density,1.019,g/cm3,밀도 1.019 g/cm³,25 °C (298 K) · 무첨가 바인더 · 실측값,논문이 인용한 실측 · 강좌 week16/data/density_match28.csv,True,True
+assaf2024predicting,10.1016/j.matdes.2024.113327,target,density,1.042,g/cm3,밀도 1.042 g/cm³,25 °C (298 K) · 무첨가 바인더 · 실측값,논문이 인용한 실측 · 강좌 week16/data/density_match28.csv,True,True
+assaf2024predicting,10.1016/j.matdes.2024.113327,target,density,1.041,g/cm3,밀도 1.041 g/cm³,25 °C (298 K) · 무첨가 바인더 · 실측값,논문이 인용한 실측 · 강좌 week16/data/density_match28.csv,True,True
+assaf2024predicting,10.1016/j.matdes.2024.113327,target,density,1.051,g/cm3,밀도 1.051 g/cm³,25 °C (298 K) · 무첨가 바인더 · 실측값,논문이 인용한 실측 · 강좌 week16/data/density_match28.csv,True,True
+assaf2024predicting,10.1016/j.matdes.2024.113327,target,density,1.07,g/cm3,밀도 1.07 g/cm³,25 °C (298 K) · 무첨가 바인더 · 실측값,논문이 인용한 실측 · 강좌 week16/data/density_match28.csv,True,True
+cui2022study,10.1016/j.conbuildmat.2021.125849,target,density,1.01,g/cm3,밀도 1.01 g/cm³,25 °C (298 K) · 무첨가 바인더 · 실측값,논문이 인용한 실측 · 강좌 week16/data/density_match28.csv,True,True
+cui2022study,10.1016/j.conbuildmat.2021.125849,target,density,1.04,g/cm3,밀도 1.04 g/cm³,25 °C (298 K) · 무첨가 바인더 · 실측값,논문이 인용한 실측 · 강좌 week16/data/density_match28.csv,True,True
+gao2022molecular,10.1021/acsomega.2c02813,target,ced,382.1,MJ/m3,CED 382.1 MJ/m³,298 K · COMPASS · SARA 비율 바인더 MD 모델 asphalt 1,표 4,True,True
+gao2022molecular,10.1021/acsomega.2c02813,target,ced,354.2,MJ/m3,CED 354.2 MJ/m³,298 K · COMPASS · SARA 비율 바인더 MD 모델 asphalt 2,표 4,True,True
+gao2022molecular,10.1021/acsomega.2c02813,target,ced,353.3,MJ/m3,CED 353.3 MJ/m³,298 K · COMPASS · SARA 비율 바인더 MD 모델 asphalt 3,표 4,True,True
+gao2022molecular,10.1021/acsomega.2c02813,target,ced,354.6,MJ/m3,CED 354.6 MJ/m³,298 K · COMPASS · SARA 비율 바인더 MD 모델 asphalt 4,표 4,True,True
+jiang2026atomistic,10.1016/j.molliq.2026.129761,target,density,1.0126,g/cm3,밀도 1.0126 g/cm³,25 °C (298 K) · 무첨가 바인더 · 실측값,논문이 인용한 실측 · 강좌 week16/data/density_match28.csv,True,True
+jiao2022evaluating,10.1016/j.conbuildmat.2022.126360,target,density,1.012,g/cm3,밀도 1.012 g/cm³,25 °C (298 K) · 무첨가 바인더 · 실측값,논문이 인용한 실측 · 강좌 week16/data/density_match28.csv,True,True
+li2022investigation,10.1016/j.conbuildmat.2022.128314,target,density,1.002,g/cm3,밀도 1.002 g/cm³,25 °C (298 K) · 무첨가 바인더 · 실측값,논문이 인용한 실측 · 강좌 week16/data/density_match28.csv,True,True
+liu2021molecular,10.1016/j.conbuildmat.2021.123898,target,density,0.95,g/cm3,밀도 0.95 g/cm³,25 °C (298 K) · 무첨가 바인더 · 실측값,논문이 인용한 실측 · 강좌 week16/data/density_match28.csv,True,True
+liu2021molecular,10.1016/j.conbuildmat.2021.123898,target,density,1.08,g/cm3,밀도 1.08 g/cm³,25 °C (298 K) · 무첨가 바인더 · 실측값,논문이 인용한 실측 · 강좌 week16/data/density_match28.csv,True,True
+liu2025study,10.1371/journal.pone.0328441,target,ced,322.5616,MJ/m3,용해도 매개변수 δ 17.96 MPa^0.5,298 K 에서 만든 AAA-1 기반 4성분 모델(COMPASS II) · 신재 바인더,표 3,True,True
+ren2022insight,10.1016/j.matdes.2022.111141,target,density,1.017,g/cm3,밀도 1.017 g/cm³,25 °C (298 K) · 무첨가 바인더 · 실측값,논문이 인용한 실측 · 강좌 week16/data/density_match28.csv,True,True
+rouidi2024molecular,10.18280/acsm.480514,target,ced,305.0,MJ/m3,CED 305 MJ/m³,298.15 K · PCFF · AAA-1 12분자 모델 MD,표 4 (3.05×10⁸ J/m³ · δ 17.46),True,True
+rouidi2024molecular,10.18280/acsm.480514,target,density,0.947,g/cm3,밀도 0.947 g/cm³,298.15 K · AAA-1 MD 계산값,표 4 · MD 값(실측 아님) → 표적 아님,True,False
+yan2022molecular,10.1016/j.jtte.2021.02.008,target,density,0.94,g/cm3,밀도 0.94 g/cm³,25 °C (298 K) · 무첨가 바인더 · 실측값,논문이 인용한 실측 · 강좌 week16/data/density_match28.csv,True,True
+zhang2021molecular,10.1016/j.fuel.2020.119175,target,density,1.012,g/cm3,밀도 1.012 g/cm³,25 °C (298 K) · 무첨가 바인더 · 실측값,논문이 인용한 실측 · 강좌 week16/data/density_match28.csv,True,True
+zhu2019use,10.1080/14680629.2019.1645725,target,ced,366.7225,MJ/m3,용해도 매개변수 δ 19.15 MPa^0.5,실온(25 °C 가정 · 원문 온도 미기재) · Redelius (2004) Hansen 매개변수 δD 18.4 · δP 3.9 · δH 3.6 의 합성 δt = √(δD²+δP²+δH²),3.2절 · 베네수엘라 역청 · 48 용매 용해도 시험,True,True
+zou2024adhesion,10.1016/j.apsusc.2023.158851,target,density,1.01,g/cm3,밀도 1.01 g/cm³,25 °C (298 K) · 무첨가 바인더 · 실측값,논문이 인용한 실측 · 강좌 week16/data/density_match28.csv,True,True
+zou2024adhesion,10.1016/j.apsusc.2023.158851,target,density,1.02,g/cm3,밀도 1.02 g/cm³,25 °C (298 K) · 무첨가 바인더 · 실측값,논문이 인용한 실측 · 강좌 week16/data/density_match28.csv,True,True
+zou2024adhesion,10.1016/j.apsusc.2023.158851,target,density,1.03,g/cm3,밀도 1.03 g/cm³,25 °C (298 K) · 무첨가 바인더 · 실측값,논문이 인용한 실측 · 강좌 week16/data/density_match28.csv,True,True
+zou2024adhesion,10.1016/j.apsusc.2023.158851,target,density,1.04,g/cm3,밀도 1.04 g/cm³,25 °C (298 K) · 무첨가 바인더 · 실측값,논문이 인용한 실측 · 강좌 week16/data/density_match28.csv,True,True

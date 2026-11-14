@@ -1,0 +1,69 @@
+tolerance 3.0
+filetype pdb
+output out/mix.pdb
+seed 7
+
+structure out/pdb/SA-Squalane.pdb
+  number 3
+  inside box 1.0 1.0 1.0 52.39 52.39 52.39
+end structure
+
+structure out/pdb/SA-Hopane.pdb
+  number 3
+  inside box 1.0 1.0 1.0 52.39 52.39 52.39
+end structure
+
+structure out/pdb/AR-PHPN.pdb
+  number 9
+  inside box 1.0 1.0 1.0 52.39 52.39 52.39
+end structure
+
+structure out/pdb/AR-DOCHN.pdb
+  number 10
+  inside box 1.0 1.0 1.0 52.39 52.39 52.39
+end structure
+
+structure out/pdb/RE-Quin.pdb
+  number 2
+  inside box 1.0 1.0 1.0 52.39 52.39 52.39
+end structure
+
+structure out/pdb/RE-Pyrid.pdb
+  number 1
+  inside box 1.0 1.0 1.0 52.39 52.39 52.39
+end structure
+
+structure out/pdb/RE-Thio.pdb
+  number 1
+  inside box 1.0 1.0 1.0 52.39 52.39 52.39
+end structure
+
+structure out/pdb/RE-Benzo.pdb
+  number 5
+  inside box 1.0 1.0 1.0 52.39 52.39 52.39
+end structure
+
+structure out/pdb/RE-Trim.pdb
+  number 2
+  inside box 1.0 1.0 1.0 52.39 52.39 52.39
+end structure
+
+structure out/pdb/AS-Pyrrole.pdb
+  number 1
+  inside box 1.0 1.0 1.0 52.39 52.39 52.39
+end structure
+
+structure out/pdb/AS-Phenol.pdb
+  number 1
+  inside box 1.0 1.0 1.0 52.39 52.39 52.39
+end structure
+
+structure out/pdb/AS-Thio.pdb
+  number 1
+  inside box 1.0 1.0 1.0 52.39 52.39 52.39
+end structure
+
+structure out/pdb/AS-HighS13.pdb
+  number 1
+  inside box 1.0 1.0 1.0 52.39 52.39 52.39
+end structure

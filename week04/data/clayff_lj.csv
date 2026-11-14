@@ -1,0 +1,5 @@
+element,sigma_A,epsilon_kcal_mol,charge_SiO2_e,source
+Si,3.302,1.8405e-06,2.1,"ClayFF st (tetrahedral Si; Cygan 2004, R0->sigma)"
+O,3.166,0.1554,-1.05,"ClayFF ob/oh (bridging/hydroxyl O; Cygan 2004, R0->sigma)"
+Al,4.271,1.3298e-06,1.575,"ClayFF ao (Cygan 2004 Table 1, VERIFIED; sigma=R0/2^(1/6)). Transfer to anhydrous alpha-Al2O3 pending benchmark."
+Na,2.35,0.1301,1.0,"ClayFF aqueous Na+ (Cygan 2004 Table 1, VERIFIED; sigma=R0/2^(1/6)). For interlayer/exchangeable Na (montmorillonite). NaCl rocksalt slab inherits this — outside ClayFF comparison scope."

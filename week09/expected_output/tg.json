@@ -1,0 +1,37 @@
+{
+ "points": [
+  {
+   "T_K": 100.0,
+   "rho_gcc": 0.872,
+   "V_A3": 8779.3,
+   "V_std": 236.33
+  },
+  {
+   "T_K": 175.0,
+   "rho_gcc": 0.7596,
+   "V_A3": 10085.7,
+   "V_std": 452.0
+  },
+  {
+   "T_K": 250.0,
+   "rho_gcc": 0.6883,
+   "V_A3": 11175.0,
+   "V_std": 1049.06
+  },
+  {
+   "T_K": 325.0,
+   "rho_gcc": 0.6069,
+   "V_A3": 12634.2,
+   "V_std": 732.85
+  }
+ ],
+ "n_T": 4,
+ "Tg_K_bilinear": 356.5,
+ "slope_glassy_A3perK": 17.418,
+ "slope_rubbery_A3perK": 19.456,
+ "intercept_glassy": 7037.5,
+ "intercept_rubbery": 6311.0,
+ "rss": 0.0,
+ "alpha_rubbery_perK": 0.00154,
+ "note": "온도점 4 × 수 ps · 수렴 전 「형태만」 — 실제 Tg 는 온도 8점 × 1 ns · 냉각률 의존 · 조성 간 상대 비교용(원본 06주차 #11 · #28)"
+}

@@ -1,0 +1,21 @@
+{
+ "title": "아스팔트 바인더 첨가제 · 노화 · 온도 조건에서 강성과 응집을 함께 높이는 조건 찾기 (예시 · W16 실행값)",
+ "targets": [
+  {
+   "name": "bulk_modulus",
+   "unit": "GPa",
+   "direction": "max"
+  },
+  {
+   "name": "cohesive_energy_density",
+   "unit": "MJ/m3",
+   "direction": "max"
+  }
+ ],
+ "constraints": [
+  "첨가제 = 카탈로그 6계열(none · SBS 3:7 · Lignin · SiO2 · CNT · Graphene)",
+  "온도 213~433 K 격자 안",
+  "적용 영역 = 학습 분포 안(외삽 플래그 시 검증 대상 분리)"
+ ],
+ "success": "EHVI 3개 배치의 실제 HV 증가 > 무작위 3개 평균 · 참조점 (1.0 GPa, 250 MJ/m3)"
+}

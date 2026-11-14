@@ -1,0 +1,21 @@
+{
+ "tag": "wet",
+ "frame_step": 4000,
+ "slab_top_A": 10.17,
+ "exposure_e": 0.167,
+ "t_res_A": 11.84,
+ "z1_A": 4.0,
+ "e_threshold": 0.5,
+ "mode": "cohesive(응집 파괴)",
+ "binder_z_5_95_A": [
+  26.2,
+  59.7
+ ],
+ "gap_binder_below_A": -4.58,
+ "n_binder_within_12A": 5,
+ "grid": [
+  12,
+  12
+ ],
+ "rule": "e > e_th → adhesive · t_res ≥ z1 → cohesive · else thin-layer (paper13 R6 2.3절 축소판)"
+}

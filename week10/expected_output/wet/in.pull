@@ -1,0 +1,46 @@
+# in.pull — week10 계면 인장 · 석영(고정) | 물 | 톨루엔(그립 정속 당김) · COMID clayff_gaff2_v1 설정 · 교육용 축소 프로토콜
+units          real
+atom_style     full
+boundary       p p f
+pair_style     lj/cut/coul/long 12.0
+bond_style     harmonic
+angle_style    harmonic
+dihedral_style fourier
+special_bonds  lj 0.0 0.0 0.5 coul 0.0 0.0 0.833333
+read_data      wet_final.data
+pair_modify    mix arithmetic
+kspace_style   pppm 1.0e-4
+kspace_modify  slab 3.0
+neighbor       2.0 bin
+neigh_modify   every 1 delay 0 check yes
+
+group          slab id 1:540
+group          binder id 1168:2067
+group          water id 541:1167
+fix            shk water shake 1.0e-4 20 0 b 1 a 1
+compute        zw water reduce ave z
+region         top block INF INF INF INF 47.01 INF units box
+group          topg region top
+group          grip intersect binder topg
+group          mobile subtract all slab grip
+region         near block INF INF INF INF INF 27.54 units box
+compute        tm mobile temp
+compute        zb binder reduce ave z
+compute        fg grip reduce sum fz
+fix            fav grip ave/time 1 20 20 c_fg
+variable       disp equal step*dt*0.0025
+variable       nb_near equal count(binder,near)
+
+fix            frz slab setforce 0.0 0.0 0.0
+velocity       mobile create 298.0 4928459 mom yes rot yes dist gaussian
+fix            nvt mobile nvt temp 298.0 298.0 100.0
+fix_modify     nvt temp tm
+fix            pull grip move linear 0.0 0.0 0.0025 units box
+timestep       1.0
+thermo_style   custom step v_disp f_fav pe c_tm c_zb c_zw v_nb_near
+thermo_modify  format float %14.4f
+thermo         20
+dump           d1 all custom 500 pull.dump id mol type q x y z
+dump_modify    d1 sort id
+run            4000
+write_data     pull_final.data
