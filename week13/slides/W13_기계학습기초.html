@@ -1,1 +1,896 @@
-../../강의덱/W13_기계학습기초.html
+<!doctype html>
+<html lang="ko" data-v="3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>W13 기계학습 기초 · 분할 · 누수 · 지표 · 선형 → 트리</title>
+<link rel="stylesheet" href="../../common/deck.css">
+</head>
+<body>
+
+<!-- 1 표지 -->
+<section class="slide v3 cover">
+<div class="stop">
+<div class="ribbon"></div>
+<div class="cover-txt">
+<p class="eb a" style="--d:0"><span class="ko" data-i>건설소재 역설계 도구 개발을 위한 AI와 분자동역학 활용 · WEEK 13 · 모듈 M4 기계학습 · 도구 주차 · 차시 13-1 ~ 13-4 · 50분</span><span class="en" data-i>AI and Molecular Dynamics for Inverse Design of Construction Materials · WEEK 13 · Module M4 Machine learning · Tool week · Sessions 13-1 ~ 13-4 · 50 min</span></p>
+<h1 class="cover-h a" style="--d:1"><span class="ko" data-i>기계학습 기초: 분할 · 누수 · 지표 · 선형 → 트리</span><span class="en" data-i>Machine learning basics: split · leakage · metrics · linear → tree</span></h1>
+<p class="cover-sub a" style="--d:2"><span class="ko" data-i>MD 336행으로 대리모델 첫 판 · 점수보다 먼저 「시험 점이 처음 보는 것」 확인</span><span class="en" data-i>First surrogate model on 336 MD rows · check "the test points are unseen" before the score</span></p>
+<p class="who a" style="--d:3"><span class="ko" data-i><b>윤태영</b> 연구위원 · 한국건설기술연구원 도로교통연구본부 · 과학기술연합대학원대학교(UST) 교수</span><span class="en" data-i><b>Taeyoung Yun</b> Senior Research Fellow · Department of Highway & Transportation Research, Korea Institute of Civil Engineering and Building Technology (KICT) · Professor, University of Science and Technology (UST)</span></p>
+<div class="rel a" style="--d:4;justify-content:flex-start"><span><span class="ko" data-i>새 물리 없음 · 도구만</span><span class="en" data-i>No new physics · tools only</span></span><span><span class="ko" data-i>준비물 · mdai · Claude Code</span><span class="en" data-i>Prerequisites · mdai · Claude Code</span></span><span><span class="ko" data-i>W09 results.csv 열 구조</span><span class="en" data-i>W09 results.csv column layout</span></span></div>
+</div>
+<div class="cover-fig"><div class="emb" data-emb="splitc" data-dur="12"></div></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 2 오늘 만들 것 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>오늘 만들 것 · 4차시 · 50분</span><span class="en" data-i>What we build today · 4 sessions · 50 min</span></p>
+<div class="hrow"><span class="hico" data-ico="package-check"></span><h2 class="h"><span class="ko" data-i>오늘의 완성물: 분할 4종 성능표 · 나무 깊이 선택 보고서</span><span class="en" data-i>Today's deliverables: 4-split performance table · tree-depth selection report</span></h2></div>
+<p class="sub"><span class="ko" data-i>완성물 2개 · 재료 = 참고 사례 데이터 MD 336행 · 노트북 ▶ 2번 · Claude Code 지시 3 · 슬라이더 1 · 숫자 = 실행값</span><span class="en" data-i>2 deliverables · material = reference-case data, MD 336 rows · notebook ▶ ×2 · Claude Code prompts 3 · slider 1 · numbers = actual run values</span></p>
+<div class="bd today">
+<div class="goal">
+<div class="it white a" style="--d:1">
+<div class="ih"><span class="icb" data-ico="git-compare"></span><div><p class="k"><span class="ko" data-i>완성물 ①</span><span class="en" data-i>Deliverable ①</span></p><h4><span class="ko" data-i>split_compare.json · 같은 모델 · 분할만 4가지</span><span class="en" data-i>split_compare.json · same model · only 4 splits differ</span></h4></div></div>
+<div class="bars">
+<div class="bar"><div class="l"><span class="ko" data-i>행 무작위<small>누수 100 %</small></span><span class="en" data-i>Random rows<small>leakage 100 %</small></span></div><div class="b" style="width:330px"></div><div class="v nosum">R² 0.989</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>조건 그룹<small>셀@온도 단위</small></span><span class="en" data-i>Condition group<small>per cell@temperature</small></span></div><div class="b bl" style="width:318px"></div><div class="v nosum">R² 0.954</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>노화 상태 빼기<small>처음 보는 노화</small></span><span class="en" data-i>Drop an aging state<small>unseen aging</small></span></div><div class="b dk" style="width:90px"></div><div class="v nosum">R² 0.268</div></div>
+</div>
+<p><span class="ko" data-i>숲 · 밀도 · 분할만 바꿨는데 R² 0.27 ~ 0.99</span><span class="en" data-i>Forest · density · only the split changed, yet R² 0.27 ~ 0.99</span></p>
+</div>
+<div class="it dark a" style="--d:2">
+<div class="ih"><span class="icb" data-ico="file-json"></span><div><p class="k"><span class="ko" data-i>완성물 ②</span><span class="en" data-i>Deliverable ②</span></p><h4><span class="ko" data-i>tree_depth.json · 나무 깊이 1 ~ 12</span><span class="en" data-i>tree_depth.json · tree depth 1 ~ 12</span></h4></div></div>
+<p class="mono-line">{ "bulk_modulus": { "best_depth": <b>2</b>, "val_rmse": <b>0.611</b>, "seed_sd": 0.436 } }</p>
+<p><span class="ko" data-i>깊이 2 이후 검증 오차 재상승 (23장)</span><span class="en" data-i>Validation error rises again after depth 2 (slide 23)</span></p>
+</div>
+</div>
+<div class="plan">
+<div class="lines">
+<div class="ln a" style="--d:1"><span class="nn">13-1</span><div><h4><span class="ko" data-i>지도학습과 데이터</span><span class="en" data-i>Supervised learning and data</span></h4><p><span class="ko" data-i>한 행 · 반복 6 · 용어 5 · P13-1</span><span class="en" data-i>One row · 6 repeats · 5 terms · P13-1</span></p></div><span class="min"><span class="ko" data-i>12.5분</span><span class="en" data-i>12.5 min</span></span></div>
+<div class="ln a" style="--d:2"><span class="nn">13-2</span><div><h4><span class="ko" data-i>분할과 누수</span><span class="en" data-i>Split and leakage</span></h4><p><span class="ko" data-i>바구니 3방식 · 누수 경보 · 성능표 · P13-2</span><span class="en" data-i>3 bucket schemes · leakage alarm · performance table · P13-2</span></p></div><span class="min"><span class="ko" data-i>13분</span><span class="en" data-i>13 min</span></span></div>
+<div class="ln a" style="--d:3"><span class="nn">13-3</span><div><h4><span class="ko" data-i>평가 지표</span><span class="en" data-i>Evaluation metrics</span></h4><p><span class="ko" data-i>RMSE · MAE · R² · 계산기 · 파리티 · 보고 5칸</span><span class="en" data-i>RMSE · MAE · R² · calculator · parity · 5 report items</span></p></div><span class="min"><span class="ko" data-i>12분</span><span class="en" data-i>12 min</span></span></div>
+<div class="ln a" style="--d:4"><span class="nn">13-4</span><div><h4><span class="ko" data-i>선형 → 트리 · 과적합</span><span class="en" data-i>Linear → tree · overfitting</span></h4><p><span class="ko" data-i>분할선 · 외삽 · 깊이 곡선 · P13-3</span><span class="en" data-i>Split lines · extrapolation · depth curve · P13-3</span></p></div><span class="min"><span class="ko" data-i>16.5분</span><span class="en" data-i>16.5 min</span></span></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>준비물: <b>mdai</b> · Claude Code(W01 12장) · LAMMPS 없음</span><span class="en" data-i>Prerequisites: <b>mdai</b> · Claude Code (W01 slide 12) · no LAMMPS</span></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>계획서 50분 · 원본 10주차 보충A 10-S1 · 10-S2 · 수치 = week13/expected_output (scikit-learn 1.9 · 2026-11-08 실행)</span><span class="en" data-i>Plan 50 min · original week-10 supplement A 10-S1 · 10-S2 · values = week13/expected_output (scikit-learn 1.9 · run 2026-11-08)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 3 차시 13-1 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 13-1 · 12.5분 · 영상 1편</span><span class="en" data-i>Session 13-1 · 12.5 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="database"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">1</p><p class="hubt"><span class="ko" data-i>지도학습과 데이터</span><span class="en" data-i>Supervised learning and data</span></p><p class="hubs"><span class="ko" data-i>한 행 · 그룹 · 표적 · MD 반복 오차</span><span class="en" data-i>One row · group · target · MD repeat error</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>내 데이터의 행 · 그룹 · 표적 정의표 (P13-1)</span><span class="en" data-i>Definition table of rows · groups · targets for my data (P13-1)</span></h4></div></div><p><span class="ko" data-i>한 행이 무엇 1회인지 · 같은 조건 반복을 묶는 열 · 표적 3개의 단위 · 범위 · 반복 간 차</span><span class="en" data-i>What one row is (1 run of what) · column grouping same-condition repeats · units · range · repeat spread of 3 targets</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>파이프라인 ④ 대리모델의 재료</span><span class="en" data-i>Pipeline ④ material for the surrogate model</span></h4></div></div><p><span class="ko" data-i>W09 의 results.csv 한 줄 = 오늘 표의 한 행 · W14: 같은 표 + 분자 표현자 열</span><span class="en" data-i>One line of W09 results.csv = one row of today's table · W14: same table + molecular descriptor columns</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 4 FIG 지도학습 한 행 -->
+<section class="slide v3" data-src="10주차보충A#6">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>13-1 · 무엇</span><span class="en" data-i>13-1 · What</span></p>
+<div class="hrow"><span class="hico" data-ico="table"></span><h2 class="h"><span class="ko" data-i>지도학습 = x(노화 · 온도) → y(밀도) · 한 행 = MD 1회</span><span class="en" data-i>Supervised learning = x (aging · temperature) → y (density) · one row = 1 MD run</span></h2></div>
+<p class="sub"><span class="ko" data-i>정답 y 가 붙은 예제로 규칙 학습 → 새 x 에 적용 · 특징 6열 · 표적 3열 · 그룹 1열</span><span class="en" data-i>Learn the rule from examples with answer y → apply to new x · 6 feature columns · 3 target columns · 1 group column</span></p>
+<div class="bd">
+<div class="row">
+<div class="it white a fill" style="--d:1"><div class="ih"><span class="icb" data-ico="file-spreadsheet"></span><div><p class="k"><span class="ko" data-i>data/bulk_md_373.csv · 실제 4행</span><span class="en" data-i>data/bulk_md_373.csv · 4 actual rows</span></p><h4><span class="ko" data-i>특징 x · 그룹 · 표적 y</span><span class="en" data-i>Features x · group · target y</span></h4></div></div>
+<table class="t"><thead><tr><th>run</th><th>aging</th><th>T_K</th><th>seed</th><th><span class="ko" data-i>cell (그룹)</span><span class="en" data-i>cell (group)</span></th><th>density</th><th>ced</th><th>K</th></tr></thead><tbody>
+<tr><td>16</td><td class="mono">2</td><td class="mono">173</td><td class="mono">…721</td><td><span class="ko" data-i>AAA1-장기</span><span class="en" data-i>AAA1-long</span></td><td class="mono">1.0696</td><td class="mono">388.4</td><td class="mono">4.88</td></tr>
+<tr><td>75</td><td class="mono">2</td><td class="mono">333</td><td class="mono">…928</td><td><span class="ko" data-i>AAA1-장기</span><span class="en" data-i>AAA1-long</span></td><td class="mono">1.0382</td><td class="mono">362.7</td><td class="mono">3.79</td></tr>
+<tr class="hl"><td>356</td><td class="mono">1</td><td class="mono">413</td><td class="mono">…719</td><td><span class="ko" data-i>AAA1-단기</span><span class="en" data-i>AAA1-short</span></td><td class="mono">0.9749</td><td class="mono">327.8</td><td class="mono">1.78</td></tr>
+<tr class="hl"><td>361</td><td class="mono">1</td><td class="mono">413</td><td class="mono">…721</td><td><span class="ko" data-i>AAA1-단기</span><span class="en" data-i>AAA1-short</span></td><td class="mono">0.9763</td><td class="mono">335.7</td><td class="mono">2.60</td></tr>
+</tbody></table>
+<p><span class="ko" data-i>주황 두 행 = 같은 셀 · 같은 온도 · 시드만 다름 · 밀도 차 0.0013 · 체적탄성률 차 0.81 GPa</span><span class="en" data-i>Two orange rows = same cell · same temperature · only seed differs · density gap 0.0013 · bulk modulus gap 0.81 GPa</span></p></div>
+<div class="col" style="width:620px;flex:none">
+<div class="exf a" style="--d:2">
+<div class="exs"><span class="exi" data-ico="list-checks"></span><div><h4><span class="ko" data-i>x 특징 6</span><span class="en" data-i>6 x features</span></h4><p><span class="ko" data-i>노화 · 온도 · 물 · 첨가 · 바인더 2</span><span class="en" data-i>aging · temperature · water · additive · binder 2</span></p></div></div><span class="exa"></span>
+<div class="exs hot"><span class="exi" data-ico="brain-circuit"></span><div><h4><span class="ko" data-i>모델</span><span class="en" data-i>Model</span></h4><p><span class="ko" data-i>선형 · 나무 · 숲</span><span class="en" data-i>linear · tree · forest</span></p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="target"></span><div><h4>ŷ</h4><p><span class="ko" data-i>밀도 g/cm³</span><span class="en" data-i>Density g/cm³</span></p></div></div>
+</div>
+<div class="it a" style="--d:3"><div class="ih"><span class="icb" data-ico="layers"></span><div><h4><span class="ko" data-i>표적 3 · 단위 서로 다름</span><span class="en" data-i>3 targets · different units</span></h4></div></div><p><span class="ko" data-i>밀도 g/cm³ · CED MJ/m³ · 체적탄성률(K) GPa · 오차도 각 단위로 보고</span><span class="en" data-i>Density g/cm³ · CED MJ/m³ · bulk modulus (K) GPa · report error in each unit</span></p></div>
+<div class="it dark a" style="--d:4"><div class="ih"><span class="icb" data-ico="git-branch"></span><div><h4><span class="ko" data-i>그룹 열 = cell</span><span class="en" data-i>Group column = cell</span></h4></div></div><p><span class="ko" data-i>같은 조성 셀의 행을 묶는 이름 · 13-2 분할의 기준 열</span><span class="en" data-i>Name that groups rows of the same-composition cell · basis column for the 13-2 split</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 10주차 보충A #6 · 데이터 = 참고 사례 데이터(연구 플랫폼 결과 · 벌크 · GAFF2 · completed 373행) → 이 강좌 기본 = AAA1 노화 3셀 336행 · scripts/export_dataset.py · 내 데이터 = W17 · W18 MD 워크플로우</span><span class="en" data-i>Original week-10 supplement A #6 · data = reference-case data (research-platform result · bulk · GAFF2 · 373 completed rows) → course default = AAA1 aging 3 cells, 336 rows · scripts/export_dataset.py · own data = W17 · W18 MD workflow</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 5 FIG 데이터 구조 -->
+<section class="slide v3" data-src="10주차보충A#9">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>13-1 · 무엇</span><span class="en" data-i>13-1 · What</span></p>
+<div class="hrow"><span class="hico" data-ico="grid-3x3"></span><h2 class="h"><span class="ko" data-i>데이터 336행: 셀 · 온도 · 반복의 조합</span><span class="en" data-i>336 data rows: combinations of cell · temperature · repeat</span></h2></div>
+<p class="sub"><span class="ko" data-i>셀 3개 · 온도 18개 · 반복 6회 · 반복 간 차 0.0027 · 점 하나 = MD 실행 1회 · 같은 조건 반복의 흩어짐 = <b>어떤 모델도 넘을 수 없는 오차</b></span><span class="en" data-i>3 cells · 18 temperatures · 6 repeats · repeat gap 0.0027 · one point = 1 MD run · scatter of same-condition repeats = <b>error no model can beat</b></span></p>
+<div class="bd">
+<div class="row">
+<div class="figw white fill"><svg id="w13-grid" viewBox="0 0 1060 520" class="cfig"></svg></div>
+<div class="col" style="width:520px;flex:none">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="thermometer"></span><div><p class="k"><span class="ko" data-i>열 = 온도 18</span><span class="en" data-i>Columns = 18 temperatures</span></p><h4><span class="ko" data-i>133 ~ 433 K · 대부분 20 K 간격</span><span class="en" data-i>133 ~ 433 K · mostly 20 K steps</span></h4></div></div></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="clock"></span><div><p class="k"><span class="ko" data-i>줄 = 노화 3</span><span class="en" data-i>Rows = 3 aging states</span></p><h4><span class="ko" data-i>비노화 · 단기 · 장기 (aging 0 · 1 · 2)</span><span class="en" data-i>unaged · short-term · long-term (aging 0 · 1 · 2)</span></h4></div></div></div>
+<div class="it hot a" style="--d:3"><div class="ih"><span class="icb" data-ico="dices"></span><div><p class="k"><span class="ko" data-i>MD 반복 오차</span><span class="en" data-i>MD repeat error</span></p><div class="n md nosum">0.0027 g/cm³</div></div></div><p><span class="ko" data-i>한 칸 6점의 표준편차 중앙값 · CED 3.80 MJ/m³ · K 0.436 GPa</span><span class="en" data-i>Median SD of the 6 points per cell · CED 3.80 MJ/m³ · K 0.436 GPa</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 10주차 보충A #9(온도 격자) · 수치 = out/split_compare*.json 의 md_seed_sd · 실행 = 참고 사례(연구 플랫폼 2026-07 ~ 09 캠페인)</span><span class="en" data-i>Original week-10 supplement A #9 (temperature grid) · values = md_seed_sd in out/split_compare*.json · runs = reference case (research-platform campaign, 2026-07 ~ 09)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 6 DEF -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>용어 정의</span><span class="en" data-i>Key terms</span></p>
+<div class="hrow"><span class="hico" data-ico="book-marked"></span><h2 class="h"><span class="ko" data-i>새 용어 5: 지도학습 · 분할 · 누수 · 과적합 · 결정계수 R²</span><span class="en" data-i>5 new terms: supervised learning · split · leakage · overfitting · coefficient of determination R²</span></h2></div>
+<p class="sub"><span class="ko" data-i>영어 병기 · 한 줄 정의 · 다시 나오는 곳: W14 대리모델 · W15 불확실성 · W16 검증</span><span class="en" data-i>English given · one-line definition · reappears in: W14 surrogate model · W15 uncertainty · W16 validation</span></p>
+<div class="bd">
+<div class="defs icon">
+<div class="defcard icon a" style="--d:1"><span class="lic" data-ico="graduation-cap"></span><p class="term"><span class="ko" data-i>지도학습<em>supervised learning</em></span><span class="en" data-i>Supervised learning<em>supervised learning</em></span></p><p class="def"><span class="ko" data-i>정답 y 가 붙은 예제로 x → y 규칙을 배우는 방법</span><span class="en" data-i>Method that learns an x → y rule from examples with answer y</span></p><p class="again">W14</p></div>
+<div class="defcard icon a" style="--d:2"><span class="lic" data-ico="split"></span><p class="term"><span class="ko" data-i>분할<em>split · 학습 / 검증 / 시험</em></span><span class="en" data-i>Split<em>split · train / validation / test</em></span></p><p class="def"><span class="ko" data-i>배우는 몫 · 채점하는 몫 분리 · 단위 = 평가 질문</span><span class="en" data-i>Separate the part that learns from the part that grades · unit = evaluation question</span></p><p class="again">W15 · W16</p></div>
+<div class="defcard icon a" style="--d:3"><span class="lic" data-ico="triangle-alert"></span><p class="term"><span class="ko" data-i>누수<em>leakage</em></span><span class="en" data-i>Leakage<em>leakage</em></span></p><p class="def"><span class="ko" data-i>시험 점의 정보(같은 조건 반복)가 학습에 섞여 점수가 부푸는 것</span><span class="en" data-i>Test-point information (same-condition repeats) mixes into training and inflates the score</span></p><p class="again">W16</p></div>
+<div class="defcard icon a" style="--d:4"><span class="lic" data-ico="trending-down"></span><p class="term"><span class="ko" data-i>과적합<em>overfitting</em></span><span class="en" data-i>Overfitting<em>overfitting</em></span></p><p class="def"><span class="ko" data-i>학습 오차만 줄고 검증 오차는 그대로이거나 오름 · 잡음까지 외움</span><span class="en" data-i>Only training error falls; validation error stays flat or rises · memorizes noise</span></p><p class="again">W14 · W15</p></div>
+<div class="defcard icon a" style="--d:4"><span class="lic" data-ico="gauge"></span><p class="term"><span class="ko" data-i>결정계수<em>R² · coefficient of determination</em></span><span class="en" data-i>Coefficient of determination<em>R² · coefficient of determination</em></span></p><p class="def"><span class="ko" data-i>시험값 분산 중 모델이 설명한 몫 · 시험 범위가 좁으면 같은 오차에도 하락</span><span class="en" data-i>Share of test-value variance the model explains · drops for the same error if test range is narrow</span></p><p class="again">W16</p></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>정의 문구 = GLOSSARY.md</span><span class="en" data-i>Definitions = GLOSSARY.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 7 MAKE P13-1 -->
+<section class="slide v3" data-src="10주차보충A#7">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>13-1 · 만들어 보기</span><span class="en" data-i>13-1 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="pencil-ruler"></span><h2 class="h"><span class="ko" data-i>만들어 보기 P13-1: 내 데이터의 행 · 그룹 · 표적 정의표</span><span class="en" data-i>Try it P13-1: definition table of rows · groups · targets for my data</span></h2></div>
+<div class="bd">
+<div class="make">
+<div class="left a" style="--d:1">
+<pre class="code"><span class="c"><span class="ko" data-i># 터미널: conda activate mdai → cd week13 → claude</span><span class="en" data-i># Terminal: conda activate mdai → cd week13 → claude</span></span>
+<span class="c"><span class="ko" data-i># 아래 지시 → 승인 → 노트북 01 실행 (run_nb.py)</span><span class="en" data-i># Prompt below → approve → run notebook 01 (run_nb.py)</span></span>
+<span class="c"><span class="ko" data-i># 셀 1 출력 = 데이터 요약 (행 · 셀 · 온도 · 표적 · 반복 SD)</span><span class="en" data-i># Cell 1 output = data summary (rows · cells · temperatures · targets · repeat SD)</span></span>
+<span class="c"><span class="ko" data-i># 정의표 → week13/out/P13-1_result.md (자동 저장)</span><span class="en" data-i># Definition table → week13/out/P13-1_result.md (auto-saved)</span></span></pre>
+<div class="prompt" data-id="P13-1"><span class="ko" data-i>@notebooks/01_split_and_leak.ipynb 를 실행하고, 셀 1 의 데이터 요약 출력과 @data/bulk_md_373.csv 로 ① 한 행이 무엇 1회인지 ② 같은 조건 반복을 묶는 그룹 열 ③ 표적 3개(밀도 · CED · 체적탄성률)의 단위 · 범위 · 반복 간 표준편차 ④ 반복 간 표준편차보다 작은 RMSE 를 믿으면 안 되는 이유 한 줄 ⑤ 내 연구 데이터([내 재료 · 내 측정 종류])라면 그룹 기준이 무엇일지를 표로 정리해라. 요약에 없는 수치는 「확인 필요」로 표시해라. 노트북과 scripts/ 는 고치지 마라.</span><span class="en" data-i>Run @notebooks/01_split_and_leak.ipynb and, using the data summary printed by cell 1 and @data/bulk_md_373.csv, tabulate: ① what one row is (1 run of what) ② the group column that bundles same-condition repeats ③ unit · range · repeat standard deviation of the 3 targets (density · CED · bulk modulus) ④ one line on why an RMSE below the repeat standard deviation cannot be trusted ⑤ what the grouping criterion would be for my own research data ([my material · my measurement type]). Mark any value not in the summary as "needs checking". Do not edit the notebook or scripts/.</span></div>
+</div>
+<div class="expect a" style="--d:2">
+<h4><span class="tic" data-ico="table"></span><span class="ko" data-i>기대 결과 · 정의표 (이 저장소 데이터)</span><span class="en" data-i>Expected result · definition table (this repository's data)</span></h4>
+<table class="t"><thead><tr><th><span class="ko" data-i>항목</span><span class="en" data-i>Item</span></th><th><span class="ko" data-i>값</span><span class="en" data-i>Value</span></th><th><span class="ko" data-i>근거</span><span class="en" data-i>Basis</span></th></tr></thead><tbody>
+<tr><td><span class="ko" data-i>한 행</span><span class="en" data-i>One row</span></td><td><span class="ko" data-i>MD 실행 1회 (벌크 · GAFF2 · NPT)</span><span class="en" data-i>1 MD run (bulk · GAFF2 · NPT)</span></td><td><span class="ko" data-i>run 열 · 336행</span><span class="en" data-i>run column · 336 rows</span></td></tr>
+<tr><td><span class="ko" data-i>그룹</span><span class="en" data-i>Group</span></td><td><span class="ko" data-i>cell (조성 셀) · 더 잘게 cell@T_K</span><span class="en" data-i>cell (composition cell) · finer: cell@T_K</span></td><td><span class="ko" data-i>셀 3 · 조건 54</span><span class="en" data-i>3 cells · 54 conditions</span></td></tr>
+<tr><td><span class="ko" data-i>밀도</span><span class="en" data-i>Density</span></td><td>0.921 ~ 1.081 g/cm³</td><td><span class="ko" data-i>반복 SD 0.0027</span><span class="en" data-i>repeat SD 0.0027</span></td></tr>
+<tr><td>CED</td><td>288 ~ 396 MJ/m³</td><td><span class="ko" data-i>반복 SD 3.80</span><span class="en" data-i>repeat SD 3.80</span></td></tr>
+<tr><td><span class="ko" data-i>체적탄성률</span><span class="en" data-i>Bulk modulus</span></td><td>1.31 ~ 7.89 GPa</td><td><span class="ko" data-i>반복 SD 0.436</span><span class="en" data-i>repeat SD 0.436</span></td></tr>
+</tbody></table>
+<p class="cap"><span class="ko" data-i>④ 기준 = 반복 SD 보다 작은 RMSE = 같은 조건의 다른 실행을 외운 결과 · ⑤ = 내 재료로 작성</span><span class="en" data-i>Basis for ④ = an RMSE below the repeat SD means memorizing other runs of the same condition · ⑤ = write for my own material</span></p>
+</div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>그룹 열이 「같은 조건의 반복」을 한 묶음으로 만드는가</span><span class="en" data-i>Does the group column bundle "repeats of the same condition" into one set?</span></p><p><span class="ko" data-i>표적마다 단위 · 범위 · 반복 SD 3칸이 모두 있는가</span><span class="en" data-i>Does each target have all 3 cells: unit · range · repeat SD?</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 10주차 보충A #7(그룹 단위) · 지시문 원문 week13/prompts.md · P13-1 · 수치 = out/split_compare*.json</span><span class="en" data-i>Original week-10 supplement A #7 (group unit) · prompt source week13/prompts.md · P13-1 · values = out/split_compare*.json</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 8 차시 13-2 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 13-2 · 13분 · 영상 1편</span><span class="en" data-i>Session 13-2 · 13 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="split"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">2</p><p class="hubt"><span class="ko" data-i>분할과 누수</span><span class="en" data-i>Split and leakage</span></p><p class="hubs"><span class="ko" data-i>분할 방식 = 평가 질문</span><span class="en" data-i>Split scheme = evaluation question</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>분할 4종 성능표 (P13-2)</span><span class="en" data-i>4-split performance table (P13-2)</span></h4></div></div><p><span class="ko" data-i>split_compare.py ▶ → 모델 4 × 분할 4 의 RMSE · R² · 누수 비율 → 보고 문장 1개</span><span class="en" data-i>split_compare.py ▶ → RMSE · R² · leakage fraction for 4 models × 4 splits → 1 report sentence</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>대리모델 평가의 첫 결정</span><span class="en" data-i>First decision in surrogate evaluation</span></h4></div></div><p><span class="ko" data-i>W15 불확실성 · W16 역설계 검증 = 같은 분할 규칙</span><span class="en" data-i>W15 uncertainty · W16 inverse-design validation = same split rules</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 9 ANIM 분할 3방식 -->
+<section class="slide v3" data-src="10주차보충A#6,10주차보충A#7">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>13-2 · 어떻게 · 동적</span><span class="en" data-i>13-2 · How · animated</span></p>
+<div class="hrow"><span class="hico" data-ico="split"></span><h2 class="h"><span class="ko" data-i>분할 3방식: 행 무작위 · 조건 그룹 · 노화 상태 빼기 → 시험 바구니</span><span class="en" data-i>3 split schemes: random rows · condition group · drop an aging state → test bucket</span></h2></div>
+<p class="sub"><span class="ko" data-i>칸 = 같은 셀 · 같은 온도 · 점 6 = 반복 · 빨간 테 = 한 칸이 학습 · 시험에 동시에 걸림(<b>누수</b>)</span><span class="en" data-i>Cell = same cell · same temperature · 6 points = repeats · red outline = one cell falls in both training and test (<b>leakage</b>)</span></p>
+<div class="bd"><div class="emb" data-emb="split" data-dur="12" data-steps="3" data-labels="① 행 무작위|② 조건 그룹|③ 노화 상태 빼기" data-labels-en="① Random rows|② Condition group|③ Drop aging state"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 10주차 보충A #6 · #7 · 점 배치 = 개념 · 시험 수 · 누수 비율 = out/split_compare.json (무작위 · 그룹은 20회 반복 평균)</span><span class="en" data-i>Original week-10 supplement A #6 · #7 · point layout = concept · test count · leakage fraction = out/split_compare.json (random · group are 20-run means)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 10 ANIM 누수 경보 -->
+<section class="slide v3" data-src="10주차보충A#7">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>13-2 · 왜 · 동적</span><span class="en" data-i>13-2 · Why · animated</span></p>
+<div class="hrow"><span class="hico" data-ico="triangle-alert"></span><h2 class="h"><span class="ko" data-i>누수 = 시험 문제를 미리 본 학생 · 쌍둥이 점이 학습에 섞임</span><span class="en" data-i>Leakage = a student who saw the exam questions beforehand · twin points mix into training</span></h2></div>
+<p class="sub"><span class="ko" data-i>숲 R² 0.989 → 0.954 → 0.268 · 쌍둥이(같은 셀 · 같은 온도 · 시드만 다름)가 학습에 있으면 <b>외운 값</b> 출력</span><span class="en" data-i>Forest R² 0.989 → 0.954 → 0.268 · if twins (same cell · same temperature · only seed differs) are in training, it outputs <b>memorized values</b></span></p>
+<div class="bd"><div class="emb" data-emb="leak" data-dur="12" data-steps="3" data-labels="① 행 무작위 · 경보|② 조건 그룹|③ 노화 상태 빼기" data-labels-en="① Random rows · alarm|② Condition group|③ Drop aging state"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 10주차 보충A #7 「그룹 조회 실패 시 무작위 분할 대체 금지」 · 수치 = out/split_compare.json (forest · 200그루 · seed 42)</span><span class="en" data-i>Original week-10 supplement A #7 "never fall back to random split if group lookup fails" · values = out/split_compare.json (forest · 200 trees · seed 42)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 11 FIG 성능표 -->
+<section class="slide v3" data-src="10주차보충A#10,10주차보충A#11">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>13-2 · 확인</span><span class="en" data-i>13-2 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="activity"></span><h2 class="h"><span class="ko" data-i>분할 4종 비교: 숲 점수는 분할에 좌우 · 선형은 안정</span><span class="en" data-i>Comparing 4 splits: forest score depends on the split · linear is stable</span></h2></div>
+<p class="sub"><span class="ko" data-i>모델 4종 · 숲 R² 0.27 ~ 0.99 · 선형 0.94 이상 · 막대 = 시험 RMSE(g/cm³) · <b>점수 옆에 분할 방식 항상 기재</b></span><span class="en" data-i>4 models · forest R² 0.27 ~ 0.99 · linear 0.94 or above · bar = test RMSE (g/cm³) · <b>always state the split next to the score</b></span></p>
+<div class="bd">
+<div class="figw white fill"><svg id="w13-bars" viewBox="0 0 1588 470" class="cfig"></svg></div>
+<div class="foot a" style="--d:2"><span class="ko" data-i>나무 · 숲은 처음 보는 노화에서 RMSE <b>8배</b> · 선형 = 밀도–온도–노화 관계가 거의 직선이라 유지 · 「좋은 모델」 = 질문마다 다름</span><span class="en" data-i>Tree · forest RMSE <b>8×</b> on unseen aging · linear holds since density–temperature–aging is nearly linear · "good model" = depends on the question</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 10주차 보충A #10 · #11 (분할만 바꾼 라이브 · 외삽 배율) · 수치 = out/split_compare.json</span><span class="en" data-i>Original week-10 supplement A #10 · #11 (live demo changing only the split · extrapolation ratio) · values = out/split_compare.json</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 12 TWEAK -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>13-2 · 바꿔 보기</span><span class="en" data-i>13-2 · Try changing</span></p>
+<div class="hrow"><span class="hico" data-ico="git-compare"></span><h2 class="h"><span class="ko" data-i>무작위 ↔ 노화 빼기: 숲 시험 오차 8배</span><span class="en" data-i>Random ↔ drop aging: forest test error 8×</span></h2></div>
+<p class="sub"><span class="ko" data-i>숲 RMSE 0.0036 → 0.0299 g/cm³ · 바꾼 것 = 분할 한 줄 · 학습 대비 시험 오차 배율 = <b>누수 진단의 첫 숫자</b></span><span class="en" data-i>Forest RMSE 0.0036 → 0.0299 g/cm³ · what changed = one line of split · test/train error ratio = <b>first number of leakage diagnosis</b></span></p>
+<div class="bd">
+<div class="tweak">
+<div class="pane before a" style="--d:1"><h3><span class="tic" data-ico="minus"></span><span class="ko" data-i>전 · 행 무작위 80/20 (20회 평균)</span><span class="en" data-i>Before · random rows 80/20 (20-run mean)</span></h3>
+<div class="cb"><span class="fc rd"><span class="ko" data-i>누수 <em>100</em> %</span><span class="en" data-i>Leakage <em>100</em> %</span></span><span class="fc"><span class="ko" data-i>시험 <em>68</em>행</span><span class="en" data-i>Test <em>68</em> rows</span></span><span class="fc">R² <em>0.989</em></span></div>
+<div class="bars">
+<div class="bar"><div class="l"><span class="ko" data-i>학습 RMSE</span><span class="en" data-i>Train RMSE</span></div><div class="b mt" style="width:29px"></div><div class="v nosum">0.0029</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>시험 RMSE</span><span class="en" data-i>Test RMSE</span></div><div class="b" style="width:36px"></div><div class="v nosum">0.0036</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>MD 반복 오차</span><span class="en" data-i>MD repeat error</span></div><div class="b gr" style="width:27px"></div><div class="v nosum">0.0027</div></div>
+</div>
+<div class="n md nosum"><span class="ko" data-i>시험 ÷ 학습 = 1.2배</span><span class="en" data-i>Test ÷ train = 1.2×</span></div>
+<p class="cap"><span class="ko" data-i>시험 오차가 반복 오차까지 내려감 = 쌍둥이를 외운 점수</span><span class="en" data-i>Test error falls to the repeat error = score from memorizing twins</span></p></div>
+<div class="pane after a" style="--d:2"><h3><span class="tic" data-ico="plus"></span><span class="ko" data-i>후 · 노화 상태 1종 빼기 (3겹)</span><span class="en" data-i>After · drop 1 aging state (3 folds)</span></h3>
+<div class="cb"><span class="fc gr"><span class="ko" data-i>누수 <em>0</em> %</span><span class="en" data-i>Leakage <em>0</em> %</span></span><span class="fc"><span class="ko" data-i>시험 <em>336</em>행(3겹 합)</span><span class="en" data-i>Test <em>336</em> rows (3 folds total)</span></span><span class="fc">R² <em>0.268</em></span></div>
+<div class="bars">
+<div class="bar"><div class="l"><span class="ko" data-i>학습 RMSE</span><span class="en" data-i>Train RMSE</span></div><div class="b mt" style="width:30px"></div><div class="v nosum">0.0030</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>시험 RMSE</span><span class="en" data-i>Test RMSE</span></div><div class="b dk" style="width:299px"></div><div class="v nosum">0.0299</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>MD 반복 오차</span><span class="en" data-i>MD repeat error</span></div><div class="b gr" style="width:27px"></div><div class="v nosum">0.0027</div></div>
+</div>
+<div class="n md nosum"><span class="ko" data-i>시험 ÷ 학습 = 10배</span><span class="en" data-i>Test ÷ train = 10×</span></div>
+<p class="cap"><span class="ko" data-i>처음 보는 노화 상태에서 숲 예측이 학습 범위 평균값 쪽으로 쏠림(17장 파리티)</span><span class="en" data-i>On an unseen aging state the forest prediction is pulled toward the mean of the training range (slide 17 parity)</span></p></div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>노트북 01 셀 3 의 split 인수만 random ↔ loago 로 바꿔 ▶</span><span class="en" data-i>Change only the split argument in notebook 01 cell 3: random ↔ loago, then ▶</span></p><p><span class="ko" data-i>배율이 1 에 가까운데 R² 가 0.98 이상이면 먼저 누수를 의심</span><span class="en" data-i>If the ratio is near 1 and R² is above 0.98, suspect leakage first</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>수치 = out/split_compare.json (forest · train_rmse · rmse) · 막대 길이 = RMSE × 10⁵ px</span><span class="en" data-i>Values = out/split_compare.json (forest · train_rmse · rmse) · bar length = RMSE × 10⁵ px</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 13 MAKE P13-2 -->
+<section class="slide v3" data-src="10주차보충A#11">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>13-2 · 만들어 보기</span><span class="en" data-i>13-2 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="play"></span><h2 class="h"><span class="ko" data-i>만들어 보기 P13-2: split_compare ▶ → 분할 4종 표 · 보고 문장</span><span class="en" data-i>Try it P13-2: split_compare ▶ → 4-split table · report sentence</span></h2></div>
+<div class="bd">
+<div class="make">
+<div class="left a" style="--d:1">
+<pre class="code"><span class="c"><span class="ko" data-i># week13 폴더 · claude · 노트북 01 셀 2 와 같은 명령</span><span class="en" data-i># week13 folder · claude · same command as notebook 01 cell 2</span></span>
+<span class="c"><span class="ko" data-i># Claude Code 가 실행 (승인 · 약 1분 · CPU)</span><span class="en" data-i># Claude Code runs it (approve · approx. 1 min · CPU)</span></span>
+python3 scripts/split_compare.py
+<span class="c"><span class="ko" data-i># → out/split_compare.json · Claude Code 가 직접 읽음</span><span class="en" data-i># → out/split_compare.json · Claude Code reads it directly</span></span></pre>
+<div class="prompt" data-id="P13-2"><span class="ko" data-i>python3 scripts/split_compare.py 를 실행하고 결과 out/split_compare.json(같은 데이터 · 모델 4종 · 분할 4종)을 읽어 ① 분할 4종(random · cond · loago · t_extrap)이 각각 답하는 질문을 한 줄씩 ② 무작위 분할의 누수 비율(leak_frac)과 그것이 숲(forest) 점수를 얼마나 부풀렸는지 ③ 「처음 보는 노화 상태」 예측에 쓸 모델과 근거 ④ 보고 문장 1개(분할 방식 · RMSE 와 단위 · R² · 시험 n 포함)를 써라. 숫자는 expected_output/split_compare.json 과 대조하고, JSON 에 없는 값은 지어내지 마라.</span><span class="en" data-i>Run python3 scripts/split_compare.py, read the result out/split_compare.json (same data · 4 models · 4 splits), and write ① one line on the question each of the 4 splits (random · cond · loago · t_extrap) answers ② the leakage fraction (leak_frac) of the random split and how much it inflated the forest score ③ the model to use for predicting an "unseen aging state" and why ④ 1 report sentence (include split scheme · RMSE with unit · R² · test n). Cross-check numbers against expected_output/split_compare.json and do not invent values absent from the JSON.</span></div>
+</div>
+<div class="expect a" style="--d:2">
+<h4><span class="tic" data-ico="file-json"></span><span class="ko" data-i>기대 결과 · split_compare.json 발췌 (이번 실행)</span><span class="en" data-i>Expected result · split_compare.json excerpt (this run)</span></h4>
+<pre class="code">"random":   { "leak_frac": 1.0,
+  "forest": { "rmse": 0.00359, "r2": 0.989 } }
+"cond":     { "leak_frac": 0.0,
+  "forest": { "rmse": 0.00623, "r2": 0.954 } }
+"loago":    { "leak_frac": 0.0,
+  "forest": { "rmse": 0.02988, "r2": 0.268 },
+  "linear": { "rmse": 0.0077,  "r2": 0.951 } }
+"t_extrap": { "leak_frac": 0.0,
+  "forest": { "rmse": 0.01314, "r2": 0.93 } }</pre>
+<div class="cb"><span class="fc"><span class="ko" data-i>처음 보는 노화</span><span class="en" data-i>Unseen aging</span></span><span class="x">→</span><span class="fc or"><span class="ko" data-i>선형 <em>0.0077</em></span><span class="en" data-i>Linear <em>0.0077</em></span></span><span class="x">vs</span><span class="fc"><span class="ko" data-i>숲 <em>0.0299</em> g/cm³</span><span class="en" data-i>Forest <em>0.0299</em> g/cm³</span></span></div>
+<p class="cap"><span class="ko" data-i>보고 예: 「노화 상태 1종 빼기(3겹) · 선형 RMSE 0.0077 g/cm³ · R² 0.951 · n 336」 · 무작위 점수 0.989 = 보고 제외</span><span class="en" data-i>Report example: "Drop 1 aging state (3 folds) · linear RMSE 0.0077 g/cm³ · R² 0.951 · n 336" · random score 0.989 = excluded from report</span></p>
+</div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>보고 문장에 분할 방식 · 단위 · n 이 모두 있는가</span><span class="en" data-i>Does the report sentence include split scheme · unit · n?</span></p><p><span class="ko" data-i>숫자가 JSON 과 글자까지 같은가 · 다르면 LLM 이 지어낸 것</span><span class="en" data-i>Do the numbers match the JSON character for character? If not, the LLM made them up</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>week13/scripts/split_compare.py · notebooks/01_split_and_leak.ipynb · 지시문 원문 week13/prompts.md · P13-2</span><span class="en" data-i>week13/scripts/split_compare.py · notebooks/01_split_and_leak.ipynb · prompt source week13/prompts.md · P13-2</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 14 차시 13-3 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 13-3 · 12분 · 영상 1편</span><span class="en" data-i>Session 13-3 · 12 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="gauge"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">3</p><p class="hubt"><span class="ko" data-i>평가 지표</span><span class="en" data-i>Evaluation metrics</span></p><p class="hubs"><span class="ko" data-i>RMSE · MAE · R² · 파리티 · 보고 5칸</span><span class="en" data-i>RMSE · MAE · R² · parity · 5 report items</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>지표 3 의 성질 · 보고 5칸</span><span class="en" data-i>Properties of 3 metrics · 5 report items</span></h4></div></div><p><span class="ko" data-i>계산기로 편향 · 오차 · 시험 범위를 바꿔 R² 가 왜 흔들리는지 확인</span><span class="en" data-i>Use the calculator to vary bias · error · test range and see why R² swings</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>대리모델 보고의 형식</span><span class="en" data-i>Format of a surrogate-model report</span></h4></div></div><p><span class="ko" data-i>W14 · W15 성능표 전부 같은 5칸 사용</span><span class="en" data-i>All W14 · W15 performance tables use the same 5 items</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 15 EQ -->
+<section class="slide v3" data-src="10주차보충A#15">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>13-3 · 무엇 · 식 1</span><span class="en" data-i>13-3 · What · formula 1</span></p>
+<div class="hrow"><span class="hico" data-ico="gauge"></span><h2 class="h"><span class="ko" data-i>성능 지표 3종: 큰 오차 · 전형 오차 · 설명력</span><span class="en" data-i>3 performance metrics: large error · typical error · explanatory power</span></h2></div>
+<p class="sub"><span class="ko" data-i>RMSE · MAE = 물성 단위 오차 · R² = 단위 없는 설명력 · 비교 기준 = <b>MD 반복 오차</b></span><span class="en" data-i>RMSE · MAE = error in property units · R² = unitless explanatory power · yardstick = <b>MD repeat error</b></span></p>
+<div class="bd">
+<div class="eqfig w13-eqw">
+<div class="eqbox"><p class="eq w13-weq"><span class="ko" data-i>R² = 1 − 남은 오차 ÷ 원래 흩어짐</span><span class="en" data-i>R² = 1 − remaining error ÷ original spread</span></p></div>
+<table class="t eqt w13-say"><tbody><tr><td><span class="ko" data-i>말로 읽기</span><span class="en" data-i>In words</span></td><td><span class="ko" data-i>남은 오차 = 예측과 MD 값 차이의 제곱 합 · 원래 흩어짐 = 시험값과 평균 차이의 제곱 합 · 1 = 전부 설명 · 0 = 평균만 찍은 수준</span><span class="en" data-i>Remaining error = sum of squared prediction-vs-MD differences · original spread = sum of squared test-value-vs-mean differences · 1 = fully explained · 0 = no better than the mean</span></td></tr></tbody></table>
+<div class="fig"><svg id="w13-resid" viewBox="0 0 1588 380" class="cfig"></svg></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 10주차 보충A #15 · 그림 점 = out/split_compare.json 의 parity_random_forest 앞 8점 · 기호식 · 성질 = docs/metrics_notes.md</span><span class="en" data-i>Original week-10 supplement A #15 · figure points = first 8 points of parity_random_forest in out/split_compare.json · symbolic formula · properties = docs/metrics_notes.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 16 SIM 지표 계산기 -->
+<section class="slide v3" data-src="10주차보충A#19">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>13-3 · 확인 · 조작형</span><span class="en" data-i>13-3 · Check · interactive</span></p>
+<div class="hrow"><span class="hico" data-ico="sliders-horizontal"></span><h2 class="h"><span class="ko" data-i>지표 계산기: 편향 · 오차 배율 · 시험 범위 → RMSE · MAE · R² 즉시</span><span class="en" data-i>Metric calculator: bias · error scale · test range → RMSE · MAE · R² instantly</span></h2></div>
+<p class="sub"><span class="ko" data-i>점 = 실제 예측 68개 · 띠 = MD 반복 오차 ±0.0027 · 범위 축소 → <b>오차 그대로 · R² 만 하락</b></span><span class="en" data-i>Points = 68 actual predictions · band = MD repeat error ±0.0027 · narrower range → <b>same error · only R² drops</b></span></p>
+<div class="bd">
+<div class="sim" id="sim-metric">
+<div class="ctl">
+<label><span class="ko" data-i><b>편향 b (g/cm³) <output data-o="b">0.000</output></b></span><span class="en" data-i><b>Bias b (g/cm³) <output data-o="b">0.000</output></b></span><input type="range" min="-0.02" max="0.02" value="0" step="0.001" data-k="b"></label>
+<label><span class="ko" data-i><b>오차 배율 s <output data-o="s">1.0</output></b></span><span class="en" data-i><b>Error scale s <output data-o="s">1.0</output></b></span><input type="range" min="0" max="4" value="1" step="0.1" data-k="s"></label>
+<div class="chips"><button type="button" data-w="all"><span class="ko" data-i>시험 범위 133 ~ 433 K</span><span class="en" data-i>Test range 133 ~ 433 K</span></button><button type="button" class="alt" data-w="narrow"><span class="ko" data-i>좁게 273 ~ 333 K</span><span class="en" data-i>Narrow 273 ~ 333 K</span></button></div>
+<button type="button" class="alt" data-act="reset"><span class="ko" data-i>초기값 (b 0 · s 1 · 전체)</span><span class="en" data-i>Initial values (b 0 · s 1 · full)</span></button>
+</div>
+<div class="view"><svg viewBox="0 0 1100 460" aria-label="파리티 도표"></svg>
+<div class="kpi"><div>RMSE <b data-o="rmse">·</b></div><div>MAE <b data-o="mae">·</b></div><div>R² <b data-o="r2">·</b></div><div><span class="ko" data-i>시험 폭 <b data-o="sd">·</b></span><span class="en" data-i>Test width <b data-o="sd">·</b></span></div><div>n <b data-o="n">·</b></div></div></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 10주차 보충A #19 · R² 와 시험 폭의 관계식 = docs/metrics_notes.md · 점 = out/split_compare.json parity_random_forest · 계산식 = scripts/common.py metrics()</span><span class="en" data-i>Original week-10 supplement A #19 · R²-vs-test-width relation = docs/metrics_notes.md · points = parity_random_forest in out/split_compare.json · formula = metrics() in scripts/common.py</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 17 FIG 파리티 -->
+<section class="slide v3" data-src="10주차보충A#16,10주차보충A#17">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>13-3 · 어떻게</span><span class="en" data-i>13-3 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="crosshair"></span><h2 class="h"><span class="ko" data-i>파리티 도표 읽기: 대각선 위 = 정답 · 한쪽 치우침 = 체계적 편향</span><span class="en" data-i>Reading a parity plot: on the diagonal = correct · one-sided shift = systematic bias</span></h2></div>
+<p class="sub"><span class="ko" data-i>가로 = MD 값 · 세로 = 예측 · 장기 노화를 처음 본 숲은 점 전체가 <b>대각선 아래로</b> 치우침(학습한 노화 쪽으로 끌림)</span><span class="en" data-i>x = MD value · y = prediction · a forest seeing long-term aging for the first time has all points shifted <b>below the diagonal</b> (pulled toward the aging it learned)</span></p>
+<div class="bd">
+<div class="figw white fill"><svg id="w13-parity" viewBox="0 0 1588 470" class="cfig"></svg></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 10주차 보충A #16 · #17 (파리티 · 조건별 체계적 편차) · 점 = out/split_compare.json parity_random_forest · parity_loago2_forest</span><span class="en" data-i>Original week-10 supplement A #16 · #17 (parity · per-condition systematic deviation) · points = parity_random_forest · parity_loago2_forest in out/split_compare.json</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 18 FIG R² 범위 -->
+<section class="slide v3" data-src="10주차보충A#19">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>13-3 · 왜</span><span class="en" data-i>13-3 · Why</span></p>
+<div class="hrow"><span class="hico" data-ico="ruler"></span><h2 class="h"><span class="ko" data-i>R² 는 시험 범위에 좌우: 오차가 더 커도 R² 상승 가능</span><span class="en" data-i>R² depends on test range: R² can rise even with larger error</span></h2></div>
+<p class="sub"><span class="ko" data-i>체적탄성률 · 숲 · RMSE 0.58 → R² 0.75 · RMSE 0.66 → R² 0.88 · 이유 = 시험값의 폭 · <b>R² 단독 보고 금지</b></span><span class="en" data-i>Bulk modulus · forest · RMSE 0.58 → R² 0.75 · RMSE 0.66 → R² 0.88 · reason = width of test values · <b>never report R² alone</b></span></p>
+<div class="bd">
+<div class="row">
+<div class="figw white fill"><svg id="w13-range" viewBox="0 0 1000 440" class="cfig"></svg></div>
+<div class="col" style="width:560px;flex:none">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="split"></span><div><p class="k"><span class="ko" data-i>조건 그룹 (20회 평균)</span><span class="en" data-i>Condition group (20-run mean)</span></p><h4>RMSE 0.578 · σ<sub>y</sub> 1.16 → R² 0.748</h4></div></div></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="thermometer"></span><div><p class="k"><span class="ko" data-i>온도 외삽 (양 끝 4온도)</span><span class="en" data-i>Temperature extrapolation (4 end temperatures)</span></p><h4>RMSE 0.662 · σ<sub>y</sub> 1.92 → R² 0.882</h4></div></div></div>
+<div class="it dark a" style="--d:3"><div class="ih"><span class="icb" data-ico="dices"></span><div><p class="k"><span class="ko" data-i>바닥 = MD 반복 오차</span><span class="en" data-i>Floor = MD repeat error</span></p><h4>0.436 GPa</h4></div></div><p><span class="ko" data-i>모델 RMSE = 그 1.3 ~ 1.5배 · 개선 여지 작음</span><span class="en" data-i>Model RMSE = 1.3 ~ 1.5× that · little room to improve</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 10주차 보충A #19 (같은 RMSE · 반대 부호 R²) · 수치 = out/split_compare_bulk_modulus.json (rmse · sd_y · r2)</span><span class="en" data-i>Original week-10 supplement A #19 (same RMSE · opposite-sign R²) · values = out/split_compare_bulk_modulus.json (rmse · sd_y · r2)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 19 FIG 보고 5칸 -->
+<section class="slide v3" data-src="10주차보충A#13,10주차보충A#18">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>13-3 · 확인</span><span class="en" data-i>13-3 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="clipboard-check"></span><h2 class="h"><span class="ko" data-i>보고 5칸: 분할 방식 · RMSE(단위) · R² + 범위 · n · MD 반복 오차</span><span class="en" data-i>5 report items: split scheme · RMSE (unit) · R² + range · n · MD repeat error</span></h2></div>
+<p class="sub"><span class="ko" data-i>한 칸 누락 → 다른 사람과 숫자 비교 불가 · 시험셋 = <b>모델을 고른 뒤 한 번만</b> 예측</span><span class="en" data-i>One missing item → numbers not comparable with others · test set = <b>predict once, after the model is chosen</b></span></p>
+<div class="bd">
+<div class="grid c5">
+<div class="it a" style="--d:1"><span class="icb" data-ico="split"></span><p class="k">01</p><h4><span class="ko" data-i>분할 방식</span><span class="en" data-i>Split scheme</span></h4><p><span class="ko" data-i>무작위 · 조건 그룹 · 노화 빼기 · 온도 외삽 = 평가 질문</span><span class="en" data-i>random · condition group · drop aging · temperature extrapolation = evaluation question</span></p></div>
+<div class="it a" style="--d:2"><span class="icb" data-ico="ruler"></span><p class="k">02</p><h4><span class="ko" data-i>RMSE · 단위</span><span class="en" data-i>RMSE · unit</span></h4><p><span class="ko" data-i>g/cm³ · MJ/m³ · GPa · MAE 병기</span><span class="en" data-i>g/cm³ · MJ/m³ · GPa · MAE alongside</span></p></div>
+<div class="it a" style="--d:3"><span class="icb" data-ico="gauge"></span><p class="k">03</p><h4><span class="ko" data-i>R² + 범위</span><span class="en" data-i>R² + range</span></h4><p><span class="ko" data-i>시험값 σ<sub>y</sub> 또는 최소 ~ 최대</span><span class="en" data-i>test-value σ<sub>y</sub> or min ~ max</span></p></div>
+<div class="it a" style="--d:4"><span class="icb" data-ico="hash"></span><p class="k">04</p><h4><span class="ko" data-i>n · 겹 · 반복</span><span class="en" data-i>n · folds · repeats</span></h4><p><span class="ko" data-i>시험 점 수 · 3겹 · 20회 평균 ± SD</span><span class="en" data-i>number of test points · 3 folds · 20-run mean ± SD</span></p></div>
+<div class="it hot a" style="--d:4"><span class="icb" data-ico="dices"></span><p class="k">05</p><h4><span class="ko" data-i>MD 반복 오차</span><span class="en" data-i>MD repeat error</span></h4><p><span class="ko" data-i>밀도 0.0027 · 이보다 작은 RMSE = 의심</span><span class="en" data-i>Density 0.0027 · RMSE below this = suspect</span></p></div>
+</div>
+<div class="doc a" style="--d:4"><span class="doc-pub"><span class="ko" data-i>보고 예 · 이 저장소 실행</span><span class="en" data-i>Report example · this repository's run</span></span><span class="doc-t"><span class="ko" data-i>노화 상태 1종 빼기(3겹) · 선형 회귀 · 밀도 RMSE 0.0077 g/cm³ · MAE 0.0057 · R² 0.951 (시험 0.921 ~ 1.081) · n 336 · MD 반복 오차 0.0027</span><span class="en" data-i>Drop 1 aging state (3 folds) · linear regression · density RMSE 0.0077 g/cm³ · MAE 0.0057 · R² 0.951 (test 0.921 ~ 1.081) · n 336 · MD repeat error 0.0027</span></span><span class="doc-m"><span class="ko" data-i>대리모델 오차 ≠ 실제 물성 오차 · MD 와 실측의 차이는 별도 층위(W16)</span><span class="en" data-i>Surrogate error ≠ real property error · MD vs measurement gap is a separate layer (W16)</span></span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 10주차 보충A #13(독립 검증셋) · #18(두 층위) · 수치 = out/split_compare.json (loago · linear)</span><span class="en" data-i>Original week-10 supplement A #13 (independent validation set) · #18 (two layers) · values = out/split_compare.json (loago · linear)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 20 차시 13-4 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 13-4 · 16.5분 · 영상 1편</span><span class="en" data-i>Session 13-4 · 16.5 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="git-fork"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">4</p><p class="hubt"><span class="ko" data-i>선형 → 트리 · 과적합</span><span class="en" data-i>Linear → tree · overfitting</span></p><p class="hubs"><span class="ko" data-i>분할선 · 외삽 · 깊이 곡선 · 학습 곡선</span><span class="en" data-i>Split lines · extrapolation · depth curve · learning curve</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>나무 깊이 선택 보고서 (P13-3)</span><span class="en" data-i>Tree-depth selection report (P13-3)</span></h4></div></div><p><span class="ko" data-i>fit_linear_tree.py ▶ → 물성 3종 깊이 곡선 → 고를 깊이 · 근거 2줄</span><span class="en" data-i>fit_linear_tree.py ▶ → depth curves for 3 properties → depth to pick · 2-line rationale</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>W14 XGBoost 의 바탕</span><span class="en" data-i>Basis of W14 XGBoost</span></h4></div></div><p><span class="ko" data-i>부스팅 = 얕은 나무 수백 그루 · 깊이 · 그루 수 = 오늘 깊이 곡선으로 결정</span><span class="en" data-i>Boosting = hundreds of shallow trees · depth · tree count = decided by today's depth curve</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 21 ANIM 트리 분할선 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>13-4 · 무엇 · 동적</span><span class="en" data-i>13-4 · What · animated</span></p>
+<div class="hrow"><span class="hico" data-ico="git-fork"></span><h2 class="h"><span class="ko" data-i>결정 트리 = 특징 하나 · 문턱 하나씩 나누기</span><span class="en" data-i>Decision tree = split one feature at one threshold at a time</span></h2></div>
+<p class="sub"><span class="ko" data-i>깊이 3 = 잎 8개 · 왼쪽 평면 분할선 1개 = 오른쪽 나무 노드 1개 · 잎 = <b>그 칸 점들의 평균</b></span><span class="en" data-i>Depth 3 = 8 leaves · 1 split line on the left plane = 1 tree node on the right · leaf = <b>mean of the points in that cell</b></span></p>
+<div class="bd"><div class="emb" data-emb="tree" data-dur="12" data-steps="3" data-labels="깊이 1|깊이 2|깊이 3" data-labels-en="Depth 1|Depth 2|Depth 3"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>나무 = out/tree2d.json (특징 T_K · aging · max_depth 3 · scikit-learn DecisionTreeRegressor) · 점 = 조건 54개 평균 밀도</span><span class="en" data-i>Tree = out/tree2d.json (features T_K · aging · max_depth 3 · scikit-learn DecisionTreeRegressor) · points = mean density of 54 conditions</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 22 FIG 외삽 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>13-4 · 왜</span><span class="en" data-i>13-4 · Why</span></p>
+<div class="hrow"><span class="hico" data-ico="trending-down"></span><h2 class="h"><span class="ko" data-i>온도 외삽: 트리는 학습 범위 끝값에 멈춤 · 선형은 기울기 유지</span><span class="en" data-i>Temperature extrapolation: tree stops at the training-range end value · linear keeps its slope</span></h2></div>
+<p class="sub"><span class="ko" data-i>학습 173 ~ 393 K → 양 끝 4온도 예측 · 비노화 · 나무의 잎 = 학습에서 본 값만 출력 · <b>범위 밖 표적에 사용 금지</b></span><span class="en" data-i>Train 173 ~ 393 K → predict 4 end temperatures · unaged · tree leaves output only values seen in training · <b>do not use for targets outside the range</b></span></p>
+<div class="bd">
+<div class="row">
+<div class="figw white fill"><svg id="w13-extrap" viewBox="0 0 1060 450" class="cfig"></svg></div>
+<div class="col" style="width:520px;flex:none">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="trending-down"></span><div><p class="k"><span class="ko" data-i>선형</span><span class="en" data-i>Linear</span></p><h4><span class="ko" data-i>기울기 −0.000289 g/cm³/K</span><span class="en" data-i>slope −0.000289 g/cm³/K</span></h4></div></div><p><span class="ko" data-i>범위 밖에서도 같은 기울기 · 곡률은 못 잡음</span><span class="en" data-i>Same slope outside the range · cannot capture curvature</span></p></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="git-fork"></span><div><p class="k"><span class="ko" data-i>깊이 4 나무</span><span class="en" data-i>Depth-4 tree</span></p><h4><span class="ko" data-i>133 K · 153 K 예측 = 1.017 (같은 잎)</span><span class="en" data-i>133 K · 153 K prediction = 1.017 (same leaf)</span></h4></div></div><p><span class="ko" data-i>학습 범위 끝 잎의 평균 그대로 출력</span><span class="en" data-i>Outputs the mean of the end leaf of the training range as is</span></p></div>
+<div class="it dark a" style="--d:3"><div class="ih"><span class="icb" data-ico="target"></span><div><p class="k"><span class="ko" data-i>역설계와의 연결</span><span class="en" data-i>Link to inverse design</span></p><h4><span class="ko" data-i>표적이 범위 밖이면 나무 · 숲 금지</span><span class="en" data-i>If target is outside the range, no tree · no forest</span></h4></div></div><p><span class="ko" data-i>W15 의 적용 영역 · 불확실성으로 판정</span><span class="en" data-i>Judge by W15 applicability domain · uncertainty</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>수치 = out/deck_data.json extrap (export_deck_data.py · 학습 t_extrap 분할) · 원본 10주차 보충A #8 · #9 (온그리드 · 오프그리드)</span><span class="en" data-i>Values = out/deck_data.json extrap (export_deck_data.py · trained on t_extrap split) · original week-10 supplement A #8 · #9 (on-grid · off-grid)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 23 ANIM 과적합 곡선 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>13-4 · 어떻게 · 동적</span><span class="en" data-i>13-4 · How · animated</span></p>
+<div class="hrow"><span class="hico" data-ico="activity"></span><h2 class="h"><span class="ko" data-i>과적합 = 기출만 외운 학생 · 깊이 2 이후 검증 오차 상승</span><span class="en" data-i>Overfitting = a student who memorized past exams · validation error rises after depth 2</span></h2></div>
+<p class="sub"><span class="ko" data-i>깊이 ↑ → 학습 오차 ↓ · 체적탄성률 · 조건 그룹 5겹 · 학습 오차가 MD 반복 오차(점선) 아래 = <b>잡음을 외우는 중</b></span><span class="en" data-i>Depth ↑ → train error ↓ · bulk modulus · condition-group 5 folds · train error below MD repeat error (dashed) = <b>memorizing noise</b></span></p>
+<div class="bd"><div class="emb" data-emb="over" data-dur="12" data-steps="3" data-labels="① 학습 오차|② 검증 오차|③ 최소 · 간격" data-labels-en="① Train error|② Validation error|③ Min · gap"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>수치 = out/tree_depth.json (GroupKFold 5 · cell@T_K · 깊이 1 ~ 12 · 물성 3종) · 원본 10주차 보충A #18 (MD 자체 오차 기준)</span><span class="en" data-i>Values = out/tree_depth.json (GroupKFold 5 · cell@T_K · depth 1 ~ 12 · 3 properties) · original week-10 supplement A #18 (MD self-error yardstick)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 24 FIG 학습 곡선 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>13-4 · 확인</span><span class="en" data-i>13-4 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="line-chart"></span><h2 class="h"><span class="ko" data-i>학습 곡선: 표본 증가 → 숲 오차 감소 · 선형은 일찍 평탄</span><span class="en" data-i>Learning curve: more samples → forest error falls · linear flattens early</span></h2></div>
+<p class="sub"><span class="ko" data-i>숲 검증 RMSE 0.032 → 0.006 · 가로 = 학습 표본 수 · 간격이 크면 <b>데이터를 더</b> · 둘 다 평탄하면 <b>모델 교체</b> · W15 능동학습의 기준</span><span class="en" data-i>Forest validation RMSE 0.032 → 0.006 · x = training samples · large gap → <b>more data</b> · both flat → <b>change model</b> · basis of W15 active learning</span></p>
+<div class="bd">
+<div class="row">
+<div class="figw white fill"><svg id="w13-lc" viewBox="0 0 1060 450" class="cfig"></svg></div>
+<div class="col" style="width:520px;flex:none">
+<div class="it hot a" style="--d:1"><div class="ih"><span class="icb" data-ico="git-fork"></span><div><p class="k"><span class="ko" data-i>숲</span><span class="en" data-i>Forest</span></p><h4><span class="ko" data-i>27 → 268 표본: 0.0319 → 0.0062</span><span class="en" data-i>27 → 268 samples: 0.0319 → 0.0062</span></h4></div></div><p><span class="ko" data-i>학습 0.003 과 간격 축소 중 = 데이터 추가 효과</span><span class="en" data-i>Gap to train 0.003 still closing = adding data helps</span></p></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="trending-down"></span><div><p class="k"><span class="ko" data-i>선형</span><span class="en" data-i>Linear</span></p><h4><span class="ko" data-i>55 표본부터 0.0064 ~ 0.0077</span><span class="en" data-i>From 55 samples 0.0064 ~ 0.0077</span></h4></div></div><p><span class="ko" data-i>더 모아도 그대로 = 직선 모델의 한계</span><span class="en" data-i>Flat even with more data = limit of a straight-line model</span></p></div>
+<div class="it dark a" style="--d:3"><div class="ih"><span class="icb" data-ico="dices"></span><div><p class="k"><span class="ko" data-i>바닥</span><span class="en" data-i>Floor</span></p><h4><span class="ko" data-i>MD 반복 오차 0.0027</span><span class="en" data-i>MD repeat error 0.0027</span></h4></div></div><p><span class="ko" data-i>두 곡선 모두 이 아래로 하강 불가</span><span class="en" data-i>Neither curve can fall below this</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>수치 = out/learning_curve.json (GroupKFold 5 · 학습 조건 10 · 20 · 30 · 50 · 70 · 100 % · seed 42)</span><span class="en" data-i>Values = out/learning_curve.json (GroupKFold 5 · training conditions 10 · 20 · 30 · 50 · 70 · 100 % · seed 42)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 25 MAKE P13-3 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>13-4 · 만들어 보기</span><span class="en" data-i>13-4 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="play"></span><h2 class="h"><span class="ko" data-i>만들어 보기 P13-3: fit_linear_tree ▶ → 깊이 선택 · 근거 2줄</span><span class="en" data-i>Try it P13-3: fit_linear_tree ▶ → pick depth · 2-line rationale</span></h2></div>
+<div class="bd">
+<div class="make">
+<div class="left a" style="--d:1">
+<pre class="code"><span class="c"><span class="ko" data-i># week13 폴더 · claude · 노트북 02 셀 1 과 같은 명령</span><span class="en" data-i># week13 folder · claude · same command as notebook 02 cell 1</span></span>
+<span class="c"><span class="ko" data-i># Claude Code 가 실행 (승인 · 약 30초)</span><span class="en" data-i># Claude Code runs it (approve · approx. 30 s)</span></span>
+python3 scripts/fit_linear_tree.py
+<span class="c"><span class="ko" data-i># → out/tree_depth.json · Claude Code 가 직접 읽음</span><span class="en" data-i># → out/tree_depth.json · Claude Code reads it directly</span></span></pre>
+<div class="prompt" data-id="P13-3"><span class="ko" data-i>python3 scripts/fit_linear_tree.py 를 실행하고 결과 out/tree_depth.json(나무 깊이 1 ~ 12 · 조건 그룹 5겹의 학습 · 검증 RMSE · 물성 3종 · 무작위 KFold 비교)을 읽어 ① 물성별 검증 RMSE 가 최소인 깊이 ② 최소 이후 검증 오차가 오르는 물성과 평탄한 물성의 차이를 반복 간 표준편차(md_seed_sd_median)와 비교해 설명 ③ 내가 고를 깊이와 근거 2줄 ④ 무작위 KFold(random_kfold)의 검증 오차가 조건 그룹보다 낮은 이유를 표로 정리해라. 다른 깊이를 시험할 때는 scripts/ 대신 out/ 아래 새 스크립트로 돌려 강좌 결과와 비교해라. JSON 에 없는 값은 지어내지 마라.</span><span class="en" data-i>Run python3 scripts/fit_linear_tree.py, read the result out/tree_depth.json (tree depth 1 ~ 12 · train/validation RMSE with condition-group 5 folds · 3 properties · random KFold comparison), and tabulate ① the depth with minimum validation RMSE per property ② for properties whose validation error rises after the minimum vs. those that stay flat, explain the difference by comparing with the repeat standard deviation (md_seed_sd_median) ③ the depth I would pick, with a 2-line rationale ④ why the validation error of random KFold (random_kfold) is lower than that of condition groups. To test other depths, use a new script under out/ instead of scripts/ and compare with the course results. Do not invent values absent from the JSON.</span></div>
+</div>
+<div class="expect a" style="--d:2">
+<h4><span class="tic" data-ico="table"></span><span class="ko" data-i>기대 결과 · 물성 3종 깊이 표 (이번 실행)</span><span class="en" data-i>Expected result · depth table for 3 properties (this run)</span></h4>
+<table class="t"><thead><tr><th><span class="ko" data-i>물성</span><span class="en" data-i>Property</span></th><th><span class="ko" data-i>최소 깊이</span><span class="en" data-i>Min depth</span></th><th><span class="ko" data-i>검증 최소 → 깊이 12</span><span class="en" data-i>Validation min → depth 12</span></th><th><span class="ko" data-i>학습 (깊이 12)</span><span class="en" data-i>Train (depth 12)</span></th><th><span class="ko" data-i>반복 SD</span><span class="en" data-i>Repeat SD</span></th></tr></thead><tbody>
+<tr><td><span class="ko" data-i>밀도</span><span class="en" data-i>Density</span></td><td class="mono">8</td><td class="mono">0.0066 → 0.0066</td><td class="mono">0.0030</td><td class="mono">0.0027</td></tr>
+<tr><td>CED</td><td class="mono">6</td><td class="mono">6.25 → 6.39</td><td class="mono">3.69</td><td class="mono">3.80</td></tr>
+<tr class="hl"><td><span class="ko" data-i>체적탄성률</span><span class="en" data-i>Bulk modulus</span></td><td class="mono">2</td><td class="mono">0.611 → 0.625</td><td class="mono">0.483</td><td class="mono">0.436</td></tr>
+</tbody></table>
+<div class="cb"><span class="fc"><span class="ko" data-i>무작위 KFold · K 깊이 3</span><span class="en" data-i>Random KFold · K depth 3</span></span><span class="x">→</span><span class="fc rd"><span class="ko" data-i>검증 <em>0.559</em></span><span class="en" data-i>Validation <em>0.559</em></span></span><span class="x">vs</span><span class="fc"><span class="ko" data-i>조건 그룹 <em>0.617</em> GPa</span><span class="en" data-i>Condition group <em>0.617</em> GPa</span></span></div>
+<p class="cap"><span class="ko" data-i>④ 기준 = 무작위 KFold: 같은 조건 반복이 학습 · 검증에 함께 존재(누수) → 오차 과소</span><span class="en" data-i>Basis for ④ = random KFold: same-condition repeats exist in both train and validation (leakage) → error underestimated</span></p>
+</div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>고른 깊이의 근거에 검증 오차와 반복 SD 가 함께 있는가</span><span class="en" data-i>Does the rationale for the chosen depth include both validation error and repeat SD?</span></p><p><span class="ko" data-i>깊이를 무작위 KFold 곡선으로 고르지 않았는가</span><span class="en" data-i>Was the depth not chosen from the random KFold curve?</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>week13/scripts/fit_linear_tree.py · notebooks/02_tree_depth.ipynb · 지시문 원문 week13/prompts.md · P13-3</span><span class="en" data-i>week13/scripts/fit_linear_tree.py · notebooks/02_tree_depth.ipynb · prompt source week13/prompts.md · P13-3</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 26 FIG 정리 비유 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>13-4 · 정리 · 비유</span><span class="en" data-i>13-4 · Summary · analogy</span></p>
+<div class="hrow"><span class="hico" data-ico="graduation-cap"></span><h2 class="h"><span class="ko" data-i>시험 공부 비유로 다시 보기: 누수 · 과적합</span><span class="en" data-i>Exam-study analogy revisited: leakage · overfitting</span></h2></div>
+<p class="sub"><span class="ko" data-i>누수 · 과적합 공통 = <b>점수가 실력보다 높게 나오는 상황</b> · 처방 = 처음 보는 문제로만 채점</span><span class="en" data-i>Common to leakage · overfitting = <b>score higher than true ability</b> · remedy = grade only on unseen problems</span></p>
+<div class="bd">
+<div class="row w13-ana">
+<div class="it white a fill" style="--d:1"><div class="ih"><span class="icb" data-ico="glasses"></span><div><p class="k"><span class="ko" data-i>누수 · leakage · 13-2</span><span class="en" data-i>Leakage · leakage · 13-2</span></p><h4><span class="ko" data-i>시험 문제를 미리 본 학생</span><span class="en" data-i>A student who saw the exam questions beforehand</span></h4></div></div>
+<div class="lines">
+<div class="ln"><span class="nn"><span class="ko" data-i>증상</span><span class="en" data-i>Symptom</span></span><div><p><span class="ko" data-i>모의고사 만점 → 처음 보는 시험에서 급락</span><span class="en" data-i>Perfect mock exam score → sharp drop on an unseen exam</span></p></div></div>
+<div class="ln"><span class="nn"><span class="ko" data-i>이번 주</span><span class="en" data-i>This week</span></span><div><p><span class="ko" data-i>숲 R² 0.989 (행 무작위) → 0.268 (노화 상태 빼기)</span><span class="en" data-i>Forest R² 0.989 (random rows) → 0.268 (drop an aging state)</span></p></div></div>
+<div class="ln"><span class="nn"><span class="ko" data-i>처방</span><span class="en" data-i>Remedy</span></span><div><p><span class="ko" data-i>같은 조건 반복 = 한 바구니 · 그룹 단위 분할</span><span class="en" data-i>Same-condition repeats = one bucket · split by group</span></p></div></div>
+</div></div>
+<div class="it white a fill" style="--d:2"><div class="ih"><span class="icb" data-ico="book-open"></span><div><p class="k"><span class="ko" data-i>과적합 · overfitting · 13-4</span><span class="en" data-i>Overfitting · overfitting · 13-4</span></p><h4><span class="ko" data-i>기출만 외운 학생</span><span class="en" data-i>A student who memorized past exams</span></h4></div></div>
+<div class="lines">
+<div class="ln"><span class="nn"><span class="ko" data-i>증상</span><span class="en" data-i>Symptom</span></span><div><p><span class="ko" data-i>기출 점수 계속 상승 · 새 문제 점수 하락</span><span class="en" data-i>Past-exam score keeps rising · new-problem score drops</span></p></div></div>
+<div class="ln"><span class="nn"><span class="ko" data-i>이번 주</span><span class="en" data-i>This week</span></span><div><p><span class="ko" data-i>나무 깊이 2 이후 검증 오차 상승 · 학습 오차만 하락</span><span class="en" data-i>Validation error rises after tree depth 2 · only train error falls</span></p></div></div>
+<div class="ln"><span class="nn"><span class="ko" data-i>처방</span><span class="en" data-i>Remedy</span></span><div><p><span class="ko" data-i>검증 오차 최소 깊이 선택 · 반복 오차 아래 = 잡음 암기</span><span class="en" data-i>Pick depth of minimum validation error · below repeat error = memorizing noise</span></p></div></div>
+</div></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>수치 = 이번 주 10장 · 23장 실행값(expected_output/split_compare.json · tree_depth.json)</span><span class="en" data-i>Values = this week's slide 10 · 23 run values (expected_output/split_compare.json · tree_depth.json)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 27 다음 주차로 -->
+
+<section class="slide v3 accent">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>다음 주차로 · W14 표현자와 대리모델</span><span class="en" data-i>To next week · W14 descriptors and surrogate model</span></p>
+<div class="hrow"><span class="hico" data-ico="arrow-right"></span><h2 class="h"><span class="ko" data-i>오늘의 산출물 3: 정의표 · 분할 성능표 · 깊이 보고서 → W14 대리모델</span><span class="en" data-i>Today's 3 outputs: definition table · split performance table · depth report → W14 surrogate model</span></h2></div>
+<p class="sub"><span class="ko" data-i>분할 방식 = 평가 질문 · 누수 = 쌍둥이 · 지표는 단위 · 범위 · n 과 함께 · 나무는 외삽 불가 · 학습 오차가 반복 오차 아래면 과적합</span><span class="en" data-i>Split scheme = evaluation question · leakage = twins · metrics with unit · range · n · trees cannot extrapolate · train error below repeat error means overfitting</span></p>
+<div class="bd">
+<div class="lines">
+<div class="ln a" style="--d:1"><span class="nn">01</span><div><h4><span class="ko" data-i>산출물</span><span class="en" data-i>Outputs</span></h4><p><span class="file">out/P13-1_result.md</span> · <span class="file">split_compare.json</span> · <span class="file">tree_depth.json</span> <span class="ko" data-i>· P13-2 · P13-3 결과</span><span class="en" data-i>· P13-2 · P13-3 results</span></p></div></div>
+<div class="ln a" style="--d:2"><span class="nn">02</span><div><h4><span class="ko" data-i>다음 주 W14</span><span class="en" data-i>Next week W14</span></h4><p><span class="ko" data-i>같은 표 + 분자 표현자 열 → XGBoost · SHAP · 분할은 오늘의 조건 그룹 · 노화 빼기 그대로 · 준비물 없음</span><span class="en" data-i>Same table + molecular descriptor columns → XGBoost · SHAP · splits stay today's condition group · drop aging · no prerequisites</span></p></div></div>
+<div class="ln a" style="--d:3"><span class="nn">03</span><div><h4><span class="ko" data-i>못 끝냈다면</span><span class="en" data-i>If unfinished</span></h4><p><span class="file">week13/expected_output/</span> <span class="ko" data-i>의 JSON 으로 W14 진행 가능</span><span class="en" data-i>JSON lets you continue W14</span></p></div></div>
+<div class="ln a" style="--d:4"><span class="nn">04</span><div><h4><span class="ko" data-i>퀴즈 · 용어 · 보충</span><span class="en" data-i>Quiz · terms · supplements</span></h4><p><span class="file">week13/quiz.md</span> <span class="ko" data-i>5문항 ·</span><span class="en" data-i>5 questions ·</span> <span class="file">GLOSSARY.md</span> <span class="ko" data-i>용어 5 ·</span><span class="en" data-i>5 terms ·</span> <span class="file">docs/metrics_notes.md</span></p></div></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>도구 주차 · 다음 주부터 M4 대리모델 (W14 ~ W15) · M5 파이프라인 (W16) · W17 MD 워크플로우 · W18 폐루프 통합</span><span class="en" data-i>Tool week · from next week M4 surrogate model (W14 ~ W15) · M5 pipeline (W16) · W17 MD workflow · W18 closed-loop integration</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<script src="../../common/icons.js"></script>
+<script src="../../common/deck.js"></script>
+<script>
+var W13 = /*__W13_DATA__*/{"n_rows":336,"cells":["AAA1-long_aging","AAA1-non_aging","AAA1-short_aging"],"T_levels":[133,153,173,193,213,233,253,273,293,313,323,333,343,353,373,393,413,433],"cond":[["AAA1-long_aging",133,6,1.07809,0.00263],["AAA1-long_aging",153,6,1.07511,0.00326],["AAA1-long_aging",173,6,1.07086,0.00213],["AAA1-long_aging",193,6,1.06808,0.00206],["AAA1-long_aging",213,6,1.06424,0.00261],["AAA1-long_aging",233,6,1.05919,0.00212],["AAA1-long_aging",253,6,1.05427,0.00375],["AAA1-long_aging",273,6,1.04924,0.0022],["AAA1-long_aging",293,9,1.04206,0.00586],["AAA1-long_aging",313,6,1.04047,0.00338],["AAA1-long_aging",323,6,1.03861,0.00323],["AAA1-long_aging",333,6,1.03327,0.00532],["AAA1-long_aging",343,6,1.03069,0.00224],["AAA1-long_aging",353,6,1.02751,0.00338],["AAA1-long_aging",373,6,1.0209,0.00381],["AAA1-long_aging",393,6,1.01391,0.0026],["AAA1-long_aging",413,6,1.00425,0.00256],["AAA1-long_aging",433,6,0.99619,0.00441],["AAA1-non_aging",133,6,1.0252,0.00225],["AAA1-non_aging",153,6,1.02269,0.00183],["AAA1-non_aging",173,6,1.01919,0.00151],["AAA1-non_aging",193,6,1.01509,0.00275],["AAA1-non_aging",213,6,1.01021,0.00182],["AAA1-non_aging",233,6,1.00558,0.00281],["AAA1-non_aging",253,6,1.00066,0.00268],["AAA1-non_aging",273,6,0.99573,0.00495],["AAA1-non_aging",293,12,0.98571,0.00535],["AAA1-non_aging",313,6,0.98531,0.00272],["AAA1-non_aging",323,6,0.97956,0.00352],["AAA1-non_aging",333,6,0.97772,0.00255],["AAA1-non_aging",343,6,0.97458,0.00443],["AAA1-non_aging",353,6,0.96897,0.00317],["AAA1-non_aging",373,6,0.95925,0.00312],["AAA1-non_aging",393,6,0.94901,0.00184],["AAA1-non_aging",413,6,0.93718,0.00272],["AAA1-non_aging",433,6,0.92257,0.00114],["AAA1-short_aging",133,6,1.05299,0.00122],["AAA1-short_aging",153,6,1.04975,0.00112],["AAA1-short_aging",173,6,1.04721,0.00148],["AAA1-short_aging",193,6,1.04243,0.00129],["AAA1-short_aging",213,6,1.03912,0.00133],["AAA1-short_aging",233,6,1.03405,0.00216],["AAA1-short_aging",253,6,1.02877,0.00401],["AAA1-short_aging",273,6,1.02482,0.00412],["AAA1-short_aging",293,9,1.01641,0.00515],["AAA1-short_aging",313,6,1.01415,0.00305],["AAA1-short_aging",323,6,1.01023,0.00225],["AAA1-short_aging",333,6,1.00825,0.00257],["AAA1-short_aging",343,6,1.00586,0.00416],["AAA1-short_aging",353,6,1.00183,0.00355],["AAA1-short_aging",373,6,0.99512,0.00289],["AAA1-short_aging",393,6,0.98498,0.00343],["AAA1-short_aging",413,6,0.97434,0.00265],["AAA1-short_aging",433,6,0.96258,0.00155]],"split_density":{"target":"density","cells":"core","n_rows":336,"n_cells":3,"n_cond":54,"y_range":[0.92141,1.08133],"y_sd":0.03492,"md_seed_sd":{"median":0.0027,"mean":0.0029},"repeat":20,"splits":{"random":{"folds":20,"repeated":true,"n_test":68,"leak_frac":1.0,"models":{"linear":{"rmse":0.00645,"mae":0.00496,"r2":0.965,"rmse_sd":0.00065,"r2_sd":0.006,"sd_y":0.03444,"n":68,"train_rmse":0.00621,"fold_r2":null},"tree_d4":{"rmse":0.00707,"mae":0.00564,"r2":0.957,"rmse_sd":0.00067,"r2_sd":0.01,"sd_y":0.03444,"n":68,"train_rmse":0.00637,"fold_r2":null},"tree_full":{"rmse":0.0036,"mae":0.00284,"r2":0.989,"rmse_sd":0.00028,"r2_sd":0.002,"sd_y":0.03444,"n":68,"train_rmse":0.0029,"fold_r2":null},"forest":{"rmse":0.00359,"mae":0.00283,"r2":0.989,"rmse_sd":0.00027,"r2_sd":0.002,"sd_y":0.03444,"n":68,"train_rmse":0.0029,"fold_r2":null}}},"cond":{"folds":20,"repeated":true,"n_test":69,"leak_frac":0.0,"models":{"linear":{"rmse":0.00603,"mae":0.00484,"r2":0.958,"rmse_sd":0.0015,"r2_sd":0.019,"sd_y":0.03059,"n":69,"train_rmse":0.00631,"fold_r2":null},"tree_d4":{"rmse":0.01089,"mae":0.00901,"r2":0.856,"rmse_sd":0.00283,"r2_sd":0.091,"sd_y":0.03059,"n":69,"train_rmse":0.00648,"fold_r2":null},"tree_full":{"rmse":0.00712,"mae":0.00587,"r2":0.94,"rmse_sd":0.00195,"r2_sd":0.034,"sd_y":0.03059,"n":69,"train_rmse":0.00297,"fold_r2":null},"forest":{"rmse":0.00623,"mae":0.00502,"r2":0.954,"rmse_sd":0.00219,"r2_sd":0.034,"sd_y":0.03059,"n":69,"train_rmse":0.00297,"fold_r2":null}}},"loago":{"folds":3,"repeated":false,"n_test":114,"leak_frac":0.0,"models":{"linear":{"rmse":0.0077,"mae":0.00568,"r2":0.951,"n":336,"sd_y":0.03492,"train_rmse":0.00605,"fold_r2":[0.893,0.942,0.902]},"tree_d4":{"rmse":0.03002,"mae":0.02944,"r2":0.261,"n":336,"sd_y":0.03492,"train_rmse":0.00437,"fold_r2":[-0.234,-0.553,-0.293]},"tree_full":{"rmse":0.02988,"mae":0.02947,"r2":0.268,"n":336,"sd_y":0.03492,"train_rmse":0.00298,"fold_r2":[-0.223,-0.541,-0.275]},"forest":{"rmse":0.02988,"mae":0.02947,"r2":0.268,"n":336,"sd_y":0.03492,"train_rmse":0.00298,"fold_r2":[-0.224,-0.54,-0.275]}}},"t_extrap":{"folds":1,"repeated":false,"n_test":72,"leak_frac":0.0,"models":{"linear":{"rmse":0.01196,"mae":0.01001,"r2":0.942,"n":72,"sd_y":0.04951,"train_rmse":0.00429,"fold_r2":[0.942]},"tree_d4":{"rmse":0.01629,"mae":0.01424,"r2":0.892,"n":72,"sd_y":0.04951,"train_rmse":0.00496,"fold_r2":[0.892]},"tree_full":{"rmse":0.01317,"mae":0.01067,"r2":0.929,"n":72,"sd_y":0.04951,"train_rmse":0.00315,"fold_r2":[0.929]},"forest":{"rmse":0.01314,"mae":0.01063,"r2":0.93,"n":72,"sd_y":0.04951,"train_rmse":0.00315,"fold_r2":[0.93]}}}},"parity_random_forest":{"y":[1.03525,0.99902,1.0049,1.00008,1.01549,1.05041,1.05122,1.01502,1.00172,1.01153,0.96509,1.06627,1.07525,1.0324,1.01557,0.97666,1.00215,0.98772,1.00482,1.03315,1.03285,1.01863,1.03114,0.97318,1.03908,1.0781,1.00861,1.02632,0.96851,1.02702,1.04739,1.02798,0.96341,1.07598,1.00997,0.92207,0.99866,1.02539,1.02545,1.00295,1.03583,1.06072,0.97988,0.92434,1.02216,1.02979,1.00723,1.02691,0.98473,1.04892,1.0263,0.99588,0.98202,0.97308,1.02344,1.0309,1.07125,0.97521,0.97512,1.08,1.03913,1.02741,0.97085,1.0086,1.01089,0.9696,1.03214,1.04244],"p":[1.03318,0.9947,1.00842,0.9947,1.01547,1.04961,1.05334,1.01392,1.00665,1.01036,0.97016,1.06391,1.07397,1.03154,1.01366,0.97501,0.99636,0.99636,1.00429,1.03318,1.03437,1.01437,1.03154,0.97634,1.04075,1.07841,1.01036,1.0313,0.97016,1.0245,1.04961,1.0313,0.96247,1.07841,1.00484,0.92264,1.00117,1.0313,1.01994,1.00161,1.03886,1.05883,0.97969,0.92264,1.02287,1.02387,1.00665,1.03154,0.97969,1.04961,1.0245,0.99496,0.98611,0.97871,1.01547,1.03154,1.07095,0.97969,0.97634,1.07397,1.04244,1.02632,0.97501,1.00842,1.00842,0.97634,1.02632,1.04251],"T":[333,433,333,433,293,273,133,313,343,213,353,213,153,343,393,343,273,273,413,333,233,193,343,413,313,133,213,253,353,133,273,253,433,133,233,433,253,253,373,353,323,233,323,433,153,273,343,343,323,273,133,373,293,333,293,343,173,323,413,153,293,353,343,333,333,413,353,193],"aging":[2,2,1,2,1,2,1,1,1,0,0,2,2,2,2,0,0,0,2,2,1,0,2,1,2,2,0,1,0,0,2,1,1,2,0,0,0,1,2,1,2,2,0,0,0,1,1,2,0,2,0,1,0,0,1,2,2,0,1,2,2,2,0,1,1,1,2,1]},"parity_loago2_forest":{"y":[1.08126,1.08133,1.0755,1.07598,1.07636,1.0781,1.07783,1.08,1.07214,1.07525,1.07183,1.07361,1.0715,1.0728,1.06727,1.06957,1.07125,1.07279,1.06742,1.07102,1.06536,1.06722,1.06746,1.06999,1.06625,1.06627,1.06014,1.06331,1.06274,1.0667,1.06034,1.06098,1.05533,1.06072,1.05944,1.05834,1.05368,1.05874,1.04896,1.05193,1.05396,1.05832,1.05041,1.05296,1.04696,1.04892,1.04739,1.0488,1.03723,1.04305,1.04811,1.03378,1.04091,1.05106,1.03743,1.03913,1.04781,1.03908,1.04312,1.03698,1.04478,1.03669,1.04219,1.03583,1.04065,1.03705,1.04217,1.0345,1.04146,1.03113,1.03792,1.02396,1.03525,1.03315,1.03823,1.03114,1.0309,1.02691,1.0324,1.02956,1.03322,1.02312,1.02741,1.02964,1.03214,1.02421,1.02852,1.0201,1.02357,1.02004,1.02545,1.01438,1.02187,1.00907,1.01557,1.01293,1.01593,1.01475,1.01524,1.00015,1.00215,1.00482,1.00544,1.00637,1.00655,0.99235,1.00132,0.9915,1.00008,0.99287,0.99902],"p":[1.05297,1.05297,1.05297,1.05297,1.05297,1.05297,1.04978,1.04978,1.04978,1.04978,1.04978,1.04978,1.04719,1.04719,1.04719,1.04719,1.04719,1.04719,1.04239,1.04239,1.04239,1.04239,1.04239,1.04239,1.03918,1.03918,1.03918,1.03918,1.03918,1.03918,1.03406,1.03406,1.03406,1.03406,1.03406,1.03406,1.02864,1.02864,1.02864,1.02864,1.02864,1.02864,1.02487,1.02487,1.02487,1.02487,1.02487,1.02487,1.01633,1.01633,1.01633,1.01633,1.01633,1.01633,1.01633,1.01633,1.01633,1.01413,1.01413,1.01413,1.01413,1.01413,1.01413,1.01029,1.01029,1.01029,1.01029,1.01029,1.01029,1.00835,1.00835,1.00835,1.00835,1.00835,1.00835,1.00586,1.00586,1.00586,1.00586,1.00586,1.00586,1.00185,1.00185,1.00185,1.00185,1.00185,1.00185,0.99519,0.99519,0.99519,0.99519,0.99519,0.99519,0.98508,0.98508,0.98508,0.98508,0.98508,0.98508,0.97428,0.97428,0.97428,0.97428,0.97428,0.97428,0.96256,0.96256,0.96256,0.96256,0.96256,0.96256],"T":[133,133,133,133,133,133,153,153,153,153,153,153,173,173,173,173,173,173,193,193,193,193,193,193,213,213,213,213,213,213,233,233,233,233,233,233,253,253,253,253,253,253,273,273,273,273,273,273,293,293,293,293,293,293,293,293,293,313,313,313,313,313,313,323,323,323,323,323,323,333,333,333,333,333,333,343,343,343,343,343,343,353,353,353,353,353,353,373,373,373,373,373,373,393,393,393,393,393,393,413,413,413,413,413,413,433,433,433,433,433,433]}},"split_bulk":{"target":"bulk_modulus","cells":"core","n_rows":336,"n_cells":3,"n_cond":54,"y_range":[1.3097,7.8854],"y_sd":1.29978,"md_seed_sd":{"median":0.43619,"mean":0.48302},"repeat":20,"splits":{"random":{"folds":20,"repeated":true,"n_test":68,"leak_frac":1.0,"models":{"linear":{"rmse":0.55681,"mae":0.4413,"r2":0.806,"rmse_sd":0.04852,"r2_sd":0.039,"sd_y":1.27482,"n":68,"train_rmse":0.54165,"fold_r2":null},"tree_d4":{"rmse":0.58502,"mae":0.45952,"r2":0.786,"rmse_sd":0.05481,"r2_sd":0.043,"sd_y":1.27482,"n":68,"train_rmse":0.50673,"fold_r2":null},"tree_full":{"rmse":0.59663,"mae":0.46349,"r2":0.778,"rmse_sd":0.05897,"r2_sd":0.044,"sd_y":1.27482,"n":68,"train_rmse":0.46868,"fold_r2":null},"forest":{"rmse":0.5932,"mae":0.46075,"r2":0.78,"rmse_sd":0.05893,"r2_sd":0.043,"sd_y":1.27482,"n":68,"train_rmse":0.46907,"fold_r2":null}}},"cond":{"folds":20,"repeated":true,"n_test":69,"leak_frac":0.0,"models":{"linear":{"rmse":0.52054,"mae":0.42228,"r2":0.795,"rmse_sd":0.05131,"r2_sd":0.04,"sd_y":1.16433,"n":69,"train_rmse":0.55076,"fold_r2":null},"tree_d4":{"rmse":0.59859,"mae":0.47371,"r2":0.725,"rmse_sd":0.06919,"r2_sd":0.084,"sd_y":1.16433,"n":69,"train_rmse":0.51351,"fold_r2":null},"tree_full":{"rmse":0.61574,"mae":0.48757,"r2":0.708,"rmse_sd":0.06341,"r2_sd":0.085,"sd_y":1.16433,"n":69,"train_rmse":0.48607,"fold_r2":null},"forest":{"rmse":0.57775,"mae":0.45804,"r2":0.748,"rmse_sd":0.06307,"r2_sd":0.05,"sd_y":1.16433,"n":69,"train_rmse":0.48636,"fold_r2":null}}},"loago":{"folds":3,"repeated":false,"n_test":114,"leak_frac":0.0,"models":{"linear":{"rmse":0.55668,"mae":0.44398,"r2":0.817,"n":336,"sd_y":1.29978,"train_rmse":0.5418,"fold_r2":[0.819,0.847,0.779]},"tree_d4":{"rmse":0.57332,"mae":0.44933,"r2":0.805,"n":336,"sd_y":1.29978,"train_rmse":0.5047,"fold_r2":[0.819,0.819,0.769]},"tree_full":{"rmse":0.57845,"mae":0.45314,"r2":0.802,"n":336,"sd_y":1.29978,"train_rmse":0.48232,"fold_r2":[0.821,0.814,0.76]},"forest":{"rmse":0.57693,"mae":0.45257,"r2":0.803,"n":336,"sd_y":1.29978,"train_rmse":0.48255,"fold_r2":[0.821,0.816,0.761]}}},"t_extrap":{"folds":1,"repeated":false,"n_test":72,"leak_frac":0.0,"models":{"linear":{"rmse":0.58591,"mae":0.47739,"r2":0.907,"n":72,"sd_y":1.92363,"train_rmse":0.5375,"fold_r2":[0.907]},"tree_d4":{"rmse":0.68409,"mae":0.5072,"r2":0.874,"n":72,"sd_y":1.92363,"train_rmse":0.50931,"fold_r2":[0.874]},"tree_full":{"rmse":0.67255,"mae":0.49657,"r2":0.878,"n":72,"sd_y":1.92363,"train_rmse":0.48744,"fold_r2":[0.878]},"forest":{"rmse":0.66182,"mae":0.48451,"r2":0.882,"n":72,"sd_y":1.92363,"train_rmse":0.48768,"fold_r2":[0.882]}}}},"parity_random_forest":{"y":[3.5186,1.9354,3.9104,2.0529,3.42,2.9879,5.1201,3.2395,2.4001,5.1877,2.4846,5.3067,6.2727,2.636,2.8205,2.7696,4.1553,3.6818,2.6969,3.5797,5.0345,5.5807,2.7632,2.2032,3.3664,5.2626,5.5943,4.6514,2.3701,5.8484,3.2517,4.0867,2.1513,4.9911,4.7837,1.5439,4.4028,3.9335,2.6832,2.8063,3.2447,4.0551,3.4767,1.429,6.3107,3.7761,3.2044,3.102,4.233,4.7663,6.0023,2.3199,3.822,2.9998,3.4647,4.0012,4.6519,2.9247,2.0238,6.8397,3.312,3.389,3.123,3.3735,3.511,1.638,3.7662,5.2018],"p":[3.39231,2.129,3.09304,2.129,3.65229,4.77951,5.61772,3.49961,3.04456,4.76365,2.99619,5.27127,5.98336,2.74262,2.68311,3.07026,3.91589,3.91589,2.51844,3.39231,5.03213,5.88408,2.74262,2.09642,3.84219,5.54982,4.76365,4.33695,2.99619,5.67746,4.77951,4.33695,2.02374,5.54982,4.74043,1.46094,4.63209,4.33695,2.71371,3.12978,3.4212,4.25515,2.96273,1.46094,5.82114,4.30544,3.04456,2.74262,2.96273,4.77951,5.67746,2.79326,3.4562,3.62074,3.65229,2.74262,5.28089,2.96273,2.09642,5.98336,3.6408,3.12659,3.07026,3.09304,3.09304,2.09642,3.12659,5.30844],"T":[333,433,333,433,293,273,133,313,343,213,353,213,153,343,393,343,273,273,413,333,233,193,343,413,313,133,213,253,353,133,273,253,433,133,233,433,253,253,373,353,323,233,323,433,153,273,343,343,323,273,133,373,293,333,293,343,173,323,413,153,293,353,343,333,333,413,353,193],"aging":[2,2,1,2,1,2,1,1,1,0,0,2,2,2,2,0,0,0,2,2,1,0,2,1,2,2,0,1,0,0,2,1,1,2,0,0,0,1,2,1,2,2,0,0,0,1,1,2,0,2,0,1,0,0,1,2,2,0,1,2,2,2,0,1,1,1,2,1]},"parity_loago2_forest":{"y":[5.3695,6.6961,4.9121,4.9911,5.2056,5.2626,7.5277,6.8397,5.3028,6.2727,5.4107,5.6751,5.4259,6.2742,4.9913,4.8754,4.6519,4.6863,5.0482,5.5208,4.9984,5.7293,4.323,4.4461,4.9492,5.3067,5.8625,4.8004,5.1922,5.5858,4.0913,4.9234,3.497,4.0551,4.7199,4.0416,4.4817,4.5972,4.7741,3.8583,4.9458,3.9895,2.9879,4.8258,4.2391,4.7663,3.2517,5.2026,3.6227,3.4376,3.807,3.4588,3.6722,3.4638,3.5157,3.312,4.1762,3.3664,3.8194,4.3689,4.6005,2.8966,3.5013,3.2447,3.1651,3.0584,4.075,3.4607,3.3857,3.6319,3.1356,2.9023,3.5186,3.5797,3.7906,2.7632,4.0012,3.102,2.636,2.4865,2.8761,3.1974,3.389,2.9064,3.7662,3.433,2.921,3.1176,2.5606,2.0091,2.6832,2.6198,3.2337,2.6571,2.8205,2.4448,2.8547,2.6023,2.9318,2.9591,2.397,2.6969,2.5765,2.3098,2.415,1.3336,2.3538,2.2636,2.0529,2.5224,1.9354],"p":[5.56023,5.56023,5.56023,5.56023,5.56023,5.56023,5.46192,5.46192,5.46192,5.46192,5.46192,5.46192,5.58179,5.58179,5.58179,5.58179,5.58179,5.58179,5.26522,5.26522,5.26522,5.26522,5.26522,5.26522,5.00551,5.00551,5.00551,5.00551,5.00551,5.00551,5.0427,5.0427,5.0427,5.0427,5.0427,5.0427,4.28218,4.28218,4.28218,4.28218,4.28218,4.28218,4.21329,4.21329,4.21329,4.21329,4.21329,4.21329,3.60563,3.60563,3.60563,3.60563,3.60563,3.60563,3.60563,3.60563,3.60563,3.44581,3.44581,3.44581,3.44581,3.44581,3.44581,3.6735,3.6735,3.6735,3.6735,3.6735,3.6735,3.31367,3.31367,3.31367,3.31367,3.31367,3.31367,2.96982,2.96982,2.96982,2.96982,2.96982,2.96982,3.07277,3.07277,3.07277,3.07277,3.07277,3.07277,2.7144,2.7144,2.7144,2.7144,2.7144,2.7144,2.30425,2.30425,2.30425,2.30425,2.30425,2.30425,2.0268,2.0268,2.0268,2.0268,2.0268,2.0268,2.04348,2.04348,2.04348,2.04348,2.04348,2.04348],"T":[133,133,133,133,133,133,153,153,153,153,153,153,173,173,173,173,173,173,193,193,193,193,193,193,213,213,213,213,213,213,233,233,233,233,233,233,253,253,253,253,253,253,273,273,273,273,273,273,293,293,293,293,293,293,293,293,293,313,313,313,313,313,313,323,323,323,323,323,323,333,333,333,333,333,333,343,343,343,343,343,343,353,353,353,353,353,353,373,373,373,373,373,373,393,393,393,393,393,393,413,413,413,413,413,413,433,433,433,433,433,433]}},"split_ced":{"target":"ced","cells":"core","n_rows":336,"n_cells":3,"n_cond":54,"y_range":[287.96,395.8],"y_sd":22.86881,"md_seed_sd":{"median":3.80235,"mean":3.61432},"repeat":20,"splits":{"random":{"folds":20,"repeated":true,"n_test":68,"leak_frac":1.0,"models":{"linear":{"rmse":6.80677,"mae":5.41481,"r2":0.909,"rmse_sd":0.56634,"r2_sd":0.013,"sd_y":22.60979,"n":68,"train_rmse":6.49903,"fold_r2":null},"tree_d4":{"rmse":5.41106,"mae":4.15449,"r2":0.941,"rmse_sd":0.31289,"r2_sd":0.011,"sd_y":22.60979,"n":68,"train_rmse":4.64756,"fold_r2":null},"tree_full":{"rmse":4.59969,"mae":3.68866,"r2":0.958,"rmse_sd":0.24036,"r2_sd":0.008,"sd_y":22.60979,"n":68,"train_rmse":3.56461,"fold_r2":null},"forest":{"rmse":4.5559,"mae":3.66273,"r2":0.959,"rmse_sd":0.23742,"r2_sd":0.008,"sd_y":22.60979,"n":68,"train_rmse":3.56965,"fold_r2":null}}},"cond":{"folds":20,"repeated":true,"n_test":69,"leak_frac":0.0,"models":{"linear":{"rmse":6.77864,"mae":5.46409,"r2":0.874,"rmse_sd":1.11786,"r2_sd":0.055,"sd_y":19.79771,"n":69,"train_rmse":6.52261,"fold_r2":null},"tree_d4":{"rmse":7.12479,"mae":5.70106,"r2":0.861,"rmse_sd":1.40036,"r2_sd":0.06,"sd_y":19.79771,"n":69,"train_rmse":4.6647,"fold_r2":null},"tree_full":{"rmse":5.99002,"mae":4.73655,"r2":0.903,"rmse_sd":1.11442,"r2_sd":0.037,"sd_y":19.79771,"n":69,"train_rmse":3.66531,"fold_r2":null},"forest":{"rmse":5.45844,"mae":4.2993,"r2":0.919,"rmse_sd":1.1378,"r2_sd":0.032,"sd_y":19.79771,"n":69,"train_rmse":3.66716,"fold_r2":null}}},"loago":{"folds":3,"repeated":false,"n_test":114,"leak_frac":0.0,"models":{"linear":{"rmse":14.99236,"mae":13.41723,"r2":0.57,"n":336,"sd_y":22.86881,"train_rmse":5.28465,"fold_r2":[0.401,0.779,0.129]},"tree_d4":{"rmse":17.76641,"mae":15.366,"r2":0.396,"n":336,"sd_y":22.86881,"train_rmse":4.30295,"fold_r2":[0.068,-0.107,0.88]},"tree_full":{"rmse":17.35517,"mae":15.07586,"r2":0.424,"n":336,"sd_y":22.86881,"train_rmse":3.69014,"fold_r2":[0.14,-0.097,0.887]},"forest":{"rmse":17.34816,"mae":15.06692,"r2":0.425,"n":336,"sd_y":22.86881,"train_rmse":3.69178,"fold_r2":[0.139,-0.095,0.888]}}},"t_extrap":{"folds":1,"repeated":false,"n_test":72,"leak_frac":0.0,"models":{"linear":{"rmse":10.00214,"mae":7.49342,"r2":0.922,"n":72,"sd_y":35.78708,"train_rmse":5.64267,"fold_r2":[0.922]},"tree_d4":{"rmse":12.43454,"mae":9.94,"r2":0.879,"n":72,"sd_y":35.78708,"train_rmse":4.3493,"fold_r2":[0.879]},"tree_full":{"rmse":11.00115,"mae":8.81546,"r2":0.906,"n":72,"sd_y":35.78708,"train_rmse":3.7448,"fold_r2":[0.906]},"forest":{"rmse":10.95744,"mae":8.76313,"r2":0.906,"n":72,"sd_y":35.78708,"train_rmse":3.74681,"fold_r2":[0.906]}}}},"parity_random_forest":{"y":[362.5,336.07,351.85,336.72,360.29,368.31,391.41,360.53,346.14,358.59,319.79,381.86,394.15,357.85,346.39,332.5,353.53,342.81,337.74,356.32,372.34,367.32,354.92,326.88,358.2,391.65,355.89,366.73,324.05,374.38,366.52,371.39,323.23,394.63,359.76,296.22,353.03,366.63,357.63,350.44,359.65,381.16,338.58,295.61,372.7,372.6,355.68,354.45,341.13,372.19,373.31,342.61,335.87,330.58,366.44,356.17,385.37,330.05,332.96,395.45,359.22,356.28,325.22,357.82,357.34,324.72,360.99,381.3],"p":[359.53011,328.37022,353.94137,328.37022,359.51407,370.47098,392.53436,358.31943,353.16905,360.01469,331.0896,380.1568,390.31037,355.79365,341.87446,330.95434,348.15723,348.15723,336.26417,359.53011,375.59035,365.41895,355.79365,333.62645,364.10874,393.91628,360.01469,371.70361,331.0896,373.59261,370.47098,371.70361,318.91451,393.91628,355.08835,290.93923,352.22216,371.70361,349.25011,348.33371,363.69395,376.42364,336.96594,290.93923,371.28297,365.41432,353.16905,355.79365,336.96594,370.47098,373.59261,346.36749,341.37088,337.00675,359.51407,355.79365,387.21457,336.96594,333.62645,390.31037,363.64858,353.5043,330.95434,353.94137,353.94137,333.62645,353.5043,382.19637],"T":[333,433,333,433,293,273,133,313,343,213,353,213,153,343,393,343,273,273,413,333,233,193,343,413,313,133,213,253,353,133,273,253,433,133,233,433,253,253,373,353,323,233,323,433,153,273,343,343,323,273,133,373,293,333,293,343,173,323,413,153,293,353,343,333,333,413,353,193],"aging":[2,2,1,2,1,2,1,1,1,0,0,2,2,2,2,0,0,0,2,2,1,0,2,1,2,2,0,1,0,0,2,1,1,2,0,0,0,1,2,1,2,2,0,0,0,1,1,2,0,2,0,1,0,0,1,2,2,0,1,2,2,2,0,1,1,1,2,1]},"parity_loago2_forest":{"y":[395.43,395.8,394.23,394.63,389.7,391.65,393.5,395.45,390.93,394.15,387.73,389.28,387.08,388.08,386.41,388.38,385.37,386.42,383.39,387.25,384.88,386.53,383.0,385.32,380.01,381.86,379.64,383.57,377.21,380.02,376.94,377.61,376.88,381.16,374.92,375.71,370.9,375.43,371.3,374.63,370.73,373.8,368.31,373.3,370.74,372.19,366.52,367.77,357.15,362.96,367.99,357.76,364.55,374.99,356.66,359.22,367.49,358.2,365.1,363.01,371.27,357.68,363.43,359.65,362.87,362.17,370.73,358.16,366.22,357.1,363.98,353.56,362.5,356.32,362.69,354.92,356.17,354.45,357.85,351.35,358.98,348.3,356.28,357.52,360.99,350.98,357.71,347.51,353.91,349.62,357.63,342.64,353.01,337.81,346.39,341.64,346.76,340.04,343.97,328.14,334.09,337.74,342.82,334.2,340.4,324.48,338.57,325.78,336.72,324.6,336.07],"p":[392.39364,392.39364,392.39364,392.39364,392.39364,392.39364,388.23275,388.23275,388.23275,388.23275,388.23275,388.23275,385.09672,385.09672,385.09672,385.09672,385.09672,385.09672,381.95348,381.95348,381.95348,381.95348,381.95348,381.95348,377.32579,377.32579,377.32579,377.32579,377.32579,377.32579,374.99813,374.99813,374.99813,374.99813,374.99813,374.99813,369.85191,369.85191,369.85191,369.85191,369.85191,369.85191,366.64999,366.64999,366.64999,366.64999,366.64999,366.64999,360.37984,360.37984,360.37984,360.37984,360.37984,360.37984,360.37984,360.37984,360.37984,358.75853,358.75853,358.75853,358.75853,358.75853,358.75853,356.8062,356.8062,356.8062,356.8062,356.8062,356.8062,354.78595,354.78595,354.78595,354.78595,354.78595,354.78595,352.30273,352.30273,352.30273,352.30273,352.30273,352.30273,348.71589,348.71589,348.71589,348.71589,348.71589,348.71589,345.80251,345.80251,345.80251,345.80251,345.80251,345.80251,337.29044,337.29044,337.29044,337.29044,337.29044,337.29044,330.79238,330.79238,330.79238,330.79238,330.79238,330.79238,319.61568,319.61568,319.61568,319.61568,319.61568,319.61568],"T":[133,133,133,133,133,133,153,153,153,153,153,153,173,173,173,173,173,173,193,193,193,193,193,193,213,213,213,213,213,213,233,233,233,233,233,233,253,253,253,253,253,253,273,273,273,273,273,273,293,293,293,293,293,293,293,293,293,313,313,313,313,313,313,323,323,323,323,323,323,333,333,333,333,333,333,343,343,343,343,343,343,353,353,353,353,353,353,373,373,373,373,373,373,393,393,393,393,393,393,413,413,413,413,413,413,433,433,433,433,433,433]}},"tree2d":{"features":["T_K","aging"],"depth":3,"nodes":[{"id":0,"leaf":false,"feature":"T_K","thr":283.0,"left":1,"right":8,"value":1.01445,"n":336},{"id":1,"leaf":false,"feature":"aging","thr":0.5,"left":2,"right":5,"value":1.03886,"n":144},{"id":2,"leaf":false,"feature":"T_K","thr":203.0,"left":3,"right":4,"value":1.01179,"n":48},{"id":3,"leaf":true,"feature":null,"thr":null,"left":-1,"right":-1,"value":1.02055,"n":24},{"id":4,"leaf":true,"feature":null,"thr":null,"left":-1,"right":-1,"value":1.00304,"n":24},{"id":5,"leaf":false,"feature":"aging","thr":1.5,"left":6,"right":7,"value":1.05239,"n":96},{"id":6,"leaf":true,"feature":null,"thr":null,"left":-1,"right":-1,"value":1.03989,"n":48},{"id":7,"leaf":true,"feature":null,"thr":null,"left":-1,"right":-1,"value":1.06488,"n":48},{"id":8,"leaf":false,"feature":"aging","thr":0.5,"left":9,"right":12,"value":0.99614,"n":192},{"id":9,"leaf":false,"feature":"T_K","thr":383.0,"left":10,"right":11,"value":0.96596,"n":66},{"id":10,"leaf":true,"feature":null,"thr":null,"left":-1,"right":-1,"value":0.9771,"n":48},{"id":11,"leaf":true,"feature":null,"thr":null,"left":-1,"right":-1,"value":0.93625,"n":18},{"id":12,"leaf":false,"feature":"T_K","thr":383.0,"left":13,"right":14,"value":1.01194,"n":126},{"id":13,"leaf":true,"feature":null,"thr":null,"left":-1,"right":-1,"value":1.02097,"n":90},{"id":14,"leaf":true,"feature":null,"thr":null,"left":-1,"right":-1,"value":0.98937,"n":36}],"train":{"rmse":0.01207,"mae":0.00977,"r2":0.88,"n":336,"sd_y":0.03492},"points":[[133,0,1.0252],[133,1,1.05299],[133,2,1.07809],[153,0,1.02269],[153,1,1.04975],[153,2,1.07511],[173,0,1.01919],[173,1,1.04721],[173,2,1.07086],[193,0,1.01509],[193,1,1.04243],[193,2,1.06808],[213,0,1.01021],[213,1,1.03912],[213,2,1.06424],[233,0,1.00558],[233,1,1.03405],[233,2,1.05919],[253,0,1.00066],[253,1,1.02877],[253,2,1.05427],[273,0,0.99573],[273,1,1.02482],[273,2,1.04924],[293,0,0.98571],[293,1,1.01641],[293,2,1.04206],[313,0,0.98531],[313,1,1.01415],[313,2,1.04047],[323,0,0.97955],[323,1,1.01023],[323,2,1.03861],[333,0,0.97772],[333,1,1.00824],[333,2,1.03327],[343,0,0.97458],[343,1,1.00586],[343,2,1.03069],[353,0,0.96897],[353,1,1.00183],[353,2,1.02751],[373,0,0.95925],[373,1,0.99512],[373,2,1.0209],[393,0,0.94901],[393,1,0.98498],[393,2,1.01392],[413,0,0.93718],[413,1,0.97434],[413,2,1.00425],[433,0,0.92257],[433,1,0.96258],[433,2,0.99619]]},"depth":{"cv":__L("GroupKFold(5) by cell@T · KFold(5) 무작위 비교","GroupKFold(5) by cell@T · KFold(5) random comparison"),"targets":{"density":{"group":[{"depth":1,"train_rmse":0.02702,"val_rmse":0.03213,"n_leaves":2},{"depth":2,"train_rmse":0.01799,"val_rmse":0.02192,"n_leaves":4},{"depth":3,"train_rmse":0.01162,"val_rmse":0.01646,"n_leaves":8},{"depth":4,"train_rmse":0.00611,"val_rmse":0.00931,"n_leaves":16},{"depth":5,"train_rmse":0.00364,"val_rmse":0.00715,"n_leaves":31},{"depth":6,"train_rmse":0.00301,"val_rmse":0.00665,"n_leaves":45},{"depth":7,"train_rmse":0.00298,"val_rmse":0.00657,"n_leaves":53},{"depth":8,"train_rmse":0.00298,"val_rmse":0.00656,"n_leaves":54},{"depth":9,"train_rmse":0.00298,"val_rmse":0.00656,"n_leaves":54},{"depth":10,"train_rmse":0.00298,"val_rmse":0.00656,"n_leaves":54},{"depth":11,"train_rmse":0.00298,"val_rmse":0.00656,"n_leaves":54},{"depth":12,"train_rmse":0.00298,"val_rmse":0.00656,"n_leaves":54}],"random_kfold":[{"depth":1,"train_rmse":0.02769,"val_rmse":0.0288,"n_leaves":2},{"depth":2,"train_rmse":0.01841,"val_rmse":0.01911,"n_leaves":4},{"depth":3,"train_rmse":0.01212,"val_rmse":0.01302,"n_leaves":8},{"depth":4,"train_rmse":0.00629,"val_rmse":0.00694,"n_leaves":16},{"depth":5,"train_rmse":0.00382,"val_rmse":0.00469,"n_leaves":31},{"depth":6,"train_rmse":0.003,"val_rmse":0.00373,"n_leaves":45},{"depth":7,"train_rmse":0.00292,"val_rmse":0.00355,"n_leaves":53},{"depth":8,"train_rmse":0.00292,"val_rmse":0.00353,"n_leaves":54},{"depth":9,"train_rmse":0.00292,"val_rmse":0.00353,"n_leaves":54},{"depth":10,"train_rmse":0.00292,"val_rmse":0.00353,"n_leaves":54},{"depth":11,"train_rmse":0.00292,"val_rmse":0.00353,"n_leaves":54},{"depth":12,"train_rmse":0.00292,"val_rmse":0.00353,"n_leaves":54}],"best":{"depth":8,"train_rmse":0.00298,"val_rmse":0.00656,"n_leaves":54},"y_sd":0.03492,"md_seed_sd_median":0.0027},"ced":{"group":[{"depth":1,"train_rmse":15.8316,"val_rmse":17.72138,"n_leaves":2},{"depth":2,"train_rmse":11.64345,"val_rmse":15.43982,"n_leaves":4},{"depth":3,"train_rmse":6.77865,"val_rmse":9.06977,"n_leaves":8},{"depth":4,"train_rmse":4.68682,"val_rmse":7.58315,"n_leaves":16},{"depth":5,"train_rmse":3.97683,"val_rmse":6.4904,"n_leaves":31},{"depth":6,"train_rmse":3.72855,"val_rmse":6.24979,"n_leaves":48},{"depth":7,"train_rmse":3.68981,"val_rmse":6.28177,"n_leaves":53},{"depth":8,"train_rmse":3.68981,"val_rmse":6.38654,"n_leaves":54},{"depth":9,"train_rmse":3.68981,"val_rmse":6.38654,"n_leaves":54},{"depth":10,"train_rmse":3.68981,"val_rmse":6.38654,"n_leaves":54},{"depth":11,"train_rmse":3.68981,"val_rmse":6.38654,"n_leaves":54},{"depth":12,"train_rmse":3.68981,"val_rmse":6.38654,"n_leaves":54}],"random_kfold":[{"depth":1,"train_rmse":16.04854,"val_rmse":16.06995,"n_leaves":2},{"depth":2,"train_rmse":11.99307,"val_rmse":12.65009,"n_leaves":4},{"depth":3,"train_rmse":6.59068,"val_rmse":6.80575,"n_leaves":8},{"depth":4,"train_rmse":4.65634,"val_rmse":5.3568,"n_leaves":16},{"depth":5,"train_rmse":3.93769,"val_rmse":4.81069,"n_leaves":31},{"depth":6,"train_rmse":3.62711,"val_rmse":4.48766,"n_leaves":48},{"depth":7,"train_rmse":3.60355,"val_rmse":4.45952,"n_leaves":53},{"depth":8,"train_rmse":3.60316,"val_rmse":4.46681,"n_leaves":54},{"depth":9,"train_rmse":3.60316,"val_rmse":4.46681,"n_leaves":54},{"depth":10,"train_rmse":3.60316,"val_rmse":4.46681,"n_leaves":54},{"depth":11,"train_rmse":3.60316,"val_rmse":4.46681,"n_leaves":54},{"depth":12,"train_rmse":3.60316,"val_rmse":4.46681,"n_leaves":54}],"best":{"depth":6,"train_rmse":3.72855,"val_rmse":6.24979,"n_leaves":48},"y_sd":22.86881,"md_seed_sd_median":3.80235},"bulk_modulus":{"group":[{"depth":1,"train_rmse":0.77091,"val_rmse":0.78468,"n_leaves":2},{"depth":2,"train_rmse":0.58072,"val_rmse":0.61114,"n_leaves":4},{"depth":3,"train_rmse":0.52998,"val_rmse":0.61746,"n_leaves":8},{"depth":4,"train_rmse":0.50877,"val_rmse":0.6136,"n_leaves":16},{"depth":5,"train_rmse":0.49246,"val_rmse":0.62397,"n_leaves":31},{"depth":6,"train_rmse":0.4857,"val_rmse":0.62295,"n_leaves":47},{"depth":7,"train_rmse":0.48317,"val_rmse":0.62385,"n_leaves":52},{"depth":8,"train_rmse":0.48251,"val_rmse":0.62479,"n_leaves":54},{"depth":9,"train_rmse":0.48251,"val_rmse":0.62479,"n_leaves":54},{"depth":10,"train_rmse":0.48251,"val_rmse":0.62479,"n_leaves":54},{"depth":11,"train_rmse":0.48251,"val_rmse":0.62479,"n_leaves":54},{"depth":12,"train_rmse":0.48251,"val_rmse":0.62479,"n_leaves":54}],"random_kfold":[{"depth":1,"train_rmse":0.76851,"val_rmse":0.80137,"n_leaves":2},{"depth":2,"train_rmse":0.58235,"val_rmse":0.60564,"n_leaves":4},{"depth":3,"train_rmse":0.53687,"val_rmse":0.55886,"n_leaves":8},{"depth":4,"train_rmse":0.51039,"val_rmse":0.56687,"n_leaves":16},{"depth":5,"train_rmse":0.48742,"val_rmse":0.57721,"n_leaves":31},{"depth":6,"train_rmse":0.47539,"val_rmse":0.57934,"n_leaves":47},{"depth":7,"train_rmse":0.47264,"val_rmse":0.57903,"n_leaves":52},{"depth":8,"train_rmse":0.47128,"val_rmse":0.58245,"n_leaves":54},{"depth":9,"train_rmse":0.47095,"val_rmse":0.58199,"n_leaves":54},{"depth":10,"train_rmse":0.47095,"val_rmse":0.58199,"n_leaves":54},{"depth":11,"train_rmse":0.47095,"val_rmse":0.58199,"n_leaves":54},{"depth":12,"train_rmse":0.47095,"val_rmse":0.58199,"n_leaves":54}],"best":{"depth":2,"train_rmse":0.58072,"val_rmse":0.61114,"n_leaves":4},"y_sd":1.29978,"md_seed_sd_median":0.43619}},"linear_coef_density":{"aging":0.028661,"T_K":-0.000289},"linear_intercept_density":1.06948},"learning":{"fracs":[0.1,0.2,0.3,0.5,0.7,1.0],"models":{"linear":[{"frac":0.1,"n_train":27,"train_rmse":0.00418,"val_rmse":0.0108},{"frac":0.2,"n_train":55,"train_rmse":0.00538,"val_rmse":0.00772},{"frac":0.3,"n_train":78,"train_rmse":0.00561,"val_rmse":0.00721},{"frac":0.5,"n_train":136,"train_rmse":0.00567,"val_rmse":0.0074},{"frac":0.7,"n_train":187,"train_rmse":0.00595,"val_rmse":0.0065},{"frac":1.0,"n_train":268,"train_rmse":0.00621,"val_rmse":0.00644}],"forest":[{"frac":0.1,"n_train":27,"train_rmse":0.00343,"val_rmse":0.03192},{"frac":0.2,"n_train":58,"train_rmse":0.00299,"val_rmse":0.02195},{"frac":0.3,"n_train":80,"train_rmse":0.00286,"val_rmse":0.01686},{"frac":0.5,"n_train":139,"train_rmse":0.00312,"val_rmse":0.01106},{"frac":0.7,"n_train":186,"train_rmse":0.00293,"val_rmse":0.00818},{"frac":1.0,"n_train":268,"train_rmse":0.00298,"val_rmse":0.00621}]}},"extrap":{"T":[133,153,173,193,213,233,253,273,293,313,323,333,343,353,373,393,413,433],"obs":[1.0252,1.02269,1.01919,1.01509,1.01021,1.00558,1.00066,0.99573,0.98571,0.98531,0.97956,0.97772,0.97458,0.96897,0.95925,0.94901,0.93718,0.92257],"linear":[1.03173,1.02621,1.02068,1.01515,1.00963,1.0041,0.99858,0.99305,0.98753,0.982,0.97924,0.97647,0.97371,0.97095,0.96542,0.9599,0.95437,0.94884],"tree_d4":[1.01714,1.01714,1.01714,1.01714,1.01021,1.00312,1.00312,0.99573,0.98557,0.98557,0.9752,0.9752,0.9752,0.9752,0.95925,0.94901,0.94901,0.94901],"train_range":[173,393]},"features":["aging","T_K","h2o","additive_wt","binder_AAK1","binder_AAM1"]};
+function TX(o) { return o.replace(/<text([^>]*)>/g, function (m, at) { var st = ''; at = at.replace(/\s(fill|font-size)=\x22([^\x22]+)\x22/g, function (_, k, v) { st += (k === 'fill' ? 'fill:' + v : 'font-size:' + v + (/^[\d.]+$/.test(v) ? 'px' : '')) + ';'; return ''; }); return '<text' + at + (st ? ' style="' + st + '"' : '') + '>'; }); }
+function stepOf(root) { var s = parseInt(root.dataset.step || '0', 10); return isNaN(s) ? 0 : s; }
+function ez(u) { u = Math.max(0, Math.min(1, u)); return 1 - Math.pow(1 - u, 3); }
+function f4(v) { return (Math.round(v * 10000) / 10000).toFixed(4); }
+function rng(seed) { return function () { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; }; }
+var AG = [__L('비노화','unaged'), __L('단기','short'), __L('장기','long')], AGC = ['#4F7FB0', '#E37F1A', '#231F20'];
+var SD = W13.split_density, MDSD = SD.md_seed_sd.median;
+
+/* ---- 조건 54칸 × 반복 6 의 기본 배치 ---- */
+var TL = W13.T_levels;
+function condDots() { var out = []; for (var a = 0; a < 3; a++) for (var j = 0; j < TL.length; j++) for (var k = 0; k < 6; k++) out.push({ a: a, j: j, k: k }); return out; }
+function assign(mode) {
+  var D = condDots(), R = rng(42);
+  if (mode === 0) { D.forEach(function (d) { d.test = R() < 0.2; }); }
+  else if (mode === 1) { var pick = {}; for (var a = 0; a < 3; a++) for (var j = 0; j < TL.length; j++) pick[a + '_' + j] = R() < 0.2; D.forEach(function (d) { d.test = pick[d.a + '_' + d.j]; }); }
+  else D.forEach(function (d) { d.test = d.a === 2; });
+  return D;
+}
+
+/* ===== 표지 compact: 점이 바구니로 (세 방식 번갈아) ===== */
+EMB["splitc"] = function (root, RAF) {
+  var t0 = CLK(), W = 560, H = 560, modes = [assign(0), assign(1), assign(2)], names = [__L('행 무작위 · 누수 100 %','Random rows · leakage 100 %'), __L('조건 그룹 · 누수 0','Condition group · leakage 0'), __L('노화 상태 빼기','Drop an aging state')];
+  function f(now) {
+    var t = ((now - t0) / 1000) % 12, m = Math.floor(t / 4), u = ez(((t % 4) - 0.6) / 2.2), D = modes[m], o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    o += '<text x="280" y="36" text-anchor="middle" class="cfh" font-size="20">' + names[m] + '</text>';
+    o += __L('<rect x="40" y="350" width="290" height="170" rx="16" fill="#F6F0E7" stroke="#D3C6B5" stroke-width="2"/><text x="185" y="545" text-anchor="middle" class="cfs">학습</text>','<rect x="40" y="350" width="290" height="170" rx="16" fill="#F6F0E7" stroke="#D3C6B5" stroke-width="2"/><text x="185" y="545" text-anchor="middle" class="cfs">Train</text>');
+    o += __L('<rect x="350" y="350" width="170" height="170" rx="16" fill="#FFF1E0" stroke="#F99D1C" stroke-width="2"/><text x="435" y="545" text-anchor="middle" class="cfs">시험</text>','<rect x="350" y="350" width="170" height="170" rx="16" fill="#FFF1E0" stroke="#F99D1C" stroke-width="2"/><text x="435" y="545" text-anchor="middle" class="cfs">Test</text>');
+    var ntr = 0, nte = 0;
+    for (var cj = 0; cj < 18; cj++) for (var ca = 0; ca < 3; ca++) o += '<rect x="' + (68 + cj * 25) + '" y="' + (63 + ca * 80) + '" width="22" height="30" rx="5" fill="#FFFFFF" stroke="#E2D8CA"/>';
+    D.forEach(function (d) {
+      var gx = 74 + d.j * 25 + (d.k % 3) * 7, gy = 70 + d.a * 80 + Math.floor(d.k / 3) * 9, bx, by;
+      if (d.test) { bx = 362 + (nte % 18) * 8.5; by = 362 + Math.floor(nte / 18) * 9; nte++; } else { bx = 52 + (ntr % 33) * 8.2; by = 362 + Math.floor(ntr / 33) * 9; ntr++; }
+      var x = gx + (bx - gx) * u, y = gy + (by - gy) * u;
+      o += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="3.2" fill="' + (d.test ? '#E37F1A' : '#9AA5B1') + '"/>';
+    });
+    for (var a = 0; a < 3; a++) o += '<text x="66" y="' + (82 + a * 80) + '" text-anchor="end" class="cfmu" font-size="14">' + AG[a] + '</text>';
+    o += '</svg>'; root.innerHTML = TX(o); RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 9장: 분할 3방식 ===== */
+EMB["split"] = function (root, RAF) {
+  var t0 = CLK(), W = 1588, H = 560, modes = [assign(0), assign(1), assign(2)], key = ['random', 'cond', 'loago'];
+  var lab = [__L('① 행 무작위 80/20 · 점마다 따로','① Random rows 80/20 · per point'), __L('② 조건 그룹 · 칸(셀@온도) 통째로','② Condition group · whole cell (cell@T)'), __L('③ 노화 상태 빼기 · 장기 노화 줄 전체가 시험','③ Drop an aging state · whole long-term aging row is test')];
+  function f(now) {
+    var st = stepOf(root), t = st ? (st - 1) * 4 + 3.99 : ((now - t0) / 1000) % 12, m = Math.min(2, Math.floor(t / 4)), u = ez(((t % 4) - 0.8) / 2.0), D = modes[m], S = SD.splits[key[m]];
+    var o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">', cw = 46, x0 = 120, y0 = 70;
+    o += '<text x="' + x0 + '" y="40" class="cfh" font-size="22">' + lab[m] + '</text>';
+    for (var a = 0; a < 3; a++) { o += '<text x="' + (x0 - 14) + '" y="' + (y0 + a * 92 + 40) + '" text-anchor="end" class="cfs">' + AG[a] + '</text>'; }
+    for (var j = 0; j < TL.length; j += 3) o += '<text x="' + (x0 + j * cw + 20) + '" y="' + (y0 + 3 * 92 + 10) + '" text-anchor="middle" class="cfm" fill="#6E655C" font-size="15">' + TL[j] + '</text>';
+    o += '<text x="' + (x0 + 9 * cw) + '" y="' + (y0 + 3 * 92 + 36) + __L('" text-anchor="middle" class="cfmu">온도 (K) · 칸 = 조건 · 점 6 = 반복</text>','" text-anchor="middle" class="cfmu">Temperature (K) · cell = condition · 6 points = repeats</text>');
+    /* 칸 테두리: 학습 · 시험이 섞인 칸 = 빨강 */
+    for (a = 0; a < 3; a++) for (j = 0; j < TL.length; j++) {
+      var tt = 0; for (var k = 0; k < 6; k++) if (D[(a * TL.length + j) * 6 + k].test) tt++;
+      var mixed = tt > 0 && tt < 6;
+      o += '<rect x="' + (x0 + j * cw) + '" y="' + (y0 + a * 92) + '" width="' + (cw - 6) + '" height="78" rx="8" fill="' + (tt === 6 ? '#FFF1E0' : '#FFFFFF') + '" stroke="' + (mixed ? '#D9534F' : '#E2D8CA') + '" stroke-width="' + (mixed ? 3 : 1.5) + '"/>';
+    }
+    var bx0 = 1020, ntr = 0, nte = 0;
+    o += '<rect x="' + bx0 + '" y="70" width="300" height="300" rx="18" fill="#F6F0E7" stroke="#D3C6B5" stroke-width="2"/><text x="' + (bx0 + 150) + __L('" y="395" text-anchor="middle" class="cfh" font-size="20">학습</text>','" y="395" text-anchor="middle" class="cfh" font-size="20">Train</text>');
+    o += '<rect x="' + (bx0 + 320) + '" y="70" width="210" height="300" rx="18" fill="#FFF1E0" stroke="#F99D1C" stroke-width="2"/><text x="' + (bx0 + 425) + __L('" y="395" text-anchor="middle" class="cfh" font-size="20" fill="#C8610C">시험</text>','" y="395" text-anchor="middle" class="cfh" font-size="20" fill="#C8610C">Test</text>');
+    D.forEach(function (d) {
+      var gx = x0 + d.j * cw + 8 + (d.k % 3) * 12, gy = y0 + d.a * 92 + 22 + Math.floor(d.k / 3) * 30, bx, by;
+      if (d.test) { bx = bx0 + 336 + (nte % 13) * 14.5; by = 88 + Math.floor(nte / 13) * 15; nte++; } else { bx = bx0 + 16 + (ntr % 21) * 13.5; by = 88 + Math.floor(ntr / 21) * 13.5; ntr++; }
+      var x = gx + (bx - gx) * u, y = gy + (by - gy) * u;
+      o += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="5" fill="' + (d.test ? '#E37F1A' : '#9AA5B1') + '"/>';
+    });
+    var leak = S.leak_frac;
+    o += '<rect x="120" y="440" width="1410" height="92" rx="16" fill="' + (leak > 0.5 ? '#FBE3E1' : '#E8F3EC') + '"/>';
+    o += '<text x="150" y="480" class="cfh" font-size="22" fill="' + (leak > 0.5 ? '#A83A32' : '#1F6B42') + __L('">누수 ','">Leakage ') + Math.round(leak * 100) + ' % · ' + (leak > 0.5 ? (__L('시험 점마다 같은 칸의 쌍둥이 = 학습에 존재','Twins of each test point = present in training')) : __L('시험 칸의 쌍둥이 = 학습에 없음','Twins of test cells = absent from training')) + '</text>';
+    o += __L('<text x="150" y="515" class="cfs">시험 ','<text x="150" y="515" class="cfs">Test ') + S.n_test + __L('행',' rows') + (S.repeated ? (__L(' · 20회 반복',' · 20 repeats')) : ' · ' + S.folds + __L('겹',' folds')) + __L(' · 숲 RMSE ',' · forest RMSE ') + f4(S.models.forest.rmse) + ' g/cm³ · R² ' + S.models.forest.r2 + '</text>';
+    o += '</svg>'; root.innerHTML = TX(o); RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 10장: 누수 경보 · 점수 미터 ===== */
+EMB["leak"] = function (root, RAF) {
+  var t0 = CLK(), W = 1588, H = 560, key = ['random', 'cond', 'loago'];
+  function bar(x, y, w, v, max, col, label, val) { var L = Math.min(1, v / max) * w; return '<text x="' + x + '" y="' + (y - 10) + '" class="cfs">' + label + '</text><rect x="' + x + '" y="' + y + '" width="' + w + '" height="34" rx="10" fill="#F6F0E7"/><rect x="' + x + '" y="' + y + '" width="' + L.toFixed(1) + '" height="34" rx="10" fill="' + col + '"/><text x="' + (x + w + 16) + '" y="' + (y + 25) + '" class="cfm" font-size="22" fill="#231F20">' + val + '</text>'; }
+  function f(now) {
+    var st = stepOf(root), t = st ? (st - 1) * 4 + 3.99 : ((now - t0) / 1000) % 12, m = Math.min(2, Math.floor(t / 4)), u = ez(((t % 4) - 0.3) / 1.6), S = SD.splits[key[m]].models.forest;
+    var o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    /* 왼쪽: 한 조건(장기 · 333 K)의 쌍둥이 6점 */
+    o += '<rect x="30" y="30" width="650" height="500" rx="18" fill="#F6F0E7"/>';
+    o += __L('<text x="355" y="70" text-anchor="middle" class="cfh" font-size="21">조건 하나 = AAA1-장기 @ 333 K · 반복 6</text>','<text x="355" y="70" text-anchor="middle" class="cfh" font-size="21">One condition = AAA1-long @ 333 K · 6 repeats</text>');
+    o += __L('<rect x="70" y="110" width="260" height="300" rx="16" fill="#FFFFFF" stroke="#D3C6B5" stroke-width="2"/><text x="200" y="438" text-anchor="middle" class="cfs">학습</text>','<rect x="70" y="110" width="260" height="300" rx="16" fill="#FFFFFF" stroke="#D3C6B5" stroke-width="2"/><text x="200" y="438" text-anchor="middle" class="cfs">Train</text>');
+    o += __L('<rect x="390" y="110" width="250" height="300" rx="16" fill="#FFF1E0" stroke="#F99D1C" stroke-width="2"/><text x="515" y="438" text-anchor="middle" class="cfs" fill="#C8610C">시험</text>','<rect x="390" y="110" width="250" height="300" rx="16" fill="#FFF1E0" stroke="#F99D1C" stroke-width="2"/><text x="515" y="438" text-anchor="middle" class="cfs" fill="#C8610C">Test</text>');
+    var pos = [];
+    for (var k = 0; k < 6; k++) {
+      var inTest = m === 0 ? k === 0 : true; if (m === 2) inTest = true;
+      var px = inTest ? 450 + (k % 3) * 60 : 140 + (k % 3) * 60, py = 200 + Math.floor(k / 3) * 90;
+      if (m === 0 && !inTest) { px = 120 + ((k - 1) % 3) * 70; py = 190 + Math.floor((k - 1) / 3) * 100; }
+      pos.push([px, py, inTest]);
+    }
+    if (m === 0) { for (k = 1; k < 6; k++) o += '<line class="flow" x1="' + pos[0][0] + '" y1="' + pos[0][1] + '" x2="' + pos[k][0] + '" y2="' + pos[k][1] + '" stroke="#D9534F" stroke-width="3" stroke-dasharray="10 8" opacity="' + u.toFixed(2) + '"/>'; }
+    pos.forEach(function (p) { o += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="16" fill="' + (p[2] ? '#E37F1A' : '#9AA5B1') + '"/>'; });
+    var msg = [__L('시험 1점의 쌍둥이 5개 = 학습에 존재','5 twins of 1 test point = present in training'), __L('칸 통째로 시험 · 학습엔 쌍둥이 없음','Whole cell is test · no twins in training'), __L('장기 노화 54행(9칸) 전체가 시험','Whole long-term aging, 54 rows (9 cells), is test')][m];
+    o += '<text x="355" y="490" text-anchor="middle" class="cfh" font-size="20" fill="' + (m === 0 ? '#A83A32' : '#1F6B42') + '">' + msg + '</text>';
+    if (m === 0) o += '<circle class="pulse" cx="620" cy="70" r="16" fill="#D9534F"/><text x="620" y="77" text-anchor="middle" class="cfw" font-size="20">!</text>';
+    /* 오른쪽: 점수 미터 */
+    var x = 760;
+    o += '<text x="' + x + __L('" y="70" class="cfh" font-size="22">랜덤포레스트 · 밀도 · ','" y="70" class="cfh" font-size="22">Random forest · density · ') + [__L('행 무작위','Random rows'), __L('조건 그룹','Condition group'), __L('노화 상태 빼기','Drop an aging state')][m] + '</text>';
+    o += bar(x, 130, 560, S.r2 * u, 1, m === 0 ? '#D9534F' : (m === 1 ? '#4F7FB0' : '#231F20'), __L('R² (1 에 가까울수록 좋게 표시)','R² (higher = better, shown toward 1)'), (S.r2 * u).toFixed(3));
+    o += bar(x, 240, 560, S.rmse * u, 0.032, '#E37F1A', __L('시험 RMSE (g/cm³)','Test RMSE (g/cm³)'), f4(S.rmse * u));
+    o += bar(x, 350, 560, S.train_rmse, 0.032, '#9AA5B1', __L('학습 RMSE (g/cm³)','Train RMSE (g/cm³)'), f4(S.train_rmse));
+    var mx = x + 560 * MDSD / 0.032;
+    o += '<line x1="' + mx.toFixed(1) + '" y1="230" x2="' + mx.toFixed(1) + '" y2="394" stroke="#2E8B57" stroke-width="3" stroke-dasharray="6 5"/><text x="' + (mx + 6).toFixed(1) + __L('" y="418" class="cfm" fill="#2E8B57" font-size="16">MD 반복 오차 ','" y="418" class="cfm" fill="#2E8B57" font-size="16">MD repeat error ') + MDSD + '</text>';
+    o += '<rect x="' + x + '" y="450" width="760" height="70" rx="14" fill="' + (m === 0 ? '#FBE3E1' : '#231F20') + '"/><text x="' + (x + 380) + '" y="494" text-anchor="middle" class="cfh" font-size="20" fill="' + (m === 0 ? '#A83A32' : '#FBB44E') + '">' + [__L('시험 ÷ 학습 = 1.2배 · 시험 오차 ≈ 반복 오차 = 외운 점수','Test ÷ train = 1.2× · test error ≈ repeat error = memorized score'), __L('시험 ÷ 학습 = 2.1배 · 처음 보는 조건의 실력','Test ÷ train = 2.1× · skill on unseen conditions'), __L('시험 ÷ 학습 = 10배 · 처음 보는 노화 상태','Test ÷ train = 10× · unseen aging state')][m] + '</text>';
+    o += '</svg>'; root.innerHTML = TX(o); RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 21장: 트리 분할선 + 노드 ===== */
+EMB["tree"] = function (root, RAF) {
+  var t0 = CLK(), W = 1588, H = 560, T = W13.tree2d, N = T.nodes, P = T.points;
+  var X0 = 100, X1 = 880, Y0 = 70, Y1 = 470, tmin = 120, tmax = 446;
+  function X(v) { return X0 + (v - tmin) / (tmax - tmin) * (X1 - X0); }
+  function Ya(a) { return Y1 - (a + 0.5) / 3 * (Y1 - Y0); }  /* 정수 a = 줄 중심 · 반정수 = 경계 */
+  var ys = P.map(function (p) { return p[2]; }), ymin = Math.min.apply(null, ys), ymax = Math.max.apply(null, ys);
+  function col(v) { var q = (v - ymin) / (ymax - ymin); var r = Math.round(253 - q * (253 - 200)), g = Math.round(227 - q * (227 - 97)), b = Math.round(191 - q * (191 - 12)); return 'rgb(' + r + ',' + g + ',' + b + ')'; }
+  /* 노드 깊이 · 영역 */
+  var depth = {}, box = {}; depth[0] = 0; box[0] = [tmin, tmax, -0.5, 2.5];
+  N.forEach(function (n) { if (!n.leaf) { var b = box[n.id], L = n.left, R = n.right; depth[L] = depth[R] = depth[n.id] + 1;
+    if (n.feature === 'T_K') { box[L] = [b[0], n.thr, b[2], b[3]]; box[R] = [n.thr, b[1], b[2], b[3]]; } else { box[L] = [b[0], b[1], b[2], n.thr]; box[R] = [b[0], b[1], n.thr, b[3]]; } } });
+  /* 나무 그림 위치 */
+  var tx = {}, ty = {};
+  function place(id, x, w) { var n = N[id]; tx[id] = x; ty[id] = 90 + depth[id] * 120; if (!n.leaf) { place(n.left, x - w / 2, w / 2); place(n.right, x + w / 2, w / 2); } }
+  place(0, 1240, 340);
+  function f(now) {
+    var st = stepOf(root), t = st ? st * 4 - 0.01 : ((now - t0) / 1000) % 12, k = Math.min(3, Math.floor(t / 4) + 1), u = ez((t % 4) / 1.5);
+    var o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    o += '<rect x="' + X0 + '" y="' + Y0 + '" width="' + (X1 - X0) + '" height="' + (Y1 - Y0) + '" fill="#FFFFFF" stroke="#D3C6B5" stroke-width="2"/>';
+    for (var a = 0; a < 3; a++) o += '<text x="' + (X0 - 12) + '" y="' + (Ya(a) + 2) + '" text-anchor="end" class="cfs">' + AG[a] + '</text>';
+    [133, 193, 253, 313, 373, 433].forEach(function (v) { o += '<text x="' + X(v) + '" y="' + (Y1 + 26) + '" text-anchor="middle" class="cfm" fill="#6E655C" font-size="15">' + v + '</text>'; });
+    o += '<text x="' + ((X0 + X1) / 2) + '" y="' + (Y1 + 54) + __L('" text-anchor="middle" class="cfmu">온도 T_K → · 점 색 = 평균 밀도(진할수록 큼)</text>','" text-anchor="middle" class="cfmu">Temperature T_K → · point color = mean density (darker = larger)</text>');
+    /* 잎 영역 음영(현재 깊이의 노드) · 경계 값 v → y = Ya(v) */
+    N.forEach(function (n) { if (depth[n.id] === k || (n.leaf && depth[n.id] < k)) { var b = box[n.id]; o += '<rect x="' + X(b[0]).toFixed(1) + '" y="' + Ya(b[3]).toFixed(1) + '" width="' + (X(b[1]) - X(b[0])).toFixed(1) + '" height="' + (Ya(b[2]) - Ya(b[3])).toFixed(1) + '" fill="' + col(n.value) + '" opacity=".30"/><text x="' + (X(b[0]) + 10).toFixed(1) + '" y="' + (Ya(b[2]) - 10).toFixed(1) + '" class="cfm" fill="#7A3306" font-size="16">' + n.value.toFixed(3) + '</text>'; } });
+    P.forEach(function (p) { o += '<circle cx="' + X(p[0]).toFixed(1) + '" cy="' + (Ya(p[1]) - 6).toFixed(1) + '" r="9" fill="' + col(p[2]) + '" stroke="#FFFFFF" stroke-width="1.5"/>'; });
+    /* 분할선 */
+    N.forEach(function (n) { if (n.leaf || depth[n.id] >= k) return; var b = box[n.id], fresh = depth[n.id] === k - 1, w = fresh ? u : 1;
+      if (n.feature === 'T_K') { var yA = Ya(b[3]), yB = Ya(b[2]); o += '<line x1="' + X(n.thr) + '" y1="' + yA + '" x2="' + X(n.thr) + '" y2="' + (yA + (yB - yA) * w) + '" stroke="#C8610C" stroke-width="' + (fresh ? 5 : 3) + '"/>'; }
+      else { var xA = X(b[0]), xB = X(b[1]), yy = Ya(n.thr); o += '<line x1="' + xA + '" y1="' + yy + '" x2="' + (xA + (xB - xA) * w) + '" y2="' + yy + '" stroke="#C8610C" stroke-width="' + (fresh ? 5 : 3) + '" stroke-dasharray="' + (fresh ? '0' : '8 6') + '"/>'; } });
+    /* 나무 */
+    o += __L('<text x="1240" y="44" text-anchor="middle" class="cfh" font-size="21">깊이 ','<text x="1240" y="44" text-anchor="middle" class="cfh" font-size="21">Depth ') + k + __L(' · 잎 ',' · leaves ') + Math.pow(2, k) + '</text>';
+    N.forEach(function (n) { if (depth[n.id] > k) return; if (!n.leaf && depth[n.id] < k) { [n.left, n.right].forEach(function (c) { o += '<line x1="' + tx[n.id] + '" y1="' + (ty[n.id] + 22) + '" x2="' + tx[c] + '" y2="' + (ty[c] - 22) + '" stroke="#D3C6B5" stroke-width="2.5"/>'; }); } });
+    N.forEach(function (n) { if (depth[n.id] > k) return; var leafNow = n.leaf || depth[n.id] === k, fresh = depth[n.id] === k;
+      var txt = leafNow ? n.value.toFixed(3) : (n.feature === 'T_K' ? 'T ≤ ' + Math.round(n.thr) : (n.thr < 1 ? (__L('비노화?','unaged?')) : __L('단기 이하?','short or lower?')));
+      var w = leafNow ? 76 : 124; o += '<rect x="' + (tx[n.id] - w / 2) + '" y="' + (ty[n.id] - 22) + '" width="' + w + '" height="44" rx="12" fill="' + (leafNow ? col(n.value) : '#231F20') + '" opacity="' + (fresh ? u.toFixed(2) : 1) + '"/><text x="' + tx[n.id] + '" y="' + (ty[n.id] + 7) + '" text-anchor="middle" class="' + (leafNow ? 'cfm' : 'cfw') + '" font-size="' + (leafNow ? 14 : 17) + '" fill="' + (leafNow ? '#231F20' : '#FBB44E') + '">' + txt + '</text>'; });
+    o += '<text x="1240" y="' + (H - 20) + __L('" text-anchor="middle" class="cfmu">깊이 3 · 특징 2 · 학습 RMSE ','" text-anchor="middle" class="cfmu">depth 3 · 2 features · train RMSE ') + T.train.rmse + ' · R² ' + T.train.r2 + '</text>';
+    o += '</svg>'; root.innerHTML = TX(o); RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 23장: 과적합 곡선 (체적탄성률) ===== */
+EMB["over"] = function (root, RAF) {
+  var t0 = CLK(), W = 1588, H = 560, G = W13.depth.targets.bulk_modulus, Rr = G.group, sd = G.md_seed_sd_median;
+  var X0 = 120, X1 = 1060, Y0 = 60, Y1 = 470, ymin = 0.4, ymax = 0.82;
+  function X(d) { return X0 + (d - 1) / 11 * (X1 - X0); } function Y(v) { return Y1 - (v - ymin) / (ymax - ymin) * (Y1 - Y0); }
+  function path(key, upto) { var s = ''; Rr.forEach(function (r, i) { if (r.depth > upto) return; s += (i ? 'L' : 'M') + X(r.depth).toFixed(1) + ' ' + Y(r[key]).toFixed(1); }); return s; }
+  function f(now) {
+    var st = stepOf(root), t = st ? st * 4 - 0.01 : ((now - t0) / 1000) % 12, k = Math.min(2, Math.floor(t / 4)), u = (t % 4) / 3.2, up = k === 0 ? 1 + 11 * Math.min(1, u) : 12;
+    var o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    o += '<line x1="' + X0 + '" y1="' + Y1 + '" x2="' + X1 + '" y2="' + Y1 + '" stroke="#6E655C" stroke-width="2.5"/><line x1="' + X0 + '" y1="' + Y0 + '" x2="' + X0 + '" y2="' + Y1 + '" stroke="#6E655C" stroke-width="2.5"/>';
+    for (var d = 1; d <= 12; d++) o += '<text x="' + X(d) + '" y="' + (Y1 + 26) + '" text-anchor="middle" class="cfm" fill="#6E655C" font-size="15">' + d + '</text>';
+    [0.4, 0.5, 0.6, 0.7, 0.8].forEach(function (v) { o += '<text x="' + (X0 - 12) + '" y="' + (Y(v) + 5) + '" text-anchor="end" class="cfm" fill="#6E655C" font-size="15">' + v.toFixed(1) + '</text>'; });
+    o += '<text x="' + ((X0 + X1) / 2) + '" y="' + (Y1 + 54) + __L('" text-anchor="middle" class="cfmu">나무 깊이 (복잡도) →</text><text x="40" y="','" text-anchor="middle" class="cfmu">Tree depth (complexity) →</text><text x="40" y="') + ((Y0 + Y1) / 2) + '" text-anchor="middle" class="cfmu" transform="rotate(-90 40 ' + ((Y0 + Y1) / 2) + ')">RMSE (GPa)</text>';
+    o += '<line x1="' + X0 + '" y1="' + Y(sd) + '" x2="' + X1 + '" y2="' + Y(sd) + '" stroke="#2E8B57" stroke-width="3" stroke-dasharray="8 6"/><text x="' + (X1 - 4) + '" y="' + (Y(sd) + 24) + __L('" text-anchor="end" class="cfm" fill="#2E8B57" font-size="16">MD 반복 오차 ','" text-anchor="end" class="cfm" fill="#2E8B57" font-size="16">MD repeat error ') + sd.toFixed(3) + '</text>';
+    if (k === 2) { var poly = 'M'; Rr.forEach(function (r, i) { poly += (i ? 'L' : '') + X(r.depth).toFixed(1) + ' ' + Y(r.val_rmse).toFixed(1); }); for (var i = Rr.length - 1; i >= 0; i--) poly += 'L' + X(Rr[i].depth).toFixed(1) + ' ' + Y(Rr[i].train_rmse).toFixed(1); o += '<path d="' + poly + 'Z" fill="#E37F1A" opacity=".12"/>'; }
+    o += '<path d="' + path('train_rmse', up) + '" fill="none" stroke="#9AA5B1" stroke-width="5"/>';
+    if (k >= 1) o += '<path d="' + path('val_rmse', k === 1 ? 1 + 11 * Math.min(1, u) : 12) + '" fill="none" stroke="#E37F1A" stroke-width="5"/>';
+    if (k === 2) { var b = G.best; o += '<circle class="pulse" cx="' + X(b.depth) + '" cy="' + Y(b.val_rmse) + '" r="12" fill="#C8610C"/><circle cx="' + X(b.depth) + '" cy="' + Y(b.val_rmse) + '" r="10" fill="#C8610C"/><text x="' + (X(b.depth) + 18) + '" y="' + (Y(b.val_rmse) - 18) + __L('" class="cfh" fill="#C8610C" font-size="20">검증 최소 · 깊이 ','" class="cfh" fill="#C8610C" font-size="20">Validation min · depth ') + b.depth + ' · ' + b.val_rmse.toFixed(3) + '</text>'; }
+    var last = Rr[Rr.length - 1];
+    o += '<rect x="1110" y="60" width="440" height="410" rx="16" fill="#F6F0E7"/>';
+    var lines = [[__L('① 학습 오차','① Train error'), __L('깊이 1 → 12: ','depth 1 → 12: ') + Rr[0].train_rmse.toFixed(3) + ' → ' + last.train_rmse.toFixed(3), '#9AA5B1'], [__L('② 검증 오차','② Validation error'), Rr[0].val_rmse.toFixed(3) + __L(' → 최소 ',' → min ') + G.best.val_rmse.toFixed(3) + ' → ' + last.val_rmse.toFixed(3), '#E37F1A'], [__L('③ 간격 = 과적합','③ Gap = overfitting'), __L('학습 < 반복 오차 ','train < repeat error ') + sd.toFixed(3) + __L(' = 잡음 외움',' = memorizing noise'), '#C8610C']];
+    lines.forEach(function (L, i) { var on = i <= k; o += '<rect x="1130" y="' + (80 + i * 120) + '" width="400" height="100" rx="12" fill="' + (i === k ? '#FFF1E0' : '#FFFFFF') + '" stroke="' + (i === k ? '#F99D1C' : '#E2D8CA') + '" stroke-width="2" opacity="' + (on ? 1 : 0.4) + '"/><rect x="1146" y="' + (100 + i * 120) + '" width="10" height="60" rx="5" fill="' + L[2] + '" opacity="' + (on ? 1 : 0.4) + '"/><text x="1172" y="' + (122 + i * 120) + '" class="cfh" font-size="20" opacity="' + (on ? 1 : 0.4) + '">' + L[0] + '</text><text x="1172" y="' + (154 + i * 120) + '" class="cfs" font-size="17" opacity="' + (on ? 1 : 0.4) + '">' + L[1] + '</text>'; });
+    o += '</svg>'; root.innerHTML = TX(o); RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 정적 그림 (로드 시 1회) ===== */
+function svgAxes(o, X0, X1, Y0, Y1) { return o + '<line x1="' + X0 + '" y1="' + Y1 + '" x2="' + X1 + '" y2="' + Y1 + '" stroke="#6E655C" stroke-width="2.5"/><line x1="' + X0 + '" y1="' + Y0 + '" x2="' + X0 + '" y2="' + Y1 + '" stroke="#6E655C" stroke-width="2.5"/>'; }
+(function () {
+  /* 5장: 데이터 격자 */
+  var g = document.getElementById('w13-grid');
+  if (g) { var o = '', cw = 52, x0 = 110, y0 = 60, R = rng(7), C = {}; W13.cond.forEach(function (c) { C[c[0] + '@' + c[1]] = c; });
+    var cells = ['AAA1-non_aging', 'AAA1-short_aging', 'AAA1-long_aging'];
+    for (var a = 0; a < 3; a++) { o += '<text x="' + (x0 - 14) + '" y="' + (y0 + a * 130 + 62) + '" text-anchor="end" class="cfs">' + AG[a] + '</text>';
+      for (var j = 0; j < TL.length; j++) { var c = C[cells[a] + '@' + TL[j]], n = c ? c[2] : 0; o += '<rect x="' + (x0 + j * cw) + '" y="' + (y0 + a * 130) + '" width="' + (cw - 8) + '" height="110" rx="8" fill="#F6F0E7"/>';
+        for (var k = 0; k < Math.min(n, 12); k++) o += '<circle cx="' + (x0 + j * cw + 11 + (k % 3) * 11) + '" cy="' + (y0 + a * 130 + 20 + Math.floor(k / 3) * 22) + '" r="4.5" fill="' + AGC[a] + '"/>'; } }
+    for (j = 0; j < TL.length; j += 2) o += '<text x="' + (x0 + j * cw + 22) + '" y="' + (y0 + 3 * 130 + 18) + '" text-anchor="middle" class="cfm" fill="#6E655C" font-size="15">' + TL[j] + '</text>';
+    o += '<text x="' + (x0 + 9 * cw) + '" y="' + (y0 + 3 * 130 + 48) + __L('" text-anchor="middle" class="cfmu">온도 (K) · 점 = MD 실행 1회 · 칸 = 조건 54 · 대부분 6점(일부 9 · 12)</text>','" text-anchor="middle" class="cfmu">Temperature (K) · point = 1 MD run · cell = condition 54 · mostly 6 points (some 9 · 12)</text>');
+    g.innerHTML = TX(o); }
+  /* 11장: 성능표 막대 */
+  var b = document.getElementById('w13-bars');
+  if (b) { var o = '', sp = ['random', 'cond', 'loago', 't_extrap'], sn = [__L('행 무작위','Random rows'), __L('조건 그룹','Condition group'), __L('노화 상태 빼기','Drop an aging state'), __L('온도 외삽','Temperature extrapolation')], md = ['linear', 'tree_d4', 'tree_full', 'forest'], mn = [__L('선형','Linear'), __L('나무 깊이 4','Depth-4 tree'), __L('나무 제한 없음','Unlimited tree'), __L('숲','Forest')], mc = ['#4F7FB0', '#9AA5B1', '#6E655C', '#E37F1A'];
+    var X0 = 120, Y1 = 380, Y0 = 50, gw = 340, sc = (Y1 - Y0) / 0.032;
+    o = svgAxes(o, X0, 1520, Y0, Y1);
+    [0, 0.01, 0.02, 0.03].forEach(function (v) { o += '<text x="' + (X0 - 12) + '" y="' + (Y1 - v * sc + 5) + '" text-anchor="end" class="cfm" fill="#6E655C" font-size="15">' + v.toFixed(2) + '</text>'; });
+    o += '<line x1="' + X0 + '" y1="' + (Y1 - MDSD * sc) + '" x2="1520" y2="' + (Y1 - MDSD * sc) + '" stroke="#2E8B57" stroke-width="2.5" stroke-dasharray="8 6"/><line x1="' + (X0 + 860) + '" y1="20" x2="' + (X0 + 896) + '" y2="20" stroke="#2E8B57" stroke-width="2.5" stroke-dasharray="8 6"/><text x="' + (X0 + 906) + __L('" y="26" class="cfs" fill="#2E8B57" font-size="16">MD 반복 오차 ','" y="26" class="cfs" fill="#2E8B57" font-size="16">MD repeat error ') + MDSD + '</text>';
+    sp.forEach(function (s, i) { var S = SD.splits[s]; md.forEach(function (m, q) { var v = S.models[m].rmse, x = X0 + 40 + i * gw + q * 64, h = v * sc; o += '<rect x="' + x + '" y="' + (Y1 - h).toFixed(1) + '" width="52" height="' + h.toFixed(1) + '" rx="6" fill="' + mc[q] + '"/><text x="' + (x + 26) + '" y="' + (Y1 - h - 8).toFixed(1) + '" text-anchor="middle" class="cfm" fill="#231F20" font-size="13">' + S.models[m].r2.toFixed(2) + '</text>'; });
+      o += '<text x="' + (X0 + 40 + i * gw + 124) + '" y="' + (Y1 + 30) + '" text-anchor="middle" class="cfh" font-size="19">' + sn[i] + '</text><text x="' + (X0 + 40 + i * gw + 124) + '" y="' + (Y1 + 54) + __L('" text-anchor="middle" class="cfmu" font-size="15">누수 ','" text-anchor="middle" class="cfmu" font-size="15">Leakage ') + Math.round(S.leak_frac * 100) + __L(' % · 시험 ',' % · test ') + S.n_test + '</text>'; });
+    md.forEach(function (m, q) { o += '<rect x="' + (X0 + 20 + q * 210) + '" y="12" width="20" height="16" rx="4" fill="' + mc[q] + '"/><text x="' + (X0 + 48 + q * 210) + '" y="26" class="cfs" font-size="16">' + mn[q] + '</text>'; });
+    o += __L('<text x="1520" y="26" text-anchor="end" class="cfmu" font-size="15">막대 위 숫자 = R²</text>','<text x="1520" y="26" text-anchor="end" class="cfmu" font-size="15">Numbers above bars = R²</text>');
+    b.innerHTML = TX(o); }
+  /* 15장: 잔차 막대 */
+  var r = document.getElementById('w13-resid');
+  if (r) { var P = SD.parity_random_forest, o = '', n = 8, X0 = 60, sc = 9000, Ym = 150;
+    o += '<line x1="' + X0 + '" y1="' + Ym + '" x2="1040" y2="' + Ym + '" stroke="#6E655C" stroke-width="2"/><text x="1046" y="' + (Ym + 5) + '" class="cfmu" font-size="15">ŷ − y = 0</text>';
+    for (var i = 0; i < n; i++) { var e = P.p[i] - P.y[i], x = X0 + 30 + i * 120, h = e * sc; o += '<rect x="' + x + '" y="' + (h > 0 ? Ym - h : Ym).toFixed(1) + '" width="60" height="' + Math.abs(h).toFixed(1) + '" rx="6" fill="' + (e > 0 ? '#E37F1A' : '#4F7FB0') + '"/><text x="' + (x + 30) + '" y="' + (h > 0 ? Ym - h - 8 : Ym - h + 20).toFixed(1) + '" text-anchor="middle" class="cfm" fill="#231F20" font-size="14">' + (e >= 0 ? '+' : '') + e.toFixed(4) + '</text>'; }
+    var s2 = 0, s1 = 0; for (i = 0; i < n; i++) { var e2 = P.p[i] - P.y[i]; s2 += e2 * e2; s1 += Math.abs(e2); }
+    var rm = Math.sqrt(s2 / n), ma = s1 / n, bs = 330 / Math.max(rm, MDSD);
+    o += __L('<rect x="1110" y="20" width="460" height="340" rx="16" fill="#FFFFFF" stroke="#E2D8CA" stroke-width="2"/><text x="1340" y="58" text-anchor="middle" class="cfh" font-size="20">이 8점의 지표 · g/cm³</text>','<rect x="1110" y="20" width="460" height="340" rx="16" fill="#FFFFFF" stroke="#E2D8CA" stroke-width="2"/><text x="1340" y="58" text-anchor="middle" class="cfh" font-size="20">Metrics of these 8 points · g/cm³</text>');
+    [['RMSE', rm, '#C8610C', __L('큰 오차에 민감','Sensitive to large errors')], ['MAE', ma, '#4F7FB0', __L('전형 오차','Typical error')], [__L('MD 반복','MD repeat'), MDSD, '#2E8B57', __L('넘을 수 없는 바닥','Unbeatable floor')]].forEach(function (q, k) { var y = 90 + k * 82, w = q[1] * bs; o += '<text x="1130" y="' + (y + 4) + '" class="cfh" font-size="18" fill="' + q[2] + '">' + q[0] + '</text><text x="1550" y="' + (y + 4) + '" text-anchor="end" class="cfmu" font-size="15">' + q[3] + '</text><rect x="1130" y="' + (y + 14) + '" width="' + w.toFixed(1) + '" height="30" rx="7" fill="' + q[2] + '"/><text x="' + (1140 + w).toFixed(1) + '" y="' + (y + 36) + '" class="cfm" font-size="18" fill="#231F20">' + (k === 2 ? MDSD : f4(q[1])) + '</text>'; });
+    o += __L('<text x="1340" y="345" text-anchor="middle" class="cfs" font-size="16">RMSE ≥ MAE · 큰 잔차 하나가 RMSE 상승</text><text x="60" y="350" class="cfmu" font-size="15">막대 = 잔차(예측 − MD) · g/cm³ · 주황 = 과대 예측 · 파랑 = 과소 예측</text>','<text x="1340" y="345" text-anchor="middle" class="cfs" font-size="16">RMSE ≥ MAE · one large residual raises RMSE</text><text x="60" y="350" class="cfmu" font-size="15">Bars = residual (prediction − MD) · g/cm³ · orange = overprediction · blue = underprediction</text>');
+    r.innerHTML = TX(o); }
+  /* 17장: 파리티 2개 */
+  var pp = document.getElementById('w13-parity');
+  if (pp) { var o = '';
+    function parity(ox, P, title, color, S) { var s = '', lo = 0.91, hi = 1.09, w = 400, X = function (v) { return ox + (v - lo) / (hi - lo) * w; }, Y = function (v) { return 420 - (v - lo) / (hi - lo) * 360; };
+      s += '<rect x="' + ox + '" y="60" width="' + w + '" height="360" fill="#FFFFFF" stroke="#D3C6B5" stroke-width="2"/>';
+      s += '<polygon points="' + X(lo) + ',' + Y(lo + MDSD) + ' ' + X(hi - MDSD) + ',' + Y(hi) + ' ' + X(hi) + ',' + Y(hi) + ' ' + X(hi) + ',' + Y(hi - MDSD) + ' ' + X(lo + MDSD) + ',' + Y(lo) + ' ' + X(lo) + ',' + Y(lo) + '" fill="#2E8B57" opacity=".12"/>';
+      s += '<line x1="' + X(lo) + '" y1="' + Y(lo) + '" x2="' + X(hi) + '" y2="' + Y(hi) + '" stroke="#6E655C" stroke-width="2" stroke-dasharray="6 5"/>';
+      P.y.forEach(function (y, i) { s += '<circle cx="' + X(y).toFixed(1) + '" cy="' + Y(P.p[i]).toFixed(1) + '" r="6" fill="' + color + '" opacity=".75"/>'; });
+      s += '<text x="' + (ox + w / 2) + '" y="40" text-anchor="middle" class="cfh" font-size="20">' + title + '</text><text x="' + (ox + w / 2) + __L('" y="450" text-anchor="middle" class="cfmu" font-size="15">MD 밀도 (g/cm³) →</text>','" y="450" text-anchor="middle" class="cfmu" font-size="15">MD density (g/cm³) →</text>');
+      s += '<text x="' + (ox + 12) + '" y="84" class="cfm" font-size="15" fill="#231F20">RMSE ' + f4(S.rmse) + ' · R² ' + S.r2 + ' · n ' + P.y.length + '</text>';
+      return s; }
+    o += parity(60, SD.parity_random_forest, __L('행 무작위 · 숲','Random rows · forest'), '#D9534F', SD.splits.random.models.forest);
+    var L2 = SD.parity_loago2_forest, e = 0; L2.y.forEach(function (y, i) { e += L2.p[i] - y; }); e /= L2.y.length; var s2 = 0; L2.y.forEach(function (y, i) { s2 += Math.pow(L2.p[i] - y, 2); });
+    var my = L2.y.reduce(function (a, b) { return a + b; }, 0) / L2.y.length, sst = 0; L2.y.forEach(function (y) { sst += Math.pow(y - my, 2); });
+    o += parity(560, L2, __L('장기 노화 빼기 · 숲','Drop long-term aging · forest'), '#231F20', { rmse: Math.sqrt(s2 / L2.y.length), r2: (1 - s2 / sst).toFixed(2) });
+    o += __L('<rect x="1080" y="60" width="460" height="360" rx="16" fill="#F6F0E7"/><text x="1110" y="104" class="cfh" font-size="20">읽는 법</text>','<rect x="1080" y="60" width="460" height="360" rx="16" fill="#F6F0E7"/><text x="1110" y="104" class="cfh" font-size="20">How to read</text>');
+    var rows = [[__L('대각선 점선','Dashed diagonal'), __L('예측 = MD (정답)','prediction = MD (truth)')], [__L('초록 띠','Green band'), __L('MD 반복 오차 ±','MD repeat error ±') + MDSD], [__L('왼쪽','Left'), __L('띠 안에 붙음 = 외운 점수','hugs the band = memorized score')], [__L('오른쪽','Right'), __L('평균 편향 ','mean bias ') + (e >= 0 ? '+' : '') + e.toFixed(4) + ' g/cm³'], ['', __L('= 장기 노화를 덜 조밀하게 예측','= predicts long-term aging as less dense')]];
+    rows.forEach(function (q, i) { o += '<text x="1110" y="' + (150 + i * 50) + '" class="cfm" font-size="17" fill="#C8610C">' + q[0] + '</text><text x="1250" y="' + (150 + i * 50) + '" class="cfs" font-size="17">' + q[1] + '</text>'; });
+    pp.innerHTML = TX(o); }
+  /* 18장: R² 범위 */
+  var rg = document.getElementById('w13-range');
+  if (rg) { var B = W13.split_bulk.splits, o = '', items = [[__L('조건 그룹','Condition group'), B.cond.models.forest, '#4F7FB0'], [__L('온도 외삽','Temperature extrapolation'), B.t_extrap.models.forest, '#E37F1A']];
+    items.forEach(function (it, i) { var x = 120 + i * 430, m = it[1], sc = 150;
+      o += '<text x="' + (x + 150) + '" y="40" text-anchor="middle" class="cfh" font-size="21">' + it[0] + '</text>';
+      [['RMSE', m.rmse, '#231F20'], [__L('σ_y (시험 폭)','σ_y (test width)'), m.sd_y, it[2]], [__L('반복 오차','Repeat error'), W13.split_bulk.md_seed_sd.median, '#2E8B57']].forEach(function (q, k) { var h = q[1] * sc; o += '<rect x="' + (x + k * 100) + '" y="' + (360 - h).toFixed(1) + '" width="80" height="' + h.toFixed(1) + '" rx="8" fill="' + q[2] + '"/><text x="' + (x + k * 100 + 40) + '" y="' + (350 - h).toFixed(1) + '" text-anchor="middle" class="cfm" font-size="17" fill="#231F20">' + q[1].toFixed(2) + '</text><text x="' + (x + k * 100 + 40) + '" y="388" text-anchor="middle" class="cfs" font-size="15">' + q[0] + '</text>'; });
+      o += '<rect x="' + (x + 20) + '" y="400" width="260" height="34" rx="10" fill="#FFF1E0"/><text x="' + (x + 150) + '" y="424" text-anchor="middle" class="cfh" font-size="19" fill="#C8610C">R² = ' + m.r2 + '</text>'; });
+    o += __L('<text x="980" y="432" text-anchor="end" class="cfmu" font-size="14">GPa · 숲 · 체적탄성률</text>','<text x="980" y="432" text-anchor="end" class="cfmu" font-size="14">GPa · forest · bulk modulus</text>');
+    rg.innerHTML = TX(o); }
+  /* 22장: 외삽 */
+  var ex = document.getElementById('w13-extrap');
+  if (ex) { var E = W13.extrap, o = '', X0 = 110, X1 = 1020, Y0 = 50, Y1 = 380, lo = 0.91, hi = 1.04, X = function (t) { return X0 + (t - 120) / (446 - 120) * (X1 - X0); }, Y = function (v) { return Y1 - (v - lo) / (hi - lo) * (Y1 - Y0); };
+    o += '<rect x="' + X(173) + '" y="' + Y0 + '" width="' + (X(393) - X(173)) + '" height="' + (Y1 - Y0) + '" fill="#E8F3EC"/><text x="' + ((X(173) + X(393)) / 2) + '" y="' + (Y0 + 24) + __L('" text-anchor="middle" class="cfm" fill="#1F6B42" font-size="16">학습 범위 173 ~ 393 K</text>','" text-anchor="middle" class="cfm" fill="#1F6B42" font-size="16">Training range 173 ~ 393 K</text>');
+    o = svgAxes(o, X0, X1, Y0, Y1);
+    [133, 193, 253, 313, 373, 433].forEach(function (t) { o += '<text x="' + X(t) + '" y="' + (Y1 + 26) + '" text-anchor="middle" class="cfm" fill="#6E655C" font-size="15">' + t + '</text>'; });
+    [0.92, 0.96, 1.0, 1.04].forEach(function (v) { o += '<text x="' + (X0 - 10) + '" y="' + (Y(v) + 5) + '" text-anchor="end" class="cfm" fill="#6E655C" font-size="15">' + v.toFixed(2) + '</text>'; });
+    o += '<text x="' + ((X0 + X1) / 2) + '" y="' + (Y1 + 54) + __L('" text-anchor="middle" class="cfmu">온도 (K) · 비노화 · 밀도 g/cm³</text>','" text-anchor="middle" class="cfmu">Temperature (K) · unaged · density g/cm³</text>');
+    function pl(arr, col, w, dash) { var s = ''; E.T.forEach(function (t, i) { s += (i ? 'L' : 'M') + X(t).toFixed(1) + ' ' + Y(arr[i]).toFixed(1); }); return '<path d="' + s + '" fill="none" stroke="' + col + '" stroke-width="' + w + '"' + (dash ? ' stroke-dasharray="' + dash + '"' : '') + '/>'; }
+    o += pl(E.linear, '#4F7FB0', 4) + pl(E.tree_d4, '#E37F1A', 4);
+    E.T.forEach(function (t, i) { var out = t < 173 || t > 393; o += '<circle cx="' + X(t) + '" cy="' + Y(E.obs[i]) + '" r="' + (out ? 9 : 6) + '" fill="' + (out ? '#D9534F' : '#231F20') + '"/>'; });
+    o += '<rect x="' + (X1 - 260) + '" y="' + (Y0 + 40) + '" width="250" height="110" rx="12" fill="#FFFFFF" stroke="#E2D8CA"/><line x1="' + (X1 - 245) + '" y1="' + (Y0 + 70) + '" x2="' + (X1 - 205) + '" y2="' + (Y0 + 70) + '" stroke="#4F7FB0" stroke-width="4"/><text x="' + (X1 - 195) + '" y="' + (Y0 + 76) + __L('" class="cfs" font-size="16">선형</text><line x1="','" class="cfs" font-size="16">Linear</text><line x1="') + (X1 - 245) + '" y1="' + (Y0 + 102) + '" x2="' + (X1 - 205) + '" y2="' + (Y0 + 102) + '" stroke="#E37F1A" stroke-width="4"/><text x="' + (X1 - 195) + '" y="' + (Y0 + 108) + __L('" class="cfs" font-size="16">나무 깊이 4</text><circle cx="','" class="cfs" font-size="16">Depth-4 tree</text><circle cx="') + (X1 - 225) + '" cy="' + (Y0 + 132) + '" r="7" fill="#D9534F"/><text x="' + (X1 - 195) + '" y="' + (Y0 + 138) + __L('" class="cfs" font-size="16">시험 MD 값</text>','" class="cfs" font-size="16">Test MD value</text>');
+    ex.innerHTML = TX(o); }
+  /* 24장: 학습 곡선 */
+  var lc = document.getElementById('w13-lc');
+  if (lc) { var Lm = W13.learning.models, o = '', X0 = 110, X1 = 1020, Y0 = 40, Y1 = 380, X = function (n) { return X0 + (n - 0) / 290 * (X1 - X0); }, Y = function (v) { return Y1 - v / 0.034 * (Y1 - Y0); };
+    o = svgAxes(o, X0, X1, Y0, Y1);
+    [0, 50, 100, 150, 200, 250].forEach(function (n) { o += '<text x="' + X(n) + '" y="' + (Y1 + 26) + '" text-anchor="middle" class="cfm" fill="#6E655C" font-size="15">' + n + '</text>'; });
+    [0, 0.01, 0.02, 0.03].forEach(function (v) { o += '<text x="' + (X0 - 10) + '" y="' + (Y(v) + 5) + '" text-anchor="end" class="cfm" fill="#6E655C" font-size="15">' + v.toFixed(2) + '</text>'; });
+    o += '<text x="' + ((X0 + X1) / 2) + '" y="' + (Y1 + 54) + __L('" text-anchor="middle" class="cfmu">학습 표본 수 (조건 그룹 5겹 평균) · RMSE g/cm³</text>','" text-anchor="middle" class="cfmu">Training samples (condition-group 5-fold mean) · RMSE g/cm³</text>');
+    o += '<line x1="' + X0 + '" y1="' + Y(MDSD) + '" x2="' + X1 + '" y2="' + Y(MDSD) + '" stroke="#2E8B57" stroke-width="2.5" stroke-dasharray="8 6"/>';
+    [['forest', '#E37F1A'], ['linear', '#4F7FB0']].forEach(function (q) { ['val_rmse', 'train_rmse'].forEach(function (key) { var s = ''; Lm[q[0]].forEach(function (r, i) { s += (i ? 'L' : 'M') + X(r.n_train).toFixed(1) + ' ' + Y(r[key]).toFixed(1); }); o += '<path d="' + s + '" fill="none" stroke="' + q[1] + '" stroke-width="' + (key === 'val_rmse' ? 4.5 : 2.5) + '"' + (key === 'train_rmse' ? ' stroke-dasharray="6 6"' : '') + '/>'; Lm[q[0]].forEach(function (r) { if (key === 'val_rmse') o += '<circle cx="' + X(r.n_train).toFixed(1) + '" cy="' + Y(r[key]).toFixed(1) + '" r="6" fill="' + q[1] + '"/>'; }); }); });
+    o += '<rect x="' + (X1 - 300) + '" y="' + (Y0 + 10) + '" width="290" height="104" rx="12" fill="#FFFFFF" stroke="#E2D8CA"/><text x="' + (X1 - 284) + '" y="' + (Y0 + 40) + __L('" class="cfs" font-size="16">실선 = 검증 · 점선 = 학습</text><text x="','" class="cfs" font-size="16">solid = validation · dashed = train</text><text x="') + (X1 - 284) + '" y="' + (Y0 + 70) + __L('" class="cfs" font-size="16" fill="#C8610C">주황 = 숲 · 파랑 = 선형</text><text x="','" class="cfs" font-size="16" fill="#C8610C">orange = forest · blue = linear</text><text x="') + (X1 - 284) + '" y="' + (Y0 + 100) + __L('" class="cfs" font-size="16" fill="#2E8B57">초록 점선 = MD 반복 오차</text>','" class="cfs" font-size="16" fill="#2E8B57">green dashed = MD repeat error</text>');
+    lc.innerHTML = TX(o); }
+})();
+
+/* ===== 16장 조작형: 지표 계산기 ===== */
+(function () {
+  var root = document.getElementById('sim-metric'); if (!root) return;
+  var svg = root.querySelector('svg'), P = SD.parity_random_forest, st = { b: 0, s: 1, w: 'all' };
+  function draw() {
+    var ys = [], ps = [];
+    P.y.forEach(function (y, i) { var T = P.T[i]; if (st.w === 'narrow' && (T < 273 || T > 333)) return; ys.push(y); ps.push(y + st.s * (P.p[i] - y) + st.b); });
+    var n = ys.length, m = ys.reduce(function (a, b) { return a + b; }, 0) / n, se = 0, sa = 0, st2 = 0;
+    for (var i = 0; i < n; i++) { se += Math.pow(ps[i] - ys[i], 2); sa += Math.abs(ps[i] - ys[i]); st2 += Math.pow(ys[i] - m, 2); }
+    var rmse = Math.sqrt(se / n), mae = sa / n, r2 = 1 - se / st2, sd = Math.sqrt(st2 / n);
+    var lo = 0.90, hi = 1.10, X0 = 110, X1 = 610, Y0 = 30, Y1 = 430, X = function (v) { return X0 + (v - lo) / (hi - lo) * (X1 - X0); }, Y = function (v) { return Y1 - (v - lo) / (hi - lo) * (Y1 - Y0); };
+    var o = '<rect x="' + X0 + '" y="' + Y0 + '" width="' + (X1 - X0) + '" height="' + (Y1 - Y0) + '" fill="#FFFFFF" stroke="#D3C6B5" stroke-width="2"/>';
+    o += '<polygon points="' + X(lo) + ',' + Y(lo + MDSD) + ' ' + X(hi - MDSD) + ',' + Y(hi) + ' ' + X(hi) + ',' + Y(hi) + ' ' + X(hi) + ',' + Y(hi - MDSD) + ' ' + X(lo + MDSD) + ',' + Y(lo) + ' ' + X(lo) + ',' + Y(lo) + '" fill="#2E8B57" opacity=".14"/>';
+    o += '<line x1="' + X(lo) + '" y1="' + Y(lo) + '" x2="' + X(hi) + '" y2="' + Y(hi) + '" stroke="#6E655C" stroke-width="2" stroke-dasharray="6 5"/>';
+    for (i = 0; i < n; i++) o += '<circle cx="' + X(ys[i]).toFixed(1) + '" cy="' + Y(Math.max(lo, Math.min(hi, ps[i]))).toFixed(1) + '" r="7" fill="#E37F1A" opacity=".8"/>';
+    [0.92, 0.96, 1.0, 1.04, 1.08].forEach(function (v) { o += '<text x="' + X(v) + '" y="' + (Y1 + 22) + '" text-anchor="middle" class="cfm" fill="#6E655C" font-size="14">' + v.toFixed(2) + '</text><text x="' + (X0 - 8) + '" y="' + (Y(v) + 5) + '" text-anchor="end" class="cfm" fill="#6E655C" font-size="14">' + v.toFixed(2) + '</text>'; });
+    o += '<text x="' + ((X0 + X1) / 2) + '" y="' + (Y1 + 44) + __L('" text-anchor="middle" class="cfmu" font-size="14">MD 밀도 →  · 세로 = 예측</text>','" text-anchor="middle" class="cfmu" font-size="14">MD density →  · y = prediction</text>');
+    /* 오른쪽: 지표 막대 */
+    var bx = 670; o += '<text x="' + bx + '" y="60" class="cfh" font-size="20">' + (st.w === 'narrow' ? (__L('시험 범위 273 ~ 333 K · σ_y 좁음','Test range 273 ~ 333 K · narrow σ_y')) : __L('시험 범위 전체 · 133 ~ 433 K','Test range: full · 133 ~ 433 K')) + '</text>';
+    [['RMSE', rmse, 0.02, '#E37F1A'], ['MAE', mae, 0.02, '#4F7FB0'], ['σ_y', sd, 0.05, '#6E655C']].forEach(function (q, k) { var y = 110 + k * 80, w = Math.min(1, q[1] / q[2]) * 240; o += '<text x="' + bx + '" y="' + (y + 24) + '" class="cfs" font-size="18">' + q[0] + '</text><rect x="' + (bx + 70) + '" y="' + y + '" width="240" height="34" rx="10" fill="#F6F0E7"/><rect x="' + (bx + 70) + '" y="' + y + '" width="' + w.toFixed(1) + '" height="34" rx="10" fill="' + q[3] + '"/><text x="' + (bx + 322) + '" y="' + (y + 25) + '" class="cfm" font-size="18" fill="#231F20">' + f4(q[1]) + '</text>'; });
+    o += '<rect x="' + bx + '" y="350" width="400" height="70" rx="14" fill="' + (r2 < 0.5 ? '#FBE3E1' : '#231F20') + '"/><text x="' + (bx + 200) + '" y="395" text-anchor="middle" class="cfh" font-size="24" fill="' + (r2 < 0.5 ? '#A83A32' : '#FBB44E') + '">R² = ' + r2.toFixed(3) + '</text>';
+    svg.innerHTML = TX(o);
+    root.querySelector('[data-o=rmse]').textContent = f4(rmse); root.querySelector('[data-o=mae]').textContent = f4(mae); root.querySelector('[data-o=r2]').textContent = r2.toFixed(3); root.querySelector('[data-o=sd]').textContent = f4(sd); root.querySelector('[data-o=n]').textContent = n;
+    root.querySelector('[data-o=b]').textContent = st.b.toFixed(3); root.querySelector('[data-o=s]').textContent = st.s.toFixed(1);
+    root.querySelectorAll('button[data-w]').forEach(function (bt) { bt.classList.toggle('alt', bt.dataset.w !== st.w); });
+  }
+  root.querySelectorAll('input[type=range]').forEach(function (inp) { inp.addEventListener('input', function () { st[inp.dataset.k] = +inp.value; draw(); }); });
+  root.querySelectorAll('button[data-w]').forEach(function (bt) { bt.onclick = function () { st.w = bt.dataset.w; draw(); }; });
+  root.querySelector('[data-act=reset]').onclick = function () { st = { b: 0, s: 1, w: 'all' }; root.querySelector('input[data-k=b]').value = 0; root.querySelector('input[data-k=s]').value = 1; draw(); };
+  draw();
+})();
+</script>
+</body>
+</html>

@@ -1,1 +1,859 @@
-../../강의덱/W10_계면과부착.html
+<!doctype html>
+<html lang="ko" data-v="3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>W10 계면과 부착 · 인장 프로토콜 · 분리일 · 수분 손상 · 파괴 모드</title>
+<link rel="stylesheet" href="../../common/deck.css">
+</head>
+<body>
+
+<!-- 1 표지 -->
+<section class="slide v3 cover">
+<div class="stop">
+<div class="ribbon"></div>
+<div class="cover-txt">
+<p class="eb a" style="--d:0"><span class="ko" data-i>건설소재 역설계 도구 개발을 위한 AI와 분자동역학 활용 · WEEK 10 · 모듈 M3 물성 · 소재 · 차시 10-1 ~ 10-4 · 50분</span><span class="en" data-i>AI and Molecular Dynamics for Inverse Design of Construction Materials · WEEK 10 · Module M3 Properties · Materials · sessions 10-1 ~ 10-4 · 50 min</span></p>
+<h1 class="cover-h a" style="--d:1"><span class="ko" data-i>계면과 부착: 인장 프로토콜 · 분리일 · 수분 손상 · 파괴 모드</span><span class="en" data-i>Interface and adhesion: tension protocol · work of separation · moisture damage · failure mode</span></h1>
+<p class="cover-sub a" style="--d:2"><span class="ko" data-i>3층 셀을 z 로 당겨 곡선 하나를 얻고, 그 곡선에서 분리일 · 물의 효과 · 파괴 모드 판독</span><span class="en" data-i>Pull the 3-layer cell along z to get one curve, then read work of separation · water effect · failure mode from it</span></p>
+<p class="who a" style="--d:3"><span class="ko" data-i><b>윤태영</b> 연구위원 · 한국건설기술연구원 도로교통연구본부 · 과학기술연합대학원대학교(UST) 교수</span><span class="en" data-i><b>Taeyoung Yun</b> Senior Research Fellow · Department of Highway & Transportation Research, Korea Institute of Civil Engineering and Building Technology (KICT) · Professor, University of Science and Technology (UST)</span></p>
+<div class="rel a" style="--d:4;justify-content:flex-start"><span><span class="ko" data-i>준비물 · 터미널 + Claude Code</span><span class="en" data-i>Prerequisites · terminal + Claude Code</span></span><span>conda mdai (LAMMPS · Packmol)</span><span><span class="ko" data-i>W08 3층 셀 (저장소)</span><span class="en" data-i>W08 3-layer cell (repository)</span></span></div>
+</div>
+<div class="cover-fig"><div class="emb" data-emb="pullcover" data-dur="10"></div></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 2 오늘 만들 것 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>오늘 만들 것 · 4차시 · 50분</span><span class="en" data-i>What we build today · 4 sessions · 50 min</span></p>
+<div class="hrow"><span class="hico" data-ico="package-check"></span><h2 class="h"><span class="ko" data-i>오늘의 완성물 2개: 응력–변위 곡선과 분리일 · 건조 ↔ 습윤 비교표와 파괴 모드</span><span class="en" data-i>2 deliverables today: stress–displacement curve with work of separation · dry ↔ wet comparison table with failure mode</span></h2></div>
+<p class="sub"><span class="ko" data-i>인장 실행 2건(건조 · 습윤) · Claude Code 지시 3개 · 슬라이더 1개 · 인장 1건 = 40초</span><span class="en" data-i>2 tension runs (dry · wet) · 3 Claude Code prompts · 1 slider · 1 tension run = 40 s</span></p>
+<div class="bd today">
+<div class="goal">
+<div class="it white a" style="--d:1">
+<div class="ih"><span class="icb" data-ico="line-chart"></span><div><p class="k"><span class="ko" data-i>완성물 ①</span><span class="en" data-i>Deliverable ①</span></p><h4><span class="ko" data-i>응력–변위 곡선 · 분리일</span><span class="en" data-i>Stress–displacement curve · work of separation</span></h4></div></div>
+<div class="figw"><svg viewBox="0 0 760 230" class="cfig" id="today_curve"></svg></div>
+<p><span class="ko" data-i>σ = 반력 ÷ 단면적 · 면적 = 분리일 · 에너지 차 병기</span><span class="en" data-i>σ = reaction force ÷ cross-section · area = work of separation · energy difference alongside</span></p>
+</div>
+<div class="it dark a" style="--d:2">
+<div class="ih"><span class="icb" data-ico="git-compare"></span><div><p class="k"><span class="ko" data-i>완성물 ②</span><span class="en" data-i>Deliverable ②</span></p><h4><span class="ko" data-i>건조 ↔ 습윤 비교표 · 파괴 모드</span><span class="en" data-i>Dry ↔ wet comparison table · failure mode</span></h4></div></div>
+<div class="cb plain" id="today_chips"></div>
+<p><span class="ko" data-i>e · t_res → 응집 · 박층 · 계면 · 702런과 같은 규칙</span><span class="en" data-i>e · t_res → cohesive · thin-layer · interfacial · same rule as the 702-run campaign</span></p>
+</div>
+</div>
+<div class="plan">
+<div class="lines">
+<div class="ln a" style="--d:1"><span class="nn">10-1</span><div><h4><span class="ko" data-i>계면 인장 프로토콜</span><span class="en" data-i>Interface tension protocol</span></h4><p><span class="ko" data-i>셀 규칙 4 · 인장 애니 · 명령 5줄 · 계산기</span><span class="en" data-i>4 cell rules · tension animation · 5 command lines · calculator</span></p></div><span class="min"><span class="ko" data-i>15분</span><span class="en" data-i>15 min</span></span></div>
+<div class="ln a" style="--d:2"><span class="nn">10-2</span><div><h4><span class="ko" data-i>분리일</span><span class="en" data-i>Work of separation</span></h4><p><span class="ko" data-i>정의식 · 면적 · 같은 좌표 규약 · P10-1</span><span class="en" data-i>Definition · area · same coordinate convention · P10-1</span></p></div><span class="min"><span class="ko" data-i>12.5분</span><span class="en" data-i>12.5 min</span></span></div>
+<div class="ln a" style="--d:3"><span class="nn">10-3</span><div><h4><span class="ko" data-i>수분 손상</span><span class="en" data-i>Moisture damage</span></h4><p><span class="ko" data-i>건조 · 습윤 쌍 화면 · 에너지비 · P10-2</span><span class="en" data-i>Dry · wet pair view · energy ratio · P10-2</span></p></div><span class="min"><span class="ko" data-i>12.5분</span><span class="en" data-i>12.5 min</span></span></div>
+<div class="ln a" style="--d:4"><span class="nn">10-4</span><div><h4><span class="ko" data-i>파괴 모드와 보고</span><span class="en" data-i>Failure mode and reporting</span></h4><p><span class="ko" data-i>스냅샷 3 · 판정 · 시드 수 · P10-3</span><span class="en" data-i>3 snapshots · verdict · number of seeds · P10-3</span></p></div><span class="min"><span class="ko" data-i>12분</span><span class="en" data-i>12 min</span></span></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>준비물: <b>Claude Code</b> · mdai LAMMPS · Packmol(W06) · 셀 = 저장소 제공 · 교육용 10¹¹ s⁻¹ · 정량 = 확장 예시</span><span class="en" data-i>Prerequisites: <b>Claude Code</b> · mdai LAMMPS · Packmol (W06) · cell = provided in repository · teaching rate 10¹¹ s⁻¹ · quantitative values = final-project extension example</span></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>계획서 50분 · 원본 06주차 보충A(19장) · 07주차 7-4(7장) 재구성 · 수치 = week10 실행(expected_output) · 선행 연구 캠페인 702런 집계(2026-09-20) · 계면 인장 = MD 워크플로우 범위 밖</span><span class="en" data-i>Plan 50 min · reorganized from original week-06 supplement A (19 slides) · week-07 7-4 (7 slides) · values = week10 run (expected_output) · prior-study campaign 702-run tally (2026-09-20) · interface pull = outside MD workflow</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 3 차시 10-1 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 10-1 · 15분 · 영상 1편</span><span class="en" data-i>Session 10-1 · 15 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="move"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">1</p><p class="hubt"><span class="ko" data-i>계면 인장 프로토콜</span><span class="en" data-i>Interface tension protocol</span></p><p class="hubs"><span class="ko" data-i>셀 규칙 4 → 그립 당김 → 곡선</span><span class="en" data-i>4 cell rules → grip pull → curve</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>내 셀의 인장 조건표</span><span class="en" data-i>Tension condition table for my cell</span></h4></div></div><p><span class="ko" data-i>변형률 속도 · 게이지 · 최대 변형률 → 그립 속도 · 스텝 수 · 예상 시간 (7장 계산기)</span><span class="en" data-i>Strain rate · gauge · max strain → grip speed · number of steps · estimated time (calculator, slide 7)</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>W08 셀 → 인장 → 분리일 100건</span><span class="en" data-i>W08 cell → tension → work of separation, 100 runs</span></h4></div></div><p><span class="ko" data-i>최종 프로젝트 확장 예시의 표적 물성 「계면 분리일」을 만드는 계산 · 오늘은 1건을 손으로</span><span class="en" data-i>The calculation that produces the final project's target property "interfacial work of separation" · today, 1 run by hand</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 4 FIG 계면 계 규칙 4 -->
+<section class="slide v3" data-src="06주차 보충A#6,06주차 보충A#7,06주차 보충A#9">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>10-1 · 무엇</span><span class="en" data-i>10-1 · What</span></p>
+<div class="hrow"><span class="hico" data-ico="layers-3"></span><h2 class="h"><span class="ko" data-i>계면 계 규칙 4: 격자 정합 · 슬랩 두께 · 경계 조건 · 힘장 조합</span><span class="en" data-i>4 interface-system rules: lattice match · slab thickness · boundary conditions · force-field combination</span></h2></div>
+<p class="sub"><span class="ko" data-i>만드는 절차가 결과 좌우 · 슬랩 ≥ 컷오프 2배 · z 만 비주기 · 오늘 셀 ↔ 캠페인 셀 = 크기 차이</span><span class="en" data-i>Build procedure drives the result · slab ≥ 2× cutoff · only z non-periodic · today's cell ↔ campaign cell = size difference</span></p>
+<div class="bd">
+<div class="grid c4">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="grid-2x2"></span><div><p class="k"><span class="ko" data-i>규칙 ①</span><span class="en" data-i>Rule ①</span></p><h4><span class="ko" data-i>격자 정합</span><span class="en" data-i>Lattice match</span></h4></div></div><p><span class="ko" data-i>x · y = 결정 격자 정수배 · 바인더를 그 단면으로 · 잔류 변형 1 % 이내</span><span class="en" data-i>x · y = integer multiples of crystal lattice · cut binder to that cross-section · residual strain within 1 %</span></p><span class="fc"><span class="ko" data-i>오늘 5 × 3 초격자</span><span class="en" data-i>Today 5 × 3 supercell</span></span></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="ruler"></span><div><p class="k"><span class="ko" data-i>규칙 ②</span><span class="en" data-i>Rule ②</span></p><h4><span class="ko" data-i>슬랩 두께 ≥ 2 rc</span><span class="en" data-i>Slab thickness ≥ 2 rc</span></h4></div></div><p><span class="ko" data-i>중앙부 벌크 성질 유지 · 바인더 막도 2 rc 이상</span><span class="en" data-i>Keep bulk behavior at the center · binder film also at least 2 rc</span></p><span class="fc"><span class="ko" data-i>석영 10.8 · 톨루엔 24.4 Å</span><span class="en" data-i>Quartz 10.8 · toluene 24.4 Å</span></span></div>
+<div class="it a" style="--d:3"><div class="ih"><span class="icb" data-ico="expand"></span><div><p class="k"><span class="ko" data-i>규칙 ③</span><span class="en" data-i>Rule ③</span></p><h4><span class="ko" data-i>p p f + slab 3.0 · 바닥 고정</span><span class="en" data-i>p p f + slab 3.0 · bottom fixed</span></h4></div></div><p><span class="ko" data-i>z 비주기 · 진공 30 Å · slab 보정 · 슬랩 fix setforce 0</span><span class="en" data-i>z non-periodic · vacuum 30 Å · slab correction · slab fix setforce 0</span></p><span class="fc"><span class="ko" data-i>W08 21장 그대로</span><span class="en" data-i>Same as W08 slide 21</span></span></div>
+<div class="it hot a" style="--d:4"><div class="ih"><span class="icb" data-ico="badge-check"></span><div><p class="k"><span class="ko" data-i>규칙 ④</span><span class="en" data-i>Rule ④</span></p><h4><span class="ko" data-i>힘장 조합 가능</span><span class="en" data-i>Force fields compatible</span></h4></div></div><p><span class="ko" data-i>GAFF2 + ClayFF = 둘 다 12-6 · 산술 σ · 점전하 · W08 「가능」</span><span class="en" data-i>GAFF2 + ClayFF = both 12-6 · arithmetic σ · point charges · W08 "compatible"</span></p><span class="fc">clayff_gaff2_v1</span></div>
+</div>
+<table class="t"><thead><tr><th><span class="ko" data-i>셀</span><span class="en" data-i>Cell</span></th><th><span class="ko" data-i>단면</span><span class="en" data-i>Cross-section</span></th><th><span class="ko" data-i>바인더 막</span><span class="en" data-i>Binder film</span></th><th><span class="ko" data-i>원자</span><span class="en" data-i>Atoms</span></th><th><span class="ko" data-i>변형률 속도</span><span class="en" data-i>Strain rate</span></th><th><span class="ko" data-i>스텝</span><span class="en" data-i>Steps</span></th></tr></thead><tbody>
+<tr class="hl"><td><span class="ko" data-i>오늘 (교육용)</span><span class="en" data-i>Today (teaching)</span></td><td>24.6 × 25.5 Å</td><td><span class="ko" data-i>톨루엔 60분자 · 24.4 Å</span><span class="en" data-i>Toluene 60 molecules · 24.4 Å</span></td><td>1,440 · 2,067</td><td>~10¹¹ s⁻¹</td><td><span class="ko" data-i>4,000 · 40초</span><span class="en" data-i>4,000 · 40 s</span></td></tr>
+<tr><td><span class="ko" data-i>선행 연구 캠페인</span><span class="en" data-i>Prior-study campaign</span></td><td><span class="ko" data-i>단면 60 Å ↑</span><span class="en" data-i>Cross-section 60 Å ↑</span></td><td><span class="ko" data-i>39~45 Å · 게이지 55~60 Å</span><span class="en" data-i>39~45 Å · gauge 55~60 Å</span></td><td><span class="ko" data-i>수만</span><span class="en" data-i>Tens of thousands</span></td><td>10⁸~10¹⁰ s⁻¹</td><td>4,000,000</td></tr></tbody></table>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 06주차 보충A #6 · #7 · #9 · 캠페인 치수 = 선행 연구 R6 원고 2.1~2.2절(MD 설정값) · 오늘 셀 = week10/data/*_summary.json</span><span class="en" data-i>Original week-06 supplement A #6 · #7 · #9 · campaign dimensions = prior-study R6 manuscript sections 2.1~2.2 (MD settings) · today's cell = week10/data/*_summary.json</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 5 ANIM 인장 애니 -->
+<section class="slide v3" data-src="06주차 보충A#8,06주차 보충A#17">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>10-1 · 어떻게 · 동적</span><span class="en" data-i>10-1 · How · dynamic</span></p>
+<div class="hrow"><span class="hico" data-ico="move"></span><h2 class="h"><span class="ko" data-i>인장 = 그립 정속 당김: 피크 뒤 급락 = 분리 · 곡선 아래 면적 = 분리일</span><span class="en" data-i>Tension = constant-speed grip pull: sharp drop after peak = separation · area under curve = work of separation</span></h2></div>
+<p class="sub"><span class="ko" data-i>왼쪽 셀 그립 상승 ↔ 오른쪽 곡선 작도 · 실제 실행(건조 · 0.0025 Å/fs · 4,000 스텝) · 응력 = 그립 반력 ÷ 단면적 627 Å²</span><span class="en" data-i>Left: cell grip rises ↔ right: curve plotted · actual run (dry · 0.0025 Å/fs · 4,000 steps) · stress = grip reaction ÷ cross-section 627 Å²</span></p>
+<div class="bd"><div class="emb" data-emb="pull" data-dur="12" data-steps="4" data-labels="① 그립 당김|② 피크|③ 급락 = 분리|④ 곡선 · 면적" data-labels-en="① Grip pull|② Peak|③ Sharp drop = separation|④ Curve · area"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 06주차 보충A #8 · #17 · 데이터 = week10/expected_output/dry/pull.csv (mdai lmp · 20 스텝 평균 반력 · 1 kcal/mol/Å ÷ 627 Å² = 11.08 MPa)</span><span class="en" data-i>Original week-06 supplement A #8 · #17 · data = week10/expected_output/dry/pull.csv (mdai lmp · 20-step average reaction force · 1 kcal/mol/Å ÷ 627 Å² = 11.08 MPa)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 6 FIG 인장 설정 명령 5 -->
+<section class="slide v3" data-src="06주차 보충A#8,06주차 보충A#10">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>10-1 · 어떻게</span><span class="en" data-i>10-1 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="terminal"></span><h2 class="h"><span class="ko" data-i>인장 설정 5줄: 슬랩 고정 · 그립 정의 · 나머지 NVT · fix move · 반력 평균</span><span class="en" data-i>5 tension setup lines: fix slab · define grip · rest NVT · fix move · average reaction force</span></h2></div>
+<p class="sub"><span class="ko" data-i>정속 당김(Protocol B)이 아스팔트 분야 표준 · 준정적 단계 인장(A)은 견인력–분리 법칙 추출용 · 오늘은 B 를 그립 방식으로</span><span class="en" data-i>Constant-speed pull (Protocol B) is the asphalt-field standard · quasi-static stepwise tension (A) is for extracting traction–separation laws · today, B as the grip method</span></p>
+<div class="bd">
+<div class="row">
+<pre class="code fill" style="flex:1"><span class="c"><span class="ko" data-i># in.pull — week10 (W08 in.stack 뒤에 붙는 5줄)</span><span class="en" data-i># in.pull — week10 (5 lines appended after W08 in.stack)</span></span>
+fix    frz slab setforce 0.0 0.0 0.0        <span class="c"><span class="ko" data-i># ① 석영 고정</span><span class="en" data-i># ① Fix quartz</span></span>
+region top block INF INF INF INF 41.7 INF units box
+group  grip intersect binder topg   <span class="c"><span class="ko" data-i># ② 그립 = 상단 6 Å</span><span class="en" data-i># ② Grip = top 6 Å</span></span>
+fix    nvt mobile nvt temp 298 298 100       <span class="c"><span class="ko" data-i># ③ 나머지 298 K</span><span class="en" data-i># ③ Rest at 298 K</span></span>
+fix    pull grip move linear 0 0 <span class="o">0.0025</span>  <span class="c"><span class="ko" data-i># ④ 정속 당김 Å/fs</span><span class="en" data-i># ④ Constant-speed pull Å/fs</span></span>
+compute fg grip reduce sum fz
+fix    fav grip ave/time 1 20 20 c_fg        <span class="c"><span class="ko" data-i># ⑤ 반력 20 스텝 평균</span><span class="en" data-i># ⑤ Reaction force 20-step average</span></span>
+thermo_style custom step v_disp f_fav pe c_zb</pre>
+<div class="col" style="width:640px;flex:none">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="sigma"></span><div><h4><span class="ko" data-i>응력 · 변위 · 변형률</span><span class="en" data-i>Stress · displacement · strain</span></h4></div></div><p><span class="ko" data-i>σ = −F_grip / A (1 kcal/mol/Å ÷ 627 Å² = 11.08 MPa) · d = v · t · ε = d / 게이지 길이</span><span class="en" data-i>σ = −F_grip / A (1 kcal/mol/Å ÷ 627 Å² = 11.08 MPa) · d = v · t · ε = d / gauge length</span></p></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="git-compare"></span><div><h4><span class="ko" data-i>캠페인 방식 = fix deform z erate</span><span class="en" data-i>Campaign method = fix deform z erate</span></h4></div></div><p><span class="ko" data-i>셀 전체 신장 · σ_zz = −P_zz 로 판독 · remap x · erate 1e-6 fs⁻¹ = 10⁹ s⁻¹ · 같은 물리 · 다른 읽는 곳</span><span class="en" data-i>Stretch whole cell · read σ_zz = −P_zz · remap x · erate 1e-6 fs⁻¹ = 10⁹ s⁻¹ · same physics · different place to read</span></p></div>
+<div class="it dark a" style="--d:3"><div class="ih"><span class="icb" data-ico="triangle-alert"></span><div><h4><span class="ko" data-i>오늘 실행의 한계 2</span><span class="en" data-i>2 limits of today's run</span></h4></div></div><p><span class="ko" data-i>속도 10¹¹ s⁻¹ 급(캠페인의 10~1,000배) · 석영 표면 수산화 없음 → 값은 모양만 · 정량은 W16</span><span class="en" data-i>Rate on the order of 10¹¹ s⁻¹ (10~1,000× the campaign) · no hydroxylation on the quartz surface → values show shape only · quantitative values in W16</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 06주차 보충A #8 · #10 · 참고 사례(연구 플랫폼) 계면 부착 이론 문서 §3(Protocol A · B) · 스크립트 = week10/scripts/pull_test.py</span><span class="en" data-i>Original week-06 supplement A #8 · #10 · reference case (research platform) interface adhesion theory document §3 (Protocol A · B) · script = week10/scripts/pull_test.py</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 7 SIM 인장 조건 계산기 -->
+<section class="slide v3" data-src="06주차 보충A#10">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>10-1 · 확인 · 조작형</span><span class="en" data-i>10-1 · Check · interactive</span></p>
+<div class="hrow"><span class="hico" data-ico="sliders-horizontal"></span><h2 class="h"><span class="ko" data-i>인장 조건 계산기: 변형률 속도 · 게이지 → 그립 속도 · 스텝 · 시간</span><span class="en" data-i>Tension condition calculator: strain rate · gauge → grip speed · steps · time</span></h2></div>
+<p class="sub"><span class="ko" data-i>그립 속도 = 변형률 속도 × 게이지 길이 · 스텝 수 = 최대 변형률을 채우는 데 걸리는 스텝 · 속도를 10배 내리면 시간은 10배</span><span class="en" data-i>Grip speed = strain rate × gauge length · steps = steps needed to reach max strain · lowering rate 10× makes time 10×</span></p>
+<div class="bd">
+<div class="sim" id="sim-rate">
+<div class="ctl">
+<label><span class="ko" data-i><b>변형률 속도 10^x s⁻¹ <output data-o="r">11</output></b></span><span class="en" data-i><b>Strain rate 10^x s⁻¹ <output data-o="r">11</output></b></span><input type="range" min="8" max="11" value="11" step="0.5" data-k="r"></label>
+<label><span class="ko" data-i><b>게이지 길이 Å <output data-o="g">24</output></b></span><span class="en" data-i><b>Gauge length Å <output data-o="g">24</output></b></span><input type="range" min="20" max="80" value="24" step="1" data-k="g"></label>
+<label><span class="ko" data-i><b>최대 변형률 <output data-o="e">0.4</output></b></span><span class="en" data-i><b>Max strain <output data-o="e">0.4</output></b></span><input type="range" min="0.1" max="0.6" value="0.4" step="0.05" data-k="e"></label>
+<button type="button" data-act="camp"><span class="ko" data-i>캠페인 조건 (10⁸ · 57.5 Å · 0.4)</span><span class="en" data-i>Campaign condition (10⁸ · 57.5 Å · 0.4)</span></button>
+<button type="button" class="alt" data-act="reset"><span class="ko" data-i>오늘 조건 (10¹¹ · 24 Å · 0.4)</span><span class="en" data-i>Today's condition (10¹¹ · 24 Å · 0.4)</span></button>
+</div>
+<div class="view"><svg viewBox="0 0 1160 300" aria-label="조건 → 속도 · 스텝"></svg>
+<div class="kpi"><div><span class="ko" data-i>그립 속도 <b data-o="v"> · </b></span><span class="en" data-i>Grip speed <b data-o="v"> · </b></span></div><div><span class="ko" data-i>총 스텝 <b data-o="n"> · </b></span><span class="en" data-i>Total steps <b data-o="n"> · </b></span></div><div><span class="ko" data-i>예상 벽시계 <b data-o="t"> · </b></span><span class="en" data-i>Estimated wall clock <b data-o="t"> · </b></span></div><div><span class="ko" data-i>변위 <b data-o="d"> · </b></span><span class="en" data-i>Displacement <b data-o="d"> · </b></span></div></div></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>환산 = 원본 06주차 보충A #10 (v = ε̇ · L · 스텝 = ε_max / ε̇ / Δt) · 벽시계 기준 = week10 실행(2,067원자 · 4,000 스텝 · 1코어 약 40초)</span><span class="en" data-i>Conversion = original week-06 supplement A #10 (v = ε̇ · L · steps = ε_max / ε̇ / Δt) · wall-clock basis = week10 run (2,067 atoms · 4,000 steps · 1 core approx. 40 s)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 8 DEF 5 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>용어 정의</span><span class="en" data-i>Key terms</span></p>
+<div class="hrow"><span class="hico" data-ico="book-marked"></span><h2 class="h"><span class="ko" data-i>새 용어 5: 분리일 · 견인력–분리 관계 · 에너지비 · 파괴 모드 · 노출률</span><span class="en" data-i>5 new terms: work of separation · traction–separation law · energy ratio · failure mode · exposure</span></h2></div>
+<p class="sub"><span class="ko" data-i>영어 병기 · 한 줄 정의 · 다시 나오는 곳: 10-2 · 10-3 · 10-4 · W16</span><span class="en" data-i>English given · one-line definition · reappears in: 10-2 · 10-3 · 10-4 · W16</span></p>
+<div class="bd">
+<div class="defs icon">
+<div class="defcard icon a" style="--d:1"><span class="lic" data-ico="unlink"></span><p class="term"><span class="ko" data-i>분리일<em>work of separation · W_sep</em></span><span class="en" data-i>Work of separation<em>work of separation · W_sep</em></span></p><p class="def"><span class="ko" data-i>두 층을 떼는 데 드는 일 ÷ 단면적 · 곡선 아래 면적 또는 (E_A + E_B − E_AB)/A · mJ/m²</span><span class="en" data-i>Work to separate two layers ÷ cross-section · area under curve or (E_A + E_B − E_AB)/A · mJ/m²</span></p><p class="again"><span class="ko" data-i>10 · 11장</span><span class="en" data-i>Slides 10 · 11</span></p></div>
+<div class="defcard icon a" style="--d:2"><span class="lic" data-ico="line-chart"></span><p class="term"><span class="ko" data-i>견인력–분리 관계<em>traction–separation law</em></span><span class="en" data-i>Traction–separation law<em>traction–separation law</em></span></p><p class="def"><span class="ko" data-i>σ(d) 곡선 자체 · 피크 2~4 Å · 면적 = 기계적 분리일 · 연속체 응집 영역 모델의 입력</span><span class="en" data-i>The σ(d) curve itself · peak at 2~4 Å · area = mechanical work of separation · input to continuum cohesive-zone models</span></p><p class="again"><span class="ko" data-i>13장</span><span class="en" data-i>Slide 13</span></p></div>
+<div class="defcard icon a" style="--d:3"><span class="lic" data-ico="droplet"></span><p class="term"><span class="ko" data-i>에너지비<em>energy ratio · ER</em></span><span class="en" data-i>Energy ratio<em>energy ratio · ER</em></span></p><p class="def"><span class="ko" data-i>건조 부착일 ÷ 습윤 박리일 · ER &gt; 1 = 수분 저항 · 정의가 둘이라 출처 확인</span><span class="en" data-i>Dry adhesion work ÷ wet debonding work · ER &gt; 1 = moisture resistant · two definitions exist, so check the source</span></p><p class="again"><span class="ko" data-i>18장</span><span class="en" data-i>Slide 18</span></p></div>
+<div class="defcard icon a" style="--d:4"><span class="lic" data-ico="split"></span><p class="term"><span class="ko" data-i>파괴 모드<em>failure mode</em></span><span class="en" data-i>Failure mode<em>failure mode</em></span></p><p class="def"><span class="ko" data-i>파단면 위치 · 응집(바인더 내부) · 박층 응집(단분자층 이하 잔존) · 계면 박리(결정면 노출)</span><span class="en" data-i>Fracture-surface location · cohesive (inside binder) · thin-layer cohesive (sub-monolayer remains) · interfacial debonding (crystal face exposed)</span></p><p class="again"><span class="ko" data-i>23 · 24장</span><span class="en" data-i>Slides 23 · 24</span></p></div>
+<div class="defcard icon a" style="--d:4"><span class="lic" data-ico="scan-search"></span><p class="term"><span class="ko" data-i>노출률<em>exposure · e</em></span><span class="en" data-i>Exposure<em>exposure · e</em></span></p><p class="def"><span class="ko" data-i>결정 윗면 중 바인더 · 물이 덮지 않은 비율 · e &gt; 50 % → 계면 박리 · 잔류 두께 t_res 와 짝</span><span class="en" data-i>Fraction of crystal top face not covered by binder · water · e &gt; 50 % → interfacial debonding · paired with residual thickness t_res</span></p><p class="again"><span class="ko" data-i>24장</span><span class="en" data-i>Slide 24</span></p></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>정의 문구 = GLOSSARY.md · 출처 = 원본 06주차 보충A #12 · #16 · #20 · #25 · #27</span><span class="en" data-i>Definition wording = GLOSSARY.md · sources = original week-06 supplement A #12 · #16 · #20 · #25 · #27</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 9 차시 10-2 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 10-2 · 12.5분 · 영상 1편</span><span class="en" data-i>Session 10-2 · 12.5 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="unlink"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">2</p><p class="hubt"><span class="ko" data-i>분리일</span><span class="en" data-i>Work of separation</span></p><p class="hubs"><span class="ko" data-i>식 하나 · 경로 둘 · 검산 셋</span><span class="en" data-i>One equation · two routes · three sanity checks</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>내 곡선의 분리일 2경로 (P10-1)</span><span class="en" data-i>Work of separation of my curve, 2 routes (P10-1)</span></h4></div></div><p><span class="ko" data-i>work_of_separation.py ▶ → W_mech(면적) · W_E(에너지 차) · 어느 규약인지 기록</span><span class="en" data-i>work_of_separation.py ▶ → W_mech (area) · W_E (energy difference) · record which convention</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>W16 표적 물성 「계면 분리일」의 정의</span><span class="en" data-i>Definition of W16 target property "interfacial work of separation"</span></h4></div></div><p><span class="ko" data-i>W01 10장 표적 5종 중 하나 · 방향 ↑ 최대 · 단위 mJ/m² · 산출 방법이 오늘</span><span class="en" data-i>One of the 5 targets on W01 slide 10 · direction ↑ maximize · unit mJ/m² · today is how to compute it</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 10 EQ 분리일 식 -->
+<section class="slide v3" data-src="06주차 보충A#12,06주차 보충A#15">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>10-2 · 무엇 · 식</span><span class="en" data-i>10-2 · What · equation</span></p>
+<div class="hrow"><span class="hico" data-ico="function-square"></span><h2 class="h"><span class="ko" data-i>분리일 = 떼어 놓는 데 드는 에너지 ÷ 면적</span><span class="en" data-i>Work of separation = energy to pull apart ÷ area</span></h2></div>
+<p class="sub"><span class="ko" data-i>세 상태의 에너지를 같은 좌표에서 계산 · 층 안의 항은 상쇄 · 층 사이 끌림만 남음 · 테이프 떼기와 같은 구조</span><span class="en" data-i>Energies of three states computed at the same coordinates · intralayer terms cancel · only interlayer attraction remains · same structure as peeling tape</span></p>
+<div class="bd">
+<div class="eqbox a" style="--d:1"><p class="eq"><span class="ko" data-i>분리일 = ( 떼어 놓은 뒤 에너지 − 붙어 있을 때 에너지 ) ÷ 접촉 면적</span><span class="en" data-i>Work of separation = ( energy after separation − energy when attached ) ÷ contact area</span></p></div>
+<div class="row fill">
+<div class="figw white fill"><svg viewBox="0 0 1000 400" class="cfig">
+<g transform="translate(40,30)"><text x="150" y="20" text-anchor="middle" class="cfh" font-size="21"><tspan class="ko" data-i>붙어 있음</tspan><tspan class="en" data-i>Attached</tspan></text><rect x="40" y="200" width="220" height="40" fill="#6E655C"/><rect x="40" y="160" width="220" height="40" fill="#4F7FB0"/><rect x="40" y="70" width="220" height="90" fill="#E37F1A"/><text x="150" y="275" text-anchor="middle" class="cfs"><tspan class="ko" data-i>석영 | 물 | 바인더</tspan><tspan class="en" data-i>Quartz | water | binder</tspan></text><text x="150" y="305" text-anchor="middle" class="cfm">E_AB</text></g>
+<text x="370" y="200" text-anchor="middle" class="cfx">→</text>
+<g transform="translate(400,30)"><text x="150" y="20" text-anchor="middle" class="cfh" font-size="21"><tspan class="ko" data-i>떼어 놓음 ① 바인더만</tspan><tspan class="en" data-i>Separated ① binder only</tspan></text><rect x="40" y="200" width="220" height="40" fill="#6E655C" opacity=".12"/><rect x="40" y="160" width="220" height="40" fill="#4F7FB0" opacity=".12"/><rect x="40" y="70" width="220" height="90" fill="#E37F1A"/><text x="150" y="275" text-anchor="middle" class="cfs"><tspan class="ko" data-i>아래 층 삭제 · 재이완 없음</tspan><tspan class="en" data-i>Delete lower layer · no re-relaxation</tspan></text><text x="150" y="305" text-anchor="middle" class="cfm">E_A</text></g>
+<text x="730" y="200" text-anchor="middle" class="cfx">+</text>
+<g transform="translate(760,30)"><text x="110" y="20" text-anchor="middle" class="cfh" font-size="21"><tspan class="ko" data-i>② 아래 층만</tspan><tspan class="en" data-i>② lower layer only</tspan></text><rect x="0" y="200" width="220" height="40" fill="#6E655C"/><rect x="0" y="160" width="220" height="40" fill="#4F7FB0"/><rect x="0" y="70" width="220" height="90" fill="#E37F1A" opacity=".12"/><text x="110" y="275" text-anchor="middle" class="cfs"><tspan class="ko" data-i>바인더 삭제</tspan><tspan class="en" data-i>Delete binder</tspan></text><text x="110" y="305" text-anchor="middle" class="cfm">E_B</text></g>
+<text x="500" y="385" text-anchor="middle" class="cfs"><tspan class="ko" data-i>(① + ②) − 붙어 있음 = 층 사이 끌림 에너지 → 면적으로 나눔 · LAMMPS compute group/group</tspan><tspan class="en" data-i>(① + ②) − attached = interlayer attraction energy → divide by area · LAMMPS compute group/group</tspan></text>
+</svg></div>
+<div class="col" style="width:520px;flex:none">
+<div class="figw white w10-tape"><svg viewBox="0 0 520 250" class="cfig">
+<rect x="20" y="170" width="480" height="40" rx="6" fill="#6E655C"/><text x="260" y="236" text-anchor="middle" class="cfs"><tspan class="ko" data-i>골재 표면</tspan><tspan class="en" data-i>Aggregate surface</tspan></text>
+<rect x="200" y="152" width="300" height="18" fill="#E37F1A"/>
+<path d="M200 161 C 150 150, 120 110, 110 60" stroke="#E37F1A" stroke-width="18" fill="none" stroke-linecap="round"/>
+<path d="M100 72 L 70 20" stroke="#1F2A37" stroke-width="4" marker-end="url(#w10ar)"/>
+<defs><marker id="w10ar" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#1F2A37"/></marker></defs>
+<text x="135" y="30" class="cfh" font-size="20"><tspan class="ko" data-i>테이프 떼기</tspan><tspan class="en" data-i>Peeling tape</tspan></text>
+<text x="350" y="130" text-anchor="middle" class="cfs"><tspan class="ko" data-i>잘 붙을수록 떼는 일 ↑</tspan><tspan class="en" data-i>Better adhesion → more work to peel</tspan></text>
+<text x="105" y="197" text-anchor="middle" class="cfs" style="fill:#FFFFFF"><tspan class="ko" data-i>떼어 낸 자리</tspan><tspan class="en" data-i>Where it peeled off</tspan></text>
+</svg></div>
+<table class="t eqt"><thead><tr><th><span class="ko" data-i>말로 읽기</span><span class="en" data-i>In words</span></th><th><span class="ko" data-i>뜻</span><span class="en" data-i>Meaning</span></th></tr></thead><tbody><tr><td><span class="ko" data-i>붙어 있을 때</span><span class="en" data-i>When attached</span></td><td><span class="ko" data-i>바인더 + 골재 접합 상태</span><span class="en" data-i>Binder + aggregate joined state</span></td></tr><tr><td><span class="ko" data-i>떼어 놓은 뒤</span><span class="en" data-i>After separation</span></td><td><span class="ko" data-i>같은 좌표 · 상대 층만 지운 두 상태의 합</span><span class="en" data-i>Same coordinates · sum of two states with the other layer deleted</span></td></tr><tr><td><span class="ko" data-i>접촉 면적</span><span class="en" data-i>Contact area</span></td><td><span class="ko" data-i>계면 1개의 단면적 · mJ/m²</span><span class="en" data-i>Cross-section of 1 interface · mJ/m²</span></td></tr></tbody></table>
+</div>
+</div>
+<div class="foot a" style="--d:3"><span class="ko" data-i>숫자로 한 번: 아스팔트–골재 전형값 <b>100~500 mJ/m²</b> · 선행 연구 SiO₂ 건조 63.9 · Al₂O₃ 161 · Fe₂O₃ 170 (n 117)</span><span class="en" data-i>Once with numbers: typical asphalt–aggregate value <b>100~500 mJ/m²</b> · prior study SiO₂ dry 63.9 · Al₂O₃ 161 · Fe₂O₃ 170 (n 117)</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 06주차 보충A #12 · #13 · #15 · 참고 사례(연구 플랫폼) 계면 부착 이론 문서 §1.1~1.6 · 전형값 = 선행 연구 집계표(건조 ↔ 수산화)</span><span class="en" data-i>Original week-06 supplement A #12 · #13 · #15 · reference case (research platform) interface adhesion theory document §1.1~1.6 · typical values = prior-study tally table (dry ↔ hydroxylated)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 11 ANIM 면적 음영 -->
+<section class="slide v3" data-src="06주차 보충A#15,06주차 보충A#16">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>10-2 · 어떻게 · 동적</span><span class="en" data-i>10-2 · How · dynamic</span></p>
+<div class="hrow"><span class="hico" data-ico="line-chart"></span><h2 class="h"><span class="ko" data-i>분리일 2경로: 곡선 아래 면적 ↔ 처음 · 끝 에너지 차 · 짧은 실행은 면적만</span><span class="en" data-i>2 routes to work of separation: area under curve ↔ start · end energy difference · short run gives area only</span></h2></div>
+<p class="sub"><span class="ko" data-i>면적이 왼쪽부터 채워지며 누적 분리일 상승 · 에너지 차 경로 = 열 요동이 차이보다 커서 이 실행에서는 사용 불가</span><span class="en" data-i>Area fills from the left and cumulative work rises · energy-difference route = thermal fluctuation exceeds the difference, so unusable in this run</span></p>
+<div class="bd"><div class="emb" data-emb="wsep" data-dur="12" data-steps="3" data-labels="① 면적 쌓기|② 분리점|③ 두 경로 비교" data-labels-en="① Accumulate area|② Separation point|③ Compare two routes"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 06주차 보충A #15 · #16 · 데이터 = week10/expected_output/dry/wsep.json (work_of_separation.py · 평활 15점) · 비교값 = 선행 연구 SiO₂ 건조 W_sep 63.9 mJ/m² (n 117)</span><span class="en" data-i>Original week-06 supplement A #15 · #16 · data = week10/expected_output/dry/wsep.json (work_of_separation.py · 15-point smoothing) · reference = prior-study SiO₂ dry W_sep 63.9 mJ/m² (n 117)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 12 FIG 같은 좌표 규약 · 흔한 실수 3 -->
+<section class="slide v3" data-src="06주차 보충A#12,06주차 보충A#13">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>10-2 · 확인</span><span class="en" data-i>10-2 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="shield-check"></span><h2 class="h"><span class="ko" data-i>같은 좌표 규약 · 흔한 실수 3: 새 분리 상태 · 면적 두 배 · 쿨롱 누락</span><span class="en" data-i>Same-coordinate convention · 3 common mistakes: new separated state · doubled area · missing Coulomb</span></h2></div>
+<p class="sub"><span class="ko" data-i>같은 좌표 → 고립 기준 에너지 없이 계산 · 결정 고정 = 변형항 0</span><span class="en" data-i>Same coordinates → no isolated-reference energy needed · fixed crystal = deformation term 0</span></p>
+<div class="bd">
+<div class="grid c3">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="circle-x"></span><div><p class="k"><span class="ko" data-i>실수 ①</span><span class="en" data-i>Mistake ①</span></p><h4><span class="ko" data-i>분리 상태 새로 생성</span><span class="en" data-i>Generate separated state anew</span></h4></div></div><p><span class="ko" data-i>다른 좌표의 슬랩 → 층 안 항 미상쇄 · 수백 kcal/mol 오차 → 대책 = 같은 좌표에서 상대 층만 삭제</span><span class="en" data-i>Slab at different coordinates → intralayer terms do not cancel · errors of hundreds of kcal/mol → fix = delete only the other layer at the same coordinates</span></p><span class="fc rd"><span class="ko" data-i>벌크 항이 섞임</span><span class="en" data-i>Bulk terms mixed in</span></span></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="divide"></span><div><p class="k"><span class="ko" data-i>실수 ②</span><span class="en" data-i>Mistake ②</span></p><h4><span class="ko" data-i>2A 로 나눔</span><span class="en" data-i>Divide by 2A</span></h4></div></div><p><span class="ko" data-i>샌드위치(골재 | 바인더 | 골재) = 계면 둘 → 2A · 오늘 셀 = 계면 하나 → A = 627 Å²</span><span class="en" data-i>Sandwich (aggregate | binder | aggregate) = two interfaces → 2A · today's cell = one interface → A = 627 Å²</span></p><span class="fc rd"><span class="ko" data-i>값이 절반</span><span class="en" data-i>Value halved</span></span></div>
+<div class="it a" style="--d:3"><div class="ih"><span class="icb" data-ico="zap"></span><div><p class="k"><span class="ko" data-i>실수 ③</span><span class="en" data-i>Mistake ③</span></p><h4><span class="ko" data-i>장거리 쿨롱 누락</span><span class="en" data-i>Missing long-range Coulomb</span></h4></div></div><p><span class="ko" data-i>GPU group/group 은 kspace 미지원 → 광물 계면(쿨롱 지배) 과소 · CPU 로 궤적 재계산</span><span class="en" data-i>GPU group/group does not support kspace → mineral interfaces (Coulomb-dominated) underestimated · recompute trajectory on CPU</span></p><span class="fc rd"><span class="ko" data-i>염기성 골재 = 쿨롱 지배</span><span class="en" data-i>Basic aggregate = Coulomb-dominated</span></span></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>보고 한 줄: <b>분리일 = 값 ± SE (n) · 규약 · 면적 · 장거리 포함 여부</b> · 하나라도 빠지면 비교 불가</span><span class="en" data-i>One report line: <b>work of separation = value ± SE (n) · convention · area · long-range included or not</b> · missing any one makes comparison impossible</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 06주차 보충A #12 · #13 · 참고 사례(연구 플랫폼) 계면 부착 이론 문서 §1.2~1.6 (PMC8306897 · PMC9573178 인용)</span><span class="en" data-i>Original week-06 supplement A #12 · #13 · reference case (research platform) interface adhesion theory document §1.2~1.6 (cites PMC8306897 · PMC9573178)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 13 FIG 견인력–분리 관계 -->
+<section class="slide v3" data-src="06주차 보충A#16,06주차 보충A#17,07주차#34">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>10-2 · 어떻게</span><span class="en" data-i>10-2 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="spline"></span><h2 class="h"><span class="ko" data-i>곡선 읽기 4: 상승 · 피크 · 하강 · 바닥 · 피크 = 적합값</span><span class="en" data-i>Reading the curve in 4 parts: rise · peak · fall · floor · peak = fitted value</span></h2></div>
+<p class="sub"><span class="ko" data-i>피크 위치 2~4 Å · 원시 최대점 = 요동 포함 · 적합 피크보다 24~51 % 큼 · 선행 연구 = Weibull 손상식으로 피크 산출 · 응집 지배는 피크 뒤 15 Å 까지 응력 잔존 · 계면 지배는 5 Å 에서 급락</span><span class="en" data-i>Peak position 2~4 Å · raw maximum includes fluctuation · 24~51 % above fitted peak · prior study = peak from Weibull damage equation · cohesion-dominated: stress remains to 15 Å past peak · interface-dominated: drops sharply by 5 Å</span></p>
+<div class="bd">
+<div class="row">
+<div class="figw white fill"><svg viewBox="0 0 960 420" class="cfig">
+<line x1="80" y1="340" x2="920" y2="340" stroke="#6E655C" stroke-width="3"/><line x1="80" y1="340" x2="80" y2="40" stroke="#6E655C" stroke-width="3"/>
+<text x="600" y="400" text-anchor="middle" class="cfs"><tspan class="ko" data-i>분리 d (Å)</tspan><tspan class="en" data-i>Separation d (Å)</tspan></text><text x="36" y="190" text-anchor="middle" class="cfs" transform="rotate(-90 36 190)">σ (MPa)</text>
+<path d="M80 340 L220 90 L440 250 L760 330 L920 338" fill="none" stroke="#E37F1A" stroke-width="6"/>
+<path d="M80 340 L220 90 L300 335 L920 338" fill="none" stroke="#4F7FB0" stroke-width="4" stroke-dasharray="12 8"/>
+<path class="fl" d="M80 340 L220 90 L440 250 L760 330 L920 338 L80 338 Z" fill="#E37F1A" opacity=".15"/>
+<circle class="pulse" cx="220" cy="90" r="12" fill="#C8610C"/><text x="220" y="70" text-anchor="middle" class="cfh" font-size="21"><tspan class="ko" data-i>피크 σ_p · d 2~4 Å</tspan><tspan class="en" data-i>Peak σ_p · d 2~4 Å</tspan></text>
+<text x="140" y="250" text-anchor="middle" class="cfs"><tspan class="ko" data-i>① 상승 · 탄성</tspan><tspan class="en" data-i>① Rise · elastic</tspan></text><text x="400" y="180" class="cfs"><tspan class="ko" data-i>② 하강 · 손상 누적</tspan><tspan class="en" data-i>② Fall · damage accumulation</tspan></text><text x="610" y="282" class="cfs" style="fill:#C8610C"><tspan class="ko" data-i>③ 응집 지배 · 15 Å 까지 잔존</tspan><tspan class="en" data-i>③ Cohesion-dominated · remains to 15 Å</tspan></text><text x="230" y="372" class="cfs" style="fill:#4F7FB0"><tspan class="ko" data-i>계면 지배 · 5 Å 에서 0</tspan><tspan class="en" data-i>Interface-dominated · 0 at 5 Å</tspan></text>
+<text x="320" y="320" class="cfm" style="fill:#C8610C"><tspan class="ko" data-i>면적 = 기계적 분리일</tspan><tspan class="en" data-i>Area = mechanical work of separation</tspan></text>
+</svg></div>
+<div class="col" style="width:560px;flex:none">
+<table class="t"><thead><tr><th><span class="ko" data-i>변형률 속도</span><span class="en" data-i>Strain rate</span></th><th><span class="ko" data-i>Weibull 피크</span><span class="en" data-i>Weibull peak</span></th><th><span class="ko" data-i>원시 최대</span><span class="en" data-i>Raw maximum</span></th><th><span class="ko" data-i>차</span><span class="en" data-i>Diff.</span></th></tr></thead><tbody>
+<tr><td>10⁸ s⁻¹</td><td>150 MPa</td><td>163</td><td>+9 %</td></tr>
+<tr><td>10⁹ s⁻¹</td><td>185 MPa</td><td>199</td><td>+8 %</td></tr>
+<tr><td>10¹⁰ s⁻¹</td><td>248 MPa</td><td>307</td><td>+24 %</td></tr></tbody></table>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="function-square"></span><div><h4><span class="ko" data-i>Weibull 손상식 σ = Eε exp[−(ε/ε₀)^k]</span><span class="en" data-i>Weibull damage equation σ = Eε exp[−(ε/ε₀)^k]</span></h4></div></div><p><span class="ko" data-i>피크 ε_p = ε₀ k^(−1/k) · 적합 피크 = 보고값 · 원시 최대 = 요동 · CZM 적합이 나쁜 빠른 인장에도 적용</span><span class="en" data-i>Peak ε_p = ε₀ k^(−1/k) · fitted peak = reported value · raw maximum = fluctuation · also applies to fast tension where CZM fit is poor</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 06주차 보충A #16 · #17 · 07주차 #34 · 수치 = 선행 연구 그림 자료(Weibull 적합 · Table A · B · MD 계산값) · 피크 위치 2~4 Å = R6 원고 3.3절</span><span class="en" data-i>Original week-06 supplement A #16 · #17 · week-07 #34 · values = prior-study figure data (Weibull fit · Table A · B · MD results) · peak position 2~4 Å = R6 manuscript section 3.3</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 14 MAKE P10-1 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>10-2 · 만들어 보기</span><span class="en" data-i>10-2 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="play"></span><h2 class="h"><span class="ko" data-i>만들어 보기 P10-1: pull.csv → wsep.json · 분리일 검산 · 보고 한 줄</span><span class="en" data-i>Try it P10-1: pull.csv → wsep.json · check work of separation · one report line</span></h2></div>
+<div class="bd">
+<div class="make">
+<div class="left a" style="--d:1">
+<pre class="code"><span class="c"><span class="ko" data-i># 환경: mdai · week10 폴더에서 claude (lmp · packmol = W06)</span><span class="en" data-i># Env: mdai · run claude in the week10 folder (lmp · packmol = W06)</span></span>
+<span class="c"><span class="ko" data-i># 아래 명령 = Claude Code 가 실행 · 승인 창에서 확인</span><span class="en" data-i># Commands below = run by Claude Code · confirm in approval dialog</span></span>
+python3 scripts/pull_test.py --water 0 --tag dry --build
+python3 scripts/work_of_separation.py out/dry/pull.csv
+<span class="c"><span class="ko" data-i># → out/dry/wsep.json → 아래 지시가 @경로로 읽음</span><span class="en" data-i># → out/dry/wsep.json → the prompt below reads it via @path</span></span></pre>
+<div class="prompt" data-id="P10-1"><span class="ko" data-i>scripts/pull_test.py --water 0 --tag dry --build → work_of_separation.py out/dry/pull.csv 를 실행하고 @out/dry/wsep.json 을 읽어라(단면적 A · 그립 속도 · 스텝 수 포함). ① 응력 환산(1 kcal/mol/Å ÷ A Å² → MPa)과 면적 환산(1 MPa·Å = 0.1 mJ/m²)이 맞는지 식으로 검산하고 ② W_mech(면적)와 W_E(에너지 차)가 왜 다른지 · 열 요동 sd, 미분리, 규약 · 세 줄로 설명하고 ③ 보고 한 줄 「W_sep = 값 ± (불확실) mJ/m² · 규약 · A · 속도 · 시드 수」를 써라. 시드가 1개면 ± 는 「미정(n = 1)」 으로 두고 지어내지 마라. 내 재료 [석영 / 톨루엔 → SBS 개질 바인더]로 바꿀 때 어느 인수를 바꿔야 하는지 한 줄 덧붙여라.
+
+W_mech 를 expected_output/dry/wsep.json 과 비교하고 out/P10-1_result.md 로 저장해라.</span><span class="en" data-i>Run scripts/pull_test.py --water 0 --tag dry --build → work_of_separation.py out/dry/pull.csv and read @out/dry/wsep.json (including cross-section A · grip speed · step count). ① Verify by equation that the stress conversion (1 kcal/mol/Å ÷ A Å² → MPa) and area conversion (1 MPa·Å = 0.1 mJ/m²) are correct ② Explain in three lines why W_mech (area) and W_E (energy difference) differ: thermal fluctuation sd · incomplete separation · convention ③ Write one report line "W_sep = value ± (uncertainty) mJ/m² · convention · A · speed · number of seeds". With 1 seed, leave ± as "TBD (n = 1)" and do not invent it. Add one line on which arguments to change when switching my material [quartz / toluene → SBS-modified binder].
+
+Compare W_mech with expected_output/dry/wsep.json and save to out/P10-1_result.md.</span></div>
+</div>
+<div class="expect a" style="--d:2">
+<h4><span class="tic" data-ico="file-json"></span><span class="ko" data-i>기대 결과 · wsep.json (건조 · 교육용 실행)</span><span class="en" data-i>Expected output · wsep.json (dry · teaching run)</span></h4>
+<pre class="code" id="expect_wsep">{ "tag": "dry", "area_A2": 627.1,
+  "sigma_peak_MPa": …, "d_peak_A": …, "d_separation_A": …,
+  "W_mech_mJ_m2": …, "W_energy_mJ_m2": …,
+  "E_sd_int": …, "E_sd_sep": … }</pre>
+<table class="t"><thead><tr><th><span class="ko" data-i>검산</span><span class="en" data-i>Check</span></th><th><span class="ko" data-i>식</span><span class="en" data-i>Equation</span></th><th><span class="ko" data-i>통과 조건</span><span class="en" data-i>Pass condition</span></th></tr></thead><tbody>
+<tr><td><span class="ko" data-i>응력 환산</span><span class="en" data-i>Stress conversion</span></td><td>69.4786 / A × 100</td><td>A 627.1 → 11.08 MPa per kcal/mol/Å</td></tr>
+<tr><td><span class="ko" data-i>면적 → 분리일</span><span class="en" data-i>Area → work of separation</span></td><td>0.1 × Σ ½(σᵢ + σᵢ₊₁) Δd</td><td><span class="ko" data-i>wsep 의 W_mech 와 일치</span><span class="en" data-i>Matches W_mech in wsep</span></td></tr>
+<tr><td><span class="ko" data-i>에너지 경로</span><span class="en" data-i>Energy route</span></td><td>(E_sep − E_int)/A × 694.77</td><td><span class="ko" data-i>sd ≫ ΔE 면 「신뢰 불가」 표기</span><span class="en" data-i>If sd ≫ ΔE, mark "unreliable"</span></td></tr></tbody></table>
+<p class="cap"><span class="ko" data-i>보고 한 줄에 규약 · A · 속도 · n 이 모두 있으면 통과 · 값 자체는 모양만(10¹¹ s⁻¹ · 수산화 없음) · 정량은 W16</span><span class="en" data-i>Pass if the report line has convention · A · speed · n · value itself shows shape only (10¹¹ s⁻¹ · no hydroxylation) · quantitative values in W16</span></p>
+</div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>W_mech 가 pull.csv 로 직접 적분한 값과 같은가 (단위 0.1 배)</span><span class="en" data-i>Does W_mech equal the value integrated directly from pull.csv? (unit factor 0.1)</span></p><p><span class="ko" data-i>보고 한 줄에 「n = 1 · ± 미정」 이 그대로 있는가 · 지어낸 오차가 없는가</span><span class="en" data-i>Does the report line keep "n = 1 · ± TBD" as is? Is there any invented error?</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>week10/notebooks/01_pull_test.ipynb · scripts/pull_test.py · work_of_separation.py · 지시문 원문 week10/prompts.md · P10-1</span><span class="en" data-i>week10/notebooks/01_pull_test.ipynb · scripts/pull_test.py · work_of_separation.py · prompt source week10/prompts.md · P10-1</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 15 차시 10-3 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 10-3 · 14.5분 · 영상 1편</span><span class="en" data-i>Session 10-3 · 14.5 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="droplet"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">3</p><p class="hubt"><span class="ko" data-i>수분 손상</span><span class="en" data-i>Moisture damage</span></p><p class="hubs"><span class="ko" data-i>물 층 유무 · 에너지비 · 수산화 표면</span><span class="en" data-i>Water layer or not · energy ratio · hydroxylated surface</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>건조 ↔ 습윤 비교표 (P10-2)</span><span class="en" data-i>Dry ↔ wet comparison table (P10-2)</span></h4></div></div><p><span class="ko" data-i>pull_test.py --water 0 · 10 → σ_peak · W_mech · 모드 두 줄 → ER 판정</span><span class="en" data-i>pull_test.py --water 0 · 10 → σ_peak · W_mech · two mode lines → ER verdict</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>박리(stripping)의 분자 수준 원인</span><span class="en" data-i>Molecular-level cause of stripping</span></h4></div></div><p><span class="ko" data-i>현장 파손은 바인더 내부가 아니라 골재 계면에서 시작 · W11 아스팔트 · W16 수분 저항 표적</span><span class="en" data-i>Field failure starts at the aggregate interface, not inside the binder · W11 asphalt · W16 moisture-resistance target</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 16 ANIM 쌍 화면 -->
+<section class="slide v3" data-src="신규(규칙 16 보강)">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>10-3 · 왜</span><span class="en" data-i>10-3 · Why</span></p>
+<div class="hrow"><span class="hico" data-ico="construction"></span><h2 class="h"><span class="ko" data-i>수분 손상의 현장 의미: 물 침투 → 박리 → 골재 이탈 → 포트홀</span><span class="en" data-i>Field meaning of moisture damage: water intrusion → stripping → aggregate loss → pothole</span></h2></div>
+<p class="sub"><span class="ko" data-i>현장 파손의 시작 = 골재 계면 · MD 의 분리일 감소 · 노출률 = ③ 박리 단계의 분자 수준 지표</span><span class="en" data-i>Field failure starts at the aggregate interface · MD work-of-separation drop · exposure = molecular-level indicator of stage ③ stripping</span></p>
+<div class="bd">
+<div class="figw white"><svg viewBox="0 0 1000 320" class="cfig"><g transform="translate(10,0)"><text x="110" y="28" text-anchor="middle" class="cfh" font-size="20"><tspan class="ko" data-i>① 물 침투</tspan><tspan class="en" data-i>① Water intrusion</tspan></text><rect x="0" y="230" width="220" height="40" fill="#C9C1B6"/><rect x="0" y="120" width="220" height="110" fill="#3A3330"/><circle cx="50" cy="170" r="22" fill="#9A9187"/><circle cx="120" cy="190" r="26" fill="#9A9187"/><circle cx="185" cy="160" r="20" fill="#9A9187"/><path d="M95 120 L105 150 L98 175" stroke="#F4EFE8" stroke-width="3" fill="none"/><path d="M60 70 q -6 10 0 14 q 6 -4 0 -14z" fill="#4F7FB0"/><path d="M100 55 q -6 10 0 14 q 6 -4 0 -14z" fill="#4F7FB0"/><path d="M140 80 q -6 10 0 14 q 6 -4 0 -14z" fill="#4F7FB0"/><path d="M180 62 q -6 10 0 14 q 6 -4 0 -14z" fill="#4F7FB0"/><path d="M100 95 q -6 10 0 14 q 6 -4 0 -14z" fill="#4F7FB0"/><text x="110" y="300" text-anchor="middle" class="cfs"><tspan class="ko" data-i>균열 · 공극으로 빗물</tspan><tspan class="en" data-i>Rainwater into cracks · voids</tspan></text></g><text x="243" y="180" text-anchor="middle" class="cfx">→</text><g transform="translate(265,0)"><text x="110" y="28" text-anchor="middle" class="cfh" font-size="20"><tspan class="ko" data-i>② 계면에 물막</tspan><tspan class="en" data-i>② Water film at interface</tspan></text><rect x="0" y="230" width="220" height="40" fill="#C9C1B6"/><rect x="0" y="120" width="220" height="110" fill="#3A3330"/><circle cx="110" cy="180" r="34" fill="none" stroke="#4F7FB0" stroke-width="7"/><circle cx="110" cy="180" r="28" fill="#9A9187"/><circle cx="40" cy="160" r="16" fill="#9A9187"/><circle cx="185" cy="195" r="18" fill="#9A9187"/><text x="110" y="100" text-anchor="middle" class="cfs" style="fill:#4F7FB0"><tspan class="ko" data-i>물막</tspan><tspan class="en" data-i>Water film</tspan></text><text x="110" y="300" text-anchor="middle" class="cfs"><tspan class="ko" data-i>골재–바인더 사이로</tspan><tspan class="en" data-i>Between aggregate and binder</tspan></text></g><text x="498" y="180" text-anchor="middle" class="cfx">→</text><g transform="translate(520,0)"><text x="110" y="28" text-anchor="middle" class="cfh" font-size="20"><tspan class="ko" data-i>③ 박리</tspan><tspan class="en" data-i>③ Stripping</tspan></text><rect x="0" y="230" width="220" height="40" fill="#C9C1B6"/><rect x="0" y="120" width="220" height="110" fill="#3A3330"/><circle cx="110" cy="175" r="30" fill="#9A9187"/><path d="M80 175 A30 30 0 0 1 140 175" fill="none" stroke="#3A3330" stroke-width="6"/><path d="M80 176 A30 30 0 0 0 140 176" fill="none" stroke="#4F7FB0" stroke-width="5" stroke-dasharray="6 4"/><circle cx="40" cy="150" r="15" fill="#9A9187"/><circle cx="185" cy="200" r="17" fill="#9A9187"/><text x="110" y="100" text-anchor="middle" class="cfs"><tspan class="ko" data-i>바인더가 벗겨짐</tspan><tspan class="en" data-i>Binder peels off</tspan></text><text x="110" y="300" text-anchor="middle" class="cfs"><tspan class="ko" data-i>골재 표면 노출</tspan><tspan class="en" data-i>Aggregate surface exposed</tspan></text></g><text x="753" y="180" text-anchor="middle" class="cfx">→</text><g transform="translate(775,0)"><text x="110" y="28" text-anchor="middle" class="cfh" font-size="20"><tspan class="ko" data-i>④ 포트홀</tspan><tspan class="en" data-i>④ Pothole</tspan></text><rect x="0" y="230" width="220" height="40" fill="#C9C1B6"/><path d="M0 120 H60 Q80 200 110 205 Q140 200 160 120 H220 V230 H0 Z" fill="#3A3330"/><circle cx="95" cy="195" r="12" fill="#9A9187"/><circle cx="125" cy="198" r="10" fill="#9A9187"/><circle cx="110" cy="110" r="11" fill="#9A9187"/><circle cx="75" cy="100" r="9" fill="#9A9187"/><circle cx="150" cy="95" r="10" fill="#9A9187"/><path d="M190 60 L150 95" stroke="#1F2A37" stroke-width="4"/><text x="200" y="55" text-anchor="end" class="cfs"><tspan class="ko" data-i>하중</tspan><tspan class="en" data-i>Load</tspan></text><text x="110" y="300" text-anchor="middle" class="cfs"><tspan class="ko" data-i>하중 반복 → 골재 이탈</tspan><tspan class="en" data-i>Repeated load → aggregate loss</tspan></text></g></svg></div>
+<div class="grid c3">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="search"></span><div><p class="k"><span class="ko" data-i>현장에서 보는 것</span><span class="en" data-i>What you see in the field</span></p><h4><span class="ko" data-i>골재가 드러난 표면 · 포트홀</span><span class="en" data-i>Exposed aggregate surface · pothole</span></h4></div></div><p><span class="ko" data-i>비 · 동결융해 뒤 표면 골재 노출 · 수분 민감도 시험(인장강도비 · TSR)</span><span class="en" data-i>Surface aggregate exposure after rain · freeze–thaw · moisture sensitivity test (tensile strength ratio · TSR)</span></p></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="atom"></span><div><p class="k"><span class="ko" data-i>MD 로 보는 것</span><span class="en" data-i>What you see with MD</span></p><h4><span class="ko" data-i>건조 ↔ 습윤 분리일 · 파괴 모드</span><span class="en" data-i>Dry ↔ wet work of separation · failure mode</span></h4></div></div><p><span class="ko" data-i>물이 끼어들면 약한 자리가 계면 ↔ 바인더 내부로 이동 · 노출률로 판정</span><span class="en" data-i>With water, the weak spot shifts between interface ↔ inside binder · judged by exposure</span></p></div>
+<div class="it hot a" style="--d:3"><div class="ih"><span class="icb" data-ico="target"></span><div><p class="k"><span class="ko" data-i>판단에 쓰는 곳</span><span class="en" data-i>Where it is used</span></p><h4><span class="ko" data-i>골재 · 첨가제 선택</span><span class="en" data-i>Aggregate · additive selection</span></h4></div></div><p><span class="ko" data-i>박리에 약한 골재 조합 사전 선별 · 박리 방지제 비교 · W16 수분 저항 표적</span><span class="en" data-i>Pre-screen aggregate combinations prone to stripping · compare anti-stripping agents · W16 moisture-resistance target</span></p></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>모식도 = 수분 손상 진행 단계의 개념 그림(실측 아님) · 연결 = 이 주차 10-3 실행 · W16 표적</span><span class="en" data-i>Diagram = concept drawing of moisture-damage stages (not measured) · link = this week's session 10-3 run · W16 target</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+<section class="slide v3" data-src="06주차 보충A#19,06주차 보충A#21">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>10-3 · 어떻게 · 동적</span><span class="en" data-i>10-3 · How · dynamic</span></p>
+<div class="hrow"><span class="hico" data-ico="git-compare"></span><h2 class="h"><span class="ko" data-i>건조 ↔ 습윤 동시 인장: 계면 박리 ↔ 바인더 쪽 파단</span><span class="en" data-i>Dry ↔ wet simultaneous tension: interfacial debonding ↔ binder-side fracture</span></h2></div>
+<p class="sub"><span class="ko" data-i>같은 속도 · 같은 규약 · 두 셀 동시 인장 · 비교값은 같은 조건에서만 유효 (실제 실행 · 교육용 축소)</span><span class="en" data-i>Same speed · same convention · two cells pulled together · comparison valid only under same conditions (actual run · reduced for teaching)</span></p>
+<div class="bd"><div class="emb" data-emb="pair" data-dur="12" data-steps="3" data-labels="① 시작|② 피크 비교|③ 끝 · 모드" data-labels-en="① Start|② Peak comparison|③ End · mode"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 06주차 보충A #19 · #21 · 데이터 = week10/expected_output/{dry,wet}/pull.csv · fracture.json (mdai lmp · 0.0025 Å/fs · 4,000 스텝)</span><span class="en" data-i>Original week-06 supplement A #19 · #21 · data = week10/expected_output/{dry,wet}/pull.csv · fracture.json (mdai lmp · 0.0025 Å/fs · 4,000 steps)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 17 FIG 에너지비 두 정의 -->
+<section class="slide v3" data-src="06주차 보충A#20">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>10-3 · 무엇</span><span class="en" data-i>10-3 · What</span></p>
+<div class="hrow"><span class="hico" data-ico="divide"></span><h2 class="h"><span class="ko" data-i>에너지비 두 정의: 같은 이름 · 다른 분모 · 좋은 방향도 다름</span><span class="en" data-i>Two definitions of energy ratio: same name · different denominator · different good direction</span></h2></div>
+<p class="sub"><span class="ko" data-i>문헌값 인용 시 분모부터 확인 · 같은 이름 · 다른 식 → 판정 반전</span><span class="en" data-i>When citing literature values, check the denominator first · same name · different equation → verdict reverses</span></p>
+<div class="bd">
+<div class="row">
+<table class="t a" style="--d:1;flex:1"><thead><tr><th></th><th><span class="ko" data-i>① 수분 저항비 (Xu &amp; Wang 2017)</span><span class="en" data-i>① Moisture resistance ratio (Xu &amp; Wang 2017)</span></th><th><span class="ko" data-i>② 보존비</span><span class="en" data-i>② Retention ratio</span></th></tr></thead><tbody>
+<tr><td><span class="ko" data-i>계산</span><span class="en" data-i>Calculation</span></td><td><span class="ko" data-i>건조 부착일 ÷ 습윤 박리일</span><span class="en" data-i>Dry adhesion work ÷ wet debonding work</span></td><td><span class="ko" data-i>습윤 ÷ 건조 분리일</span><span class="en" data-i>Wet ÷ dry work of separation</span></td></tr>
+<tr><td><span class="ko" data-i>좋은 방향</span><span class="en" data-i>Good direction</span></td><td><span class="ko" data-i><b>1 초과</b> · 임계 1</span><span class="en" data-i><b>Above 1</b> · threshold 1</span></td><td><span class="ko" data-i><b>1 에 가까울수록</b></span><span class="en" data-i><b>Closer to 1</b></span></td></tr>
+<tr><td><span class="ko" data-i>필요 계산</span><span class="en" data-i>Required calculation</span></td><td><span class="ko" data-i>3층 · 짝별 에너지 3개</span><span class="en" data-i>3 layers · 3 pairwise energies</span></td><td><span class="ko" data-i>건조 · 습윤 인장 2건</span><span class="en" data-i>2 tension runs, dry · wet</span></td></tr>
+<tr><td><span class="ko" data-i>함께 보고</span><span class="en" data-i>Report together</span></td><td><span class="ko" data-i>박리일 정의</span><span class="en" data-i>Debonding-work definition</span></td><td><span class="ko" data-i>감소율 % = 1 − 보존비</span><span class="en" data-i>Reduction % = 1 − retention ratio</span></td></tr></tbody></table>
+<div class="figw white" style="width:470px;flex:none"><svg viewBox="0 0 470 300" class="cfig">
+<text x="235" y="34" text-anchor="middle" class="cfh" font-size="20"><tspan class="ko" data-i>같은 값 0.8 · 판정 반대</tspan><tspan class="en" data-i>Same value 0.8 · opposite verdict</tspan></text>
+<line x1="40" y1="110" x2="430" y2="110" stroke="#4A403A" stroke-width="3"/><line x1="235" y1="96" x2="235" y2="124" stroke="#C4472D" stroke-width="4"/><text x="235" y="150" text-anchor="middle" class="cfm">1</text>
+<rect x="235" y="98" width="195" height="24" fill="#2E8B57" opacity=".25"/><text x="335" y="88" text-anchor="middle" class="cfs"><tspan class="ko" data-i>① 좋음</tspan><tspan class="en" data-i>① Good</tspan></text><text x="120" y="88" text-anchor="middle" class="cfs"><tspan class="ko" data-i>① 취약</tspan><tspan class="en" data-i>① Poor</tspan></text>
+<line x1="40" y1="220" x2="430" y2="220" stroke="#4A403A" stroke-width="3"/><line x1="235" y1="206" x2="235" y2="234" stroke="#C4472D" stroke-width="4"/><text x="235" y="260" text-anchor="middle" class="cfm">1</text>
+<rect x="170" y="208" width="65" height="24" fill="#2E8B57" opacity=".25"/><text x="200" y="198" text-anchor="middle" class="cfs"><tspan class="ko" data-i>② 좋음</tspan><tspan class="en" data-i>② Good</tspan></text><text x="340" y="198" text-anchor="middle" class="cfs"><tspan class="ko" data-i>② 1 초과 드묾</tspan><tspan class="en" data-i>② Above 1 is rare</tspan></text>
+<circle cx="196" cy="110" r="8" fill="#F99D1C"/><circle cx="196" cy="220" r="8" fill="#F99D1C"/><text x="40" y="290" class="cfs"><tspan class="ko" data-i>● 0.8 = ① 취약 · ② 20 % 감소</tspan><tspan class="en" data-i>● 0.8 = ① poor · ② 20 % reduction</tspan></text>
+</svg></div>
+</div>
+<div class="foot a" style="--d:3"><span class="ko" data-i>오늘 실행의 ER = <b>기록 안 함</b> · 시드 1 · 10¹¹ s⁻¹ · 수산화 없음 · 바인더 쪽 파단 → 정의 ① 의 박리일 ≠ 계면 값 · 정의와 방향만 사용 (W16 에서 정량)</span><span class="en" data-i>Today's ER = <b>not recorded</b> · 1 seed · 10¹¹ s⁻¹ · no hydroxylation · binder-side fracture → debonding work in definition ① ≠ interface value · use definition and direction only (quantified in W16)</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 06주차 보충A #20 · 참고 사례(연구 플랫폼) 계면 부착 이론 문서 §2 (부호 정정 2026-09-27 반영)</span><span class="en" data-i>Original week-06 supplement A #20 · reference case (research platform) interface adhesion theory document §2 (sign correction 2026-09-27 applied)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 18 FIG 건조 대 수산화 표면 -->
+<section class="slide v3" data-src="06주차 보충A#21,06주차 보충A#22">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>10-3 · 확인</span><span class="en" data-i>10-3 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="brick-wall"></span><h2 class="h"><span class="ko" data-i>수산화 표면 효과 = 석영(SiO₂)에서만 큼: 분리일 +60 %</span><span class="en" data-i>Hydroxylated-surface effect is large only on quartz (SiO₂): work of separation +60 %</span></h2></div>
+<p class="sub"><span class="ko" data-i>Al₂O₃ · Fe₂O₃ 는 +2 % · 해당 광물 = 바인더 내부 파단 · 분리일 ≠ 계면 값 · 표면 처리 효과 = 「계면이 끊어지는 광물」에서만 판독</span><span class="en" data-i>Al₂O₃ · Fe₂O₃ are +2 % · these minerals = fracture inside binder · work of separation ≠ interface value · surface-treatment effect readable only for "minerals where the interface breaks"</span></p>
+<div class="bd">
+<div class="row">
+<div class="col" style="flex:1">
+<div class="bars">
+<div class="bar"><div class="l"><span class="ko" data-i>SiO₂ 건조<small>n 117</small></span><span class="en" data-i>SiO₂ dry<small>n 117</small></span></div><div class="b mt" style="width:192px"></div><div class="v nosum">63.9</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>SiO₂ 수산화</span><span class="en" data-i>SiO₂ hydroxylated</span></div><div class="b" style="width:307px"></div><div class="v nosum">102.4 <small>+60 %</small></div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>Al₂O₃ 건조</span><span class="en" data-i>Al₂O₃ dry</span></div><div class="b mt" style="width:483px"></div><div class="v nosum">161.0</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>Al₂O₃ 수산화</span><span class="en" data-i>Al₂O₃ hydroxylated</span></div><div class="b bl" style="width:492px"></div><div class="v nosum">164.1 <small>+2 %</small></div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>Fe₂O₃ 건조</span><span class="en" data-i>Fe₂O₃ dry</span></div><div class="b mt" style="width:509px"></div><div class="v nosum">169.8</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>Fe₂O₃ 수산화</span><span class="en" data-i>Fe₂O₃ hydroxylated</span></div><div class="b bl" style="width:518px"></div><div class="v nosum">172.8 <small>+2 %</small></div></div>
+<p class="note"><span class="ko" data-i>W_sep (mJ/m²) · 막대 길이 비례 · 표준조건 std1f · 세 속도 · 다섯 온도 통합 평균</span><span class="en" data-i>W_sep (mJ/m²) · bar length proportional · standard condition std1f · three rates · five temperatures pooled mean</span></p>
+</div>
+</div>
+<div class="col" style="width:600px;flex:none">
+<table class="t"><thead><tr><th>T (K)</th><th><span class="ko" data-i>W 건조</span><span class="en" data-i>W dry</span></th><th>W OH</th><th>ΔW</th><th><span class="ko" data-i>σ_p 건조 → OH</span><span class="en" data-i>σ_p dry → OH</span></th></tr></thead><tbody>
+<tr><td>253</td><td>59.5</td><td>97.4</td><td>+64 %</td><td>137.5 → 147.6</td></tr>
+<tr><td>273</td><td>64.1</td><td>93.7</td><td>+46 %</td><td>133.5 → 136.1</td></tr>
+<tr><td>293</td><td>67.1</td><td>103.5</td><td>+54 %</td><td>121.6 → 134.9</td></tr>
+<tr><td>313</td><td>62.0</td><td>101.7</td><td>+64 %</td><td>113.4 → 131.0</td></tr>
+<tr><td>333</td><td>63.7</td><td>108.7</td><td>+71 %</td><td>104.8 → 115.7</td></tr></tbody></table>
+<div class="it dark a" style="--d:2"><p><span class="ko" data-i>분리일은 +46~71 % · 강도는 +2~16 % · <b>표면 처리 효과 = 분리일 쪽이 훨씬 큼</b> · 수산화 표면은 물 층과 다른 조건(극성 종결 · 물 없음)</span><span class="en" data-i>Work of separation +46~71 % · strength +2~16 % · <b>surface-treatment effect = much larger on work of separation</b> · hydroxylated surface is a different condition from water layer (polar termination · no water)</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 06주차 보충A #21 · #22 · 수치 = 선행 연구 캠페인 집계표(건조 ↔ 수산화 · SiO₂ 온도별 수산화) (MD 계산값 · 실험값 아님)</span><span class="en" data-i>Original week-06 supplement A #21 · #22 · values = prior-study campaign tally table (dry ↔ hydroxylated · SiO₂ by temperature, hydroxylated) (MD results · not experimental)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 19 TWEAK 건조 ↔ 습윤 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>10-3 · 바꿔 보기</span><span class="en" data-i>10-3 · Try changing</span></p>
+<div class="hrow"><span class="hico" data-ico="git-compare"></span><h2 class="h"><span class="ko" data-i>물 층 바꿔 보기: 건조 · 습윤 셀 · 곡선 · 분리일 · 모드 동시 변화</span><span class="en" data-i>Change the water layer: dry · wet cell · curve · work of separation · mode change together</span></h2></div>
+<p class="sub"><span class="ko" data-i>--water 0 ↔ 10 · 같은 빌더 · 같은 속도 · 같은 규약 · 바뀐 것은 물 층 10 Å(209분자) 하나 · 시드 1 · 차이의 유의성 판단 불가</span><span class="en" data-i>--water 0 ↔ 10 · same builder · same rate · same convention · only the 10 Å water layer (209 molecules) changed · 1 seed · significance of difference cannot be judged</span></p>
+<div class="bd">
+<div class="tweak">
+<div class="pane before a" style="--d:1"><h3><span class="tic" data-ico="minus"></span><span class="ko" data-i>전 · --water 0 (건조 · 1,440원자)</span><span class="en" data-i>Before · --water 0 (dry · 1,440 atoms)</span></h3>
+<div class="figw white"><svg viewBox="0 0 700 230" class="cfig" id="tw_dry"></svg></div>
+<div class="cb plain" id="tw_dry_chips"></div>
+<p class="cap"><span class="ko" data-i>바인더–석영 계면 분리 · 노출률 e 가 0.5 를 넘어 계면 박리</span><span class="en" data-i>Binder–quartz interface separates · exposure e exceeds 0.5 → interfacial debonding</span></p></div>
+<div class="pane after a" style="--d:2"><h3><span class="tic" data-ico="plus"></span><span class="ko" data-i>후 · --water 10 (습윤 · 2,067원자)</span><span class="en" data-i>After · --water 10 (wet · 2,067 atoms)</span></h3>
+<div class="figw white"><svg viewBox="0 0 700 230" class="cfig" id="tw_wet"></svg></div>
+<div class="cb plain" id="tw_wet_chips"></div>
+<p class="cap"><span class="ko" data-i>바인더가 물 층에 부착 잔류 · 파단 위치 = 바인더 쪽으로 이동</span><span class="en" data-i>Binder stays attached to water layer · fracture position shifts to binder side</span></p></div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>저장소: pull_test.py --water 10 --tag wet → fracture.json 의 mode · exposure_e 비교</span><span class="en" data-i>Repository: pull_test.py --water 10 --tag wet → compare mode · exposure_e in fracture.json</span></p><p><span class="ko" data-i>두 곡선의 피크 · 면적 차가 시드 산포(25장 · ±1~12 MPa)보다 큰지 · 시드 3개로 다시</span><span class="en" data-i>Whether peak · area differences of the two curves exceed seed scatter (slide 25 · ±1~12 MPa) · redo with 3 seeds</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>수치 = week10/expected_output/{dry,wet}/wsep.json · fracture.json (mdai lmp 22 Jul 2025 · 1코어)</span><span class="en" data-i>Values = week10/expected_output/{dry,wet}/wsep.json · fracture.json (mdai lmp 22 Jul 2025 · 1 core)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 20 MAKE P10-2 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>10-3 · 만들어 보기</span><span class="en" data-i>10-3 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="play"></span><h2 class="h"><span class="ko" data-i>만들어 보기 P10-2: 습윤 셀 실행 → 건조 · 습윤 비교표 · ER 정의 명시 · 판정</span><span class="en" data-i>Try it P10-2: run wet cell → dry · wet comparison table · state ER definition · verdict</span></h2></div>
+<div class="bd">
+<div class="make">
+<div class="left a" style="--d:1">
+<pre class="code"><span class="c"><span class="ko" data-i># 환경: mdai · week10 폴더에서 claude</span><span class="en" data-i># Env: mdai · run claude in the week10 folder</span></span>
+python3 scripts/pull_test.py --water 10 --tag wet
+python3 scripts/work_of_separation.py out/wet/pull.csv
+python3 scripts/fracture_mode.py out/wet/pull.dump
+<span class="c"><span class="ko" data-i># → wsep.json · fracture.json (건조 것과 함께)</span><span class="en" data-i># → wsep.json · fracture.json (together with the dry ones)</span></span></pre>
+<div class="prompt" data-id="P10-2"><span class="ko" data-i>습윤 셀(--water 10 --tag wet)로 scripts/pull_test.py → work_of_separation.py → fracture_mode.py 를 실행하고(건조 dry 도 fracture_mode 까지) out/dry · out/wet 의 wsep.json · fracture.json 4개를 읽어라. ① 비교표(열: 조건 · 원자 수 · σ_peak MPa · W_mech mJ/m² · 파괴 모드 · 노출률 e · 규약 · 속도 · 시드 수)를 만들고 ② 에너지비를 정의 ② 보존비 W_wet/W_dry 로 계산하되 정의 ①(W_adh/W_deb)은 W_deb 가 없으니 「미정」으로 두고 ③ 시드가 1개씩이므로 「유의한 차이」라는 말을 쓰지 말고 다음 실행에 필요한 시드 수를 25장 기준(스크리닝 3 · 확정 5)으로 적어라. 수치는 파일에 있는 값만 쓴다.
+
+W_mech 를 expected_output 과 비교하고 out/P10-2_result.md 로 저장해라.</span><span class="en" data-i>With the wet cell (--water 10 --tag wet), run scripts/pull_test.py → work_of_separation.py → fracture_mode.py (also the dry run through fracture_mode), then read the 4 files wsep.json · fracture.json in out/dry · out/wet. ① Build a comparison table (columns: condition · atoms · σ_peak MPa · W_mech mJ/m² · failure mode · exposure e · convention · rate · seeds) ② Compute energy ratio with definition ② retention ratio W_wet/W_dry; leave definition ① (W_adh/W_deb) as "TBD" since W_deb is missing ③ With 1 seed each, do not say "significant difference"; state the number of seeds needed for the next run on the slide 25 basis (screening 3 · confirmation 5). Use only values in the files.
+
+Compare W_mech with expected_output and save to out/P10-2_result.md.</span></div>
+</div>
+<div class="expect a" style="--d:2">
+<h4><span class="tic" data-ico="table"></span><span class="ko" data-i>기대 결과 · 비교표 (값 = 실제 실행 · 표의 숫자 = 스크립트 기입)</span><span class="en" data-i>Expected output · comparison table (values = actual run · table numbers filled by script)</span></h4>
+<table class="t" id="expect_pair"><thead><tr><th><span class="ko" data-i>조건</span><span class="en" data-i>Condition</span></th><th><span class="ko" data-i>원자</span><span class="en" data-i>Atoms</span></th><th>σ_peak</th><th>W_mech</th><th><span class="ko" data-i>모드</span><span class="en" data-i>Mode</span></th><th>e</th></tr></thead><tbody></tbody></table>
+<div class="cb plain" id="expect_er"></div>
+<p class="cap"><span class="ko" data-i>「ER(정의 ①) 미정 · 시드 1 → 스크리닝 3개 더」 가 들어 있으면 통과 · 두 조건의 규약 · 속도가 같은 줄에 적혀 있어야 비교표</span><span class="en" data-i>Pass if it contains "ER (definition ①) TBD · 1 seed → 3 more for screening" · convention · rate of both conditions must be on the same line to count as a comparison table</span></p>
+</div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>비교표에 규약 · 속도 · 시드 수 열이 있는가 · 없으면 다른 사람의 값과 비교 불가</span><span class="en" data-i>Does the comparison table have convention · rate · seeds columns? Without them it cannot be compared with others' values</span></p><p><span class="ko" data-i>ER 을 어느 정의로 썼는지 한 줄이 있는가 · 정의 ① 이 「미정」인가</span><span class="en" data-i>Is there one line saying which definition was used for ER? Is definition ① "TBD"?</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>week10/notebooks/01_pull_test.ipynb · scripts/pull_test.py · fracture_mode.py · 지시문 원문 week10/prompts.md · P10-2</span><span class="en" data-i>week10/notebooks/01_pull_test.ipynb · scripts/pull_test.py · fracture_mode.py · prompt source week10/prompts.md · P10-2</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 21 차시 10-4 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 10-4 · 12분 · 영상 1편</span><span class="en" data-i>Session 10-4 · 12 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="split"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">4</p><p class="hubt"><span class="ko" data-i>파괴 모드와 보고</span><span class="en" data-i>Failure mode and reporting</span></p><p class="hubs"><span class="ko" data-i>어디가 끊어졌나 · 몇 번 돌렸나</span><span class="en" data-i>Where did it break · how many runs</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>파괴 모드 판정 + 보고 한 문단 (P10-3)</span><span class="en" data-i>Failure-mode verdict + one report paragraph (P10-3)</span></h4></div></div><p><span class="ko" data-i>fracture_mode.py ▶ → e · t_res · 모드 → 보고 형식(값 ± CI · n · 프로토콜)</span><span class="en" data-i>fracture_mode.py ▶ → e · t_res · mode → report format (value ± CI · n · protocol)</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>W16 100건 결과를 읽는 규칙</span><span class="en" data-i>Rules for reading the W16 100-run results</span></h4></div></div><p><span class="ko" data-i>강도 = 하중 조건 · 모드 = 광물 · 초기 배치가 결정 · 반복 뒤 평균 ± CI 로 보고</span><span class="en" data-i>Strength = load condition · mode = mineral · initial configuration decides · report mean ± CI after repeats</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 22 ANIM 파괴 모드 스냅샷 -->
+<section class="slide v3" data-src="06주차 보충A#25,07주차#31,07주차#32,07주차#33">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>10-4 · 무엇 · 동적</span><span class="en" data-i>10-4 · What · dynamic</span></p>
+<div class="hrow"><span class="hico" data-ico="split"></span><h2 class="h"><span class="ko" data-i>파괴 모드 3 스냅샷: 응집(바인더 내부) · 박층 응집 · 계면 박리(결정면 노출)</span><span class="en" data-i>3 failure-mode snapshots: cohesive (inside binder) · thin-layer cohesive · interfacial debonding (crystal face exposed)</span></h2></div>
+<p class="sub"><span class="ko" data-i>측면도 = 균열 위치 · 평면도 = 결정면 피복 · 같은 광물도 온도 · 수산화에 따라 모드 상이 (선행 연구 대표쌍 · 건조)</span><span class="en" data-i>Side view = crack location · top view = crystal-face coverage · same mineral shows different modes with temperature · hydroxylation (prior-study representative pairs · dry)</span></p>
+<div class="bd"><div class="emb" data-emb="modes" data-dur="12" data-steps="3" data-labels="① 응집 파괴|② 박층 응집|③ 계면 박리" data-labels-en="① Cohesive failure|② Thin-layer cohesive|③ Interface"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 06주차 보충A #25 · 07주차 #31~#33 · 수치 = 선행 연구 표준조건 대표쌍 스냅숏 제목값(Al₂O₃ 293 K · Fe₂O₃ 253 K · SiO₂ 253 K · 건조) · 모식도</span><span class="en" data-i>Original week-06 supplement A #25 · week-07 #31~#33 · values = prior-study standard-condition representative-pair snapshot titles (Al₂O₃ 293 K · Fe₂O₃ 253 K · SiO₂ 253 K · dry) · schematic</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 23 FIG 판정 규칙 · 광물별 구성 -->
+<section class="slide v3" data-src="06주차 보충A#26,06주차 보충A#27,07주차#30">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>10-4 · 어떻게</span><span class="en" data-i>10-4 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="list-checks"></span><h2 class="h"><span class="ko" data-i>판정 규칙 2지표: 노출률 · 잔류 두께 → 계면 박리 · 박층 · 응집</span><span class="en" data-i>Verdict rule with 2 indicators: exposure · residual thickness → interfacial debonding · thin-layer · cohesive</span></h2></div>
+<p class="sub"><span class="ko" data-i>노출률 50 % 초과 → 계면 박리 · 잔류 두께가 단분자층(z1) 이상 → 응집 · 사이 = 박층 · 모드 = 광물이 결정 · SiO₂ 거의 전부 계면 박리 · Al₂O₃ 응집 · Fe₂O₃ 중간 · 온도 · 속도 · 수화는 수 %p</span><span class="en" data-i>Exposure above 50 % → interfacial debonding · residual thickness at least a monolayer (z1) → cohesive · in between = thin-layer · mode is decided by mineral · SiO₂ almost all interfacial debonding · Al₂O₃ cohesive · Fe₂O₃ intermediate · temperature · rate · hydration a few %p</span></p>
+<div class="bd">
+<div class="row">
+<div class="figw white" style="width:560px;flex:none"><svg viewBox="0 0 560 400" class="cfig">
+<line x1="70" y1="340" x2="520" y2="340" stroke="#6E655C" stroke-width="3"/><line x1="70" y1="340" x2="70" y2="40" stroke="#6E655C" stroke-width="3"/>
+<text x="295" y="385" text-anchor="middle" class="cfs"><tspan class="ko" data-i>노출률 e (%)</tspan><tspan class="en" data-i>Exposure e (%)</tspan></text><text x="28" y="190" text-anchor="middle" class="cfs" transform="rotate(-90 28 190)">t_res / z1</text>
+<rect x="70" y="40" width="225" height="150" fill="#E37F1A" opacity=".18"/><rect x="70" y="190" width="225" height="150" fill="#FBB44E" opacity=".25"/><rect x="295" y="40" width="225" height="300" fill="#D9534F" opacity=".15"/>
+<line class="flow" x1="295" y1="40" x2="295" y2="340" stroke="#D9534F" stroke-width="3" stroke-dasharray="10 8"/><line class="flow" x1="70" y1="190" x2="295" y2="190" stroke="#C8610C" stroke-width="3" stroke-dasharray="10 8"/>
+<text x="182" y="110" text-anchor="middle" class="cfh" font-size="20"><tspan class="ko" data-i>응집 파괴</tspan><tspan class="en" data-i>Cohesive failure</tspan></text><text x="160" y="300" text-anchor="middle" class="cfh" font-size="20"><tspan class="ko" data-i>박층 응집</tspan><tspan class="en" data-i>Thin-layer cohesive</tspan></text><text x="407" y="190" text-anchor="middle" class="cfh" font-size="20" style="fill:#A83A32"><tspan class="ko" data-i>계면 박리</tspan><tspan class="en" data-i>Interfacial debonding</tspan></text>
+<text x="300" y="362" class="cfm" style="fill:#A83A32">50 %</text><text x="76" y="184" class="cfm" style="fill:#C8610C">1.0 (t_res = z1)</text>
+<circle cx="94" cy="70" r="9" fill="#2E8B57"/><text x="110" y="76" class="cfs">Al₂O₃ 293 K · 5 % · 4.7</text>
+<circle cx="226" cy="260" r="9" fill="#E37F1A"/><text x="286" y="244" text-anchor="end" class="cfs" font-size="16">Fe₂O₃ 253 K · 35 % · 1.0</text>
+<circle cx="518" cy="336" r="9" fill="#D9534F"/><text x="430" y="320" class="cfs" text-anchor="end">SiO₂ 253 K · 100 % · 0</text>
+</svg></div>
+<div class="col fill">
+<table class="t"><thead><tr><th><span class="ko" data-i>광물 · 표면 (n 117)</span><span class="en" data-i>Mineral · surface (n 117)</span></th><th><span class="ko" data-i>응집</span><span class="en" data-i>Cohesive</span></th><th><span class="ko" data-i>박층</span><span class="en" data-i>Thin-layer</span></th><th><span class="ko" data-i>계면</span><span class="en" data-i>Interface</span></th><th><span class="ko" data-i>e 평균</span><span class="en" data-i>Mean e</span></th><th>t_res</th></tr></thead><tbody>
+<tr><td><span class="ko" data-i>SiO₂ 건조</span><span class="en" data-i>SiO₂ dry</span></td><td>0</td><td>0</td><td>117</td><td>96 %</td><td>0.0 Å</td></tr>
+<tr><td><span class="ko" data-i>SiO₂ 수산화</span><span class="en" data-i>SiO₂ hydroxylated</span></td><td>1</td><td>1</td><td>115</td><td>88 %</td><td>0.2 Å</td></tr>
+<tr><td><span class="ko" data-i>Al₂O₃ 건조</span><span class="en" data-i>Al₂O₃ dry</span></td><td>115</td><td>2</td><td>0</td><td>9 %</td><td>14.1 Å</td></tr>
+<tr><td><span class="ko" data-i>Fe₂O₃ 건조</span><span class="en" data-i>Fe₂O₃ dry</span></td><td>107</td><td>10</td><td>0</td><td>15 %</td><td>11.9 Å</td></tr>
+<tr><td><span class="ko" data-i>Fe₂O₃ 수산화</span><span class="en" data-i>Fe₂O₃ hydroxylated</span></td><td>95</td><td>17</td><td>5</td><td>17 %</td><td>12.4 Å</td></tr></tbody></table>
+<div class="foot a" style="--d:2"><span class="ko" data-i>다른 캠페인(R6 486런)은 SiO₂ 계면 박리 <b>0 %</b> · 구조 세트 · 판정 프레임 차이 → <b>결과 + 프로토콜 병기</b></span><span class="en" data-i>Another campaign (R6 486 runs) shows SiO₂ interfacial debonding <b>0 %</b> · structure set · judgment-frame difference → <b>report result + protocol together</b></span></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 06주차 보충A #26 · #27 · 07주차 #30 · 수치 = 선행 연구 파괴 모드 집계표(an104 면 D · 보정 변형률 0.55) · 판정 정의 = R6 원고 2.3절 · 오늘 스크립트 fracture_mode.py 는 같은 규칙의 축소판(z1 4 Å)</span><span class="en" data-i>Original week-06 supplement A #26 · #27 · week-07 #30 · values = prior-study failure-mode tally table (an104 face D · corrected strain 0.55) · verdict definition = R6 manuscript section 2.3 · today's script fracture_mode.py is a reduced version of the same rule (z1 4 Å)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 24 FIG 변동 · 시드 수 · 보고 -->
+<section class="slide v3" data-src="06주차 보충A#28,06주차 보충A#29,06주차 보충A#30,06주차 보충A#37">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>10-4 · 확인</span><span class="en" data-i>10-4 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="dices"></span><h2 class="h"><span class="ko" data-i>변동 3층 · 시드 수 = 신뢰구간 폭 · 보고 = 값 ± 신뢰구간</span><span class="en" data-i>3 sources of variation · number of seeds = confidence-interval width · report = value ± confidence interval</span></h2></div>
+<p class="sub"><span class="ko" data-i>반복하면 줄어드는 것(시드 · 배치) · 그대로인 것(셀 크기 · 속도) 을 나눠 보고 · 계산 조건 산포 = 광물 차이의 3/4</span><span class="en" data-i>Report separately what shrinks with repeats (seeds · configurations) and what stays (cell size · rate) · calculation-condition scatter = 3/4 of mineral difference</span></p>
+<div class="bd">
+<div class="row">
+<div class="col" style="flex:1">
+<div class="bars">
+<div class="bar"><div class="l"><span class="ko" data-i>변형률 속도<small>하중 조건</small></span><span class="en" data-i>Strain rate<small>load condition</small></span></div><div class="b" style="width:452px"></div><div class="v nosum">45.2 MPa</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>온도<small>하중 조건</small></span><span class="en" data-i>Temperature<small>load condition</small></span></div><div class="b" style="width:242px"></div><div class="v nosum">24.2</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>광물<small>물질 조건</small></span><span class="en" data-i>Mineral<small>material condition</small></span></div><div class="b gr" style="width:150px"></div><div class="v nosum">15.0</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>초기 배치 + 시드<small>계산 조건</small></span><span class="en" data-i>Initial configuration + seed<small>calculation condition</small></span></div><div class="b mt" style="width:116px"></div><div class="v nosum">11.6 <small>5.9 + 5.7</small></div></div>
+<p class="note"><span class="ko" data-i>최대 강도 요인 효과 · 486런(선행 연구 R6) · 모드는 광물 99 %p</span><span class="en" data-i>Largest strength factor effects · 486 runs (prior-study R6) · mode: mineral 99 %p</span></p>
+</div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="badge-check"></span><div><h4><span class="ko" data-i>보고 형식</span><span class="en" data-i>Report format</span></h4></div></div><p class="mono-line"><span class="ko" data-i>W_sep = 320 ± 31 mJ/m² (n = 5, 95 % CI) · 단면 60 Å · 10⁹ s⁻¹ · GAFF2 + ClayFF · 평형 2 ns · 생산 2 ns</span><span class="en" data-i>W_sep = 320 ± 31 mJ/m² (n = 5, 95 % CI) · cross-section 60 Å · 10⁹ s⁻¹ · GAFF2 + ClayFF · equilibration 2 ns · production 2 ns</span></p></div>
+</div>
+<div class="col" style="width:620px;flex:none">
+<table class="t"><thead><tr><th><span class="ko" data-i>시드 n</span><span class="en" data-i>Seeds n</span></th><th>t₀.₉₇₅</th><th>95 % CI (s 25)</th><th><span class="ko" data-i>상대</span><span class="en" data-i>Relative</span></th><th><span class="ko" data-i>용도</span><span class="en" data-i>Use</span></th></tr></thead><tbody>
+<tr><td>3</td><td>4.30</td><td>±62 mJ/m²</td><td>19 %</td><td><span class="ko" data-i>스크리닝</span><span class="en" data-i>Screening</span></td></tr>
+<tr class="hl"><td>5</td><td>2.78</td><td>±31</td><td>10 %</td><td><span class="ko" data-i>확정 · 보고</span><span class="en" data-i>Confirmation · report</span></td></tr>
+<tr><td>10</td><td>2.26</td><td>±18</td><td>6 %</td><td><span class="ko" data-i>논문</span><span class="en" data-i>Paper</span></td></tr></tbody></table>
+<p class="mono-line"><span class="ko" data-i>유의한 차이 = 두 평균의 차가 두 표준오차를 합친 값의 2배 초과 · 아니면 「차이 없음」</span><span class="en" data-i>Significant difference = difference of two means exceeds 2× the combined standard errors · otherwise "no difference"</span></p>
+<p class="note"><span class="ko" data-i>시드로 안 줄어드는 것 = 셀 크기(단면 ≥ 60 Å) · 속도 · 힘장 · 체계 오차 = 조건 변경으로만 감소</span><span class="en" data-i>What seeds cannot reduce = cell size (cross-section ≥ 60 Å) · rate · force field · systematic error = reduced only by changing conditions</span></p>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 06주차 보충A #28~#30 · #37 (셀 크기 · 시간 상관 · 조건 격자 · 측면도 규칙은 repo/week10/docs/interface_notes.md) · 요인 효과 = 선행 연구 R6 486런</span><span class="en" data-i>Original week-06 supplement A #28~#30 · #37 (cell size · time correlation · condition grid · side-view rule in repo/week10/docs/interface_notes.md) · factor effects = prior-study R6 486 runs</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 25 MAKE P10-3 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>10-4 · 만들어 보기</span><span class="en" data-i>10-4 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="pencil-ruler"></span><h2 class="h"><span class="ko" data-i>만들어 보기 P10-3: fracture_mode.py → 모드 판정 → 보고 문단</span><span class="en" data-i>Try it P10-3: fracture_mode.py → mode verdict → report paragraph</span></h2></div>
+<div class="bd">
+<div class="make">
+<div class="left a" style="--d:1">
+<pre class="code"><span class="c"><span class="ko" data-i># 환경: mdai · week10 폴더에서 claude</span><span class="en" data-i># Env: mdai · run claude in the week10 folder</span></span>
+python3 scripts/fracture_mode.py out/dry/pull.dump
+python3 scripts/fracture_mode.py out/wet/pull.dump
+<span class="c"><span class="ko" data-i># → fracture.json + wsep.json → 아래 지시가 읽음</span><span class="en" data-i># → fracture.json + wsep.json → read by the prompt below</span></span></pre>
+<div class="prompt" data-id="P10-3"><span class="ko" data-i>python3 scripts/fracture_mode.py 를 out/dry/pull.dump · out/wet/pull.dump 에 차례로 실행하고, 건조 · 습윤의 분리일(@out/dry/wsep.json · @out/wet/wsep.json)과 파괴 모드 판정(fracture.json)을 읽어라. 25장의 보고 형식으로 한 문단을 써라: ① 조건마다 「W_sep = 값 ± CI (n) · 규약 · 단면 · 속도 · 힘장 · 평형/생산 길이」 한 줄씩 · 시드가 1개면 CI 를 「미정(n = 1)」 으로 ② 파괴 모드를 e · t_res · 임계(50 % · z1)로 설명 ③ 두 조건의 차이는 「유의성 미정」 으로 적고 ④ 다음 실행 계획(시드 3개 · 속도 10배 낮춤 · 석영 표면 수산화 적용)을 세 줄로 써라. 파일에 없는 수치는 쓰지 마라.
+
+mode 를 expected_output/{dry,wet}/fracture.json 과 비교하고 out/P10-3_result.md 로 저장해라.</span><span class="en" data-i>Run python3 scripts/fracture_mode.py in turn on out/dry/pull.dump · out/wet/pull.dump, then read the dry · wet work of separation (@out/dry/wsep.json · @out/wet/wsep.json) and the failure-mode verdict (fracture.json). Write one paragraph in the slide 25 report format: ① one line per condition "W_sep = value ± CI (n) · convention · cross-section · rate · force field · equilibration/production length"; with 1 seed, CI = "TBD (n = 1)" ② explain the failure mode with e · t_res · thresholds (50 % · z1) ③ state the difference between the two conditions as "significance TBD" ④ write the next-run plan (3 seeds · rate 10× lower · apply quartz-surface hydroxylation) in three lines. Do not write numbers that are not in the files.
+
+Compare mode with expected_output/{dry,wet}/fracture.json and save to out/P10-3_result.md.</span></div>
+</div>
+<div class="expect a" style="--d:2">
+<h4><span class="tic" data-ico="file-json"></span><span class="ko" data-i>기대 결과 · fracture.json 과 보고 문단</span><span class="en" data-i>Expected output · fracture.json and report paragraph</span></h4>
+<pre class="code" id="expect_frac"><span class="ko" data-i>{ "tag": "dry", "exposure_e": …, "t_res_A": …, "z1_A": 4.0,
+  "mode": "adhesive(계면 박리)", "gap_binder_below_A": … }</span><span class="en" data-i>{ "tag": "dry", "exposure_e": …, "t_res_A": …, "z1_A": 4.0,
+  "mode": "adhesive (interfacial debonding)", "gap_binder_below_A": … }</span></pre>
+<div class="doc"><span class="doc-pub"><span class="ko" data-i>보고 문단 (틀)</span><span class="en" data-i>Report paragraph (template)</span></span><span class="doc-t"><span class="ko" data-i>건조: W_sep = □ mJ/m² ± 미정(n = 1) · 규약 = 힘–거리 적분 · A 627 Å² · 2.5 × 10⁻³ Å/fs(~10¹¹ s⁻¹) · GAFF2 + ClayFF · 평형 0.5 ps · 모드 = 계면 박리(e □ &gt; 0.5)</span><span class="en" data-i>Dry: W_sep = □ mJ/m² ± TBD (n = 1) · convention = force–distance integral · A 627 Å² · 2.5 × 10⁻³ Å/fs (~10¹¹ s⁻¹) · GAFF2 + ClayFF · equilibration 0.5 ps · mode = interfacial debonding (e □ &gt; 0.5)</span></span><span class="doc-m"><span class="ko" data-i>습윤: … 모드 = 바인더 쪽(e □ · t_res □ ≥ z1) · 차이 = 유의성 미정 · 다음: 시드 3 · 속도 1/10 · 수산화 표면</span><span class="en" data-i>Wet: … mode = binder side (e □ · t_res □ ≥ z1) · difference = significance TBD · next: 3 seeds · rate 1/10 · hydroxylated surface</span></span></div>
+<p class="cap"><span class="ko" data-i>CI 에 숫자를 지어 넣었으면 불합격 · 프로토콜 5항목(규약 · A · 속도 · 힘장 · 길이)이 모두 있으면 통과</span><span class="en" data-i>Fail if numbers were invented for CI · pass if all 5 protocol items (convention · A · rate · force field · length) are present</span></p>
+</div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>모드가 e · t_res 와 임계값으로 설명되는가 (fracture.json 의 rule 과 같은가)</span><span class="en" data-i>Is the mode explained by e · t_res and thresholds (same as the rule in fracture.json)?</span></p><p><span class="ko" data-i>보고 문단에 「n = 1 · CI 미정」 과 다음 실행 계획 3줄이 있는가</span><span class="en" data-i>Does the report paragraph have "n = 1 · CI TBD" and the 3-line next-run plan?</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>week10/notebooks/02_wsep_fracture.ipynb · scripts/fracture_mode.py · 지시문 원문 week10/prompts.md · P10-3</span><span class="en" data-i>week10/notebooks/02_wsep_fracture.ipynb · scripts/fracture_mode.py · prompt source week10/prompts.md · P10-3</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 26 다음 주차로 -->
+<section class="slide v3 accent">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>다음 주차로 · W11 아스팔트</span><span class="en" data-i>Next week · W11 Asphalt</span></p>
+<div class="hrow"><span class="hico" data-ico="arrow-right"></span><h2 class="h"><span class="ko" data-i>오늘의 산출물 3: 곡선 · 분리일 2경로 · 파괴 모드 → W11 · W16</span><span class="en" data-i>Today's 3 deliverables: curve · 2-route work of separation · failure mode → W11 · W16</span></h2></div>
+<p class="sub"><span class="ko" data-i>인장 = 그립 정속 당김 · 분리일 = 면적 또는 에너지 차 · 물 = 약한 자리 이동 · 값 = n 과 프로토콜과 함께</span><span class="en" data-i>Tension = constant-speed grip pull · work of separation = area or energy difference · water = shifts weak spot · values come with n and protocol</span></p>
+<div class="bd">
+<div class="lines">
+<div class="ln a" style="--d:1"><span class="nn">01</span><div><h4><span class="ko" data-i>산출물</span><span class="en" data-i>Deliverables</span></h4><p><span class="file">out/{dry,wet}/pull.csv</span> · <span class="file">wsep.json</span> · <span class="file">fracture.json</span> <span class="ko" data-i>· P10-1~3 결과</span><span class="en" data-i>· P10-1~3 results</span></p></div></div>
+<div class="ln a" style="--d:2"><span class="nn">02</span><div><h4><span class="ko" data-i>다음 주 W11 아스팔트</span><span class="en" data-i>Next week W11 Asphalt</span></h4><p><span class="ko" data-i>톨루엔 자리에 SARA 13분자 바인더 · 분획 wt% · 첨가제 · 노화가 조성 변수 · 준비물 없음</span><span class="en" data-i>13-molecule SARA binder in place of toluene · fraction wt% · additive · aging are composition variables · no prerequisites</span></p></div></div>
+<div class="ln a" style="--d:3"><span class="nn">03</span><div><h4><span class="ko" data-i>못 끝냈다면</span><span class="en" data-i>If not finished</span></h4><p><span class="file">week10/expected_output/</span> <span class="ko" data-i>의 pull.csv · wsep.json · fracture.json 으로 W11 진행 가능</span><span class="en" data-i>'s pull.csv · wsep.json · fracture.json let you proceed with W11</span></p></div></div>
+<div class="ln a" style="--d:4"><span class="nn">04</span><div><h4><span class="ko" data-i>퀴즈 · 용어 · 보충</span><span class="en" data-i>Quiz · terms · supplement</span></h4><p><span class="file">week10/quiz.md</span> <span class="ko" data-i>5문항 ·</span><span class="en" data-i>5 questions ·</span> <span class="file">GLOSSARY.md</span> <span class="ko" data-i>용어 5 ·</span><span class="en" data-i>5 terms ·</span> <span class="file">docs/interface_notes.md</span><span class="ko" data-i>(전단 식 · 셀 크기 · 시간 상관 · 조건 격자)</span><span class="en" data-i>(shear equation · cell size · time correlation · condition grid)</span></p></div></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>M3 두 번째 주 끝 · 다음 = 아스팔트(W11) · 시멘트(W12) · 오늘 수치의 정량화 = 최종 프로젝트 확장 예시(W16 계획 · W18 제출)</span><span class="en" data-i>End of M3 second week · next = asphalt (W11) · cement (W12) · quantifying today's values = final-project extension example (planned in W16 · submitted after W18)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<script src="../../common/icons.js"></script>
+<script src="../../common/deck.js"></script>
+<script>
+function stepOf(root) { var s = parseInt(root.dataset.step || '0', 10); return isNaN(s) ? 0 : s; }
+function ez(u) { u = Math.max(0, Math.min(1, u)); return 1 - Math.pow(1 - u, 3); }
+/* ===== 실행 데이터 (week10/scripts 실행 결과 · build 시 삽입) ===== */
+var PULL = {"dry": {"curve": [[0.0, 99.2], [0.05, -6.0], [0.1, 93.8], [0.15, 73.6], [0.2, 69.1], [0.25, 80.4], [0.3, 20.4], [0.35, 40.6], [0.4, 76.0], [0.45, -8.2], [0.5, 85.5], [0.55, 55.1], [0.6, 20.0], [0.65, 67.7], [0.7, 10.4], [0.75, 23.7], [0.8, 133.1], [0.85, 13.4], [0.9, 74.3], [0.95, 51.6], [1.0, 9.3], [1.05, 90.5], [1.1, 69.8], [1.15, 58.3], [1.2, 137.9], [1.25, -14.0], [1.3, 42.9], [1.35, 43.6], [1.4, 28.3], [1.45, 137.2], [1.5, 94.0], [1.55, 19.6], [1.6, 105.3], [1.65, -26.1], [1.7, 65.8], [1.75, 81.2], [1.8, 50.9], [1.85, 81.2], [1.9, 40.3], [1.95, 0.2], [2.0, 139.4], [2.05, 53.4], [2.1, 146.4], [2.15, 127.9], [2.2, 51.6], [2.25, 80.2], [2.3, 73.9], [2.35, 34.1], [2.4, 151.5], [2.45, 31.3], [2.5, 96.9], [2.55, 78.4], [2.6, 23.2], [2.65, 69.7], [2.7, 80.1], [2.75, 47.0], [2.8, 101.5], [2.85, -36.5], [2.9, 6.8], [2.95, 30.0], [3.0, 4.0], [3.05, 77.4], [3.1, 76.9], [3.15, -27.5], [3.2, 57.7], [3.25, -5.6], [3.3, 37.9], [3.35, 65.3], [3.4, 30.6], [3.45, 6.8], [3.5, -9.1], [3.55, -52.2], [3.6, 75.1], [3.65, 5.2], [3.7, 24.2], [3.75, 11.1], [3.8, -24.1], [3.85, -25.6], [3.9, 35.5], [3.95, -48.6], [4.0, 17.2], [4.05, -21.1], [4.1, 20.3], [4.15, -7.4], [4.2, -23.0], [4.25, -17.2], [4.3, 57.2], [4.35, 2.6], [4.4, 89.2], [4.45, -8.0], [4.5, -9.2], [4.55, 5.9], [4.6, 6.1], [4.65, 35.8], [4.7, 117.6], [4.75, 10.7], [4.8, 50.6], [4.85, -4.8], [4.9, 30.7], [4.95, 102.8], [5.0, 70.3], [5.05, 9.9], [5.1, 41.7], [5.15, -59.7], [5.2, 25.1], [5.25, 45.0], [5.3, 29.1], [5.35, 78.5], [5.4, 38.3], [5.45, -14.1], [5.5, 69.7], [5.55, -27.6], [5.6, 41.3], [5.65, 38.6], [5.7, 5.2], [5.75, 45.9], [5.8, 14.5], [5.85, -47.3], [5.9, 68.5], [5.95, 11.9], [6.0, 74.1], [6.05, 45.3], [6.1, -15.3], [6.15, -26.1], [6.2, -2.2], [6.25, -7.2], [6.3, 128.8], [6.35, 1.3], [6.4, 27.0], [6.45, -9.6], [6.5, -32.1], [6.55, 62.1], [6.6, 79.8], [6.65, 12.3], [6.7, 77.4], [6.75, -54.5], [6.8, -14.3], [6.85, 40.3], [6.9, 47.6], [6.95, 75.3], [7.0, 46.4], [7.05, -37.2], [7.1, 50.7], [7.15, -12.0], [7.2, 45.1], [7.25, 90.0], [7.3, 1.4], [7.35, 1.3], [7.4, -1.4], [7.45, -47.3], [7.5, 69.8], [7.55, 11.4], [7.6, 11.3], [7.65, 31.1], [7.7, -31.2], [7.75, -35.9], [7.8, 11.1], [7.85, -27.1], [7.9, 55.0], [7.95, -24.2], [8.0, -6.8], [8.05, -5.0], [8.1, -22.5], [8.15, 15.4], [8.2, 64.4], [8.25, -7.5], [8.3, 60.2], [8.35, -17.1], [8.4, 3.3], [8.45, 17.8], [8.5, 4.9], [8.55, 29.0], [8.6, 51.5], [8.65, -35.5], [8.7, 30.2], [8.75, -54.5], [8.8, -3.7], [8.85, 36.3], [8.9, -34.0], [8.95, -36.6], [9.0, 4.3], [9.05, -63.8], [9.1, -15.0], [9.15, -42.4], [9.2, -23.4], [9.25, 13.1], [9.3, -18.7], [9.35, -25.4], [9.4, 17.2], [9.45, -47.6], [9.5, 10.2], [9.55, 12.4], [9.6, 17.2], [9.65, 47.7], [9.7, 29.3], [9.75, 10.4], [9.8, 58.8], [9.85, 56.8], [9.9, 71.9], [9.95, 73.7], [10.0, 50.2]], "summary": {"tag": "dry", "cell": "dry", "atoms": 1440, "n_slab": 540, "n_water": 0, "n_binder": 900, "area_A2": 627.1, "v_A_per_fs": 0.0025, "v_m_per_s": 250.0, "steps": 4000, "displacement_A": 10.0, "grip_thickness_A": 6.0, "grip_z_min_A": 35.5, "binder_z_range_A": [11.66, 41.5], "strain_rate_per_s": 83767619642.59908, "stress_unit": "sigma_MPa = -F_grip(kcal/mol/A) * 69.4786 / A(A^2) * 100", "rows": 201}, "wsep": {"tag": "dry", "area_A2": 627.1, "n_rows": 201, "sigma_peak_MPa": 151.5, "d_peak_A": 2.4, "d_separation_A": 2.85, "W_mech_mJ_m2": 35.8, "W_energy_mJ_m2": 6.3, "E_int_kcal_mol": -133004.7, "E_sep_kcal_mol": -132999.0, "E_sd_int": 40.1, "E_sd_sep": 20.0, "E_window_rows": 20, "note": __L("W_mech = ∫σ dd (σ<0 은 0) · W_E = (E_sep − E_int)/A · 열 요동 sd 가 ΔE 와 비슷하면 에너지법은 신뢰 불가(짧은 교육용 실행)","W_mech = ∫σ dd (σ&lt;0 as 0) · W_E = (E_sep − E_int)/A · if thermal-fluctuation sd is similar to ΔE, the energy method is unreliable (short teaching run)")}, "frac": {"tag": "dry", "frame_step": 4000, "slab_top_A": 10.17, "exposure_e": 0.701, "t_res_A": 11.19, "z1_A": 4.0, "e_threshold": 0.5, "mode": __L("adhesive(계면 박리)","adhesive (interfacial debonding)"), "binder_z_5_95_A": [13.9, 46.8], "gap_binder_below_A": 1.95, "n_binder_within_12A": 299, "grid": [12, 12], "rule": __L("e > e_th → adhesive · t_res ≥ z1 → cohesive · else thin-layer (paper13 R6 2.3절 축소판)","e > e_th → adhesive · t_res ≥ z1 → cohesive · else thin-layer (paper13 R6 section 2.3, reduced)")}}, "wet": {"curve": [[0.0, 323.0], [0.05, 368.3], [0.1, 287.1], [0.15, 335.6], [0.2, 309.2], [0.25, 251.9], [0.3, 218.3], [0.35, 247.0], [0.4, 271.7], [0.45, 230.9], [0.5, 145.7], [0.55, 124.7], [0.6, 148.0], [0.65, 171.8], [0.7, 195.4], [0.75, 245.6], [0.8, 150.8], [0.85, 189.8], [0.9, 88.2], [0.95, 138.8], [1.0, 220.2], [1.05, 206.5], [1.1, 134.5], [1.15, 145.4], [1.2, 192.5], [1.25, 131.5], [1.3, 150.6], [1.35, 208.4], [1.4, 200.7], [1.45, 202.4], [1.5, 124.7], [1.55, 180.8], [1.6, 233.4], [1.65, 236.7], [1.7, 154.3], [1.75, 138.8], [1.8, 201.2], [1.85, 212.8], [1.9, 187.6], [1.95, 73.7], [2.0, 183.7], [2.05, 194.3], [2.1, 120.0], [2.15, 108.4], [2.2, 94.2], [2.25, 93.6], [2.3, 52.0], [2.35, 26.4], [2.4, 63.4], [2.45, 118.8], [2.5, 54.8], [2.55, 14.3], [2.6, 63.6], [2.65, 45.6], [2.7, 49.4], [2.75, -4.5], [2.8, -37.2], [2.85, 20.2], [2.9, -28.7], [2.95, -23.9], [3.0, 39.2], [3.05, 132.8], [3.1, 35.3], [3.15, 8.7], [3.2, -1.7], [3.25, 47.9], [3.3, 101.4], [3.35, 33.7], [3.4, 66.0], [3.45, 136.3], [3.5, 107.3], [3.55, 68.7], [3.6, 143.0], [3.65, 181.9], [3.7, 142.7], [3.75, 102.7], [3.8, 40.8], [3.85, 126.0], [3.9, 168.4], [3.95, 117.0], [4.0, 133.5], [4.05, 107.4], [4.1, 72.1], [4.15, 57.1], [4.2, 69.3], [4.25, 83.1], [4.3, 166.5], [4.35, 61.3], [4.4, -34.9], [4.45, 17.2], [4.5, 11.7], [4.55, 18.9], [4.6, 29.5], [4.65, 37.8], [4.7, 58.1], [4.75, -3.8], [4.8, -48.5], [4.85, 7.7], [4.9, 39.3], [4.95, -19.9], [5.0, -5.1], [5.05, -24.6], [5.1, 5.8], [5.15, 77.8], [5.2, 55.2], [5.25, 60.8], [5.3, 70.6], [5.35, -19.6], [5.4, -52.4], [5.45, -6.8], [5.5, 9.6], [5.55, 47.8], [5.6, 66.8], [5.65, 7.3], [5.7, 10.0], [5.75, 37.4], [5.8, -18.8], [5.85, 36.0], [5.9, 65.0], [5.95, 19.3], [6.0, -3.7], [6.05, 64.8], [6.1, 85.8], [6.15, 85.6], [6.2, 67.0], [6.25, 26.5], [6.3, 32.5], [6.35, 61.7], [6.4, 55.4], [6.45, 88.3], [6.5, 53.2], [6.55, 94.8], [6.6, 45.1], [6.65, -22.0], [6.7, 29.2], [6.75, 82.9], [6.8, -16.3], [6.85, -21.1], [6.9, -11.5], [6.95, -39.8], [7.0, 1.5], [7.05, -4.0], [7.1, -24.9], [7.15, 11.0], [7.2, -47.5], [7.25, -43.8], [7.3, 3.6], [7.35, 19.7], [7.4, 73.7], [7.45, 88.1], [7.5, -1.3], [7.55, 55.1], [7.6, 107.1], [7.65, 76.3], [7.7, 97.1], [7.75, 141.9], [7.8, 140.2], [7.85, 129.9], [7.9, 103.4], [7.95, 101.7], [8.0, 124.3], [8.05, 70.5], [8.1, 51.6], [8.15, 66.7], [8.2, 50.6], [8.25, 46.2], [8.3, 10.5], [8.35, -24.3], [8.4, 52.6], [8.45, 13.9], [8.5, 12.5], [8.55, -27.8], [8.6, 4.0], [8.65, 13.0], [8.7, 69.9], [8.75, 12.6], [8.8, 49.5], [8.85, 44.4], [8.9, -30.9], [8.95, -52.8], [9.0, 10.0], [9.05, 38.0], [9.1, 70.3], [9.15, 41.9], [9.2, 22.2], [9.25, 1.7], [9.3, 31.5], [9.35, -56.6], [9.4, -10.1], [9.45, 48.8], [9.5, 14.4], [9.55, -15.0], [9.6, -22.0], [9.65, 5.1], [9.7, 7.2], [9.75, 4.0], [9.8, -39.3], [9.85, -57.1], [9.9, -80.5], [9.95, 3.4], [10.0, -29.1]], "summary": {"tag": "wet", "cell": "wet", "atoms": 2067, "n_slab": 540, "n_water": 627, "n_binder": 900, "area_A2": 627.1, "v_A_per_fs": 0.0025, "v_m_per_s": 250.0, "steps": 4000, "displacement_A": 10.0, "grip_thickness_A": 6.0, "grip_z_min_A": 47.01, "binder_z_range_A": [21.54, 53.01], "strain_rate_per_s": 79443338815.33853, "stress_unit": "sigma_MPa = -F_grip(kcal/mol/A) * 69.4786 / A(A^2) * 100", "rows": 201}, "wsep": {"tag": "wet", "area_A2": 627.1, "n_rows": 201, "sigma_peak_MPa": 245.6, "d_peak_A": 0.75, "d_separation_A": 2.55, "W_mech_mJ_m2": 77.4, "W_energy_mJ_m2": -311.3, "E_int_kcal_mol": -135279.1, "E_sep_kcal_mol": -135560.1, "E_sd_int": 46.9, "E_sd_sep": 23.9, "E_window_rows": 20, "note": __L("W_mech = ∫σ dd (σ<0 은 0) · W_E = (E_sep − E_int)/A · 열 요동 sd 가 ΔE 와 비슷하면 에너지법은 신뢰 불가(짧은 교육용 실행)","W_mech = ∫σ dd (σ&lt;0 as 0) · W_E = (E_sep − E_int)/A · if thermal-fluctuation sd is similar to ΔE, the energy method is unreliable (short teaching run)")}, "frac": {"tag": "wet", "frame_step": 4000, "slab_top_A": 10.17, "exposure_e": 0.167, "t_res_A": 11.84, "z1_A": 4.0, "e_threshold": 0.5, "mode": __L("cohesive(응집 파괴)","cohesive (cohesive failure)"), "binder_z_5_95_A": [26.2, 59.7], "gap_binder_below_A": -4.58, "n_binder_within_12A": 5, "grid": [12, 12], "rule": __L("e > e_th → adhesive · t_res ≥ z1 → cohesive · else thin-layer (paper13 R6 2.3절 축소판)","e > e_th → adhesive · t_res ≥ z1 → cohesive · else thin-layer (paper13 R6 section 2.3, reduced)")}}, "dry_fast": {"curve": [[0.0, 201.1], [0.1, 95.5], [0.2, 209.8], [0.3, 164.8], [0.4, 150.8], [0.5, 168.8], [0.6, 116.4], [0.7, 132.6], [0.8, 152.2], [0.9, 44.3], [1.0, 138.9], [1.1, 95.9], [1.2, 29.4], [1.3, 73.3], [1.4, 50.5], [1.5, 62.3], [1.6, 151.0], [1.7, 32.2], [1.8, 79.5], [1.9, 31.7], [2.0, -6.4], [2.1, 100.0], [2.2, 71.2], [2.3, 53.5], [2.4, 86.2], [2.5, -47.2], [2.6, 30.7], [2.7, 39.6], [2.8, 27.5], [2.9, 111.7], [3.0, 54.2], [3.1, -17.2], [3.2, 65.7], [3.3, -31.2], [3.4, 85.7], [3.5, 59.8], [3.6, 17.0], [3.7, 74.1], [3.8, 39.3], [3.9, -32.5], [4.0, 97.1], [4.1, 8.7], [4.2, 132.4], [4.3, 82.5], [4.4, -0.7], [4.5, 35.7], [4.6, 37.2], [4.7, -14.0], [4.8, 124.1], [4.9, 11.7], [5.0, 68.3], [5.1, 26.2], [5.2, -20.5], [5.3, 33.7], [5.4, 61.4], [5.5, 8.5], [5.6, 70.5], [5.7, -50.2], [5.8, 17.9], [5.9, 28.9], [6.0, -26.4], [6.1, 61.2], [6.2, 47.7], [6.3, -38.3], [6.4, 60.9], [6.5, -15.6], [6.6, 4.4], [6.7, 35.0], [6.8, 16.5], [6.9, 53.8], [7.0, -1.6], [7.1, -66.8], [7.2, 63.7], [7.3, 0.1], [7.4, 25.1], [7.5, 62.8], [7.6, -13.4], [7.7, 13.8], [7.8, 47.3], [7.9, -41.0], [8.0, 78.4], [8.1, -0.4], [8.2, 11.5], [8.3, 23.2], [8.4, 1.0], [8.5, 8.9], [8.6, 62.9], [8.7, -31.1], [8.8, 85.1], [8.9, -22.0], [9.0, -5.2], [9.1, 12.1], [9.2, -4.4], [9.3, 6.5], [9.4, 41.8], [9.5, -25.6], [9.6, 65.9], [9.7, 6.2], [9.8, -14.5], [9.9, 27.0], [10.0, 87.2]], "summary": {"tag": "dry_fast", "cell": "dry", "atoms": 1440, "n_slab": 540, "n_water": 0, "n_binder": 900, "area_A2": 627.1, "v_A_per_fs": 0.005, "v_m_per_s": 500.0, "steps": 2000, "displacement_A": 10.0, "grip_thickness_A": 6.0, "grip_z_min_A": 35.5, "binder_z_range_A": [11.66, 41.5], "strain_rate_per_s": 167535239285.19815, "stress_unit": "sigma_MPa = -F_grip(kcal/mol/A) * 69.4786 / A(A^2) * 100", "rows": 101}, "wsep": {"tag": "dry_fast", "area_A2": 627.1, "n_rows": 101, "sigma_peak_MPa": 168.8, "d_peak_A": 0.5, "d_separation_A": 2.0, "W_mech_mJ_m2": 48.1, "W_energy_mJ_m2": -1.4, "E_int_kcal_mol": -133014.7, "E_sep_kcal_mol": -133015.9, "E_sd_int": 48.1, "E_sd_sep": 20.1, "E_window_rows": 10, "note": __L("W_mech = ∫σ dd (σ<0 은 0) · W_E = (E_sep − E_int)/A · 열 요동 sd 가 ΔE 와 비슷하면 에너지법은 신뢰 불가(짧은 교육용 실행)","W_mech = ∫σ dd (σ&lt;0 as 0) · W_E = (E_sep − E_int)/A · if thermal-fluctuation sd is similar to ΔE, the energy method is unreliable (short teaching run)")}, "frac": {"tag": "dry_fast", "frame_step": 2000, "slab_top_A": 10.17, "exposure_e": 0.604, "t_res_A": 11.03, "z1_A": 4.0, "e_threshold": 0.5, "mode": __L("adhesive(계면 박리)","adhesive (interfacial debonding)"), "binder_z_5_95_A": [13.7, 46.8], "gap_binder_below_A": 1.69, "n_binder_within_12A": 350, "grid": [12, 12], "rule": __L("e > e_th → adhesive · t_res ≥ z1 → cohesive · else thin-layer (paper13 R6 2.3절 축소판)","e > e_th → adhesive · t_res ≥ z1 → cohesive · else thin-layer (paper13 R6 section 2.3, reduced)")}}, "wet_fast": {"curve": [[0.0, 530.5], [0.1, 586.0], [0.2, 494.7], [0.3, 544.7], [0.4, 474.0], [0.5, 405.1], [0.6, 378.1], [0.7, 383.3], [0.8, 427.0], [0.9, 291.9], [1.0, 134.1], [1.1, 109.8], [1.2, 145.4], [1.3, 182.0], [1.4, 222.2], [1.5, 315.9], [1.6, 185.0], [1.7, 204.8], [1.8, 58.4], [1.9, 126.8], [2.0, 255.1], [2.1, 224.6], [2.2, 188.3], [2.3, 140.0], [2.4, 179.7], [2.5, 132.4], [2.6, 143.9], [2.7, 215.0], [2.8, 183.7], [2.9, 154.5], [3.0, 24.5], [3.1, 142.2], [3.2, 203.3], [3.3, 208.9], [3.4, 135.9], [3.5, 58.4], [3.6, 108.7], [3.7, 85.2], [3.8, 117.5], [3.9, 15.4], [4.0, 139.8], [4.1, 165.6], [4.2, 69.9], [4.3, 86.0], [4.4, 71.0], [4.5, 95.7], [4.6, 35.1], [4.7, 8.9], [4.8, 84.0], [4.9, 152.1], [5.0, 139.4], [5.1, 87.2], [5.2, 149.7], [5.3, 76.0], [5.4, 90.7], [5.5, 73.6], [5.6, 86.3], [5.7, 203.6], [5.8, 73.2], [5.9, 51.2], [6.0, 106.9], [6.1, 186.0], [6.2, 138.2], [6.3, 95.1], [6.4, 85.7], [6.5, 47.2], [6.6, 97.4], [6.7, 38.9], [6.8, 141.1], [6.9, 162.0], [7.0, 62.4], [7.1, 16.1], [7.2, -64.2], [7.3, 77.7], [7.4, 135.4], [7.5, 84.6], [7.6, -12.0], [7.7, 5.0], [7.8, 4.6], [7.9, -92.4], [8.0, -1.7], [8.1, 16.5], [8.2, 27.3], [8.3, -59.3], [8.4, -78.6], [8.5, -45.7], [8.6, 26.8], [8.7, 70.0], [8.8, -16.7], [8.9, -78.5], [9.0, -97.3], [9.1, -59.7], [9.2, 13.3], [9.3, 69.6], [9.4, 142.0], [9.5, 81.3], [9.6, 40.9], [9.7, 64.6], [9.8, 116.5], [9.9, 181.5], [10.0, 216.7]], "summary": {"tag": "wet_fast", "cell": "wet", "atoms": 2067, "n_slab": 540, "n_water": 627, "n_binder": 900, "area_A2": 627.1, "v_A_per_fs": 0.005, "v_m_per_s": 500.0, "steps": 2000, "displacement_A": 10.0, "grip_thickness_A": 6.0, "grip_z_min_A": 47.01, "binder_z_range_A": [21.54, 53.01], "strain_rate_per_s": 158886677630.67706, "stress_unit": "sigma_MPa = -F_grip(kcal/mol/A) * 69.4786 / A(A^2) * 100", "rows": 101}, "wsep": {"tag": "wet_fast", "area_A2": 627.1, "n_rows": 101, "sigma_peak_MPa": 427.0, "d_peak_A": 0.8, "d_separation_A": 3.0, "W_mech_mJ_m2": 132.3, "W_energy_mJ_m2": -290.4, "E_int_kcal_mol": -135254.2, "E_sep_kcal_mol": -135516.3, "E_sd_int": 46.0, "E_sd_sep": 27.5, "E_window_rows": 10, "note": __L("W_mech = ∫σ dd (σ<0 은 0) · W_E = (E_sep − E_int)/A · 열 요동 sd 가 ΔE 와 비슷하면 에너지법은 신뢰 불가(짧은 교육용 실행)","W_mech = ∫σ dd (σ&lt;0 as 0) · W_E = (E_sep − E_int)/A · if thermal-fluctuation sd is similar to ΔE, the energy method is unreliable (short teaching run)")}, "frac": {"tag": "wet_fast", "frame_step": 2000, "slab_top_A": 10.17, "exposure_e": 0.271, "t_res_A": 11.76, "z1_A": 4.0, "e_threshold": 0.5, "mode": __L("cohesive(응집 파괴)","cohesive (cohesive failure)"), "binder_z_5_95_A": [25.9, 59.7], "gap_binder_below_A": -6.54, "n_binder_within_12A": 6, "grid": [12, 12], "rule": __L("e > e_th → adhesive · t_res ≥ z1 → cohesive · else thin-layer (paper13 R6 2.3절 축소판)","e > e_th → adhesive · t_res ≥ z1 → cohesive · else thin-layer (paper13 R6 section 2.3, reduced)")}}, "ymax": 410};
+
+/* 곡선 좌표 변환 */
+function curvePath(pts, X, Y) { var d = ''; pts.forEach(function (p, i) { d += (i ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1); }); return d; }
+function axes(x0, y0, x1, y1, xl, yl, ticks, ymax) {
+  var o = '<line x1="' + x0 + '" y1="' + y0 + '" x2="' + x1 + '" y2="' + y0 + '" stroke="#6E655C" stroke-width="3"/><line x1="' + x0 + '" y1="' + y0 + '" x2="' + x0 + '" y2="' + y1 + '" stroke="#6E655C" stroke-width="3"/>';
+  ticks.forEach(function (t) { var x = x0 + t / 10 * (x1 - x0); o += '<line x1="' + x + '" y1="' + y0 + '" x2="' + x + '" y2="' + (y0 + 8) + '" stroke="#6E655C" stroke-width="2"/><text x="' + x + '" y="' + (y0 + 30) + '" text-anchor="middle" class="cfm" style="fill:#4A4540">' + t + '</text>'; });
+  [0, 0.5, 1].forEach(function (f) { var y = y0 - f * (y0 - y1); o += '<text x="' + (x0 - 10) + '" y="' + (y + 6) + '" text-anchor="end" class="cfm" style="fill:#4A4540">' + Math.round(ymax * f) + '</text>'; });
+  o += '<text x="' + ((x0 + x1) / 2) + '" y="' + (y0 + 58) + '" text-anchor="middle" class="cfs">' + xl + '</text><text x="' + (x0 - 62) + '" y="' + ((y0 + y1) / 2) + '" text-anchor="middle" class="cfs" transform="rotate(-90 ' + (x0 - 62) + ' ' + ((y0 + y1) / 2) + ')">' + yl + '</text>';
+  return o;
+}
+/* 셀 측면 그림: 슬랩 · 물 · 바인더 · 그립 · d = 변위 · mode = 'adh'(바인더가 떠오름) | 'coh'(바인더가 늘어나고 윗부분만) */
+function cellPic(x, y, w, h, d, wet, mode, frac, dreal) {
+  var sh = 0.14 * h, wh = wet ? 0.14 * h : 0, bh = 0.34 * h, gh = 0.08 * h, base = y + h - 20, o = '';
+  o += '<rect x="' + x + '" y="' + (base - sh) + '" width="' + w + '" height="' + sh + '" fill="#6E655C"/>';
+  var topw = base - sh - 2; if (wet) { o += '<rect x="' + x + '" y="' + (topw - wh) + '" width="' + w + '" height="' + wh + '" fill="#4F7FB0" opacity=".85"/>'; }
+  var b0 = topw - wh - 2, lift = mode === 'adh' ? d * frac : 0, stretch = mode === 'adh' ? d * (1 - frac) : d;
+  /* 바인더 본체 (늘어남) */
+  o += '<rect x="' + x + '" y="' + (b0 - bh - stretch - lift) + '" width="' + w + '" height="' + (bh + stretch) + '" fill="#E37F1A" opacity="' + (0.9 - 0.35 * Math.min(1, stretch / (0.5 * h))) + '"/>';
+  if (mode === 'adh' && lift > 26) o += '<rect x="' + x + '" y="' + (b0 - lift) + '" width="' + w + '" height="' + lift + '" fill="#FFFFFF"/><text x="' + (x + w / 2) + '" y="' + (b0 - lift / 2 + 6) + __L('" text-anchor="middle" class="cfm" style="fill:#A83A32" font-size="16">틈 · 결정면 노출</text>','" text-anchor="middle" class="cfm" style="fill:#A83A32" font-size="16">Gap · crystal face exposed</text>');
+  if (mode === 'coh' && stretch > 0.25 * h) { var ny = b0 - bh - stretch * 0.55; o += '<rect x="' + (x + w * 0.1) + '" y="' + (ny - 6) + '" width="' + (w * 0.8) + '" height="12" fill="#FFFFFF" opacity=".9"/><text x="' + (x + w / 2) + '" y="' + (ny + 24) + __L('" text-anchor="middle" class="cfm" style="fill:#A83A32" font-size="16">바인더 내부 공극</text>','" text-anchor="middle" class="cfm" style="fill:#A83A32" font-size="16">Void inside binder</text>'); }
+  /* 그립 */
+  var gy = b0 - bh - stretch - lift - gh; o += '<rect x="' + x + '" y="' + gy + '" width="' + w + '" height="' + gh + '" fill="#231F20"/><text x="' + (x + w / 2) + '" y="' + (gy - 10) + __L('" text-anchor="middle" class="cfm" style="fill:#C8610C">그립 ↑ d = ','" text-anchor="middle" class="cfm" style="fill:#C8610C">Grip ↑ d = ') + (dreal === undefined ? d : dreal).toFixed(1) + ' Å</text>';
+  return o;
+}
+function sigmaAt(pts, d) { for (var i = 1; i < pts.length; i++) if (pts[i][0] >= d) return pts[i][1]; return pts[pts.length - 1][1]; }
+
+/* ===== 표지 compact ===== */
+EMB["pullcover"] = function (root, RAF) {
+  var t0 = CLK(), P = PULL.dry.curve, D = PULL.dry.summary;
+  function f(now) {
+    var u = ((now - t0) / 1000 % 10) / 10, d = u * D.displacement_A, o = '<svg viewBox="0 0 560 560" class="cfig">';
+    o += __L('<text x="280" y="40" text-anchor="middle" class="cfh" font-size="22">계면 인장 · 그립 당김 ↔ 응력 곡선</text>','<text x="280" y="40" text-anchor="middle" class="cfh" font-size="22">Interface tension · grip pull ↔ stress curve</text>');
+    o += cellPic(40, 70, 170, 400, d * 9, false, 'adh', 0.6, d);
+    var x0 = 310, x1 = 535, y0 = 440, y1 = 90, X = function (v) { return x0 + v / D.displacement_A * (x1 - x0); }, Y = function (s) { return y0 - Math.max(0, Math.min(1, s / PULL.ymax)) * (y0 - y1); };
+    o += axes(x0, y0, x1, y1, 'd (Å)', 'σ (MPa)', [0, 5, 10], PULL.ymax);
+    var pts = P.filter(function (p) { return p[0] <= d; }); if (pts.length > 1) o += '<path d="' + curvePath(pts, X, Y) + '" fill="none" stroke="#E37F1A" stroke-width="4"/>';
+    if (pts.length) { var last = pts[pts.length - 1]; o += '<circle cx="' + X(last[0]).toFixed(1) + '" cy="' + Y(last[1]).toFixed(1) + '" r="8" fill="#C8610C"/>'; }
+    o += __L('<text x="400" y="520" text-anchor="middle" class="cfs">실제 실행 · 건조 셀 · 교육용 축소</text></svg>','<text x="400" y="520" text-anchor="middle" class="cfs">Actual run · dry cell · reduced for teaching</text></svg>'); root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 5장: 인장 애니 ===== */
+EMB["pull"] = function (root, RAF) {
+  var W = 1588, H = 560, t0 = CLK(), P = PULL.dry.curve, D = PULL.dry.summary, S = PULL.dry.wsep, F = PULL.dry.frac;
+  var dp = S.d_peak_A, ds = S.d_separation_A || D.displacement_A * 0.6, dmax = D.displacement_A;
+  function f(now) {
+    var st = stepOf(root), T = ((now - t0) / 1000) % 12, u = st ? [dp / dmax * 0.98, dp / dmax, ds / dmax, 1][st - 1] : ez(T / 9) * Math.min(1, T / 9) + (T > 9 ? 0 : 0), d = Math.min(dmax, (st ? u : Math.min(1, T / 9)) * dmax);
+    var k = st ? st - 1 : (d < dp * 0.98 ? 0 : (d < ds ? 1 : (T < 11 ? 2 : 3)));
+    var o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    o += '<rect x="0" y="0" width="520" height="' + H + __L('" rx="18" fill="#F6F0E7"/><text x="260" y="36" text-anchor="middle" class="cfh" font-size="21">건조 셀 · 석영(고정) | 톨루엔 · 측면</text>','" rx="18" fill="#F6F0E7"/><text x="260" y="36" text-anchor="middle" class="cfh" font-size="21">Dry cell · quartz (fixed) | toluene · side view</text>');
+    o += cellPic(110, 60, 300, 470, d * 10, false, 'adh', 0.6, d);
+    var x0 = 640, x1 = 1170, y0 = 440, y1 = 70, X = function (v) { return x0 + v / dmax * (x1 - x0); }, Y = function (s) { return y0 - Math.max(0, Math.min(1, s / PULL.ymax)) * (y0 - y1); };
+    o += axes(x0, y0, x1, y1, __L('그립 변위 d (Å) · v 0.0025 Å/fs · 4,000 스텝','Grip displacement d (Å) · v 0.0025 Å/fs · 4,000 steps'), 'σ = −F_grip / A (MPa)', [0, 2, 4, 6, 8, 10], PULL.ymax);
+    o += '<path d="' + curvePath(P, X, Y) + '" fill="none" stroke="#E2D8CA" stroke-width="3"/>';
+    var pts = P.filter(function (p) { return p[0] <= d; }); if (pts.length > 1) o += '<path d="' + curvePath(pts, X, Y) + '" fill="none" stroke="#E37F1A" stroke-width="5"/>';
+    if (k >= 3) o += '<path d="' + curvePath(P, X, Y) + ' L' + X(dmax) + ' ' + y0 + ' L' + x0 + ' ' + y0 + ' Z" fill="#E37F1A" opacity=".18"/>';
+    if (k >= 1) o += '<circle cx="' + X(dp) + '" cy="' + Y(S.sigma_peak_MPa) + '" r="10" fill="#C8610C"/><text x="' + (X(dp) + 14) + '" y="' + (Y(S.sigma_peak_MPa) - 12) + __L('" class="cfh" font-size="20" style="fill:#C8610C">피크 ','" class="cfh" font-size="20" style="fill:#C8610C">Peak ') + S.sigma_peak_MPa + ' MPa @ ' + dp + ' Å</text>';
+    if (k >= 2) o += '<line x1="' + X(ds) + '" y1="' + y1 + '" x2="' + X(ds) + '" y2="' + y0 + '" stroke="#D9534F" stroke-width="3" stroke-dasharray="10 8"/><text x="' + (X(ds) + 10) + '" y="' + (y1 + 24) + __L('" class="cfs" style="fill:#A83A32">분리점 ','" class="cfs" style="fill:#A83A32">Separation point ') + ds + __L(' Å (피크의 10 %)</text>',' Å (10 % of peak)</text>');
+    if (pts.length) { var last = pts[pts.length - 1]; o += '<circle class="pulse" cx="' + X(last[0]).toFixed(1) + '" cy="' + Y(last[1]).toFixed(1) + '" r="9" fill="#C8610C"/>'; }
+    var cards = [[__L('① 그립 당김','① Grip pull'), __L('바인더 상단 6 Å 만 정속 이동 · 나머지는 298 K NVT','Only top 6 Å of binder moves at constant speed · rest NVT at 298 K')], [__L('② 피크 = 강도','② Peak = strength'), 'σ_p ' + S.sigma_peak_MPa + ' MPa · ' + dp + __L(' Å · 원시 최대 · 적합 피크는 13장',' Å · raw maximum · fitted peak on slide 13')], [__L('③ 급락 = 분리','③ Sharp drop = separation'), __L('건조 셀: 바인더가 석영에서 이탈 → 노출률 e ','Dry cell: binder leaves quartz → exposure e ') + F.exposure_e + __L(' → 계면 박리',' → interfacial debonding')], [__L('④ 면적 = 분리일','④ Area = work of separation'), 'W_mech ' + S.W_mech_mJ_m2 + __L(' mJ/m² · 선행 연구 SiO₂ 건조 63.9',' mJ/m² · prior study SiO₂ dry 63.9')]];
+    o += '<rect x="1210" y="40" width="372" height="480" rx="16" fill="#FFFFFF" stroke="#E2D8CA" stroke-width="2"/>';
+    cards.forEach(function (c, i) { var y = 54 + i * 115, on = i === k; o += '<rect x="1222" y="' + y + '" width="348" height="104" rx="12" fill="' + (on ? '#FFF1E0' : '#F6F0E7') + '" stroke="' + (on ? '#F99D1C' : 'none') + '" stroke-width="3"/><text x="1238" y="' + (y + 30) + '" class="cfh" font-size="20" style="fill:' + (on ? '#C8610C' : '#4A4540') + '">' + c[0] + '</text>'; var words = c[1].split(' '), line = '', ly = y + 56, lines = []; words.forEach(function (w) { if ((line + ' ' + w).length > 26) { lines.push(line); line = w; } else line = line ? line + ' ' + w : w; }); lines.push(line); lines.slice(0, 3).forEach(function (l, j) { o += '<text x="1238" y="' + (ly + j * 21) + '" class="cfs" font-size="16">' + l + '</text>'; }); });
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 11장: 면적 음영 · 두 경로 ===== */
+EMB["wsep"] = function (root, RAF) {
+  var W = 1588, H = 560, t0 = CLK(), P = PULL.dry.curve, D = PULL.dry.summary, S = PULL.dry.wsep, dmax = D.displacement_A, ds = S.d_separation_A || dmax;
+  function f(now) {
+    var st = stepOf(root), T = ((now - t0) / 1000) % 12, k = st ? st - 1 : Math.min(2, Math.floor(T / 4)), u = st ? 1 : (T % 4) / 4;
+    var dfill = k === 0 ? u * dmax : dmax, o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    var x0 = 90, x1 = 900, y0 = 440, y1 = 60, X = function (v) { return x0 + v / dmax * (x1 - x0); }, Y = function (s) { return y0 - Math.max(0, Math.min(1, s / PULL.ymax)) * (y0 - y1); };
+    o += axes(x0, y0, x1, y1, __L('변위 d (Å)','Displacement d (Å)'), 'σ (MPa)', [0, 2, 4, 6, 8, 10], PULL.ymax);
+    var pts = P.filter(function (p) { return p[0] <= dfill; });
+    if (pts.length > 1) o += '<path d="' + curvePath(pts, X, Y) + ' L' + X(pts[pts.length - 1][0]) + ' ' + y0 + ' L' + x0 + ' ' + y0 + ' Z" fill="#E37F1A" opacity=".3"/>';
+    o += '<path d="' + curvePath(P, X, Y) + '" fill="none" stroke="#E37F1A" stroke-width="5"/>';
+    var Wc = 0; for (var i = 1; i < pts.length; i++) Wc += 0.5 * (Math.max(0, pts[i - 1][1]) + Math.max(0, pts[i][1])) * (pts[i][0] - pts[i - 1][0]) * 0.1;
+    o += __L('<rect x="580" y="2" width="320" height="48" rx="12" fill="#231F20"/><text x="740" y="34" text-anchor="middle" class="cfw" font-size="22">누적 W = ','<rect x="580" y="2" width="320" height="48" rx="12" fill="#231F20"/><text x="740" y="34" text-anchor="middle" class="cfw" font-size="22">Cumulative W = ') + Wc.toFixed(1) + ' mJ/m²</text>';
+    if (k >= 1) o += '<line x1="' + X(ds) + '" y1="' + y1 + '" x2="' + X(ds) + '" y2="' + y0 + '" stroke="#D9534F" stroke-width="3" stroke-dasharray="10 8"/><text x="' + (X(ds) + 10) + '" y="' + (y1 + 26) + __L('" class="cfs" style="fill:#A83A32">분리점 ','" class="cfs" style="fill:#A83A32">Separation point ') + ds + __L(' Å · 이후 면적은 잔류 접촉</text>',' Å · area after this is residual contact</text>');
+    o += __L('<rect x="960" y="40" width="600" height="500" rx="18" fill="#F6F0E7"/><text x="1260" y="78" text-anchor="middle" class="cfh" font-size="22">두 경로 · 같은 실행</text>','<rect x="960" y="40" width="600" height="500" rx="18" fill="#F6F0E7"/><text x="1260" y="78" text-anchor="middle" class="cfh" font-size="22">Two routes · same run</text>');
+    var bars = [[__L('W_mech · 면적','W_mech · area'), S.W_mech_mJ_m2, '#E37F1A'], [__L('W_E · 에너지 차','W_E · energy difference'), S.W_energy_mJ_m2, '#4F7FB0'], [__L('선행 연구 SiO₂ 건조','Prior-study SiO₂ dry'), 63.9, '#6E655C']], bmax = Math.max(120, Math.abs(S.W_energy_mJ_m2) * 1.1, S.W_mech_mJ_m2 * 1.1);
+    bars.forEach(function (b, i) { var y = 120 + i * 90, on = k >= 2 || i === 0, w = Math.min(380, Math.abs(b[1]) / bmax * 380); o += '<text x="990" y="' + (y + 10) + '" class="cfh" font-size="19" style="fill:' + (on ? '#231F20' : '#B9AE9E') + '">' + b[0] + '</text><rect x="990" y="' + (y + 20) + '" width="' + (on ? w : 0) + '" height="26" rx="6" fill="' + b[2] + '"/><text x="' + (1000 + (on ? w : 0)) + '" y="' + (y + 40) + '" class="cfm" style="fill:' + b[2] + '">' + (on ? b[1] + ' mJ/m²' : '') + '</text>'; });
+    if (k >= 2) o += __L('<rect x="990" y="400" width="540" height="120" rx="12" fill="#FFFFFF" stroke="#D9534F" stroke-width="2"/><text x="1006" y="430" class="cfh" font-size="18" style="fill:#A83A32">에너지 경로 신뢰 불가 · 요동 sd ','<rect x="990" y="400" width="540" height="120" rx="12" fill="#FFFFFF" stroke="#D9534F" stroke-width="2"/><text x="1006" y="430" class="cfh" font-size="18" style="fill:#A83A32">Energy route unreliable · fluctuation sd ') + Math.round(S.E_sd_int) + ' / ' + Math.round(S.E_sd_sep) + '</text><text x="1006" y="458" class="cfs" font-size="16">ΔE ' + (S.E_sep_kcal_mol - S.E_int_kcal_mol).toFixed(0) + __L(' kcal/mol 이 요동과 같은 크기 · 셀이 아직 이완 중</text><text x="1006" y="484" class="cfs" font-size="16">→ 궤적 평균 + 시드 ≥ 3 + 장거리 포함 재계산(W16)</text><text x="1006" y="508" class="cfs" font-size="16">짧은 실행은 면적 경로만 · 보고에 규약을 적는다</text>',' kcal/mol equals fluctuation size · cell still relaxing</text><text x="1006" y="484" class="cfs" font-size="16">→ trajectory average + seeds ≥ 3 + recompute with long-range included (W16)</text><text x="1006" y="508" class="cfs" font-size="16">Short run gives the area route only · state the convention in the report</text>');
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 17장: 건조 · 습윤 쌍 화면 ===== */
+EMB["pair"] = function (root, RAF) {
+  var W = 1588, H = 560, t0 = CLK(), dmax = PULL.dry.summary.displacement_A;
+  function panel(ox, key, wet, d, k) {
+    var P = PULL[key].curve, S = PULL[key].wsep, F = PULL[key].frac, o = '';
+    o += '<rect x="' + ox + '" y="0" width="770" height="' + H + '" rx="18" fill="' + (wet ? '#EEF3F8' : '#F6F0E7') + '"/><text x="' + (ox + 385) + '" y="34" text-anchor="middle" class="cfh" font-size="21">' + (wet ? __L('습윤 · 물 10 Å (2,067원자)','Wet · water 10 Å (2,067 atoms)') : __L('건조 (1,440원자)','Dry (1,440 atoms)')) + '</text>';
+    o += cellPic(ox + 30, 60, 200, 420, d * 8, wet, F.mode.indexOf('adhesive') === 0 ? 'adh' : 'coh', 0.6, d);
+    var x0 = ox + 320, x1 = ox + 740, y0 = 400, y1 = 80, X = function (v) { return x0 + v / dmax * (x1 - x0); }, Y = function (s) { return y0 - Math.max(0, Math.min(1, s / PULL.ymax)) * (y0 - y1); };
+    o += axes(x0, y0, x1, y1, 'd (Å)', 'σ (MPa)', [0, 5, 10], PULL.ymax);
+    o += '<path d="' + curvePath(P, X, Y) + '" fill="none" stroke="#E2D8CA" stroke-width="3"/>';
+    var pts = P.filter(function (p) { return p[0] <= d; }); if (pts.length > 1) o += '<path d="' + curvePath(pts, X, Y) + '" fill="none" stroke="' + (wet ? '#4F7FB0' : '#E37F1A') + '" stroke-width="5"/>';
+    if (k >= 1) o += '<circle cx="' + X(S.d_peak_A) + '" cy="' + Y(S.sigma_peak_MPa) + '" r="9" fill="#C8610C"/><text x="' + (x0 + 10) + '" y="' + (y1 - 20) + '" class="cfh" font-size="19" style="fill:#C8610C">σ_p ' + S.sigma_peak_MPa + ' MPa · W_mech ' + S.W_mech_mJ_m2 + ' mJ/m²</text>';
+    if (k >= 2) o += '<rect x="' + (ox + 300) + '" y="440" width="450" height="96" rx="12" fill="#231F20"/><text x="' + (ox + 525) + '" y="474" text-anchor="middle" class="cfw" font-size="19">' + F.mode + '</text><text x="' + (ox + 525) + '" y="506" text-anchor="middle" class="cfw" font-size="17" style="fill:#CFC5B8">e ' + F.exposure_e + ' · t_res ' + F.t_res_A + __L(' Å · 바인더–아래층 틈 ',' Å · binder–lower-layer gap ') + F.gap_binder_below_A + ' Å</text>';
+    return o;
+  }
+  function f(now) {
+    var st = stepOf(root), T = ((now - t0) / 1000) % 12, u = st ? [0.05, PULL.dry.wsep.d_peak_A / dmax, 1][st - 1] : Math.min(1, T / 9), d = u * dmax, k = st ? st - 1 : (T < 3 ? 0 : (T < 9 ? 1 : 2));
+    var o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">' + panel(0, 'dry', false, d, k) + panel(818, 'wet', true, d, k) + '</svg>';
+    root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 23장: 파괴 모드 스냅샷 3 ===== */
+EMB["modes"] = function (root, RAF) {
+  var W = 1588, H = 560, t0 = CLK();
+  var M = [{ n: __L('응집 파괴 · cohesive','Cohesive failure · cohesive'), ex: __L('Al₂O₃ 293 K · 건조','Al₂O₃ 293 K · dry'), e: 5.3, t: 19.5, col: '#2E8B57', desc: [__L('변형률 30 % 부터 바인더 중앙 공극 → 잘록해져 절단','From 30 % strain a void forms at binder center → necks and severs'), __L('파단면이 광물면과 떨어진 위치 · 피복률 93 → 95 % 유지','Fracture surface away from mineral face · coverage stays 93 → 95 %'), __L('잔류 두께 19~22 Å = 단분자층의 4배 이상','Residual thickness 19~22 Å = at least 4× a monolayer')] },
+    { n: __L('박층 응집 · thin-layer','Thin-layer cohesive · thin-layer'), ex: __L('Fe₂O₃ 253 K · 건조','Fe₂O₃ 253 K · dry'), e: 34.8, t: 4.5, col: '#E37F1A', desc: [__L('바인더 대부분 분리 · 단분자층 이하만 결정면에 잔존','Most binder separates · only sub-monolayer remains on crystal face'), __L('e 35 % · t_res 4.5 Å ≈ z1 · 응집과 계면의 경계','e 35 % · t_res 4.5 Å ≈ z1 · boundary between cohesive and interfacial'), __L('저온 · 수산화 조건에서 20 % 전후','Around 20 % under low-T · hydroxylated conditions')] },
+    { n: __L('계면 박리 · adhesive','Interfacial debonding · adhesive'), ex: __L('SiO₂ 253 K · 건조','SiO₂ 253 K · dry'), e: 100, t: 0, col: '#D9534F', desc: [__L('바인더 전체가 결정면에서 분리 · 상승','Whole binder separates from crystal face · rises'), __L('피복률 92 % → 0~9 % · 노출률 100 %','Coverage 92 % → 0~9 % · exposure 100 %'), __L('수분 손상 저항 부족의 전형 · 석영은 거의 전부','Typical lack of moisture-damage resistance · quartz almost entirely')] }];
+  function snap(x, m, u) {
+    var o = '', base = 420, sh = 50, w = 300;
+    o += '<rect x="' + x + '" y="' + (base - sh) + '" width="' + w + '" height="' + sh + '" fill="#6E655C"/>';
+    var bh = 150, lift = 0, top = base - sh - 2 - bh;
+    if (m.t === 0) { lift = 90 * u; o += '<rect x="' + x + '" y="' + (top - lift) + '" width="' + w + '" height="' + bh + '" fill="#E37F1A"/>'; o += '<rect x="' + x + '" y="' + (base - sh - lift) + '" width="' + w + '" height="' + lift + '" fill="#FBE3E1"/>'; }
+    else if (m.t < 10) { lift = 90 * u; o += '<rect x="' + x + '" y="' + (top - lift) + '" width="' + w + '" height="' + (bh - 14) + '" fill="#E37F1A"/>'; o += '<rect x="' + x + '" y="' + (base - sh - 10) + '" width="' + w + '" height="10" fill="#E37F1A" opacity=".8"/>'; for (var i = 0; i < 6; i++) if (i % 2 === 0) o += '<rect x="' + (x + i * 50) + '" y="' + (base - sh - 10) + '" width="50" height="10" fill="#FBE3E1"/>'; }
+    else { var neck = 60 * u; o += '<path d="M' + x + ' ' + (top - 90 * u) + ' L' + (x + w) + ' ' + (top - 90 * u) + ' L' + (x + w) + ' ' + (top + 40) + ' Q' + (x + w / 2) + ' ' + (top + 40 + neck) + ' ' + x + ' ' + (top + 40) + ' Z" fill="#E37F1A"/>'; o += '<path d="M' + x + ' ' + (top + 70) + ' Q' + (x + w / 2) + ' ' + (top + 70 - neck) + ' ' + (x + w) + ' ' + (top + 70) + ' L' + (x + w) + ' ' + (base - sh - 2) + ' L' + x + ' ' + (base - sh - 2) + ' Z" fill="#E37F1A"/>'; }
+    o += '<text x="' + (x + w / 2) + '" y="' + (base + 28) + __L('" text-anchor="middle" class="cfs">측면도 · 결정(회색) 위 바인더(주황)</text>','" text-anchor="middle" class="cfs">Side view · binder (orange) on crystal (gray)</text>');
+    /* 평면도 */
+    var px = x + w + 30, cells = 6, cs = 28; for (var r = 0; r < cells; r++) for (var c = 0; c < cells; c++) { var exposed = (r * cells + c) % 100 < m.e * 36 / 100 * (100 / 36) ? true : false; var idx = r * cells + c, red = idx < Math.round(m.e / 100 * 36); o += '<rect x="' + (px + c * cs) + '" y="' + (150 + r * cs) + '" width="' + (cs - 2) + '" height="' + (cs - 2) + '" fill="' + (red ? '#D9534F' : '#E37F1A') + '" opacity="' + (red ? 0.8 : 0.5) + '"/>'; }
+    o += '<text x="' + (px + cells * cs / 2) + '" y="' + (150 + cells * cs + 26) + __L('" text-anchor="middle" class="cfs" font-size="16">평면도 · 붉은 칸 = 노출</text>','" text-anchor="middle" class="cfs" font-size="16">Top view · red cell = exposed</text>');
+    return o;
+  }
+  function f(now) {
+    var st = stepOf(root), T = ((now - t0) / 1000) % 12, k = st ? st - 1 : Math.floor(T / 4), u = st ? 1 : ez((T % 4) / 2.5), m = M[k], o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    o += '<rect x="0" y="0" width="760" height="' + H + '" rx="18" fill="#F6F0E7"/>' + snap(60, m, u);
+    o += '<rect x="800" y="0" width="788" height="' + H + '" rx="18" fill="#FFFFFF" stroke="#E2D8CA" stroke-width="2"/>';
+    M.forEach(function (mm, i) { var y = 30 + i * 60, on = i === k; o += '<rect x="820" y="' + y + '" width="748" height="48" rx="10" fill="' + (on ? mm.col : '#F6F0E7') + '"/><text x="840" y="' + (y + 31) + '" class="cfh" font-size="20" style="fill:' + (on ? '#FFFFFF' : '#6E655C') + '">' + mm.n + '</text><text x="1550" y="' + (y + 31) + '" text-anchor="end" class="cfm" style="fill:' + (on ? '#FFFFFF' : '#6E655C') + '">e ' + mm.e + ' % · t_res ' + mm.t + ' Å</text>'; });
+    o += '<text x="840" y="250" class="cfh" font-size="22" style="fill:' + m.col + '">' + m.ex + '</text>';
+    m.desc.forEach(function (dd, i) { o += '<text x="840" y="' + (292 + i * 40) + '" class="cfs" font-size="20">· ' + dd + '</text>'; });
+    o += __L('<rect x="820" y="440" width="748" height="90" rx="12" fill="#231F20"/><text x="1194" y="478" text-anchor="middle" class="cfw" font-size="19">판정: e &gt; 50 % → 계면 박리 · t_res ≥ z1 → 응집 · 그 사이 → 박층</text><text x="1194" y="510" text-anchor="middle" class="cfw" font-size="17" style="fill:#CFC5B8">같은 규칙이 오늘 fracture_mode.py 에 (z1 4 Å · 격자 2 Å · 5 Å 안 원자)</text>','<rect x="820" y="440" width="748" height="90" rx="12" fill="#231F20"/><text x="1194" y="478" text-anchor="middle" class="cfw" font-size="19">Verdict: e &gt; 50 % → interfacial debonding · t_res ≥ z1 → cohesive · in between → thin-layer</text><text x="1194" y="510" text-anchor="middle" class="cfw" font-size="17" style="fill:#CFC5B8">Same rule as in fracture_mode.py today (z1 4 Å · grid 2 Å · atoms within 5 Å)</text>');
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 7장 조작형: 인장 조건 계산기 ===== */
+(function () {
+  var root = document.getElementById('sim-rate'); if (!root) return;
+  var svg = root.querySelector('svg'), st = { r: 11, g: 24, e: 0.4 };
+  function sup(e) { return String(e).replace(/-/g, '⁻').replace(/\d/g, function (d) { return '⁰¹²³⁴⁵⁶⁷⁸⁹'[d]; }); }
+  function fmtT(sec) { if (sec < 90) return sec.toFixed(0) + __L(' 초',' s'); if (sec < 5400) return (sec / 60).toFixed(1) + __L(' 분',' min'); if (sec < 86400 * 2) return (sec / 3600).toFixed(1) + __L(' 시간',' h'); return (sec / 86400).toFixed(1) + __L(' 일',' d'); }
+  function draw() {
+    var rate = Math.pow(10, st.r), v = rate * st.g * 1e-15, steps = st.e / (rate * 1e-15), disp = st.e * st.g, sec = steps / 100;   /* 2,067원자 100스텝 ≈ 1초 */
+    root.querySelector('[data-o=v]').textContent = v.toExponential(2) + ' Å/fs = ' + (v * 1e5).toFixed(2) + ' m/s';
+    root.querySelector('[data-o=n]').textContent = steps >= 1e6 ? (steps / 1e6).toFixed(2) + ' M' : Math.round(steps).toLocaleString('ko-KR');
+    root.querySelector('[data-o=t]').textContent = fmtT(sec) + __L(' (1코어)',' (1 core)'); root.querySelector('[data-o=d]').textContent = disp.toFixed(1) + ' Å';
+    var o = '', x0 = 120, x1 = 1100, Y = 210;
+    o += '<text x="' + ((x0 + x1) / 2) + __L('" y="36" text-anchor="middle" class="cfh" font-size="24">스텝 수 = ε_max / ε̇ / Δt = ','" y="36" text-anchor="middle" class="cfh" font-size="24">Steps = ε_max / ε̇ / Δt = ') + st.e + ' / 10' + sup(st.r) + ' s⁻¹ / 1 fs</text>';
+    o += '<line x1="' + x0 + '" y1="' + Y + '" x2="' + x1 + '" y2="' + Y + '" stroke="#6E655C" stroke-width="3"/>';
+    [3, 4, 5, 6, 7].forEach(function (e) { var x = x0 + (e - 3) / 4 * (x1 - x0); o += '<line x1="' + x + '" y1="' + (Y - 10) + '" x2="' + x + '" y2="' + (Y + 10) + '" stroke="#6E655C" stroke-width="2"/><text x="' + x + '" y="' + (Y + 44) + '" text-anchor="middle" class="cfm" style="fill:#4A4540">10' + sup(e) + '</text>'; });
+    o += '<text x="' + ((x0 + x1) / 2) + '" y="' + (Y + 84) + __L('" text-anchor="middle" class="cfs">총 스텝 (로그 눈금) · 오늘 4,000 · 캠페인 4,000,000</text>','" text-anchor="middle" class="cfs">Total steps (log scale) · today 4,000 · campaign 4,000,000</text>');
+    var xs = x0 + (Math.log10(steps) - 3) / 4 * (x1 - x0), xt = x0 + (Math.log10(4000) - 3) / 4 * (x1 - x0), xc = x0 + (Math.log10(4e6) - 3) / 4 * (x1 - x0);
+    o += '<circle cx="' + xt + '" cy="' + (Y - 40) + '" r="12" fill="#6E655C"/><text x="' + xt + '" y="' + (Y - 62) + __L('" text-anchor="middle" class="cfs">오늘</text><circle cx="','" text-anchor="middle" class="cfs">Today</text><circle cx="') + xc + '" cy="' + (Y - 40) + '" r="12" fill="#4F7FB0"/><text x="' + xc + '" y="' + (Y - 62) + __L('" text-anchor="middle" class="cfs">캠페인</text>','" text-anchor="middle" class="cfs">Campaign</text>');
+    o += '<circle class="pulse" cx="' + Math.max(x0, Math.min(x1, xs)) + '" cy="' + (Y - 40) + '" r="14" fill="#E37F1A" opacity=".4"/><circle cx="' + Math.max(x0, Math.min(x1, xs)) + '" cy="' + (Y - 40) + '" r="14" fill="#E37F1A"/><text x="' + Math.max(x0, Math.min(x1, xs)) + '" y="' + (Y - 92) + __L('" text-anchor="middle" class="cfh" style="fill:#C8610C" font-size="22">내 조건 · ','" text-anchor="middle" class="cfh" style="fill:#C8610C" font-size="22">My condition · ') + root.querySelector('[data-o=n]').textContent + __L(' 스텝</text>',' steps</text>');
+    svg.innerHTML = o;
+  }
+  root.querySelectorAll('input[type=range]').forEach(function (inp) { inp.addEventListener('input', function () { st[inp.dataset.k] = +inp.value; root.querySelector('[data-o=' + inp.dataset.k + ']').textContent = inp.value; draw(); }); });
+  function set(o) { for (var k in o) { st[k] = o[k]; root.querySelector('input[data-k=' + k + ']').value = o[k]; root.querySelector('[data-o=' + k + ']').textContent = o[k]; } draw(); }
+  root.querySelector('[data-act=camp]').onclick = function () { set({ r: 8, g: 57.5, e: 0.4 }); };
+  root.querySelector('[data-act=reset]').onclick = function () { set({ r: 11, g: 24, e: 0.4 }); };
+  draw();
+})();
+
+/* ===== 2 · 20 · 14 · 21 · 26장 정적 채우기 (실행 데이터) ===== */
+(function () {
+  var dmax = PULL.dry.summary.displacement_A;
+  function mini(id, key, col) {
+    var el = document.getElementById(id); if (!el) return; var P = PULL[key].curve, S = PULL[key].wsep;
+    var W = +el.getAttribute('viewBox').split(' ')[2], H = +el.getAttribute('viewBox').split(' ')[3], x0 = 110, x1 = W - 20, y0 = H - 66, y1 = 24;
+    var X = function (v) { return x0 + v / dmax * (x1 - x0); }, Y = function (s) { return y0 - Math.max(0, Math.min(1, s / PULL.ymax)) * (y0 - y1); };
+    var o = axes(x0, y0, x1, y1, 'd (Å)', 'σ', [0, 5, 10], PULL.ymax) + '<path d="' + curvePath(P, X, Y) + ' L' + X(dmax) + ' ' + y0 + ' L' + x0 + ' ' + y0 + ' Z" fill="' + col + '" opacity=".15"/><path d="' + curvePath(P, X, Y) + '" fill="none" stroke="' + col + '" stroke-width="4"/>';
+    o += '<circle cx="' + X(S.d_peak_A) + '" cy="' + Y(S.sigma_peak_MPa) + '" r="7" fill="#C8610C"/>'; el.innerHTML = o;
+  }
+  mini('tw_dry', 'dry', '#E37F1A'); mini('tw_wet', 'wet', '#4F7FB0');
+  var tc = document.getElementById('today_curve');
+  if (tc) { var x0 = 110, x1 = 740, y0 = 160, y1 = 20, X = function (v) { return x0 + v / dmax * (x1 - x0); }, Y = function (s) { return y0 - Math.max(0, Math.min(1, s / PULL.ymax)) * (y0 - y1); }; tc.innerHTML = axes(x0, y0, x1, y1, __L('변위 d (Å)','Displacement d (Å)'), 'σ (MPa)', [0, 5, 10], PULL.ymax) + '<path d="' + curvePath(PULL.dry.curve, X, Y) + '" fill="none" stroke="#E37F1A" stroke-width="4"/><path d="' + curvePath(PULL.wet.curve, X, Y) + '" fill="none" stroke="#4F7FB0" stroke-width="4"/><text x="' + (x1 - 10) + '" y="' + (y1 + 20) + __L('" text-anchor="end" class="cfm" style="fill:#C8610C">건조 W ','" text-anchor="end" class="cfm" style="fill:#C8610C">Dry W ') + PULL.dry.wsep.W_mech_mJ_m2 + '</text><text x="' + (x1 - 10) + '" y="' + (y1 + 46) + __L('" text-anchor="end" class="cfm" style="fill:#4F7FB0">습윤 W ','" text-anchor="end" class="cfm" style="fill:#4F7FB0">Wet W ') + PULL.wet.wsep.W_mech_mJ_m2 + ' mJ/m²</text>'; }
+  function chips(id, key) { var el = document.getElementById(id); if (!el) return; var S = PULL[key].wsep, F = PULL[key].frac; el.innerHTML = '<span class="fc or">σ_p <em>' + S.sigma_peak_MPa + '</em></span><span class="fc or">W <em>' + S.W_mech_mJ_m2 + '</em> mJ/m²</span><span class="fc ' + (F.mode.indexOf('adhesive') === 0 ? 'rd' : 'gr') + '">' + F.mode.split('(')[1].replace(')', '') + ' · e ' + F.exposure_e + '</span>'; }
+  chips('tw_dry_chips', 'dry'); chips('tw_wet_chips', 'wet');
+  var tcs = document.getElementById('today_chips'); if (tcs) tcs.innerHTML = __L('<span class="fc dk">건조 <em>','<span class="fc dk">Dry <em>') + PULL.dry.frac.mode.split('(')[0] + __L('</em></span><span class="fc dk">습윤 <em>','</em></span><span class="fc dk">Wet <em>') + PULL.wet.frac.mode.split('(')[0] + '</em></span><span class="fc dk">e <em>' + PULL.dry.frac.exposure_e + '</em> ↔ <em>' + PULL.wet.frac.exposure_e + '</em></span>';
+  var ew = document.getElementById('expect_wsep'); if (ew) { var S = PULL.dry.wsep; ew.textContent = JSON.stringify({ tag: 'dry', area_A2: S.area_A2, sigma_peak_MPa: S.sigma_peak_MPa, d_peak_A: S.d_peak_A, d_separation_A: S.d_separation_A, W_mech_mJ_m2: S.W_mech_mJ_m2, W_energy_mJ_m2: S.W_energy_mJ_m2, E_sd_int: S.E_sd_int, E_sd_sep: S.E_sd_sep }, null, 1).replace(/\n\s*/g, function (m, o) { return m; }); }
+  var ef = document.getElementById('expect_frac'); if (ef) { var F = PULL.dry.frac; ef.textContent = JSON.stringify({ tag: 'dry', frame_step: F.frame_step, exposure_e: F.exposure_e, t_res_A: F.t_res_A, z1_A: F.z1_A, mode: F.mode, gap_binder_below_A: F.gap_binder_below_A }, null, 1); }
+  var tb = document.querySelector('#expect_pair tbody'); if (tb) { tb.innerHTML = ['dry', 'wet'].map(function (k) { var S = PULL[k].wsep, F = PULL[k].frac, D = PULL[k].summary; return '<tr><td>' + (k === 'dry' ? __L('건조 --water 0','Dry --water 0') : __L('습윤 --water 10','Wet --water 10')) + '</td><td>' + D.atoms.toLocaleString('ko-KR') + '</td><td>' + S.sigma_peak_MPa + ' MPa</td><td>' + S.W_mech_mJ_m2 + ' mJ/m²</td><td>' + F.mode.split('(')[1].replace(')', '') + '</td><td>' + F.exposure_e + '</td></tr>'; }).join(''); }
+  var er = document.getElementById('expect_er'); if (er) { var r = PULL.wet.wsep.W_mech_mJ_m2 / PULL.dry.wsep.W_mech_mJ_m2; er.innerHTML = '<span class="fc">ER′ = <em>' + r.toFixed(2) + __L('</em></span><span class="fc rd">ER ① 미정</span><span class="fc">시드 <em>1</em> → 3</span>','</em></span><span class="fc rd">ER ① TBD</span><span class="fc">Seeds <em>1</em> → 3</span>'); }
+})();
+</script>
+</body>
+</html>

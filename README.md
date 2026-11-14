@@ -24,8 +24,8 @@ cd 2026_MOOC_Lecture_Materials
 ## 폴더
 | 폴더 | 내용 |
 |---|---|
-| `강의덱/` | W01 ~ W18 슬라이드(HTML · Chrome 으로 연다 · 옆의 `common/` 과 함께) · 「한국어 \| EN」 버튼(L 키) |
-| `week01/` ~ `week18/` | 주차별 실습: README · 지시문 `prompts.md` · notebooks · scripts · data · 기준 결과 `expected_output/` · 평가문항 문제지 |
+| `week01/` ~ `week18/` | 주차별 한 묶음: 강의 덱 `slides/WNN_….html`(Chrome 으로 연다 · 「한국어 \| EN」 L 키) · README · 지시문 `prompts.md` · notebooks · scripts · data · 기준 결과 `expected_output/` · 평가문항 문제지 |
+| `common/` | 덱이 함께 쓰는 글꼴 · 스타일 · 스크립트(덱을 다른 곳으로 옮길 때 같은 상대 위치에 둔다) |
 | `mdworkflow/` | MD 워크플로우(W17): 분자 → 힘장(GAFF2 · AM1-BCC) → 상자(Packmol) → LAMMPS → 밀도 · CED → 결과 표 |
 | `loop/` | 폐루프(W18): Obsidian 볼트 문헌 노트 → 표적 → 평균 분자 후보 168 → 대리모델 → 체비셰프 EI → 볼트 환류 · 기준 사례 |
 | `docs/` | 설치 지시문 · Claude Code 시작 · 지시문 사용법 · Git |
@@ -46,4 +46,7 @@ cd 2026_MOOC_Lecture_Materials
 | M5 자율 탐색 | W16 자율 탐색 파이프라인과 검증 · W17 MD 워크플로우 조립 · W18 폐루프 통합 실습 · 최종 프로젝트 |
 
 ## 요구 사항
-Claude 유료 요금제(Pro 이상) 또는 Claude Console(API) · Ubuntu / macOS / Windows(WSL2) · 4코어 이상 권장 · 디스크 여유 10 GB 이상. 설치 검증은 Ubuntu(WSL2 포함)에서 했다.
+- 계정: Claude 유료 요금제(Pro 이상) 또는 Claude Console(API)
+- 운영체제: Ubuntu · macOS · Windows(WSL2)
+- 컴퓨터: 4코어 이상 권장 · 디스크 여유 10 GB 이상
+- 설치 검증: Ubuntu(WSL2 포함)

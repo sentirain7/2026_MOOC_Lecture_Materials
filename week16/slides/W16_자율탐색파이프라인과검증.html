@@ -1,1 +1,801 @@
-../../강의덱/W16_자율탐색파이프라인과검증.html
+<!doctype html>
+<html lang="ko" data-v="3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>W16 자율 탐색 파이프라인과 검증 · 큐레이션 · 파레토 · EHVI · 에이전트 · MD ↔ 실측 · 최종 프로젝트</title>
+<link rel="stylesheet" href="../../common/deck.css">
+</head>
+<body>
+
+<!-- 1 표지 -->
+<section class="slide v3 cover">
+<div class="stop">
+<div class="ribbon"></div>
+<div class="cover-txt">
+<p class="eb a" style="--d:0"><span class="ko" data-i>건설소재 역설계 도구 개발을 위한 AI와 분자동역학 활용 · WEEK 16 · 모듈 M5 파이프라인 · 차시 16-1 ~ 16-4 · 50분</span><span class="en" data-i>AI and Molecular Dynamics for Inverse Design of Construction Materials · WEEK 16 · Module M5 Pipeline · Sessions 16-1 ~ 16-4 · 50 min</span></p>
+<h1 class="cover-h a" style="--d:1"><span class="ko" data-i>자율 탐색 파이프라인과 검증</span><span class="en" data-i>Autonomous exploration pipeline and validation</span></h1>
+<p class="cover-sub a" style="--d:2"><span class="ko" data-i>큐레이션 · 파레토 · EHVI · 에이전트 · 검증 · 최종 프로젝트</span><span class="en" data-i>Curation · Pareto · EHVI · agent · validation · final project</span></p>
+<p class="who a" style="--d:3"><span class="ko" data-i><b>윤태영</b> 연구위원 · 한국건설기술연구원 도로교통연구본부 · 과학기술연합대학원대학교(UST) 교수</span><span class="en" data-i><b>Taeyoung Yun</b> Senior Research Fellow · Department of Highway & Transportation Research, Korea Institute of Civil Engineering and Building Technology (KICT) · Professor, University of Science and Technology (UST)</span></p>
+<div class="rel a" style="--d:4;justify-content:flex-start"><span><span class="ko" data-i>준비물 · mdai</span><span class="en" data-i>Prerequisites · mdai</span></span><span><span class="ko" data-i>W09 · W14 · W15 결과 파일</span><span class="en" data-i>W09 · W14 · W15 result files</span></span><span>Claude Code</span></div>
+</div>
+<div class="cover-fig"><div class="emb" data-emb="paretoc" data-dur="12"></div></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 2 오늘 만들 것 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>오늘 만들 것 · 4차시 · 50분</span><span class="en" data-i>What we build today · 4 sessions · 50 min</span></p>
+<div class="hrow"><span class="hico" data-ico="package-check"></span><h2 class="h"><span class="ko" data-i>오늘의 완성물: 추천 조성 3개 표 · 최종 프로젝트 체크리스트</span><span class="en" data-i>Today's deliverables: table of 3 recommended compositions · final-project checklist</span></h2></div>
+<p class="sub"><span class="ko" data-i>완성물 2개 · 재료 = 참고 사례 데이터 MD 계산값 612건 · 스크립트 5 · Claude Code 지시 3</span><span class="en" data-i>2 deliverables · material = reference-case data, 612 MD-computed cases · scripts 5 · Claude Code prompts 3</span></p>
+<div class="bd today">
+<div class="goal">
+<div class="it white a" style="--d:1">
+<div class="ih"><span class="icb" data-ico="crosshair"></span><div><p class="k"><span class="ko" data-i>완성물 ①</span><span class="en" data-i>Deliverable ①</span></p><h4><span class="ko" data-i>ehvi.json · EHVI 로 고른 다음 MD 3건</span><span class="en" data-i>ehvi.json · next 3 MD runs picked by EHVI</span></h4></div></div>
+<table class="t"><thead><tr><th><span class="ko" data-i>순위</span><span class="en" data-i>Rank</span></th><th><span class="ko" data-i>조건</span><span class="en" data-i>Condition</span></th><th><span class="ko" data-i>예측 K · CED</span><span class="en" data-i>Predicted K · CED</span></th><th><span class="ko" data-i>실제 K · CED</span><span class="en" data-i>Actual K · CED</span></th></tr></thead><tbody id="w16-today-picks"></tbody></table>
+<div class="cb plain"><span class="fc"><span class="ko" data-i>HV 증가 <em id="w16-g1">·</em></span><span class="en" data-i>HV gain <em id="w16-g1">·</em></span></span><span class="x">vs</span><span class="fc"><span class="ko" data-i>무작위 3개 평균 <em id="w16-g2">·</em></span><span class="en" data-i>Mean of 3 random picks <em id="w16-g2">·</em></span></span></div>
+</div>
+<div class="it dark a" style="--d:2">
+<div class="ih"><span class="icb" data-ico="clipboard-check"></span><div><p class="k"><span class="ko" data-i>완성물 ②</span><span class="en" data-i>Deliverable ②</span></p><h4><span class="ko" data-i>checklist.json · 평가 5항목 요건</span><span class="en" data-i>checklist.json · requirements for 5 evaluation items</span></h4></div></div>
+<p class="mono-line"><span class="ko" data-i>문제 정의 20 · 계산 · 검증 설계 30 · 탐색 결과 25 · 재현성 15 · 한계 10</span><span class="en" data-i>Problem definition 20 · computation · validation design 30 · exploration results 25 · reproducibility 15 · limitations 10</span></p>
+<p><span class="ko" data-i>빠진 파일 · 필드 바로 탐지</span><span class="en" data-i>Detect missing files · fields immediately</span></p>
+</div>
+</div>
+<div class="plan">
+<div class="lines">
+<div class="ln a" style="--d:1"><span class="nn">16-1</span><div><h4><span class="ko" data-i>큐레이션</span><span class="en" data-i>Curation</span></h4><p><span class="ko" data-i>형식화 · 깔때기 · 이상치 · P16-1</span><span class="en" data-i>Formalization · funnel · outliers · P16-1</span></p></div><span class="min"><span class="ko" data-i>13분</span><span class="en" data-i>13 min</span></span></div>
+<div class="ln a" style="--d:2"><span class="nn">16-2</span><div><h4><span class="ko" data-i>다목적 최적화</span><span class="en" data-i>Multi-objective optimization</span></h4><p><span class="ko" data-i>파레토 · EHVI · 가중치 · P16-2</span><span class="en" data-i>Pareto · EHVI · weights · P16-2</span></p></div><span class="min"><span class="ko" data-i>16분</span><span class="en" data-i>16 min</span></span></div>
+<div class="ln a" style="--d:3"><span class="nn">16-3</span><div><h4><span class="ko" data-i>에이전트 · 자동 루프</span><span class="en" data-i>Agent · automatic loop</span></h4><p><span class="ko" data-i>역할 분리 · 운영 · 정지 규칙</span><span class="en" data-i>Role separation · operation · stop rules</span></p></div><span class="min"><span class="ko" data-i>12분</span><span class="en" data-i>12 min</span></span></div>
+<div class="ln a" style="--d:4"><span class="nn">16-4</span><div><h4><span class="ko" data-i>검증 · 최종 프로젝트</span><span class="en" data-i>Validation · final project</span></h4><p><span class="ko" data-i>밀도 · Tg · 체크리스트 · P16-3</span><span class="en" data-i>Density · Tg · checklist · P16-3</span></p></div><span class="min"><span class="ko" data-i>14분</span><span class="en" data-i>14 min</span></span></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>없으면 저장소 <b>data/</b> 로 진행</span><span class="en" data-i>If missing, proceed with the repository <b>data/</b></span></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>계획서 50분 · 원본 12주차 · 13주차 · 13주차 보충A · 10주차 보충B · 07주차 #21~#28 → 27장 · 수치 = week16/expected_output (2026-11-08 실행)</span><span class="en" data-i>Plan 50 min · original week 12 · week 13 · week 13 supplement A · week 10 supplement B · week 07 #21~#28 → slide 27 · values = week16/expected_output (run 2026-11-08)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 3 차시 16-1 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 16-1 · 13분 · 영상 1편</span><span class="en" data-i>Session 16-1 · 13 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="database"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">1</p><p class="hubt"><span class="ko" data-i>큐레이션</span><span class="en" data-i>Curation</span></p><p class="hubs"><span class="ko" data-i>문제 형식화 → 표 672행 → 612행</span><span class="en" data-i>Problem formalization → table 672 rows → 612 rows</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>curation.json · 단계별 행 수 · 이유</span><span class="en" data-i>curation.json · rows per stage · reasons</span></h4></div></div><p><span class="ko" data-i>지운 행은 0 · 뺀 행은 이유와 함께 · 탐색이 읽을 표 612행</span><span class="en" data-i>Deleted rows 0 · excluded rows with reasons · table the search will read: 612 rows</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>③ MD 결과 → ④ 대리모델 사이의 적재</span><span class="en" data-i>Loading between ③ MD results → ④ surrogate model</span></h4></div></div><p><span class="ko" data-i>W09 결과 표 · W07 실패 감지와 같은 규칙을 데이터 전체에</span><span class="en" data-i>W09 results table · W07 failure detection · same rules applied to the whole dataset</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 4 FIG 형식화 -->
+<section class="slide v3" data-src="13주차#6,12주차#12">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>16-1 · 무엇</span><span class="en" data-i>16-1 · What</span></p>
+<div class="hrow"><span class="hico" data-ico="pencil-ruler"></span><h2 class="h"><span class="ko" data-i>역설계 형식화 4칸: 설계 변수 · 목표 · 제약 · 방향</span><span class="en" data-i>Inverse-design formalization, 4 cells: design variables · objectives · constraints · direction</span></h2></div>
+<p class="sub"><span class="ko" data-i>min / max [f₁(x), f₂(x)] s.t. g(x) ≤ 0 · 이 한 줄 확정 → 큐레이션 · 탐색 · 검증의 기준 동시 확정</span><span class="en" data-i>min / max [f₁(x), f₂(x)] s.t. g(x) ≤ 0 · fixing this one line fixes the criteria for curation · exploration · validation at once</span></p>
+<div class="bd">
+<div class="grid c4">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="boxes"></span><div><p class="k"><span class="ko" data-i>x · 설계 변수</span><span class="en" data-i>x · design variables</span></p><h4><span class="ko" data-i>네 축 격자</span><span class="en" data-i>Four-axis grid</span></h4></div></div><div class="n md nosum"><span class="ko" data-i>648점</span><span class="en" data-i>648 points</span></div><p><span class="ko" data-i>바인더 3 × 노화 3 × 첨가제 6 × 온도 12 · 전수 계산 대신 다음 계산 선택</span><span class="en" data-i>Binder 3 × aging 3 × additive 6 × temperature 12 · choose the next calculation instead of full enumeration</span></p></div>
+<div class="it hot a" style="--d:2"><div class="ih"><span class="icb" data-ico="target"></span><div><p class="k"><span class="ko" data-i>f · 목표</span><span class="en" data-i>f · objectives</span></p><h4>K ↑ · CED ↑</h4></div></div><p><span class="ko" data-i>체적탄성계수(강성) · 응집에너지밀도(응집) · 이번 주 실행의 두 목표 · 612건 완비</span><span class="en" data-i>Bulk modulus (stiffness) · cohesive energy density (cohesion) · the two objectives of this week's run · 612 cases complete</span></p></div>
+<div class="it a" style="--d:3"><div class="ih"><span class="icb" data-ico="shield-check"></span><div><p class="k"><span class="ko" data-i>g · 제약</span><span class="en" data-i>g · constraints</span></p><h4><span class="ko" data-i>카탈로그 · 범위 · 적용 영역</span><span class="en" data-i>Catalog · range · applicability domain</span></h4></div></div><p><span class="ko" data-i>첨가제 6계열 · 213~433 K · 학습 분포 밖은 검증 대상으로 분리</span><span class="en" data-i>6 additive families · 213~433 K · outside the training distribution is set apart for validation</span></p></div>
+<div class="it dark a" style="--d:4"><div class="ih"><span class="icb" data-ico="route"></span><div><p class="k"><span class="ko" data-i>방향</span><span class="en" data-i>Direction</span></p><h4><span class="ko" data-i>max · min · 범위</span><span class="en" data-i>max · min · range</span></h4></div></div><p><span class="ko" data-i>방향 없는 표적 = 최적화 제외 · 진단 지표로만 (W01 10장)</span><span class="en" data-i>Target with no direction = excluded from optimization · diagnostic metric only (W01 slide 10)</span></p></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>형식화 → <b>큐레이션</b>(이 차시) → 파레토 · EHVI(16-2) → 에이전트 실행(16-3) → <b>실측 대조</b>(16-4)</span><span class="en" data-i>Formalization → <b>curation</b> (this session) → Pareto · EHVI (16-2) → agent run (16-3) → <b>comparison with measurements</b> (16-4)</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 13주차 #6 · 12주차 #12(격자 648점 · 코어 672건)</span><span class="en" data-i>Original week 13 #6 · week 12 #12 (grid 648 points · core 672 cases)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 5 ANIM 깔때기 -->
+<section class="slide v3" data-src="12주차#18,12주차#19,10주차보충B#27">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>16-1 · 어떻게 · 동적</span><span class="en" data-i>16-1 · How · animated</span></p>
+<div class="hrow"><span class="hico" data-ico="list-checks"></span><h2 class="h"><span class="ko" data-i>큐레이션 깔때기 5단계: 걸러 내고 되살리기</span><span class="en" data-i>Curation funnel, 5 stages: filter out and restore</span></h2></div>
+<p class="sub"><span class="ko" data-i>672 → 플래그 56 → 614 → 복원 → 612 · 지운 행 0 · 빠진 행은 이유와 함께 기록 · 숫자 = 이번 주 curate.py 실행값</span><span class="en" data-i>672 → flagged 56 → 614 → restore → 612 · deleted rows 0 · missing rows recorded with reasons · numbers = this week's curate.py run values</span></p>
+<div class="bd"><div class="emb" data-emb="funnel" data-dur="12" data-steps="5" data-labels="① 코어 672|② 게이트 표시|③ 점도 런 제외|④ 복원 · 재백필|⑤ 중복 · 완비" data-labels-en="① Core 672|② Gate flag|③ Exclude viscosity runs|④ Restore · re-backfill|⑤ Duplicates · complete"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 12주차 #18 · #19 · 10주차 보충B #27 · 데이터 = 참고 사례(연구 플랫폼 결과) comid_core672_dataset.csv → week16/expected_output/curation.json</span><span class="en" data-i>Original week 12 #18 · #19 · week 10 supplement B #27 · data = reference case (research-platform result) comid_core672_dataset.csv → week16/expected_output/curation.json</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 6 FIG 이상치 원인 -->
+<section class="slide v3" data-min="1.5" data-src="12주차#19,12주차#20">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>16-1 · 왜</span><span class="en" data-i>16-1 · Why</span></p>
+<div class="hrow"><span class="hico" data-ico="triangle-alert"></span><h2 class="h"><span class="ko" data-i>이상치 원인 = 물성 오류가 아닌 계산 조건</span><span class="en" data-i>Cause of outliers = calculation conditions, not property errors</span></h2></div>
+<p class="sub"><span class="ko" data-i>K &gt; 50 GPa 50행 · CED &lt; 0 48행 · 두 이상치 모두 점도(전단) 런 안 · 값 삭제 대신 <b>그 조건에서 그 물성만</b> 제외</span><span class="en" data-i>K &gt; 50 GPa 50 rows · CED &lt; 0 48 rows · both outlier types sit in viscosity (shear) runs · instead of deleting values, <b>exclude only that property under that condition</b></span></p>
+<div class="bd">
+<div class="grid c3">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="octagon-alert"></span><div><p class="k"><span class="ko" data-i>① 증상</span><span class="en" data-i>① Symptom</span></p><h4><span class="ko" data-i>K ~10²⁷ GPa · CED 음수</span><span class="en" data-i>K ~10²⁷ GPa · negative CED</span></h4></div></div><div class="cb plain"><span class="fc rd">K &gt; 50 GPa <em>50</em></span><span class="fc rd">CED &lt; 0 <em>48</em></span></div><p><span class="ko" data-i>겹치는 행 포함 표시 56행 · 모두 점도 런 58행 안</span><span class="en" data-i>56 rows flagged incl. overlap · all within the 58 viscosity-run rows</span></p></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="sigma"></span><div><p class="k"><span class="ko" data-i>② 원인</span><span class="en" data-i>② Cause</span></p><h4><span class="ko" data-i>NPT 구간 없음 → var(V) ≈ 0</span><span class="en" data-i>No NPT stage → var(V) ≈ 0</span></h4></div></div><p><span class="ko" data-i>K<sub>T</sub> = k<sub>B</sub>T⟨V⟩ / var(V) 발산 · 폴백 경로 + 물리 상한 검사 없음</span><span class="en" data-i>K<sub>T</sub> = k<sub>B</sub>T⟨V⟩ / var(V) diverges · fallback path + no physical upper-bound check</span></p></div>
+<div class="it hot a" style="--d:3"><div class="ih"><span class="icb" data-ico="shield-check"></span><div><p class="k"><span class="ko" data-i>③ 처리</span><span class="en" data-i>③ Fix</span></p><h4><span class="ko" data-i>이중 방어</span><span class="en" data-i>Double defense</span></h4></div></div><p><span class="ko" data-i>계산 진입 조건 + 0.1~50 GPa 게이트 · 같은 런의 밀도 · MSD · 점도는 유지</span><span class="en" data-i>Entry condition for the calculation + 0.1~50 GPa gate · keep density · MSD · viscosity of the same run</span></p></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>반대 사례: 라벨 빠진 재시도 행을 버렸다면 <b>Lignin · SiO₂ 데이터 대부분 소실</b> · 지우지 말고 원인으로 복원</span><span class="en" data-i>Counter-example: had we discarded retry rows missing labels, <b>most Lignin · SiO₂ data would be lost</b> · restore by cause, don't delete</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 12주차 #19 · #20 · 참고 사례(연구 플랫폼 결과) HANDOFF_bulk_ced_guard.md · comid_data_quality_eda.md(정정판 v2)</span><span class="en" data-i>Original week 12 #19 · #20 · reference case (research-platform result) HANDOFF_bulk_ced_guard.md · comid_data_quality_eda.md (corrected v2)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 7 MAKE P16-1 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>16-1 · 만들어 보기</span><span class="en" data-i>16-1 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="pencil-ruler"></span><h2 class="h"><span class="ko" data-i>만들어 보기 P16-1: curate.py 실행 → 깔때기 단계표 · 큐레이션 보고</span><span class="en" data-i>Try it P16-1: run curate.py → funnel stage table · curation report</span></h2></div>
+<div class="bd">
+<div class="make">
+<div class="left a" style="--d:1">
+<pre class="code"><span class="c"><span class="ko" data-i># 환경: mdai · week16 폴더 · claude (노트북 01 셀 ②)</span><span class="en" data-i># Environment: mdai · week16 folder · claude (notebook 01 cell ②)</span></span>
+python3 scripts/curate.py data/core672.csv \
+  --out out/curation.json --csv out/curated612.csv
+<span class="c"><span class="ko" data-i># → 아래 지시 = Claude Code 가 실행 · 기록 직접 읽음</span><span class="en" data-i># → prompt below = Claude Code runs it · reads the record directly</span></span></pre>
+<div class="prompt" data-id="P16-1"><span class="ko" data-i>week16 에서 scripts/curate.py data/core672.csv --out out/curation.json --csv out/curated612.csv 를 실행하고 큐레이션 기록 out/curation.json 을 읽어라. ① 단계표(열: 단계 · 남은 행 · 표시 · 제외 · 이유)를 만들고 ② 「지운 행」과 「뺀 행」과 「복원한 행」을 구분해 세 줄로 설명하고 ③ 이상치가 값이 아니라 계산 조건(점도 런 · NPT 없음)에서 나왔다는 근거를 기록에서 찾아 적어라. ④ 같은 규칙을 내 결과 표 [../week09/out/results.csv]에 적용할 때 바꿀 인수 하나를 적어라(제안만 · 실행은 내 승인 뒤). 행 수는 expected_output/curation.json 과 비교하고, 기록에 없는 수치는 쓰지 마라. 결과는 out/P16-1_result.md 로 저장해라.</span><span class="en" data-i>In week16, run scripts/curate.py data/core672.csv --out out/curation.json --csv out/curated612.csv and read the curation record out/curation.json. ① Make a stage table (columns: stage · rows left · flagged · excluded · reason) ② explain in three lines the difference between "deleted rows", "excluded rows" and "restored rows" ③ find in the record the evidence that the outliers came from calculation conditions (viscosity runs · no NPT), not from values, and write it down ④ write one argument to change when applying the same rules to my results table [../week09/out/results.csv] (proposal only · run after my approval). Compare row counts with expected_output/curation.json and do not write numbers absent from the record. Save the result to out/P16-1_result.md.</span></div>
+</div>
+<div class="expect a" style="--d:2">
+<h4><span class="tic" data-ico="table"></span><span class="ko" data-i>기대 결과 · curation.json (이번 주 실행값)</span><span class="en" data-i>Expected result · curation.json (this week's run values)</span></h4>
+<table class="t"><thead><tr><th><span class="ko" data-i>단계</span><span class="en" data-i>Stage</span></th><th><span class="ko" data-i>남은 행</span><span class="en" data-i>Rows left</span></th><th><span class="ko" data-i>기록</span><span class="en" data-i>Record</span></th></tr></thead><tbody id="w16-cur-table"></tbody></table>
+<p class="cap"><span class="ko" data-i>지운 행 0 · 점도 런 58행은 K · CED 만 제외(밀도 · 점도는 그 런에 남음) · 복원 = 원본 로그 · exp_id 경로</span><span class="en" data-i>Deleted rows 0 · 58 viscosity-run rows exclude only K · CED (density · viscosity stay in that run) · restore = original log · exp_id path</span></p>
+</div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>행 수가 672 → 614 → 612 로 이어지는가</span><span class="en" data-i>Do row counts go 672 → 614 → 612?</span></p><p><span class="ko" data-i>보고 문단에 「삭제」 대신 「표시 · 제외 · 복원」이 쓰였는가</span><span class="en" data-i>Does the report paragraph use "flag · exclude · restore" instead of "delete"?</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>week16/scripts/curate.py · 지시문 원문 week16/prompts.md · P16-1</span><span class="en" data-i>week16/scripts/curate.py · prompt source week16/prompts.md · P16-1</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 8 차시 16-2 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 16-2 · 16분 · 영상 1편</span><span class="en" data-i>Session 16-2 · 16 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="trophy"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">2</p><p class="hubt"><span class="ko" data-i>다목적 최적화</span><span class="en" data-i>Multi-objective optimization</span></p><p class="hubs"><span class="ko" data-i>파레토 전선 · 초부피 · EHVI · 가중치</span><span class="en" data-i>Pareto front · hypervolume · EHVI · weights</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>ehvi.json · 다음 MD 3건</span><span class="en" data-i>ehvi.json · next 3 MD runs</span></h4></div></div><p><span class="ko" data-i>관측 400건 GP · 후보 212건의 EHVI · 실제값 공개로 HV 증가 확인</span><span class="en" data-i>GP on 400 observations · EHVI of 212 candidates · reveal actual values to confirm HV gain</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>⑤ 능동학습 → ⑥ 최적화</span><span class="en" data-i>⑤ Active learning → ⑥ optimization</span></h4></div></div><p><span class="ko" data-i>W15 획득함수(단일 목표)를 목표 2개로 · W14 대리모델 → μ · σ 제공 · 추천 → MD 재검증 실제 실행 = W18</span><span class="en" data-i>W15 acquisition function (single objective) extended to 2 objectives · W14 surrogate model → supplies μ · σ · actual recommendation → MD re-validation = W18</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 9 ANIM 파레토 -->
+<section class="slide v3" data-src="13주차#7,13주차#8">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>16-2 · 무엇 · 동적</span><span class="en" data-i>16-2 · What · animated</span></p>
+<div class="hrow"><span class="hico" data-ico="trophy"></span><h2 class="h"><span class="ko" data-i>파레토 전선 = 서로 지배하지 않는 점 6개</span><span class="en" data-i>Pareto front = 6 points that do not dominate each other</span></h2></div>
+<p class="sub"><span class="ko" data-i>MD 612건 → 초부피(HV · hypervolume) 871 · 점 유입마다 전선 · 녹색 면적 갱신 · 회색 = 지배된 결과 · 노란 원 = 참조점</span><span class="en" data-i>MD 612 cases → hypervolume (HV) 871 · front · green area update as each point arrives · gray = dominated results · yellow circle = reference point</span></p>
+<div class="bd"><div class="emb" data-emb="pareto" data-dur="12" data-steps="3" data-labels="① 하나씩 추가|② 612건 · 전선 6|③ 참조점 변경" data-labels-en="① Add one by one|② All 612 cases · front 6|③ Change reference point"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 13주차 #7 · #8 · 데이터 = 참고 사례(연구 플랫폼 결과) final_feature_dataset(MD 계산값 · 함량확장 재실행 전) → week16/expected_output/pareto.json</span><span class="en" data-i>Original week 13 #7 · #8 · data = reference case (research-platform result) final_feature_dataset (MD-computed values · before content-expanded rerun) → week16/expected_output/pareto.json</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 10 EQ EHVI -->
+<section class="slide v3" data-src="13주차#9">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>16-2 · 무엇 · 그림</span><span class="en" data-i>16-2 · What · figure</span></p>
+<div class="hrow"><span class="hico" data-ico="target"></span><h2 class="h"><span class="ko" data-i>다음 실험 고르기 = 전선을 넓힐 기대 면적</span><span class="en" data-i>Picking the next experiment = expected area gained by widening the front</span></h2></div>
+<p class="sub"><span class="ko" data-i>EHVI(expected hypervolume improvement) · 예측 평균이 전선 밖 = <b>활용</b> · 불확실성 큼 = <b>탐색</b> · 둘 다 EHVI 증가</span><span class="en" data-i>EHVI (expected hypervolume improvement) · predicted mean outside the front = <b>exploitation</b> · large uncertainty = <b>exploration</b> · both raise EHVI</span></p>
+<div class="bd">
+<div class="eqfig w16-say2">
+<div class="lines w16-say">
+<div class="ln a" style="--d:1"><span class="nn">①</span><div><p><span class="ko" data-i>후보 하나의 예측 분포에서 가능한 결과 512번 뽑기</span><span class="en" data-i>Draw 512 possible outcomes from one candidate's predictive distribution</span></p></div></div>
+<div class="ln a" style="--d:2"><span class="nn">②</span><div><p><span class="ko" data-i>뽑을 때마다 현재 전선(관측 400건)에 더해 늘어난 면적 계산</span><span class="en" data-i>For each draw, add to the current front (400 observations) and compute the area gained</span></p></div></div>
+<div class="ln a" style="--d:3"><span class="nn">③</span><div><p><span class="ko" data-i>면적 증가의 평균 = EHVI · 큰 후보부터 다음 MD 실행</span><span class="en" data-i>Mean area gain = EHVI · run MD on the candidates with the largest first</span></p></div></div>
+</div>
+<div class="fig"><svg viewBox="0 0 1588 300" class="cfig" id="w16-eqsvg"></svg></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 13주차 #9 · #10 · 실제 플랫폼 = BoTorch qNEHVI · 이번 주 = 독립 정규 2목표 + 몬테카를로(week16/scripts/ehvi_select.py) · 기호식 = docs/pipeline_notes.md</span><span class="en" data-i>Original week 13 #9 · #10 · real platform = BoTorch qNEHVI · this week = independent normal 2 objectives + Monte Carlo (week16/scripts/ehvi_select.py) · symbolic formulas = docs/pipeline_notes.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 11 ANIM EHVI 배치 -->
+<section class="slide v3" data-src="13주차#10,10주차보충B#12">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>16-2 · 어떻게 · 동적</span><span class="en" data-i>16-2 · How · animated</span></p>
+<div class="hrow"><span class="hico" data-ico="crosshair"></span><h2 class="h"><span class="ko" data-i>EHVI 배치 3개: 예측 → 선택 → 실제값 공개</span><span class="en" data-i>EHVI batch of 3: predict → select → reveal actual values</span></h2></div>
+<p class="sub"><span class="ko" data-i>HV +6.22 vs 무작위 +0.09 · 관측 400건 · 후보 212건 · 점 = GP 예측 평균 · 타원 = 불확실성 · 선택 예측 = 임시 관측</span><span class="en" data-i>HV +6.22 vs random +0.09 · 400 observations · 212 candidates · dot = GP predictive mean · ellipse = uncertainty · selected prediction = temporary observation</span></p>
+<div class="bd"><div class="emb" data-emb="ehvi" data-dur="12" data-steps="3" data-labels="① 관측 전선 · 예측|② 배치 3 선택|③ 실제값 공개" data-labels-en="① Observed front · prediction|② Select batch of 3|③ Reveal actual values"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 13주차 #10 · 10주차 보충B #12(가상 관측) · week16/expected_output/ehvi.json(GP 홀드아웃 RMSE K 0.415 GPa · CED 6.4)</span><span class="en" data-i>Original week 13 #10 · week 10 supplement B #12 (fantasy observation) · week16/expected_output/ehvi.json (GP holdout RMSE K 0.415 GPa · CED 6.4)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 12 SIM 가중치 -->
+<section class="slide v3" data-src="13주차#9,13주차#11">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>16-2 · 확인 · 조작형</span><span class="en" data-i>16-2 · Check · interactive</span></p>
+<div class="hrow"><span class="hico" data-ico="sliders-horizontal"></span><h2 class="h"><span class="ko" data-i>가중치 계산기: 두 목표 비중 조절 → 상위 후보 이동</span><span class="en" data-i>Weight calculator: adjust the weight of two objectives → top candidate moves</span></h2></div>
+<p class="sub"><span class="ko" data-i>K 비중 w 이동 → 선택이 전선을 따라 이동 · 단, 전선의 오목한 점 = 어떤 w 로도 1위 불가</span><span class="en" data-i>Shifting K weight w → selection moves along the front · but a concave point of the front = cannot rank 1st for any w</span></p>
+<div class="bd">
+<div class="sim" id="sim-w">
+<div class="ctl">
+<label><span class="ko" data-i><b>K 가중치 w <output data-o="w">0.50</output></b></span><span class="en" data-i><b>K weight w <output data-o="w">0.50</output></b></span><input type="range" min="0" max="1" value="0.5" step="0.05" data-k="w"></label>
+<label><span class="ko" data-i><b>선택 수 N <output data-o="n">3</output></b></span><span class="en" data-i><b>Number selected N <output data-o="n">3</output></b></span><input type="range" min="1" max="8" value="3" step="1" data-k="n"></label>
+<button type="button" data-act="ced"><span class="ko" data-i>CED 만 (w = 0)</span><span class="en" data-i>CED only (w = 0)</span></button>
+<button type="button" class="alt" data-act="k"><span class="ko" data-i>K 만 (w = 1)</span><span class="en" data-i>K only (w = 1)</span></button>
+<button type="button" class="alt" data-act="mid"><span class="ko" data-i>균형 (w = 0.5)</span><span class="en" data-i>Balanced (w = 0.5)</span></button>
+</div>
+<div class="view"><svg viewBox="0 0 1160 470" aria-label="가중합 선택"></svg>
+<div class="kpi"><div><span class="ko" data-i>1위 <b data-o="top">·</b></span><span class="en" data-i>Rank 1 <b data-o="top">·</b></span></div><div><span class="ko" data-i>닿는 전선 점 <b data-o="reach">·</b></span><span class="en" data-i>Front points reached <b data-o="reach">·</b></span></div><div><span class="ko" data-i>선택 중 전선 점 <b data-o="onf">·</b></span><span class="en" data-i>Selected front points <b data-o="onf">·</b></span></div></div></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 13주차 #9(스칼라화 · 체비셰프) · #11(제약) · 점 = MD 612건(pareto.json) · 정규화 = 612건 최소–최대</span><span class="en" data-i>Original week 13 #9 (scalarization · Chebyshev) · #11 (constraints) · points = MD 612 cases (pareto.json) · normalization = min–max over 612 cases</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 13 TWEAK 단일 ↔ 다목적 -->
+<section class="slide v3" data-src="13주차#2,13주차#20">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>16-2 · 바꿔 보기</span><span class="en" data-i>16-2 · Try changing</span></p>
+<div class="hrow"><span class="hico" data-ico="git-compare"></span><h2 class="h"><span class="ko" data-i>단일 목표 ↔ 다목적: 답 한 점 vs 교환 관계 전체</span><span class="en" data-i>Single objective ↔ multi-objective: one answer point vs. the whole trade-off</span></h2></div>
+<p class="sub"><span class="ko" data-i>비유 = <b>노트북 고르기</b>(가격 ↔ 성능 · 둘 다 나은 제품 없음 → 후보 여러 개) · 바뀐 것 = 목표 개수 하나</span><span class="en" data-i>Analogy = <b>picking a laptop</b> (price ↔ performance · no product better on both → several candidates) · what changed = number of objectives, one</span></p>
+<div class="bd">
+<div class="tweak">
+<div class="pane before a" style="--d:1"><h3><span class="tic" data-ico="minus"></span><span class="ko" data-i>전 · 목표 1개 (CED 최대)</span><span class="en" data-i>Before · 1 objective (max CED)</span></h3>
+<div class="figw white"><svg viewBox="0 0 700 330" id="w16-tw1"></svg></div>
+<div class="n md nosum"><span class="ko" data-i>답 1점 · K 4.19 GPa</span><span class="en" data-i>1 answer point · K 4.19 GPa</span></div>
+<p class="cap"><span class="ko" data-i>AAK1 · SiO₂ · 장기노화 · 233 K · 강성이 더 높은 조건 없음</span><span class="en" data-i>AAK1 · SiO₂ · long-term aged · 233 K · no condition with higher stiffness</span></p></div>
+<div class="pane after a" style="--d:2"><h3><span class="tic" data-ico="plus"></span><span class="ko" data-i>후 · 목표 2개 (K · CED 최대)</span><span class="en" data-i>After · 2 objectives (max K · CED)</span></h3>
+<div class="figw white"><svg viewBox="0 0 700 330" id="w16-tw2"></svg></div>
+<div class="n md nosum"><span class="ko" data-i>전선 6점 · K 4.19 ~ 6.13</span><span class="en" data-i>Front 6 points · K 4.19 ~ 6.13</span></div>
+<p class="cap"><span class="ko" data-i>CNT · 무첨가 · SiO₂ 가 섞인 교환 관계 · 사용자 선택 단계 잔존</span><span class="en" data-i>Trade-off mixing CNT · no additive · SiO₂ · user choice step remains</span></p></div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>pareto.py 의 목표 열을 하나만 남기면 전선이 1점이 되는지 확인</span><span class="en" data-i>Check that leaving one objective column in pareto.py makes the front 1 point</span></p><p><span class="ko" data-i>현실 요구(고온 강성 + 저온 균열)는 목표가 둘 이상</span><span class="en" data-i>Real requirements (high-temperature stiffness + low-temperature cracking) have two or more objectives</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>week16/expected_output/pareto.json · 원본 13주차 #2 · #20</span><span class="en" data-i>week16/expected_output/pareto.json · original week 13 #2 · #20</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 14 MAKE P16-2 -->
+<section class="slide v3" data-src="13주차#11">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>16-2 · 만들어 보기</span><span class="en" data-i>16-2 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="pencil-ruler"></span><h2 class="h"><span class="ko" data-i>만들어 보기 P16-2: ehvi_select.py 실행 → 추천 3건 보고서</span><span class="en" data-i>Try it P16-2: run ehvi_select.py → report of 3 recommendations</span></h2></div>
+<div class="bd">
+<div class="make">
+<div class="left a" style="--d:1">
+<pre class="code"><span class="c"><span class="ko" data-i># 환경: mdai · week16 폴더 · claude (노트북 01 셀 ④)</span><span class="en" data-i># Environment: mdai · week16 folder · claude (notebook 01 cell ④)</span></span>
+python3 scripts/ehvi_select.py \
+  data/features614.csv out/curated612.csv \
+  --obs 400 --batch 3 --out out/ehvi.json
+<span class="c"><span class="ko" data-i># 약 17초 (GP 2개 · 표본 512)</span><span class="en" data-i># approx. 17 s (2 GPs · 512 samples)</span></span></pre>
+<div class="prompt" data-id="P16-2"><span class="ko" data-i>week16 에서 scripts/ehvi_select.py data/features614.csv out/curated612.csv --obs 400 --batch 3 --out out/ehvi.json 을 실행하고(약 17초 · 수렴 경고 5건은 오류 아님) out/ehvi.json 의 picks · hv_* 항목을 읽어라. ① 추천 3건을 보고 형식(조건 · 예측 K ± σ · 예측 CED ± σ · 제약 충족 · 적용 영역 · 검증 계산 제안) 표로 만들고 ② 실제값 공개 열로 HV 증가를 무작위 3개 평균과 비교해 한 문장으로 쓰고 ③ 세 후보가 모두 SiO₂ 인 점을 다양성 관점에서 평가하고 다음 배치의 규칙(예: 첨가제당 1개)을 제안해라. ④ 내 표적 [점도 범위 · 분리일 ↑]으로 바꿀 때 필요한 열을 적어라. 추천 3건은 스크립트 결과 그대로 두고, 파일에 없는 값은 쓰지 마라. 결과는 out/P16-2_result.md 로 저장해라.</span><span class="en" data-i>In week16, run scripts/ehvi_select.py data/features614.csv out/curated612.csv --obs 400 --batch 3 --out out/ehvi.json (approx. 17 s · 5 convergence warnings are not errors) and read the picks · hv_* items of out/ehvi.json. ① Make a table of the 3 recommendations in report format (condition · predicted K ± σ · predicted CED ± σ · constraint met · applicability domain · proposed validation calculation) ② compare the HV gain from the actual-value column with the mean of 3 random picks in one sentence ③ assess from a diversity viewpoint that all three candidates are SiO₂ and propose a rule for the next batch (e.g. 1 per additive) ④ list the columns needed to switch to my target [viscosity range · delamination work ↑]. Keep the 3 recommendations exactly as the script output and do not write values absent from the file. Save the result to out/P16-2_result.md.</span></div>
+</div>
+<div class="expect a" style="--d:2">
+<h4><span class="tic" data-ico="crosshair"></span><span class="ko" data-i>기대 결과 · 추천 3건 (예측 ± σ → 실제)</span><span class="en" data-i>Expected result · 3 recommendations (predicted ± σ → actual)</span></h4>
+<table class="t w16-pt"><thead><tr><th>#</th><th><span class="ko" data-i>조건</span><span class="en" data-i>Condition</span></th><th>K ± σ</th><th>CED ± σ</th><th><span class="ko" data-i>실제</span><span class="en" data-i>Actual</span></th></tr></thead><tbody id="w16-pick-table"></tbody></table>
+<div class="cb plain"><span class="fc or">HV 865.1 → 871.3 · <em>+6.22</em></span><span class="fc"><span class="ko" data-i>무작위 3개 <em>+0.09</em></span><span class="en" data-i>3 random <em>+0.09</em></span></span><span class="fc"><span class="ko" data-i>무작위 ≥ EHVI <em>1.5 %</em></span><span class="en" data-i>Random ≥ EHVI <em>1.5 %</em></span></span></div>
+<p class="cap"><span class="ko" data-i>세 후보가 모두 SiO₂ · 배치 다양성 규칙(10주차 보충B: 거리 0.05 · 그룹당 1개)의 필요성</span><span class="en" data-i>All three candidates are SiO₂ · need for a batch diversity rule (week 10 supplement B: distance 0.05 · 1 per group)</span></p>
+</div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>예측마다 σ 가 붙어 있고 무작위 기준선과 비교했는가</span><span class="en" data-i>Does every prediction carry σ and is it compared with the random baseline?</span></p><p><span class="ko" data-i>다양성 규칙을 다음 배치 조건으로 적었는가</span><span class="en" data-i>Did you write the diversity rule as a condition for the next batch?</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>week16/scripts/ehvi_select.py · 지시문 원문 week16/prompts.md · P16-2 · 원본 13주차 #11(추천 보고 형식)</span><span class="en" data-i>week16/scripts/ehvi_select.py · prompt source week16/prompts.md · P16-2 · original week 13 #11 (recommendation report format)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 15 차시 16-3 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 16-3 · 12분 · 영상 1편</span><span class="en" data-i>Session 16-3 · 12 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="bot"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">3</p><p class="hubt"><span class="ko" data-i>에이전트 · 자동 루프</span><span class="en" data-i>Agent · automatic loop</span></p><p class="hubs"><span class="ko" data-i>역할 분리 · 승인 게이트 · 정지 규칙</span><span class="en" data-i>Role separation · approval gate · stop rules</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>내 프로젝트의 정지 규칙 3줄</span><span class="en" data-i>3-line stop rule for my project</span></h4></div></div><p><span class="ko" data-i>목표 달성 · 예산 · 무개선 · 숫자로 기록(최종 프로젝트 protocol.json)</span><span class="en" data-i>Goal reached · budget · no improvement · record as numbers (final project protocol.json)</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>⑥ 최적화 → ① 환류의 실행 담당</span><span class="en" data-i>⑥ Optimization → ① executor of the feedback loop</span></h4></div></div><p><span class="ko" data-i>W07 배치 큐 · 실패 감지를 탐색 전체로 · 사람은 승인 게이트에</span><span class="en" data-i>W07 batch queue · failure detection extended to the whole search · human at the approval gate</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 16 ANIM 에이전트 -->
+<section class="slide v3" data-min="2.5" data-src="13주차#14,13주차#15,10주차보충B#24">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>16-3 · 어떻게 · 동적</span><span class="en" data-i>16-3 · How · animated</span></p>
+<div class="hrow"><span class="hico" data-ico="network"></span><h2 class="h"><span class="ko" data-i>역할 에이전트 4 + 사람 승인: 계획 → 승인 → 생성 · 계산 → 검증</span><span class="en" data-i>4 role agents + human approval: plan → approve → generate · compute → validate</span></h2></div>
+<p class="sub"><span class="ko" data-i>선 위의 점 = 오가는 메시지 · 오른쪽 = 쌓이는 결과 카드 · 결정은 정책 + 최적화 코드가, 승인은 사람이</span><span class="en" data-i>Dots on lines = messages in transit · right = accumulating result cards · decisions by policy + optimization code, approval by the human</span></p>
+<div class="bd"><div class="emb" data-emb="agents" data-dur="12" data-steps="4" data-labels="① 계획 · plan_hash|② 사람 승인|③ 생성 · 계산|④ 검증 · 판정" data-labels-en="① Plan · plan_hash|② Human approval|③ Generate · compute|④ Validate · decide"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 13주차 #14 · #15 · 10주차 보충B #24 · 참고 사례(연구 플랫폼 결과) docs/plans/INVERSE_DESIGN_AUTOMATION_PLAN.md(원본 노트 인용)</span><span class="en" data-i>Original week 13 #14 · #15 · week 10 supplement B #24 · reference case (research-platform result) docs/plans/INVERSE_DESIGN_AUTOMATION_PLAN.md (original note quoted)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 17 FIG 운영 구조 -->
+<section class="slide v3" data-min="2.5" data-src="13주차#14,13주차#15">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>16-3 · 무엇</span><span class="en" data-i>16-3 · What</span></p>
+<div class="hrow"><span class="hico" data-ico="cpu"></span><h2 class="h"><span class="ko" data-i>운영 구조: 판단 기준 = 계약 문서 · 실행 = 작업 큐</span><span class="en" data-i>Operating structure: judgment criteria = contract document · execution = job queue</span></h2></div>
+<p class="sub"><span class="ko" data-i>누적 3,800건 이상 무인 완주 · 토론 에이전트 증설 대신 판단 기준 고정 · 실행 = 큐에 위임</span><span class="en" data-i>3,800+ cumulative cases completed unattended · fixed judgment criteria instead of adding debate agents · execution delegated to the queue</span></p>
+<div class="bd">
+<div class="row">
+<div class="it white a fill" style="--d:1"><div class="ih"><span class="icb" data-ico="cpu"></span><div><p class="k"><span class="ko" data-i>운영 실적 · GPU 6장 · 동시 36작업</span><span class="en" data-i>Operating record · 6 GPUs · 36 concurrent jobs</span></p><h4><span class="ko" data-i>누적 3,800건 이상</span><span class="en" data-i>3,800+ cumulative</span></h4></div></div>
+<div class="bars">
+<div class="bar"><div class="l"><span class="ko" data-i>벌크<small>밀도 · CED · K</small></span><span class="en" data-i>Bulk<small>density · CED · K</small></span></div><div class="b" style="width:420px;flex:none"></div><div class="v nosum"><span class="ko" data-i>1,400여</span><span class="en" data-i>1,400+</span></div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>층상 계면 인장<small>W10</small></span><span class="en" data-i>Layered interface tension<small>W10</small></span></div><div class="b bl" style="width:390px;flex:none"></div><div class="v nosum"><span class="ko" data-i>1,300여</span><span class="en" data-i>1,300+</span></div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>점탄성<small>G(t)</small></span><span class="en" data-i>Viscoelastic<small>G(t)</small></span></div><div class="b gr" style="width:48px;flex:none"></div><div class="v nosum"><span class="ko" data-i>160여</span><span class="en" data-i>160+</span></div></div>
+</div>
+<p><span class="ko" data-i>새 계산 = 입력 생성기 · 결과 해석기 · 물성 정의만 교체</span><span class="en" data-i>New calculation = swap only the input generator · result interpreter · property definition</span></p></div>
+<div class="col" style="width:640px;flex:none">
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="history"></span><div><p class="k"><span class="ko" data-i>제거 경위 · v01.05.01</span><span class="en" data-i>Removal history · v01.05.01</span></p><h4><span class="ko" data-i>제안자–비평자 토론 · 6차원 합의 점수</span><span class="en" data-i>Proposer–critic debate · 6-dimension consensus score</span></h4></div></div><p><span class="ko" data-i>대량 계산에서 고정 기준이 더 안정 → 제거 · 설계 단계 가중치 6개 = docs/pipeline_notes.md</span><span class="en" data-i>Fixed criteria more stable for mass calculation → removed · design-stage 6 weights = docs/pipeline_notes.md</span></p></div>
+<div class="it hot a" style="--d:3"><div class="ih"><span class="icb" data-ico="badge-check"></span><div><p class="k"><span class="ko" data-i>현재</span><span class="en" data-i>Now</span></p><h4><span class="ko" data-i>함수 호출 + 결정론적 점수 + 사용자 승인</span><span class="en" data-i>Function calls + deterministic scoring + user approval</span></h4></div></div><p><span class="ko" data-i>같은 입력 = 같은 후보 · 선택 이유 = 감사 기록에 보존</span><span class="en" data-i>Same input = same candidates · reason for selection kept in the audit record</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 13주차 #14(설계 단계 가중치 · 임계값) · #15(운영 실적 · 제거 경위) · 참고 사례(연구 플랫폼 결과) docs/ARCHITECTURE.md §1.4</span><span class="en" data-i>Original week 13 #14 (design-stage weights · thresholds) · #15 (operating record · removal history) · reference case (research-platform result) docs/ARCHITECTURE.md §1.4</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 18 FIG 정지 규칙 · 실패 처리 -->
+<section class="slide v3" data-src="10주차보충B#25,10주차보충B#27">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>16-3 · 어떻게</span><span class="en" data-i>16-3 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="octagon-alert"></span><h2 class="h"><span class="ko" data-i>정지 규칙 3종: 목표 달성 · 예산 · 무개선</span><span class="en" data-i>3 stop rules: goal reached · budget · no improvement</span></h2></div>
+<p class="sub"><span class="ko" data-i>예산 5라운드 · 60실험 · 무개선 2회 · 개선 = 목표 거리 감소가 <b>SE × 1.0 초과</b>일 때만 · 단일 시드 잡음 ≠ 개선</span><span class="en" data-i>Budget 5 rounds · 60 experiments · 2 no-improvement rounds · improvement counts only when goal-distance drop <b>exceeds SE × 1.0</b> · single-seed noise ≠ improvement</span></p>
+<div class="bd">
+<div class="row">
+<table class="t a fill" style="--d:1"><thead><tr><th><span class="ko" data-i>정지</span><span class="en" data-i>Stop</span></th><th><span class="ko" data-i>조건</span><span class="en" data-i>Condition</span></th><th><span class="ko" data-i>정책값</span><span class="en" data-i>Policy value</span></th></tr></thead><tbody>
+<tr><td><span class="ko" data-i>목표 달성</span><span class="en" data-i>Goal reached</span></td><td><span class="ko" data-i>어떤 후보든 목표 만족</span><span class="en" data-i>Any candidate meets the goal</span></td><td class="mono">·</td></tr>
+<tr><td><span class="ko" data-i>예산</span><span class="en" data-i>Budget</span></td><td><span class="ko" data-i>라운드 수 · 누적 실험 상한</span><span class="en" data-i>number of rounds · cumulative experiment cap</span></td><td class="mono">5 · 60</td></tr>
+<tr><td><span class="ko" data-i>무개선</span><span class="en" data-i>No improvement</span></td><td><span class="ko" data-i>감소 ≤ SE × 배수 · 연속 K회</span><span class="en" data-i>drop ≤ SE × multiplier · K in a row</span></td><td class="mono">1.0 · 2</td></tr>
+<tr><td><span class="ko" data-i>계속</span><span class="en" data-i>Continue</span></td><td><span class="ko" data-i>완료 라벨 반영 → 재제안 → plan_hash 검증</span><span class="en" data-i>Reflect completed labels → re-propose → verify plan_hash</span></td><td class="mono"><span class="ko" data-i>자동 승인</span><span class="en" data-i>Auto-approve</span></td></tr></tbody></table>
+<div class="col" style="width:640px;flex:none">
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="refresh-cw"></span><div><p class="k"><span class="ko" data-i>실패 처리 · 자동 재시도</span><span class="en" data-i>Failure handling · automatic retry</span></p><h4><span class="ko" data-i>원인별 처방 4</span><span class="en" data-i>4 remedies by cause</span></h4></div></div><p><span class="ko" data-i>겹침 불안정 → 시드 변경 · 압력 발산 · 에너지 표류 → Δt 절반 · QEq 발산 → Δt 축소 · 패킹 겹침 → 재빌드</span><span class="en" data-i>Overlap instability → change seed · pressure divergence · energy drift → halve Δt · QEq divergence → shrink Δt · packing overlap → rebuild</span></p></div>
+<div class="it dark a" style="--d:3"><div class="ih"><span class="icb" data-ico="triangle-alert"></span><div><p class="k"><span class="ko" data-i>사례 · 재시도 라벨 오염</span><span class="en" data-i>Case · retry label contamination</span></p><h4><span class="ko" data-i>304건 바인더 · 노화 라벨 손실</span><span class="en" data-i>304 cases binder · aging label lost</span></h4></div></div><p><span class="ko" data-i>재시도 경로의 고정값 1줄이 원인 → 삭제 대신 exp_id 기반 재라벨</span><span class="en" data-i>Cause = 1 line of fixed value in the retry path → relabel by exp_id instead of deleting</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 10주차 보충B #25 · #26 · #27 · 참고 사례(연구 플랫폼 결과) docs/DECISION_RULES.md R8 · 닫힌 루프 기본 OFF · 배포별 활성화</span><span class="en" data-i>Original week 10 supplement B #25 · #26 · #27 · reference case (research-platform result) docs/DECISION_RULES.md R8 · closed loop OFF by default · enable per deployment</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 19 FIG 통합 사례 -->
+<section class="slide v3" data-min="2.5" data-src="13주차#20,13주차#21,13주차#22">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>16-3 · 확인 · 사례</span><span class="en" data-i>16-3 · Check · case</span></p>
+<div class="hrow"><span class="hico" data-ico="flask-conical"></span><h2 class="h"><span class="ko" data-i>통합 사례: 세 목표 · 세 처방 · 사용성 게이트로 재점검</span><span class="en" data-i>Integrated case: three objectives · three remedies · re-checked with a desirability gate</span></h2></div>
+<p class="sub"><span class="ko" data-i>614 조합 · GP + 기대개선으로 6,000개 후보 탐색 · 극값 처방은 <b>사용 가능 밀도 창</b>에서 재선별</span><span class="en" data-i>614 combinations · GP + expected improvement searched 6,000 candidates · extreme-value remedies re-selected within a <b>usable density window</b></span></p>
+<div class="bd">
+<div class="grid c3">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="gauge"></span><div><p class="k"><span class="ko" data-i>고강성</span><span class="en" data-i>High stiffness</span></p><h4><span class="ko" data-i>SiO₂ · 219 K · 강한 산화</span><span class="en" data-i>SiO₂ · 219 K · strong oxidation</span></h4></div></div><div class="n md nosum">K 4.19 GPa</div><p><span class="ko" data-i>CED 417 · 게이트 통과</span><span class="en" data-i>CED 417 · gate passed</span></p></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="magnet"></span><div><p class="k"><span class="ko" data-i>고응집</span><span class="en" data-i>High cohesion</span></p><h4><span class="ko" data-i>무첨가 · 238 K · 중간 산화</span><span class="en" data-i>No additive · 238 K · medium oxidation</span></h4></div></div><div class="n md nosum">CED 387</div><p>E<sub>inter</sub> ≈ −3077 kcal/mol</p></div>
+<div class="it dark a" style="--d:3"><div class="ih"><span class="icb" data-ico="triangle-alert"></span><div><p class="k"><span class="ko" data-i>저밀도 유연</span><span class="en" data-i>Low-density flexible</span></p><h4><span class="ko" data-i>SBS · 431 K · 낮은 산화</span><span class="en" data-i>SBS · 431 K · low oxidation</span></h4></div></div><div class="n md nosum">ρ 0.906</div><p><span class="ko" data-i>학습 분포 안이지만 <b>밀도 창 0.93 ~ 1.10 밖</b> → 재점검</span><span class="en" data-i>Inside the training distribution but <b>outside the 0.93 ~ 1.10 density window</b> → re-check</span></p></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>만족도 게이트 + 한 물성씩 상향 → 절충 처방 4종 모두 <b>0.6 이상</b> · 시멘트 · 바이오 = 같은 루프 · 결과 수치 미확보</span><span class="en" data-i>Satisfaction gate + raising one property at a time → all 4 compromise remedies <b>0.6 or above</b> · cement · bio = same loop · result values not obtained</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 13주차 #20 · #21 · #22 · 참고 사례(연구 플랫폼 결과) comid_paper_v3 §4.1 · §4.3(MD 계산값 · 함량확장 재실행 전)</span><span class="en" data-i>Original week 13 #20 · #21 · #22 · reference case (research-platform result) comid_paper_v3 §4.1 · §4.3 (MD-computed values · before content-expanded rerun)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 20 DEF -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>용어 정의</span><span class="en" data-i>Key terms</span></p>
+<div class="hrow"><span class="hico" data-ico="book-marked"></span><h2 class="h"><span class="ko" data-i>새 용어 5: 파레토 전선 · 초부피 · EHVI · 사용성 게이트 · 삼각 대조</span><span class="en" data-i>5 new terms: Pareto front · hypervolume · EHVI · desirability gate · triangulation</span></h2></div>
+<p class="sub"><span class="ko" data-i>영어 병기 · 한 줄 정의 · 최종 보고서 용어</span><span class="en" data-i>English given · one-line definition · final report terms</span></p>
+<div class="bd">
+<div class="defs icon">
+<div class="defcard icon a" style="--d:1"><span class="lic" data-ico="trophy"></span><p class="term"><span class="ko" data-i>파레토 전선<em>Pareto front</em></span><span class="en" data-i>Pareto front<em>Pareto front</em></span></p><p class="def"><span class="ko" data-i>어느 목표에서도 다른 점에 지지 않는 점의 집합 · 다목적 문제의 해</span><span class="en" data-i>Set of points not beaten by another point on any objective · solution of a multi-objective problem</span></p><p class="again"><span class="ko" data-i>9 · 13장</span><span class="en" data-i>Slides 9 · 13</span></p></div>
+<div class="defcard icon a" style="--d:2"><span class="lic" data-ico="layers"></span><p class="term"><span class="ko" data-i>초부피<em>hypervolume · HV</em></span><span class="en" data-i>Hypervolume<em>hypervolume · HV</em></span></p><p class="def"><span class="ko" data-i>전선과 참조점 사이 면적(부피) · 전선 품질을 한 숫자로 · 참조점이 같을 때만 비교</span><span class="en" data-i>Area (volume) between the front and the reference point · front quality as one number · comparable only for the same reference point</span></p><p class="again"><span class="ko" data-i>9 · 11장</span><span class="en" data-i>Slides 9 · 11</span></p></div>
+<div class="defcard icon a" style="--d:3"><span class="lic" data-ico="crosshair"></span><p class="term">EHVI<em>expected hypervolume improvement</em></p><p class="def"><span class="ko" data-i>후보 하나가 늘릴 초부피의 기대값 · 예측 평균 · 분산 동시 사용</span><span class="en" data-i>Expected value of the hypervolume one candidate would add · uses predictive mean · variance together</span></p><p class="again"><span class="ko" data-i>10 · 11장</span><span class="en" data-i>Slides 10 · 11</span></p></div>
+<div class="defcard icon a" style="--d:4"><span class="lic" data-ico="shield-check"></span><p class="term"><span class="ko" data-i>사용성 게이트<em>desirability gate</em></span><span class="en" data-i>Desirability gate<em>desirability gate</em></span></p><p class="def"><span class="ko" data-i>물성별 사용 범위 만족도를 곱해 극값 처방을 거르는 조건</span><span class="en" data-i>Condition that multiplies per-property satisfaction over the usable range to screen out extreme-value remedies</span></p><p class="again"><span class="ko" data-i>19장</span><span class="en" data-i>Slide 19</span></p></div>
+<div class="defcard icon a" style="--d:4"><span class="lic" data-ico="git-compare"></span><p class="term"><span class="ko" data-i>삼각 대조<em>triangulation</em></span><span class="en" data-i>Triangulation<em>triangulation</em></span></p><p class="def"><span class="ko" data-i>본연구 MD · 문헌 MD · 실측을 한 축에 놓고 오차 크기 · 부호를 함께 보는 검증</span><span class="en" data-i>Validation that puts this-study MD · literature MD · measurement on one axis and checks error size · sign together</span></p><p class="again"><span class="ko" data-i>22장</span><span class="en" data-i>Slide 22</span></p></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>정의 문구 = week16/docs/glossary_w16.md · 원본 13주차 #7 · #9 · #21 · #24</span><span class="en" data-i>Definitions = week16/docs/glossary_w16.md · original week 13 #7 · #9 · #21 · #24</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 21 차시 16-4 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 16-4 · 14분 · 영상 1편</span><span class="en" data-i>Session 16-4 · 14 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="graduation-cap"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">4</p><p class="hubt"><span class="ko" data-i>검증 · 최종 프로젝트</span><span class="en" data-i>Validation · final project</span></p><p class="hubs"><span class="ko" data-i>MD ↔ 실측 · 체크리스트 · W01 ~ W16 회고</span><span class="en" data-i>MD ↔ measurement · checklist · W01 ~ W16 retrospective</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>checklist.json · 제출 요건 점검</span><span class="en" data-i>checklist.json · submission requirement check</span></h4></div></div><p><span class="ko" data-i>내 프로젝트 폴더의 빠진 파일 · 필드 · 발표 10장 계획</span><span class="en" data-i>Missing files · fields in my project folder · 10-slide presentation plan</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>⑥ → ① 환류 · 순환의 완결</span><span class="en" data-i>⑥ → ① feedback · closing the loop</span></h4></div></div><p><span class="ko" data-i>실측 결과가 들어올 때마다 모델 갱신 = W01 디지털 트윈</span><span class="en" data-i>Model updated whenever a measurement arrives = W01 digital twin</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 22 ANIM 밀도 28점 -->
+<section class="slide v3" data-src="13주차#24,13주차#25">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>16-4 · 확인 · 동적</span><span class="en" data-i>16-4 · Check · animated</span></p>
+<div class="hrow"><span class="hico" data-ico="git-compare"></span><h2 class="h"><span class="ko" data-i>밀도 실측 대조: 중앙 오차 2.3 % · MD 가 대부분 낮음</span><span class="en" data-i>Density vs. measurement: median error 2.3 % · MD mostly lower</span></h2></div>
+<p class="sub"><span class="ko" data-i>실측 28점 중 26점에서 MD 가 낮음 · 오차의 크기와 함께 <b>부호</b> 확인 · 한쪽으로 치우친 오차 = 계통 오차 = 보정 대상</span><span class="en" data-i>MD lower at 26 of 28 measured points · check the <b>sign</b> along with error size · one-sided error = systematic error = target for correction</span></p>
+<div class="bd"><div class="emb" data-emb="density" data-dur="10" data-steps="3" data-labels="① 짝 28점|② y = x · ±2.5 %|③ 부호 · 계통 오차" data-labels-en="① 28 pairs|② y = x · ±2.5 %|③ Sign · systematic error"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 13주차 #24 · #25 · 측정값 = 문헌 12편 실측 · MD 계산값 = 본연구(함량확장 재실행 전) · week16/expected_output/md_vs_exp.json · 힘장 점검 = repo/mdworkflow/README.md(NIST Chemistry WebBook)</span><span class="en" data-i>Original week 13 #24 · #25 · measured values = 12 literature papers · MD-computed values = this study (before content-expanded rerun) · week16/expected_output/md_vs_exp.json · force-field check = repo/mdworkflow/README.md (NIST Chemistry WebBook)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 23 FIG Tg · 마스터커브 · 방식 -->
+<section class="slide v3" data-src="13주차#26,13주차#27,13주차#31,13주차#32">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>16-4 · 무엇</span><span class="en" data-i>16-4 · What</span></p>
+<div class="hrow"><span class="hico" data-ico="thermometer"></span><h2 class="h"><span class="ko" data-i>대조 방식 3: 밀도 = 정량 · Tg = 방향 · 강성 = 시간축 정합</span><span class="en" data-i>3 comparison modes: density = quantitative · Tg = direction · stiffness = time-axis alignment</span></h2></div>
+<p class="sub"><span class="ko" data-i>Tg 는 MD 가 11 ~ 66 K 높아도 노화 방향은 일치 · 냉각률 차이(~10¹¹ K/s ↔ ~10 K/min)가 공통 원인</span><span class="en" data-i>Even though MD Tg is 11 ~ 66 K higher, aging direction agrees · common cause = cooling-rate difference (~10¹¹ K/s ↔ ~10 K/min)</span></p>
+<div class="bd">
+<div class="row">
+<div class="figw white fill"><svg viewBox="0 0 900 420" id="w16-tgsvg" class="cfig"></svg></div>
+<div class="col" style="width:600px;flex:none">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="trending-up"></span><div><p class="k"><span class="ko" data-i>Tg · 노화 계열 4단계</span><span class="en" data-i>Tg · 4 aging stages</span></p><h4><span class="ko" data-i>실험 259 → 265 K · MD 270 → 330 K</span><span class="en" data-i>Experiment 259 → 265 K · MD 270 → 330 K</span></h4></div></div><p><span class="ko" data-i>증가 방향 일치 · 차이 11 → 66 K 로 확대</span><span class="en" data-i>Increasing direction agrees · gap widens 11 → 66 K</span></p></div>
+<div class="it hot a" style="--d:2"><div class="ih"><span class="icb" data-ico="clock-alert"></span><div><p class="k"><span class="ko" data-i>강성 · 마스터커브</span><span class="en" data-i>Stiffness · master curve</span></p><div class="n md nosum">Δ 4.72 ± 0.39 decade</div></div></div><p><span class="ko" data-i>MD 시계가 실측보다 약 10⁴·⁷배 빠름 → 정합 후 형상 비교</span><span class="en" data-i>MD clock about 10⁴·⁷× faster than measurement → compare shape after alignment</span></p></div>
+<div class="it dark a" style="--d:3"><div class="ih"><span class="icb" data-ico="circle-x"></span><div><p class="k"><span class="ko" data-i>하지 않은 것</span><span class="en" data-i>What we did not do</span></p><h4><span class="ko" data-i>규격 지표 S · m · Jnr · G*/sinδ</span><span class="en" data-i>Specification metrics S · m · Jnr · G*/sinδ</span></h4></div></div><p><span class="ko" data-i>시험 시간(초–분) ≫ MD 창(ns) · 직접 산출값 없음</span><span class="en" data-i>Test time (seconds–minutes) ≫ MD window (ns) · no directly computed value</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 13주차 #26 · #27 · #31 · #32 · 07주차 #21~#28 · Tg 쌍 = jclepro.2023.139092(문헌값) · Δ = 참고 사례(연구 플랫폼 결과) AN116(S64-22 DSR · BBR ↔ AAA-1 G(t) 387점)</span><span class="en" data-i>Original week 13 #26 · #27 · #31 · #32 · week 07 #21~#28 · Tg pairs = jclepro.2023.139092 (literature values) · Δ = reference case (research-platform result) AN116 (S64-22 DSR · BBR ↔ AAA-1 G(t) 387 points)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 24 MAKE P16-3 -->
+<section class="slide v3" data-src="13주차보충A#23,13주차보충A#24">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>16-4 · 만들어 보기</span><span class="en" data-i>16-4 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="clipboard-check"></span><h2 class="h"><span class="ko" data-i>만들어 보기 P16-3: 제출 폴더 점검 → 발표 10장 계획</span><span class="en" data-i>Try it P16-3: check submission folder → 10-slide presentation plan</span></h2></div>
+<div class="bd">
+<div class="make">
+<div class="left a" style="--d:1">
+<pre class="code"><span class="c"><span class="ko" data-i># 환경: mdai · week16 폴더 · claude (노트북 02 셀 ④)</span><span class="en" data-i># Environment: mdai · week16 folder · claude (notebook 02 cell ④)</span></span>
+python3 scripts/final_project_check.py out/my_project \
+  --out out/checklist.json
+<span class="c"><span class="ko" data-i># 예시 폴더: expected_output/example_project</span><span class="en" data-i># Example folder: expected_output/example_project</span></span>
+<span class="c"><span class="ko" data-i># 한 번 실행 후 종료 = claude -p</span><span class="en" data-i># Run once and exit = claude -p</span></span>
+<span class="ko" data-i>claude -p "out/checklist.json 의 ✗ 항목만 표로"</span><span class="en" data-i>claude -p "table of only the ✗ items in out/checklist.json"</span></pre>
+<div class="prompt" data-id="P16-3"><span class="ko" data-i>week16 에서 scripts/final_project_check.py [out/my_project] --out out/checklist.json 을 실행하고 out/checklist.json 을 읽어라(폴더가 없으면 expected_output/example_project 복사를 제안하고 승인받아라). ① ✗ 항목마다 보완할 파일과 필드를 적고 ② 발표 10장 계획(장 번호 · 제목 · 평가 항목 · 근거 파일)을 표로 만들어라 · 실패한 시도와 원인 장을 반드시 넣고 ③ 내 주제 [아스팔트 바인더 첨가제 · 분리일과 점도]에서 표적 2개 · 제약 · 성공 기준을 problem.json 형식 초안으로 보여라. 내 폴더의 파일은 승인 전에 고치지 마라. 수치는 내 파일에 있는 값만 쓰고 없으면 「확인 필요」로 둔다. 결과는 out/P16-3_result.md 로 저장해라.</span><span class="en" data-i>In week16, run scripts/final_project_check.py [out/my_project] --out out/checklist.json and read out/checklist.json (if the folder is missing, propose copying expected_output/example_project and ask for approval). ① For each ✗ item, write the file and field to fix ② make a 10-slide presentation plan table (slide number · title · evaluation item · evidence file) · be sure to include a slide on failed attempts and causes ③ for my topic [asphalt binder additive · work of separation and viscosity], show a draft in problem.json format with 2 targets · constraints · success criteria. Do not edit files in my folder before approval. Use only values present in my files; leave others as "needs checking". Save the result to out/P16-3_result.md.</span></div>
+</div>
+<div class="expect a" style="--d:2">
+<h4><span class="tic" data-ico="list-checks"></span><span class="ko" data-i>기대 결과 · 예시 폴더 점검 (이번 주 실행)</span><span class="en" data-i>Expected result · example folder check (this week's run)</span></h4>
+<table class="t"><thead><tr><th><span class="ko" data-i>평가 항목</span><span class="en" data-i>Evaluation item</span></th><th><span class="ko" data-i>배점</span><span class="en" data-i>Points</span></th><th><span class="ko" data-i>요건</span><span class="en" data-i>Requirement</span></th></tr></thead><tbody id="w16-chk-table"></tbody></table>
+<div class="cb plain"><span class="fc or"><span class="ko" data-i>요건 충족 <em>100 / 100</em></span><span class="en" data-i>Requirements met <em>100 / 100</em></span></span><span class="fc rd"><span class="ko" data-i>슬라이드 <em>0</em>장 · 작성 대기</span><span class="en" data-i>Slides <em>0</em> · pending</span></span></div>
+<p class="cap"><span class="ko" data-i>점수 = 요건 충족 여부만 · 내용의 질은 10분 발표 + 5분 질의에서 평가</span><span class="en" data-i>Score = whether requirements are met only · content quality is judged in the 10-min presentation + 5-min Q&A</span></p>
+</div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>발표 계획에 「실패한 시도와 원인」 장이 있는가</span><span class="en" data-i>Does the presentation plan have a "failed attempts and causes" slide?</span></p><p><span class="ko" data-i>모든 수치에 근거 파일(JSON · CSV)이 붙어 있는가</span><span class="en" data-i>Does every number have an evidence file (JSON · CSV)?</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>week16/scripts/final_project_check.py · 지시문 원문 week16/prompts.md · P16-3 · 원본 13주차 보충A #23(평가 기준 · 배점) · #24(발표 10장 예시)</span><span class="en" data-i>week16/scripts/final_project_check.py · prompt source week16/prompts.md · P16-3 · original week 13 supplement A #23 (evaluation criteria · points) · #24 (10-slide example)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 25 ANIM 체크리스트 -->
+<section class="slide v3" data-src="13주차보충A#23,13주차보충A#24">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>16-4 · 어떻게 · 동적</span><span class="en" data-i>16-4 · How · animated</span></p>
+<div class="hrow"><span class="hico" data-ico="list-checks"></span><h2 class="h"><span class="ko" data-i>최종 프로젝트 체크리스트: 평가 5항목 · 발표 구성</span><span class="en" data-i>Final project checklist: 5 evaluation items · presentation structure</span></h2></div>
+<p class="sub"><span class="ko" data-i>100점 · 항목 충족마다 점수 상승 · 오른쪽 발표 10장 = 장마다 평가 항목 하나 · 제출 예시 = expected_output/example_project</span><span class="en" data-i>100 points · score rises with each item met · right = 10 presentation slides, one evaluation item per slide · submission example = expected_output/example_project</span></p>
+<div class="bd"><div class="emb" data-emb="checklist" data-dur="12" data-steps="5" data-labels="문제 정의 20|계산 · 검증 30|탐색 결과 25|재현성 15|한계 10 · 발표" data-labels-en="Problem definition 20|Computation · validation 30|Exploration results 25|Reproducibility 15|Limitations · presentation 10"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 13주차 보충A #23 · #24 · week16/expected_output/checklist.json · 제출 = 10분 발표 + 5분 질의 · 슬라이드 10장 이내</span><span class="en" data-i>Original week 13 supplement A #23 · #24 · week16/expected_output/checklist.json · submission = 10-min presentation + 5-min Q&A · up to 10 slides</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 26 FIG 6단계 회고 -->
+<section class="slide v3" data-min="1.5" data-src="01주차#25,12주차#6">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>16-4 · 회고</span><span class="en" data-i>16-4 · Retrospective</span></p>
+<div class="hrow"><span class="hico" data-ico="workflow"></span><h2 class="h"><span class="ko" data-i>W01 ~ W16 회고: 역설계 순환 단계마다 내가 만든 파일</span><span class="en" data-i>W01 ~ W16 retrospective: the file I made at each step of the inverse-design cycle</span></h2></div>
+<p class="sub"><span class="ko" data-i>6단계 순환 · W01 의 그림 속 순환 → 이제 파일로 연결 · 실측 유입마다 갱신 = 디지털 트윈 · W17 · W18 = 내 계산으로 한 바퀴</span><span class="en" data-i>6-step cycle · the cycle in the W01 figure → now linked by files · update with each incoming measurement = digital twin · W17 · W18 = one turn with my own runs</span></p>
+<div class="bd"><div class="figw white fill"><svg viewBox="0 0 1588 580" id="w16-ring" class="cfig"></svg></div></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 01주차 #25 · 12주차 #6 · 파일 = 각 주차 저장소 expected_output</span><span class="en" data-i>Original week 01 #25 · week 12 #6 · files = expected_output of each week's repository</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 27 다음 주차로 · 최종 프로젝트 -->
+<section class="slide v3 accent">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>다음 주차로 · W17 MD 워크플로우 조립 · W18 폐루프 통합</span><span class="en" data-i>To next week · W17 MD workflow assembly · W18 closed-loop integration</span></p>
+<div class="hrow"><span class="hico" data-ico="graduation-cap"></span><h2 class="h"><span class="ko" data-i>오늘의 산출물 3 → W17 · W18 폐루프 → 최종 프로젝트 제출</span><span class="en" data-i>Today's 3 outputs → W17 · W18 closed loop → final project submission</span></h2></div>
+<p class="sub"><span class="ko" data-i>큐레이션 = 지우지 않고 이유를 남김 · 다목적 = 전선 · EHVI = 다음 계산 · 검증 = 크기와 부호 · 제출 = 폴더 + 10분</span><span class="en" data-i>Curation = leave the reason instead of deleting · multi-objective = front · EHVI = next calculation · validation = size and sign · submission = folder + 10 min</span></p>
+<div class="bd">
+<div class="lines">
+<div class="ln a" style="--d:1"><span class="nn">01</span><div><h4><span class="ko" data-i>오늘 산출물</span><span class="en" data-i>Today's outputs</span></h4><p><span class="file">out/curation.json</span> · <span class="file">ehvi.json</span> · <span class="file">checklist.json</span> <span class="ko" data-i>· P16-1 ~ P16-3 결과</span><span class="en" data-i>· P16-1 ~ P16-3 results</span></p></div></div>
+<div class="ln a" style="--d:2"><span class="nn">02</span><div><h4><span class="ko" data-i>최종 프로젝트 제출</span><span class="en" data-i>Final project submission</span></h4><p><span class="ko" data-i>W18 폐루프를 내 문제에 적용(표적 · 후보 · 모델 · 획득함수 · 검증) · 3층 셀 인장(W08 · W10) = 확장 예시 · 실행 = Claude Code + 내 CLAUDE.md · 10분 + 질의 5분 ·</span><span class="en" data-i>Apply the W18 closed loop to my problem (targets · candidates · model · acquisition function · validation) · 3-layer cell tension (W08 · W10) = extension example · run = Claude Code + my CLAUDE.md · 10 min + Q&A 5 min ·</span> <span class="file">docs/final_project.md</span></p></div></div>
+<div class="ln a" style="--d:3"><span class="nn">03</span><div><h4><span class="ko" data-i>못 끝냈다면</span><span class="en" data-i>If unfinished</span></h4><p><span class="file">week16/expected_output/example_project/</span> <span class="ko" data-i>를 복사해 내 값으로 교체</span><span class="en" data-i>copy it and replace with my values</span></p></div></div>
+<div class="ln a" style="--d:4"><span class="nn">04</span><div><h4><span class="ko" data-i>강좌 이후의 확장</span><span class="en" data-i>Extensions after the course</span></h4><p><span class="ko" data-i>소재(시멘트 수화물 · 지오폴리머) · 방법(ReaxFF 노화 · MLIP · 생성 모델) · 실험 연계(실배합 → 재투입)</span><span class="en" data-i>Materials (cement hydrates · geopolymers) · methods (ReaxFF aging · MLIP · generative models) · experiment link (real mix → re-input)</span></p></div></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>퀴즈 week16/quiz.md · 용어 week16/docs/glossary_w16.md · 원본 13주차 보충A #23 ~ #25</span><span class="en" data-i>Quiz week16/quiz.md · terms week16/docs/glossary_w16.md · original week 13 supplement A #23 ~ #25</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<script src="../../common/icons.js"></script>
+<script src="../../common/deck.js"></script>
+<script>
+var W16 = {"pts":[[1.378,269.9],[2.115,328.3],[4.924,378.0],[4.365,398.1],[3.32,364.8],[4.051,365.9],[4.458,359.0],[3.334,384.8],[3.908,374.5],[2.943,291.6],[2.424,325.9],[3.012,369.8],[1.58,301.2],[5.261,397.2],[3.469,372.2],[3.636,361.2],[1.561,303.3],[2.481,345.3],[2.555,361.3],[2.738,371.9],[1.742,318.9],[1.319,323.6],[1.974,300.5],[3.725,345.4],[3.456,387.7],[1.871,337.5],[1.41,309.4],[3.383,346.9],[1.631,296.5],[3.355,399.0],[1.185,225.4],[2.258,319.5],[3.23,368.6],[3.582,301.3],[4.083,324.0],[1.036,251.5],[2.995,346.7],[2.341,360.0],[3.138,405.0],[3.033,338.1],[2.369,322.0],[1.411,301.7],[2.484,346.2],[2.831,369.0],[2.888,342.4],[3.453,370.0],[3.399,342.2],[4.682,384.9],[1.965,307.3],[3.568,344.8],[2.567,363.9],[2.776,389.2],[1.787,282.5],[2.423,321.4],[3.361,360.8],[4.542,341.6],[4.277,373.1],[1.765,318.9],[1.744,336.8],[2.829,324.7],[3.182,357.1],[2.308,381.1],[2.04,326.5],[3.474,364.5],[1.639,325.4],[1.562,253.6],[3.038,383.2],[1.995,331.7],[3.718,396.5],[1.858,289.7],[3.08,373.4],[4.029,354.0],[2.42,339.5],[3.911,389.9],[2.632,342.1],[2.434,334.9],[3.528,353.4],[1.217,242.3],[2.863,360.2],[1.158,237.5],[3.614,341.0],[3.391,354.7],[3.792,370.8],[1.594,321.4],[1.261,248.2],[4.756,351.8],[1.611,330.1],[2.794,353.4],[1.327,252.7],[1.958,280.1],[3.801,355.8],[2.556,335.6],[2.638,364.1],[1.264,284.9],[2.596,328.8],[1.577,285.6],[1.4,286.9],[1.718,264.1],[1.407,280.1],[3.671,393.7],[2.631,349.4],[1.818,326.5],[1.285,260.2],[4.385,366.6],[1.953,336.4],[1.78,302.9],[2.044,296.9],[1.196,248.7],[3.98,313.9],[1.987,338.8],[2.765,367.9],[2.73,341.7],[2.618,334.2],[2.819,316.9],[1.613,302.6],[1.534,305.2],[3.401,378.6],[2.816,353.3],[1.766,294.1],[2.279,311.7],[2.622,318.3],[3.663,369.2],[1.532,296.5],[2.897,308.5],[2.382,326.8],[3.016,297.9],[2.119,310.3],[1.848,309.4],[3.19,349.8],[3.401,399.4],[2.928,377.3],[2.307,324.4],[2.738,331.5],[3.276,360.3],[2.21,304.9],[4.327,343.2],[1.835,313.2],[2.272,317.2],[2.485,299.6],[2.266,311.2],[3.343,353.1],[3.255,368.1],[2.058,303.7],[1.895,294.8],[2.471,329.0],[2.243,314.3],[2.417,332.4],[2.676,329.8],[1.265,250.8],[2.363,347.1],[2.439,341.3],[1.113,257.4],[4.426,381.1],[1.715,257.6],[3.598,323.6],[4.195,325.8],[2.818,329.9],[3.139,363.3],[3.952,355.7],[2.566,351.3],[1.506,261.3],[1.491,279.7],[1.07,270.2],[2.24,333.5],[3.412,323.3],[3.491,322.7],[3.288,358.3],[3.36,373.2],[3.002,342.2],[2.66,400.4],[2.156,314.4],[1.325,311.7],[3.836,321.7],[1.782,297.6],[1.154,248.3],[1.335,281.2],[3.673,350.8],[5.047,373.6],[4.376,375.3],[3.531,369.9],[4.207,344.6],[3.135,380.8],[3.085,377.1],[2.152,280.5],[4.383,394.8],[4.08,390.7],[3.458,343.1],[2.931,369.0],[3.931,372.2],[3.539,365.0],[3.44,340.4],[2.607,312.4],[1.938,351.3],[2.35,344.6],[1.934,273.2],[1.963,280.2],[3.611,328.6],[2.398,309.5],[2.495,348.6],[2.851,274.4],[1.517,282.5],[3.918,325.1],[2.299,326.5],[1.9,323.0],[2.484,347.9],[1.804,286.7],[1.456,249.5],[1.629,290.1],[1.779,321.6],[3.629,390.7],[1.09,255.5],[2.807,379.3],[2.733,330.1],[4.662,392.8],[2.488,353.3],[1.421,269.9],[1.297,263.6],[3.077,338.3],[2.54,325.5],[1.134,303.3],[4.515,395.7],[1.245,272.0],[1.25,252.6],[1.212,295.6],[2.184,306.3],[1.697,288.7],[1.734,323.1],[4.436,349.0],[1.532,301.4],[3.791,395.6],[2.194,298.7],[2.81,326.8],[3.184,392.2],[3.356,336.5],[1.265,292.3],[3.298,339.0],[3.586,376.9],[4.63,404.2],[3.086,348.8],[1.645,333.7],[1.898,334.7],[2.447,346.6],[3.803,356.0],[3.471,339.6],[2.409,347.9],[2.869,319.5],[1.251,271.0],[1.479,253.1],[1.266,241.5],[3.705,393.1],[3.802,334.7],[2.514,378.0],[1.874,329.9],[1.795,289.3],[1.104,260.3],[3.017,309.7],[3.349,335.2],[2.765,339.9],[3.298,368.3],[2.67,353.2],[1.698,276.8],[2.364,312.7],[2.995,329.1],[2.374,307.8],[3.578,399.7],[2.008,300.5],[3.5,361.6],[1.699,312.6],[1.458,318.3],[2.823,363.5],[2.83,331.8],[1.208,230.4],[1.443,317.8],[0.872,229.1],[3.574,348.7],[1.698,321.1],[1.916,286.2],[1.945,316.3],[3.258,369.6],[1.268,260.3],[1.662,258.2],[2.92,351.6],[1.635,283.2],[2.757,297.5],[3.062,346.3],[1.664,301.0],[2.703,329.7],[3.972,372.1],[1.483,283.6],[2.618,327.3],[1.766,298.5],[3.34,368.0],[3.012,326.2],[3.974,342.4],[1.758,288.6],[2.801,349.7],[2.548,326.4],[0.906,252.1],[3.1,346.1],[3.246,339.0],[3.199,301.9],[3.112,399.6],[1.242,271.3],[1.928,297.3],[2.855,307.7],[1.77,378.8],[4.471,328.8],[1.39,239.9],[1.788,320.0],[3.336,388.4],[1.563,238.3],[2.902,308.4],[3.825,374.2],[5.425,392.8],[2.889,349.8],[3.528,358.0],[3.231,354.5],[3.428,360.8],[1.175,292.5],[2.008,249.9],[2.178,318.7],[2.785,327.2],[1.913,315.4],[4.194,438.5],[1.676,241.6],[4.406,349.4],[2.518,341.2],[3.571,364.9],[3.089,335.9],[1.445,309.9],[3.048,344.6],[2.935,343.1],[1.778,346.5],[2.99,372.0],[3.154,369.4],[3.219,383.7],[1.756,314.6],[3.463,309.0],[1.455,310.7],[3.917,313.4],[3.92,383.7],[3.665,400.0],[4.128,380.1],[3.731,384.0],[2.024,333.3],[4.43,371.5],[2.734,360.0],[1.283,257.4],[1.676,273.2],[3.114,337.0],[1.693,297.5],[2.603,313.9],[4.019,369.3],[4.008,380.9],[2.227,283.4],[1.607,223.1],[4.47,379.9],[2.936,370.2],[3.749,380.9],[3.285,338.2],[3.573,339.4],[4.2,362.0],[1.378,293.3],[3.935,352.1],[3.364,364.1],[2.978,371.9],[1.585,309.7],[2.546,310.2],[1.677,265.0],[4.376,348.0],[1.914,292.3],[1.361,263.6],[2.126,312.0],[1.334,293.9],[3.838,382.7],[6.133,351.4],[1.96,333.3],[2.413,352.3],[3.028,335.9],[3.967,350.3],[2.963,363.2],[2.982,328.7],[2.0,289.4],[5.072,409.5],[1.576,309.4],[1.289,227.9],[1.694,316.7],[2.421,365.5],[2.221,260.4],[3.446,427.9],[4.479,390.3],[5.118,392.0],[1.855,332.0],[3.672,383.5],[2.571,307.7],[5.218,394.9],[1.927,326.1],[3.755,389.5],[3.116,388.4],[2.013,339.8],[1.699,294.3],[1.906,263.4],[1.475,274.5],[2.96,304.2],[2.206,324.7],[2.589,305.0],[1.755,324.1],[2.211,326.9],[1.111,230.8],[2.913,357.2],[2.956,338.7],[2.802,332.4],[3.596,350.4],[3.29,348.0],[3.768,361.5],[3.211,357.5],[3.017,294.8],[2.817,329.0],[2.731,328.3],[2.203,344.7],[3.507,386.5],[1.367,312.4],[1.977,308.6],[2.099,279.5],[2.631,327.8],[2.193,328.1],[2.633,321.3],[1.869,316.9],[1.817,317.5],[4.057,393.0],[3.056,360.2],[2.2,337.4],[4.02,343.4],[3.783,376.6],[3.424,390.5],[2.958,360.5],[1.804,323.6],[2.908,367.8],[2.512,286.6],[4.985,368.0],[1.87,270.8],[1.914,301.5],[1.599,281.1],[1.242,311.9],[3.412,360.6],[3.589,376.2],[2.357,284.7],[3.693,373.6],[1.621,300.1],[1.618,313.8],[1.826,292.0],[1.755,298.4],[2.389,344.9],[2.35,347.8],[2.533,358.7],[1.124,272.6],[2.065,302.2],[3.317,370.2],[3.579,373.0],[1.969,298.7],[2.012,285.0],[1.372,261.7],[1.918,289.5],[1.434,296.0],[1.415,288.5],[4.132,367.3],[2.981,366.7],[2.738,348.6],[4.017,355.3],[4.257,324.2],[1.52,311.8],[2.414,367.6],[1.649,318.8],[3.671,368.6],[1.508,274.0],[3.024,365.5],[1.737,277.0],[2.514,328.6],[4.686,361.8],[3.025,337.0],[3.494,321.3],[2.971,329.7],[1.941,265.9],[1.302,258.1],[2.189,359.9],[1.886,316.5],[1.709,273.7],[4.876,387.6],[1.753,292.8],[1.802,288.0],[2.184,326.5],[1.646,264.2],[4.006,384.7],[4.017,359.0],[1.705,296.0],[2.312,337.1],[2.112,328.6],[1.624,284.7],[1.483,294.8],[4.125,393.1],[2.372,361.7],[3.377,317.8],[2.744,306.7],[1.292,283.4],[2.58,343.9],[1.422,278.8],[4.526,318.5],[2.724,373.7],[1.092,282.5],[2.529,333.3],[3.94,374.4],[1.759,325.5],[3.414,370.9],[1.793,264.2],[4.354,304.5],[1.881,292.1],[3.458,336.7],[2.046,322.7],[2.789,374.7],[3.648,390.7],[3.545,384.5],[1.961,268.9],[2.384,352.8],[2.925,351.7],[3.778,372.0],[5.107,369.0],[1.95,324.1],[1.871,315.9],[4.574,349.8],[4.052,367.9],[2.313,337.0],[4.203,354.4],[4.176,380.8],[3.464,366.0],[4.219,369.6],[3.819,399.8],[2.363,367.1],[2.512,357.0],[1.327,260.8],[2.215,271.0],[3.435,352.1],[1.756,345.0],[1.301,252.7],[1.41,251.4],[3.234,356.4],[1.133,269.4],[1.808,265.0],[2.051,323.3],[4.576,348.3],[1.447,260.2],[2.649,372.2],[2.149,295.8],[4.17,355.2],[1.993,298.9],[2.714,294.2],[1.418,271.1],[1.37,279.8],[4.655,371.8],[1.436,283.6],[1.723,269.4],[2.897,324.9],[2.816,358.8],[2.029,265.1],[1.418,294.2],[1.693,271.9],[3.941,329.3],[3.606,389.7],[3.67,340.9],[4.493,430.2],[4.194,348.6],[2.259,343.3],[3.922,389.8],[2.48,316.3],[1.503,295.7],[2.68,331.4],[4.123,370.3],[1.718,307.7],[2.227,310.8],[2.239,341.4],[1.606,250.7],[2.2,340.1],[1.79,335.6],[2.995,320.0],[1.159,257.4],[2.808,337.6],[3.708,366.0],[4.201,350.2],[1.632,266.7],[3.48,394.2],[2.557,294.2],[3.626,348.0],[2.109,304.7],[2.757,350.8],[3.482,351.0],[1.519,282.1],[5.343,350.6],[1.822,307.7],[2.322,352.0],[3.169,406.6],[3.16,343.0],[1.447,250.1],[1.483,282.7],[4.557,407.7],[2.674,345.7],[4.016,360.3],[3.417,419.3],[1.503,296.2],[3.84,366.6],[3.133,362.6],[2.691,333.6],[1.929,293.7],[3.309,370.2]],"front":[{"K":6.133,"CED":351.4,"binder":"AAK1","additive":"Carbon_Nano_Tube","aging":"non_aging","T_K":213.0},{"K":5.425,"CED":392.8,"binder":"AAK1","additive":"none","aging":"long_aging","T_K":213.0},{"K":5.261,"CED":397.2,"binder":"AAA1","additive":"SiO2","aging":"non_aging","T_K":233.0},{"K":5.072,"CED":409.5,"binder":"AAM1","additive":"SiO2","aging":"long_aging","T_K":213.0},{"K":4.493,"CED":430.2,"binder":"AAM1","additive":"SiO2","aging":"long_aging","T_K":233.0},{"K":4.194,"CED":438.5,"binder":"AAK1","additive":"SiO2","aging":"long_aging","T_K":233.0}],"hv":871.28,"hv_alt":{"ref":[3.0,350.0],"hv":180.97},"traj":[{"n":20,"front_n":2,"hv":630.36},{"n":21,"front_n":2,"hv":630.36},{"n":22,"front_n":2,"hv":630.36},{"n":23,"front_n":2,"hv":630.36},{"n":24,"front_n":2,"hv":630.36},{"n":25,"front_n":2,"hv":630.36},{"n":26,"front_n":2,"hv":630.36},{"n":27,"front_n":2,"hv":630.36},{"n":28,"front_n":2,"hv":630.36},{"n":29,"front_n":2,"hv":630.36},{"n":30,"front_n":3,"hv":632.49},{"n":31,"front_n":3,"hv":632.49},{"n":32,"front_n":3,"hv":632.49},{"n":33,"front_n":3,"hv":632.49},{"n":34,"front_n":3,"hv":632.49},{"n":35,"front_n":3,"hv":632.49},{"n":36,"front_n":3,"hv":632.49},{"n":37,"front_n":3,"hv":632.49},{"n":38,"front_n":3,"hv":632.49},{"n":39,"front_n":4,"hv":645.28},{"n":40,"front_n":4,"hv":645.28},{"n":41,"front_n":4,"hv":645.28},{"n":42,"front_n":4,"hv":645.28},{"n":43,"front_n":4,"hv":645.28},{"n":44,"front_n":4,"hv":645.28},{"n":45,"front_n":4,"hv":645.28},{"n":46,"front_n":4,"hv":645.28},{"n":47,"front_n":4,"hv":645.28},{"n":48,"front_n":4,"hv":645.28},{"n":49,"front_n":4,"hv":645.28},{"n":50,"front_n":4,"hv":645.28},{"n":51,"front_n":4,"hv":645.28},{"n":52,"front_n":4,"hv":645.28},{"n":53,"front_n":4,"hv":645.28},{"n":54,"front_n":4,"hv":645.28},{"n":55,"front_n":4,"hv":645.28},{"n":56,"front_n":4,"hv":645.28},{"n":57,"front_n":4,"hv":645.28},{"n":58,"front_n":4,"hv":645.28},{"n":59,"front_n":4,"hv":645.28},{"n":60,"front_n":4,"hv":645.28},{"n":100,"front_n":4,"hv":645.28},{"n":200,"front_n":4,"hv":645.4},{"n":300,"front_n":3,"hv":654.45},{"n":400,"front_n":5,"hv":865.06},{"n":500,"front_n":5,"hv":865.06},{"n":612,"front_n":6,"hv":871.28}],"ref":[1.0,250.0],"ehvi":{"n_obs":400,"n_cand":212,"holdout_rmse":{"K_GPa":0.415,"CED_MJm3":6.4},"hv_obs":865.06,"front_obs":[[6.133,351.4],[5.425,392.8],[5.261,397.2],[5.072,409.5],[4.194,438.5]],"picks":[{"rank":1,"binder":"AAA1","additive":"SiO2","aging":"long_aging","T_K":213.0,"mu":[4.264,411.5],"sd":[0.419,6.2],"ehvi":0.7,"true":[4.557,407.7]},{"rank":2,"binder":"AAM1","additive":"SiO2","aging":"long_aging","T_K":233.0,"mu":[4.021,411.6],"sd":[0.417,5.9],"ehvi":null,"true":[4.493,430.2]},{"rank":3,"binder":"AAK1","additive":"SiO2","aging":"short_aging","T_K":213.0,"mu":[4.181,403.6],"sd":[0.418,6.1],"ehvi":null,"true":[3.606,389.7]}],"top12_first_round":[{"binder":"AAA1","additive":"SiO2","aging":"long_aging","T_K":213.0,"mu":[4.264,411.5],"sd":[0.419,6.2],"ehvi":0.7,"p_improve":0.363},{"binder":"AAM1","additive":"SiO2","aging":"long_aging","T_K":233.0,"mu":[4.021,411.6],"sd":[0.417,5.9],"ehvi":0.39,"p_improve":0.24},{"binder":"AAK1","additive":"SiO2","aging":"short_aging","T_K":213.0,"mu":[4.181,403.6],"sd":[0.418,6.1],"ehvi":0.14,"p_improve":0.102},{"binder":"AAA1","additive":"SiO2","aging":"short_aging","T_K":213.0,"mu":[4.205,397.6],"sd":[0.418,6.1],"ehvi":0.04,"p_improve":0.029},{"binder":"AAK1","additive":"Graphine","aging":"long_aging","T_K":213.0,"mu":[4.244,387.0],"sd":[0.419,5.9],"ehvi":0.03,"p_improve":0.004},{"binder":"AAK1","additive":"Carbon_Nano_Tube","aging":"short_aging","T_K":213.0,"mu":[4.182,375.4],"sd":[0.418,6.0],"ehvi":0.02,"p_improve":0.004},{"binder":"AAK1","additive":"none","aging":"short_aging","T_K":213.0,"mu":[4.151,373.2],"sd":[0.418,6.0],"ehvi":0.01,"p_improve":0.004},{"binder":"AAA1","additive":"Graphine","aging":"long_aging","T_K":213.0,"mu":[4.266,389.4],"sd":[0.419,6.0],"ehvi":0.01,"p_improve":0.008},{"binder":"AAK1","additive":"SiO2","aging":"non_aging","T_K":213.0,"mu":[4.106,385.5],"sd":[0.42,6.4],"ehvi":0.01,"p_improve":0.002},{"binder":"AAM1","additive":"SiO2","aging":"short_aging","T_K":233.0,"mu":[3.941,398.0],"sd":[0.415,5.8],"ehvi":0.01,"p_improve":0.012},{"binder":"AAA1","additive":"Graphine","aging":"short_aging","T_K":213.0,"mu":[4.206,372.9],"sd":[0.418,6.0],"ehvi":0.01,"p_improve":0.002},{"binder":"AAA1","additive":"Carbon_Nano_Tube","aging":"non_aging","T_K":213.0,"mu":[4.131,354.7],"sd":[0.42,6.5],"ehvi":0.0,"p_improve":0.002}],"hv_after_true":871.28,"hv_gain_ehvi":6.22,"hv_gain_random_mean":0.09,"hv_gain_random_p_ge":0.015,"candidates_all":[[1.574,303.8,0.415,5.8,0.0],[1.383,271.3,0.417,5.9,0.0],[1.539,272.6,0.415,5.8,0.0],[2.965,303.4,0.416,5.9,0.0],[2.162,322.7,0.416,5.8,0.0],[3.247,310.6,0.416,5.8,0.0],[1.709,329.5,0.416,5.9,0.0],[1.973,331.0,0.416,5.8,0.0],[1.138,229.7,0.419,6.0,0.0],[2.425,349.8,0.416,5.8,0.0],[3.367,335.1,0.415,5.7,0.0],[3.238,335.4,0.416,5.8,0.0],[3.83,344.7,0.418,6.3,0.0],[2.935,348.3,0.416,5.8,0.0],[3.399,361.9,0.414,5.7,0.0],[2.675,356.5,0.415,5.7,0.0],[2.659,295.9,0.416,5.8,0.0],[3.085,329.2,0.415,5.7,0.0],[2.999,330.2,0.416,5.9,0.0],[2.173,340.4,0.416,5.8,0.0],[2.972,387.9,0.416,5.8,0.0],[1.536,308.6,0.419,6.0,0.0],[1.808,311.4,0.415,6.0,0.0],[2.073,279.0,0.416,5.8,0.0],[2.966,325.3,0.416,6.0,0.0],[4.1,348.6,0.42,6.5,0.0],[2.674,316.3,0.416,6.0,0.0],[2.009,333.9,0.415,5.8,0.0],[2.119,317.2,0.416,5.8,0.0],[4.205,397.6,0.418,6.1,0.04],[3.347,361.1,0.415,5.8,0.0],[1.968,344.9,0.416,5.8,0.0],[3.519,343.5,0.417,5.9,0.0],[2.969,383.2,0.416,5.8,0.0],[3.993,385.8,0.418,5.8,0.0],[2.846,362.9,0.415,5.8,0.0],[1.751,325.9,0.417,6.0,0.0],[3.212,373.4,0.416,5.8,0.0],[2.386,284.8,0.416,5.9,0.0],[4.131,387.8,0.42,6.6,0.0],[1.602,271.2,0.417,6.0,0.0],[1.779,305.8,0.415,5.8,0.0],[1.387,287.7,0.417,6.3,0.0],[1.714,314.6,0.416,5.8,0.0],[3.64,347.9,0.415,5.8,0.0],[3.511,379.6,0.416,5.8,0.0],[2.403,280.8,0.416,5.9,0.0],[3.675,371.1,0.415,5.7,0.0],[2.107,301.4,0.416,5.8,0.0],[1.743,325.7,0.417,5.9,0.0],[2.689,290.0,0.416,5.9,0.0],[1.576,299.3,0.415,5.8,0.0],[2.838,351.5,0.415,5.7,0.0],[2.849,344.9,0.415,5.7,0.0],[3.129,359.6,0.415,5.8,0.0],[1.322,279.0,0.417,5.9,0.0],[2.143,299.9,0.416,5.9,0.0],[4.206,372.9,0.418,6.0,0.01],[3.91,372.4,0.416,5.8,0.0],[2.073,300.5,0.416,5.8,0.0],[2.363,287.6,0.416,5.8,0.0],[1.343,264.1,0.417,5.8,0.0],[1.81,288.7,0.416,5.8,0.0],[1.374,288.7,0.417,5.9,0.0],[1.76,283.9,0.415,5.7,0.0],[4.106,385.5,0.42,6.4,0.01],[2.999,356.5,0.416,6.0,0.0],[2.647,354.4,0.416,5.8,0.0],[3.493,353.0,0.416,5.8,0.0],[3.827,318.9,0.417,5.9,0.0],[1.936,312.9,0.416,5.8,0.0],[2.709,364.7,0.416,5.8,0.0],[1.731,319.6,0.417,5.9,0.0],[3.212,373.4,0.416,5.8,0.0],[1.387,275.9,0.417,6.0,0.0],[2.974,366.9,0.416,5.8,0.0],[1.596,277.7,0.416,5.9,0.0],[1.968,329.1,0.416,5.8,0.0],[3.99,356.8,0.416,5.9,0.0],[2.932,339.5,0.415,5.7,0.0],[3.846,316.0,0.417,6.1,0.0],[3.259,333.1,0.416,6.1,0.0],[1.837,264.1,0.416,5.8,0.0],[1.407,256.1,0.417,6.0,0.0],[2.976,368.0,0.416,5.8,0.0],[2.018,317.4,0.415,5.8,0.0],[1.596,291.6,0.416,5.9,0.0],[4.244,387.0,0.419,5.9,0.03],[1.587,299.7,0.416,6.1,0.0],[1.587,288.9,0.416,5.9,0.0],[2.305,325.1,0.415,5.8,0.0],[1.609,287.2,0.416,5.8,0.0],[3.51,383.6,0.416,5.8,0.0],[3.752,356.3,0.416,5.8,0.0],[2.119,295.6,0.416,5.8,0.0],[2.506,337.3,0.415,5.7,0.0],[2.802,328.3,0.415,5.7,0.0],[1.788,283.8,0.415,5.8,0.0],[1.558,293.7,0.416,5.9,0.0],[3.835,381.1,0.418,6.1,0.0],[2.914,362.4,0.416,5.8,0.0],[3.545,314.6,0.416,5.8,0.0],[2.107,298.0,0.416,5.8,0.0],[1.855,288.9,0.416,5.8,0.0],[2.202,357.1,0.416,5.8,0.0],[1.633,287.7,0.416,6.1,0.0],[3.547,317.5,0.417,6.0,0.0],[4.002,387.4,0.417,6.0,0.0],[1.376,287.2,0.417,6.0,0.0],[3.093,335.4,0.415,5.7,0.0],[3.657,368.4,0.415,5.8,0.0],[1.947,330.3,0.416,5.8,0.0],[3.736,365.2,0.416,5.8,0.0],[1.383,264.0,0.417,5.9,0.0],[3.275,305.3,0.416,6.0,0.0],[2.086,298.2,0.416,5.8,0.0],[4.115,351.0,0.42,6.0,0.0],[2.038,316.1,0.415,5.7,0.0],[3.214,372.8,0.416,5.8,0.0],[4.266,389.4,0.419,6.0,0.01],[3.746,383.9,0.416,5.9,0.0],[2.086,276.9,0.416,5.8,0.0],[2.453,351.3,0.416,5.8,0.0],[3.129,353.2,0.415,5.7,0.0],[4.151,373.2,0.418,6.0,0.01],[4.232,358.3,0.419,6.1,0.0],[1.931,329.4,0.416,5.8,0.0],[1.555,318.7,0.419,6.1,0.0],[3.925,344.7,0.415,5.8,0.0],[4.115,383.1,0.42,6.2,0.0],[2.166,339.7,0.416,5.8,0.0],[3.087,356.4,0.415,5.7,0.0],[4.182,375.4,0.418,6.0,0.02],[2.976,371.3,0.416,5.8,0.0],[3.643,368.4,0.415,5.7,0.0],[3.95,393.7,0.416,6.0,0.0],[2.813,370.5,0.415,5.7,0.0],[2.675,358.4,0.415,5.8,0.0],[1.37,258.3,0.417,5.9,0.0],[2.126,270.6,0.416,5.9,0.0],[4.131,354.7,0.42,6.5,0.0],[2.266,347.2,0.415,5.7,0.0],[1.601,250.7,0.417,5.9,0.0],[1.181,241.6,0.419,6.0,0.0],[3.755,356.6,0.416,5.8,0.0],[1.551,275.7,0.416,5.8,0.0],[1.822,265.4,0.416,5.8,0.0],[2.049,322.6,0.415,5.9,0.0],[4.131,355.3,0.42,6.3,0.0],[1.383,255.8,0.417,5.9,0.0],[2.57,351.7,0.415,5.8,0.0],[1.72,302.6,0.417,5.8,0.0],[3.802,348.1,0.418,6.0,0.0],[1.741,301.4,0.417,5.8,0.0],[2.028,294.3,0.415,5.7,0.0],[1.359,281.3,0.417,6.0,0.0],[1.542,276.2,0.415,5.7,0.0],[3.952,375.7,0.416,5.9,0.0],[1.843,285.5,0.416,5.8,0.0],[1.633,270.1,0.416,5.9,0.0],[2.966,329.2,0.416,5.8,0.0],[2.711,363.7,0.416,5.8,0.0],[1.829,265.8,0.416,5.8,0.0],[1.576,291.3,0.415,5.8,0.0],[1.564,276.2,0.417,5.8,0.0],[4.092,323.2,0.42,6.1,0.0],[4.181,403.6,0.418,6.1,0.14],[3.529,341.6,0.417,5.9,0.0],[4.021,411.6,0.417,5.9,0.39],[3.845,347.3,0.417,5.8,0.0],[2.162,355.4,0.415,5.8,0.0],[3.742,383.7,0.417,5.8,0.0],[2.045,326.2,0.415,5.8,0.0],[1.548,294.8,0.415,5.8,0.0],[2.999,329.3,0.416,5.9,0.0],[3.292,366.7,0.416,6.0,0.0],[1.982,316.1,0.415,5.7,0.0],[2.363,309.2,0.416,5.8,0.0],[2.537,339.3,0.415,5.8,0.0],[1.564,255.3,0.417,5.9,0.0],[2.541,338.2,0.415,5.7,0.0],[2.263,329.6,0.415,5.7,0.0],[2.821,323.9,0.414,5.7,0.0],[1.378,258.4,0.417,6.1,0.0],[2.959,342.6,0.416,5.8,0.0],[3.41,360.1,0.415,5.8,0.0],[4.17,345.4,0.417,6.0,0.0],[1.407,271.6,0.417,6.2,0.0],[3.506,398.7,0.416,5.8,0.0],[2.672,294.6,0.416,5.9,0.0],[4.074,351.4,0.421,6.3,0.0],[2.397,307.3,0.415,5.8,0.0],[2.806,348.6,0.415,5.7,0.0],[3.812,346.4,0.418,6.0,0.0],[1.56,275.2,0.415,5.7,0.0],[4.18,346.9,0.417,5.9,0.0],[2.385,309.5,0.416,5.8,0.0],[2.45,349.7,0.416,5.8,0.0],[3.925,400.1,0.416,5.9,0.0],[2.784,346.5,0.415,5.7,0.0],[1.591,252.5,0.416,5.8,0.0],[1.348,282.7,0.417,6.0,0.0],[4.264,411.5,0.419,6.2,0.7],[2.669,340.6,0.416,5.8,0.0],[3.835,349.1,0.418,6.0,0.0],[3.941,398.0,0.415,5.8,0.01],[1.843,306.9,0.416,5.9,0.0],[4.246,360.4,0.419,6.1,0.0],[2.947,366.1,0.416,5.8,0.0],[3.292,337.9,0.416,5.9,0.0],[2.111,295.3,0.416,6.0,0.0],[3.243,374.7,0.416,5.8,0.0]]},"dens":{"n":28,"papers":__L("12편(원본 13주차 #25)","12 papers (original week 13 #25)"),"median_abs_rel_pct":2.33,"mae_gcc":0.033,"mean_dev_gcc":-0.026,"median_signed_rel_pct":-2.21,"n_md_lower":26,"n_md_higher":2,"by_T":{"293":{"n":24,"exp_median":1.018,"md":0.997},"333":{"n":4,"exp_median":1.008,"md":0.972}},"points":[[0.94,0.997,6.06,293,"none"],[1.02,0.997,-2.25,293,"none"],[1.01,0.997,-1.29,293,"none"],[1.04,0.997,-4.13,293,"none"],[1.012,0.997,-1.48,293,"none"],[1.012,0.997,-1.48,293,"none"],[1.017,0.997,-1.97,293,"none"],[0.996,0.972,-2.41,333,"none"],[1.0126,0.997,-1.54,293,"none"],[1.01,0.997,-1.29,293,"none"],[1.02,0.997,-2.25,293,"none"],[1.03,0.997,-3.2,293,"none"],[1.04,0.997,-4.13,293,"none"],[0.95,0.997,4.95,293,"none"],[1.08,0.997,-7.69,293,"none"],[1.016,0.997,-1.87,293,"none"],[1.005,0.997,-0.8,293,"none"],[1.038,0.997,-3.95,293,"none"],[1.015,0.995,-1.97,293,"SBS_3_7"],[1.03,0.972,-5.63,333,"none"],[1.02,0.972,-4.71,333,"none"],[0.99,0.972,-1.82,333,"none"],[1.019,0.997,-2.16,293,"none"],[1.042,0.997,-4.32,293,"none"],[1.041,0.997,-4.23,293,"none"],[1.051,0.997,-5.14,293,"none"],[1.07,0.997,-6.82,293,"none"],[1.002,0.997,-0.5,293,"none"]]},"tg":{"n":8,"source":__L("jclepro.2023.139092 (같은 논문의 DSC · MD · 문헌값)","jclepro.2023.139092 (DSC · MD · literature values of the same paper)"),"pairs":[{"sample":"VB (virgin)","group":"aged-series","exp_K":258.7,"md_K":269.7,"diff_K":11.1},{"sample":"LAB20","group":"aged-series","exp_K":259.8,"md_K":277.2,"diff_K":17.4},{"sample":"LAB40","group":"aged-series","exp_K":261.6,"md_K":308.1,"diff_K":46.5},{"sample":"LAB80","group":"aged-series","exp_K":264.6,"md_K":330.1,"diff_K":65.5},{"sample":"BO (bio-oil)","group":"rejuvenator","exp_K":227.5,"md_K":259.4,"diff_K":31.9},{"sample":"EO (engine-oil)","group":"rejuvenator","exp_K":220.7,"md_K":237.3,"diff_K":16.6},{"sample":"NO (naphthenic)","group":"rejuvenator","exp_K":233.4,"md_K":284.8,"diff_K":51.4},{"sample":"AO (aromatic)","group":"rejuvenator","exp_K":246.6,"md_K":294.0,"diff_K":47.4}],"diff_range_K":[11.1,65.5],"aged_direction_same":true},"mc":{"delta_decade":4.72,"delta_sd":0.39,"source":__L("연구 플랫폼 AN116 · S64-22 DSR · BBR ↔ AAA-1 G(t) 387점","Research platform AN116 · S64-22 DSR · BBR ↔ AAA-1 G(t) 387 points")},"cur":[{"stage":"raw","label":__L("코어 행(완료 실험)","Core rows (completed experiments)"),"n":672},{"stage":"gate","label":__L("물리 범위 게이트(표시)","Physical-range gate (flag)"),"n":672,"flagged":56,"K_gt_50GPa":50,"CED_negative":48},{"stage":"tier","label":__L("점도(전단) 런 제외 · K · CED 정의 불가","Viscosity (shear) runs excluded · K · CED undefined"),"n":614,"removed":58,"removed_with_flag":56,"flag_left":0},{"stage":"relabel","label":__L("노화 라벨 복원 · K 재백필(원본 로그)","Aging label restored · K re-backfilled (original log)"),"n":614,"aging_relabeled":182,"K_backfilled":36},{"stage":"dedup","label":__L("중복 조건 검사","Duplicate-condition check"),"n":614,"duplicates":0},{"stage":"complete","label":__L("두 목표(K · CED) 완비","Both objectives (K · CED) complete"),"n":612,"missing":2,"missing_rows":[["AAK1","Lignin"],["AAM1","Carbon_Nano_Tube"]]}],"check":{"project":"out/example_project","score":100,"total":100,"items":[{"group":__L("문제 정의","Problem definition"),"points":8,"item":__L("표적 물성 2개 이상 · 방향 지정","2 or more target properties · direction specified"),"ok":true,"evidence":"targets 2"},{"group":__L("문제 정의","Problem definition"),"points":6,"item":__L("제약 명시","Constraints stated"),"ok":true,"evidence":"constraints 3"},{"group":__L("문제 정의","Problem definition"),"points":6,"item":__L("성공 기준 수치","Success criterion numeric"),"ok":true,"evidence":__L("EHVI 3개 배치의 실제 HV 증가 > 무작위 3개 평균 · 참조점 (1.0 GPa, 250 MJ/m3)","Actual HV gain of the EHVI batch of 3 > mean of 3 random picks · reference point (1.0 GPa, 250 MJ/m3)")},{"group":__L("계산 · 검증 설계","Computation · validation design"),"points":10,"item":__L("프로토콜(힘장 · 앙상블 · 길이)","Protocol (force field · ensemble · length)"),"ok":true,"evidence":"forcefield,ensemble,length,error_report,split"},{"group":__L("계산 · 검증 설계","Computation · validation design"),"points":10,"item":__L("오차 보고 방식(평균 ± SE · n)","Error reporting method (mean ± SE · n)"),"ok":true,"evidence":__L("평균 ± 블록 SE · n 병기 (W05)","Mean ± block SE · n stated (W05)")},{"group":__L("계산 · 검증 설계","Computation · validation design"),"points":10,"item":__L("분할 전략 · 실측 대조","Split strategy · comparison with measurements"),"ok":true,"evidence":__L("split=관측 400 / 후보 212 (고정 난수 7) · 첨가제 홀드아웃은 확장 과제 · validation keys ['density', 'tg', 'mastercurve']","split=observations 400 / candidates 212 (fixed seed 7) · additive holdout is an extension task · validation keys ['density', 'tg', 'mastercurve']")},{"group":__L("탐색 결과","Exploration results"),"points":8,"item":__L("파레토 전선 · HV","Pareto front · HV"),"ok":true,"evidence":"front 6 · HV 871.28"},{"group":__L("탐색 결과","Exploration results"),"points":7,"item":__L("회차별 HV 곡선","HV curve per round"),"ok":true,"evidence":"trajectory 47"},{"group":__L("탐색 결과","Exploration results"),"points":10,"item":__L("추천 조성 ≥ 3 · 예측 ± 불확실성","Recommended compositions ≥ 3 · predicted ± uncertainty"),"ok":true,"evidence":"rows 3"},{"group":__L("재현성","Reproducibility"),"points":10,"item":__L("매니페스트 4묶음(코드 · 데이터 · 모델 · 실행)","Manifest of 4 bundles (code · data · model · run)"),"ok":true,"evidence":"code,data,model,run"},{"group":__L("재현성","Reproducibility"),"points":5,"item":__L("데이터 해시 · 난수 시드","Data hash · random seed"),"ok":true,"evidence":"sha256 · seed"},{"group":__L("한계 논의","Limitations discussion"),"points":5,"item":__L("한계 3개 이상(모델 · 힘장 · 데이터)","3 or more limitations (model · force field · data)"),"ok":true,"evidence":"bullets 4"},{"group":__L("한계 논의","Limitations discussion"),"points":5,"item":__L("실패한 시도와 원인","Failed attempts and causes"),"ok":true,"evidence":__L("「실패」 절","Failure section")},{"group":__L("발표 형식","Presentation format"),"points":0,"item":__L("슬라이드 1~10장(10분 + 질의 5분)","Slides 1~10 (10 min + 5 min Q&A)"),"ok":false,"evidence":"slides 0"}],"rubric":{"문제 정의":20,"계산 · 검증 설계":30,"탐색 결과":25,"재현성":15,"한계 논의":10}}};
+function stepOf(root) { var s = parseInt(root.dataset.step || '0', 10); return isNaN(s) ? 0 : s; }
+function icoIn(n, x, y, s, col) { return '<svg x="' + x + '" y="' + y + '" width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" stroke="' + col + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + (IC[n] || '') + '</svg>'; }
+function T(x, y, s, cls, st, anc) { return '<text x="' + x + '" y="' + y + '"' + (anc ? ' text-anchor="' + anc + '"' : '') + ' class="' + cls + '"' + (st ? ' style="' + st + '"' : '') + '>' + s + '</text>'; }
+function ez(u) { u = Math.max(0, Math.min(1, u)); return 1 - Math.pow(1 - u, 3); }
+function fmt(v, d) { return Number(v).toFixed(d); }
+function AB(s) { return s.replace('Carbon_Nano_Tube', 'CNT').replace('SBS_3_7', 'SBS').replace('_aging', '').replace('non', __L('비노화','Unaged')).replace('long', __L('장기','Long')).replace('short', __L('단기','Short')); }
+
+/* --- 파레토 · HV 도우미 (두 목표 최대화) --- */
+function TRN(n) { var r = W16.traj[0]; W16.traj.forEach(function (q) { if (q.n <= n) r = q; }); return r; }
+function frontOf(P) { var S = P.slice().sort(function (a, b) { return b[0] - a[0] || b[1] - a[1]; }), F = [], best = -1e18; S.forEach(function (p) { if (p[1] > best) { F.push(p); best = p[1]; } }); return F; }
+function hvOf(F, ref) { var a = 0, prev = ref[1]; F.slice().sort(function (p, q) { return q[0] - p[0]; }).forEach(function (p) { if (p[0] <= ref[0] || p[1] <= prev) return; a += (p[0] - ref[0]) * (p[1] - prev); prev = p[1]; }); return a; }
+/* 좌표계: K 0.5~6.5 GPa · CED 200~460 */
+function axes(x0, y0, w, h, kx, cy) {
+  var X = function (k) { return x0 + (k - kx[0]) / (kx[1] - kx[0]) * w; }, Y = function (c) { return y0 + h - (c - cy[0]) / (cy[1] - cy[0]) * h; };
+  var o = '<line x1="' + x0 + '" y1="' + (y0 + h) + '" x2="' + (x0 + w) + '" y2="' + (y0 + h) + '" stroke="#6E655C" stroke-width="2"/><line x1="' + x0 + '" y1="' + y0 + '" x2="' + x0 + '" y2="' + (y0 + h) + '" stroke="#6E655C" stroke-width="2"/>';
+  for (var k = Math.ceil(kx[0]); k <= kx[1]; k++) o += T(X(k), y0 + h + 24, k, 'cfm', 'fill:#4A4540', 'middle');
+  for (var c = Math.ceil(cy[0] / 50) * 50; c <= cy[1]; c += 50) o += T(x0 - 10, Y(c) + 6, c, 'cfm', 'fill:#4A4540', 'end');
+  o += T(x0 + w / 2, y0 + h + 50, __L('체적탄성계수 K (GPa) →','Bulk modulus K (GPa) →'), 'cfs', '', 'middle') + T(x0 - 56, y0 + h / 2, 'CED (MJ/m³) →', 'cfs', '', 'middle').replace('<text', '<text transform="rotate(-90 ' + (x0 - 56) + ' ' + (y0 + h / 2) + ')"');
+  return { X: X, Y: Y, o: o };
+}
+function stairs(F, ref, A) { var S = F.slice().sort(function (p, q) { return q[0] - p[0]; }), d = 'M' + A.X(ref[0]) + ' ' + A.Y(S.length ? S[0][1] : ref[1]); var a = '', prev = ref[1];
+  /* HV 면적 다각형 */
+  var poly = A.X(ref[0]) + ',' + A.Y(ref[1]); S.forEach(function (p) { if (p[0] <= ref[0] || p[1] <= prev) return; poly += ' ' + A.X(p[0]) + ',' + A.Y(prev) + ' ' + A.X(p[0]) + ',' + A.Y(p[1]); prev = p[1]; }); poly += ' ' + A.X(ref[0]) + ',' + A.Y(prev);
+  var line = ''; prev = null; S.forEach(function (p, i) { line += (i ? ' L' + A.X(prev[0]) + ' ' + A.Y(p[1]) + ' L' : 'M') + A.X(p[0]) + ' ' + A.Y(p[1]); prev = p; });
+  return { poly: poly, line: line };
+}
+
+/* ===== 표지: 파레토 전선 채우기 (compact) ===== */
+EMB["paretoc"] = function (root, RAF) {
+  var P = W16.pts, ref = W16.ref, t0 = CLK();
+  function f(now) {
+    var t = ((now - t0) / 1000) % 12, TR = W16.traj, n = TR[Math.min(TR.length - 1, Math.floor(Math.min(1, t / 9) * (TR.length - 1)))].n, cur = P.slice(0, n), F = frontOf(cur), A = axes(80, 60, 440, 380, [0.5, 6.5], [200, 460]);
+    var o = '<svg viewBox="0 0 560 560">' + T(280, 34, __L('MD 612건 → 파레토 전선','MD 612 cases → Pareto front'), 'cfh', 'font-size:20px', 'middle') + A.o, S = stairs(F, ref, A);
+    o += '<polygon points="' + S.poly + '" fill="#2E8B57" opacity=".14"/>';
+    cur.forEach(function (p) { o += '<circle cx="' + A.X(p[0]).toFixed(1) + '" cy="' + A.Y(p[1]).toFixed(1) + '" r="3" fill="#B9AE9E"/>'; });
+    o += '<path d="' + S.line + '" fill="none" stroke="#E37F1A" stroke-width="3"/>';
+    F.forEach(function (p) { o += '<circle cx="' + A.X(p[0]).toFixed(1) + '" cy="' + A.Y(p[1]).toFixed(1) + '" r="7" fill="#E37F1A" stroke="#fff" stroke-width="2"/>'; });
+    o += '<circle cx="' + A.X(ref[0]) + '" cy="' + A.Y(ref[1]) + '" r="8" fill="#FBB44E"/>';
+    o += '<rect x="92" y="64" width="230" height="64" rx="12" fill="#231F20"/>' + T(207, 90, n + __L(' / 612 건 · 전선 ',' / 612 cases · front ') + F.length + __L('점',' points'), 'cfw', 'font-size:16px', 'middle') + T(207, 116, 'HV ' + fmt(TRN(n).hv, 1), 'cfm', 'fill:#FBB44E', 'middle');
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 5장: 큐레이션 깔때기 ===== */
+EMB["funnel"] = function (root, RAF) {
+  var C = W16.cur, t0 = CLK(), W = 1588, H = 560;
+  var D = [[__L('코어 행 · 완료 실험','Core rows · completed experiments'), 672, 0, 0, '#9AA5B1'], [__L('물리 범위 게이트 · 표시만','Physical-range gate · flag only'), 672, 56, 0, '#E37F1A'], [__L('점도(전단) 런 제외','Viscosity (shear) runs excluded'), 614, 0, 58, '#4F7FB0'], [__L('라벨 복원 · K 재백필','Label restore · K re-backfill'), 614, 0, 0, '#4F7FB0'], [__L('중복 0 · 두 목표 완비','Duplicates 0 · both objectives complete'), 612, 0, 2, '#2E8B57']];
+  var note = [__L('14,771 실험 중 모델링 코어(바인더 확정 혼합물)','Modeling core (binder-confirmed mixtures) of 14,771 experiments'), 'K > 50 GPa ' + C[1].K_gt_50GPa + ' · CED < 0 ' + C[1].CED_negative + __L(' → 플래그 ',' → flagged ') + C[1].flagged + __L('행 (지우지 않음)',' rows (not deleted)'), __L('NPT 없음 → K · CED 정의 불가 · 플래그 ','No NPT → K · CED undefined · flagged ') + C[2].removed_with_flag + __L('행이 모두 여기 · 밀도 · 점도는 그 런에 유지',' rows all here · density · viscosity kept in that run'), __L('노화 라벨 ','Aging label ') + C[3].aging_relabeled + __L('행 복원(exp_id 경로) · 결측 K ',' rows restored (exp_id path) · missing K ') + C[3].K_backfilled + __L('행 재계산(원본 로그)',' rows recomputed (original log)'), __L('중복 조건 ','Duplicate conditions ') + C[4].duplicates + __L(' · 결측 ',' · missing ') + C[5].missing + __L('행(AAK1 Lignin · AAM1 CNT) → 탐색 표 612행',' rows (AAK1 Lignin · AAM1 CNT) → search table 612 rows')];
+  function f(now) {
+    var st = stepOf(root), t = st ? (st - 1) * 2.4 + 2.35 : ((now - t0) / 1000) % 12, k = Math.min(4, Math.floor(t / 2.4)), u = ez((t % 2.4) / 1.2), o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    var x0 = 360, sc = 1080 / 672;
+    for (var i = 0; i <= k; i++) {
+      var d = D[i], y = 30 + i * 98, uu = i === k ? u : 1, w = d[1] * sc * (i === 0 ? uu : 1), on = i === k;
+      o += T(330, y + 44, (i + 1) + ' ' + d[0], on ? 'cfh' : 'cfs', 'font-size:' + (on ? 21 : 19) + 'px', 'end');
+      o += '<rect x="' + (x0 + (1080 - w) / 2) + '" y="' + (y + 14) + '" width="' + w + '" height="46" rx="10" fill="' + d[4] + '" opacity="' + (on ? 1 : .55) + '"/>';
+      if (d[2]) { var fw = d[2] * sc * uu; o += '<rect x="' + (x0 + (1080 - w) / 2) + '" y="' + (y + 14) + '" width="' + fw + '" height="46" rx="10" fill="#D9534F"/>' + T(x0 + (1080 - w) / 2 + fw + 12, y + 46, __L('플래그 ','Flagged ') + d[2], 'cfm', 'fill:#fff', ''); }
+      if (d[3] && i === k) { var rw = d[3] * sc; o += '<rect x="' + (x0 + (1080 + w) / 2 + 12) + '" y="' + (y + 14) + '" width="' + Math.max(rw, 6) + '" height="46" rx="3" fill="#B9AE9E" opacity="' + (1 - .4 * uu) + '"/>' + T(x0 + (1080 + w) / 2 + rw + 24, y + 44, '− ' + d[3], 'cfm', 'fill:#6E655C', ''); }
+      o += T(x0 + 540, y + 45, d[1] + __L(' 행',' rows'), 'cfw', 'font-size:22px', 'middle');
+      if (i === 3 && i <= k) o += '<rect x="' + (x0 + 760) + '" y="' + (y + 18) + '" width="120" height="38" rx="19" fill="#FFF1E0"/>' + T(x0 + 820, y + 43, __L('복원 ','Restored ') + C[3].aging_relabeled, 'cfm', 'fill:#C8610C', 'middle') + '<rect x="' + (x0 + 890) + '" y="' + (y + 18) + '" width="120" height="38" rx="19" fill="#FFF1E0"/>' + T(x0 + 950, y + 43, __L('재백필 ','Backfilled ') + C[3].K_backfilled, 'cfm', 'fill:#C8610C', 'middle');
+    }
+    o += '<rect x="230" y="500" width="1128" height="50" rx="12" fill="#231F20"/>' + T(794, 533, note[k], 'cfw', 'font-size:20px', 'middle') + '</svg>';
+    root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 9장: 파레토 전선 ===== */
+EMB["pareto"] = function (root, RAF) {
+  var P = W16.pts, ref = W16.ref, alt = W16.hv_alt.ref, t0 = CLK(), W = 1588, H = 560;
+  function f(now) {
+    var st = stepOf(root), t = st ? [3.9, 7.9, 11.9][st - 1] : ((now - t0) / 1000) % 12, k = Math.min(2, Math.floor(t / 4)), u = (t % 4) / 4;
+    var BIG = [60, 100, 200, 300, 400, 500, 612], n = k === 0 ? Math.min(60, 20 + Math.floor(u * 40)) : (k === 1 ? BIG[Math.min(6, Math.floor(ez(u * 1.3) * 7))] : 612), cur = P.slice(0, n), F = frontOf(cur), r = k === 2 && u > .25 ? alt : ref;
+    var A = axes(110, 30, 900, 440, [0.5, 6.5], [200, 460]), o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">' + A.o, S = stairs(F, r, A), last = cur[cur.length - 1];
+    o += '<polygon points="' + S.poly + '" fill="#2E8B57" opacity=".16"/>';
+    var fs = {}; F.forEach(function (p) { fs[p[0] + ',' + p[1]] = 1; });
+    cur.forEach(function (p) { if (!fs[p[0] + ',' + p[1]]) o += '<circle cx="' + A.X(p[0]).toFixed(1) + '" cy="' + A.Y(p[1]).toFixed(1) + '" r="4" fill="#B9AE9E"/>'; });
+    o += '<path d="' + S.line + '" fill="none" stroke="#E37F1A" stroke-width="3.5"/>';
+    F.forEach(function (p) { o += '<circle cx="' + A.X(p[0]).toFixed(1) + '" cy="' + A.Y(p[1]).toFixed(1) + '" r="9" fill="#E37F1A" stroke="#fff" stroke-width="2"/>'; });
+    if (k === 0) o += '<circle class="pulse" cx="' + A.X(last[0]).toFixed(1) + '" cy="' + A.Y(last[1]).toFixed(1) + '" r="10" fill="none" stroke="#FBB44E" stroke-width="4"/>';
+    o += '<circle cx="' + A.X(r[0]) + '" cy="' + A.Y(r[1]) + '" r="10" fill="#FBB44E" stroke="#C8610C" stroke-width="2"/>' + T(A.X(r[0]) + 16, A.Y(r[1]) - 12, __L('참조점 (','Reference point (') + r[0] + ', ' + r[1] + ')', 'cfm', 'fill:#C8610C;paint-order:stroke;stroke:#FFFDF9;stroke-width:6px', '');
+    /* 오른쪽 계기판 */
+    var hvv = r === ref ? TRN(n).hv : W16.hv_alt.hv, tr = W16.traj;
+    o += '<rect x="1080" y="30" width="480" height="440" rx="16" fill="#F6F0E7"/>' + T(1110, 70, [__L('① 하나씩 추가','① Add one by one'), __L('② 612건 전체','② All 612 cases'), __L('③ 참조점 변경','③ Change reference point')][k], 'cfh', '', '') ;
+    o += T(1110, 120, __L('결과 ','Result ') + n + ' / 612', 'cfs', '', '') + T(1110, 160, __L('전선 ','Front ') + F.length + __L('점',' points'), 'cfs', '', '') + '<text x="1110" y="214" class="cfx" style="fill:#2E8B57">HV ' + fmt(hvv, 1) + '</text>';
+    var sx = function (v) { return 1110 + v / 612 * 410; }, sy = function (h) { return 440 - (h - 600) / 300 * 160; }, d = '';
+    tr.forEach(function (q, i) { if (q.n <= n) d += (d ? 'L' : 'M') + sx(q.n).toFixed(1) + ' ' + sy(q.hv).toFixed(1); });
+    o += '<line x1="1110" y1="440" x2="1520" y2="440" stroke="#B9AE9E"/>' + T(1110, 268, __L('회차별 HV (참조점 1.0 · 250)','HV per round (reference point 1.0 · 250)'), 'cfmu', '', '') + '<path d="' + d + '" fill="none" stroke="#2E8B57" stroke-width="3"/>';
+    o += T(1110, 462, '0', 'cfmu', '', '') + T(1520, 462, '612', 'cfmu', '', 'end');
+    if (k === 2) o += '<rect x="1100" y="480" width="460" height="56" rx="12" fill="#231F20"/>' + T(1330, 515, __L('같은 전선 · 참조점 (3, 350) → HV ','Same front · reference point (3, 350) → HV ') + fmt(W16.hv_alt.hv, 1), 'cfw', 'font-size:18px', 'middle');
+    else o += '<rect x="1100" y="480" width="460" height="56" rx="12" fill="#231F20"/>' + T(1330, 515, k ? (__L('전선 6점 = 원본 612건 전선과 일치','Front of 6 points = matches the front of the original 612 cases')) : __L('새 점이 전선을 밀어냄 → HV 계단식 상승','New point pushes the front → HV rises stepwise'), 'cfw', 'font-size:18px', 'middle');
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 11장: EHVI 배치 ===== */
+EMB["ehvi"] = function (root, RAF) {
+  var E = W16.ehvi, ref = W16.ref, F0 = E.front_obs, t0 = CLK(), W = 1588, H = 560, C = E.candidates_all, TOP = E.top12_first_round, PK = E.picks;
+  function f(now) {
+    var st = stepOf(root), t = st ? [3.9, 7.9, 11.9][st - 1] : ((now - t0) / 1000) % 12, k = Math.min(2, Math.floor(t / 4)), u = (t % 4) / 4;
+    var A = axes(110, 30, 900, 440, [2.5, 6.5], [330, 460]), o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">' + A.o;
+    var S0 = stairs(F0, ref, A), npk = k === 0 ? 0 : (k === 1 ? Math.min(3, 1 + Math.floor(u * 3)) : 3), Fb = F0.slice(), i;
+    for (i = 0; i < npk; i++) { var p = PK[i], m = k === 2 ? p.true : p.mu; Fb = frontOf(Fb.concat([[m[0], m[1]]])); }
+    o += '<defs><clipPath id="w16ec"><rect x="110" y="30" width="900" height="440"/></clipPath></defs>';
+    if (npk) { var S1 = stairs(Fb, ref, A); o += '<g clip-path="url(#w16ec)"><polygon points="' + S1.poly + '" fill="#2E8B57" opacity=".30"/><polygon points="' + S0.poly + '" fill="#FFFDF9"/></g>'; }
+    C.forEach(function (c) { if (c[1] > 330 && c[0] > 2.5) o += '<circle cx="' + A.X(c[0]).toFixed(1) + '" cy="' + A.Y(c[1]).toFixed(1) + '" r="3.5" fill="#9AA5B1" opacity=".7"/>'; });
+    if (k === 0) TOP.forEach(function (c) { var cx = A.X(c.mu[0]), cy = A.Y(c.mu[1]), rx = Math.abs(A.X(c.mu[0] + c.sd[0]) - cx), ry = Math.abs(A.Y(c.mu[1] + c.sd[1]) - cy); o += '<ellipse cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) + '" rx="' + rx.toFixed(1) + '" ry="' + ry.toFixed(1) + '" fill="#4F7FB0" opacity=".06" stroke="#4F7FB0" stroke-dasharray="4 4"/>'; });
+    TOP.forEach(function (c) { o += '<circle cx="' + A.X(c.mu[0]).toFixed(1) + '" cy="' + A.Y(c.mu[1]).toFixed(1) + '" r="6" fill="#4F7FB0"/>'; });
+    o += '<path d="' + S0.line + '" fill="none" stroke="#E37F1A" stroke-width="3"/>';
+    F0.forEach(function (p) { o += '<circle cx="' + A.X(p[0]).toFixed(1) + '" cy="' + A.Y(p[1]).toFixed(1) + '" r="8" fill="#E37F1A" stroke="#fff" stroke-width="2"/>'; });
+    if (npk) o += '<path d="' + stairs(Fb, ref, A).line + '" fill="none" stroke="#2E8B57" stroke-width="2.5" stroke-dasharray="7 5"/>';
+    for (i = 0; i < npk; i++) { var q = PK[i], mm = q.mu, tt = q.true, X1 = A.X(mm[0]), Y1 = A.Y(mm[1]);
+      o += '<circle cx="' + X1.toFixed(1) + '" cy="' + Y1.toFixed(1) + '" r="13" fill="none" stroke="#2E8B57" stroke-width="4"/>' + T(X1 - 18, Y1 + 6 + (i - 1) * 14, '#' + (i + 1), 'cfm', 'fill:#2E8B57;paint-order:stroke;stroke:#FFFDF9;stroke-width:5px', 'end');
+      if (k === 2) { var X2 = A.X(tt[0]), Y2 = A.Y(tt[1]); o += '<line x1="' + X1.toFixed(1) + '" y1="' + Y1.toFixed(1) + '" x2="' + X2.toFixed(1) + '" y2="' + Y2.toFixed(1) + '" stroke="#231F20" stroke-width="2" stroke-dasharray="5 4"/><rect x="' + (X2 - 8) + '" y="' + (Y2 - 8) + '" width="16" height="16" fill="#231F20"/>'; } }
+    o += '<circle cx="' + A.X(ref[0]) + '" cy="' + A.Y(ref[1]) + '" r="1" fill="none"/>';
+    /* 오른쪽 */
+    o += '<rect x="1080" y="30" width="480" height="440" rx="16" fill="#F6F0E7"/>' + T(1110, 70, [__L('① 관측 400 · 후보 212','① 400 observations · 212 candidates'), __L('② 배치 3 선택 (가상 관측)','② Select batch of 3 (fantasy observation)'), __L('③ 실제 MD 값 공개','③ Reveal actual MD values')][k], 'cfh', '', '');
+    if (k === 0) { o += T(1110, 116, __L('관측 전선 HV ','Observed front HV ') + fmt(E.hv_obs, 1), 'cfs', '', '') + T(1110, 152, __L('GP 홀드아웃 RMSE','GP holdout RMSE'), 'cfs', '', '') + T(1110, 184, 'K ' + E.holdout_rmse.K_GPa + ' GPa · CED ' + E.holdout_rmse.CED_MJm3, 'cfm', 'fill:#C8610C', '') + T(1110, 230, __L('파랑 점 = 후보 예측 μ','Blue dot = candidate predicted μ'), 'cfmu', '', '') + T(1110, 256, __L('점선 타원 = ±σ (EHVI 상위 12)','Dotted ellipse = ±σ (top 12 by EHVI)'), 'cfmu', '', '') + T(1110, 282, __L('회색 = 나머지 후보','Gray = other candidates'), 'cfmu', '', ''); }
+    else { for (i = 0; i < npk; i++) { var r = PK[i], y = 100 + i * 108; o += '<rect x="1100" y="' + y + '" width="440" height="96" rx="12" fill="#fff" stroke="' + (k === 2 ? '#231F20' : '#2E8B57') + '" stroke-width="2"/>' + T(1116, y + 28, '#' + (i + 1) + ' ' + r.binder + ' · ' + AB(r.additive) + ' · ' + AB(r.aging) + ' · ' + r.T_K + ' K', 'cft', 'font-size:17px', '') + T(1116, y + 58, __L('예측 K ','Predicted K ') + r.mu[0] + ' ± ' + r.sd[0] + ' · CED ' + r.mu[1] + ' ± ' + r.sd[1], 'cfmu', 'font-size:16px', '') + (k === 2 ? T(1116, y + 84, __L('실제 K ','Actual K ') + r.true[0] + ' · CED ' + r.true[1], 'cfm', 'fill:#231F20;font-size:17px', '') : ''); } }
+    if (k === 2) o += '<rect x="1080" y="480" width="480" height="64" rx="12" fill="#231F20"/>' + T(1320, 507, 'HV ' + fmt(E.hv_obs, 1) + ' → ' + fmt(E.hv_after_true, 1) + ' (+' + E.hv_gain_ehvi + ')', 'cfw', 'font-size:18px', 'middle') + T(1320, 533, __L('무작위 3개 평균 +','Mean of 3 random picks +') + E.hv_gain_random_mean + __L(' · 무작위 ≥ EHVI ',' · random ≥ EHVI ') + (E.hv_gain_random_p_ge * 100).toFixed(1) + ' %', 'cfm', 'fill:#FBB44E;font-size:16px', 'middle');
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 16장: 에이전트 메시지 왕복 ===== */
+EMB["agents"] = function (root, RAF) {
+  var W = 1588, H = 560, t0 = CLK();
+  var N = { plan: [190, 140, __L('계획','Plan'), 'route', '#C8610C'], human: [190, 400, __L('사람 · 승인','Human · approval'), 'user-check', '#231F20'], build: [560, 140, __L('생성','Generate'), 'boxes', '#4F7FB0'], run: [560, 400, __L('계산','Compute'), 'cpu', '#4F7FB0'], check: [880, 270, __L('검증','Validate'), 'shield-check', '#2E8B57'] };
+  var MSG = [[['plan', 'human', __L('계획 문서 + plan_hash','Plan document + plan_hash')]], [['human', 'plan', __L('승인 · 해시 재검증','Approve · re-verify hash')], ['plan', 'build', __L('조성 → 기존 실험 검색','Composition → search existing experiments')]], [['build', 'run', __L('빌드 · 작업 큐 제출','Build · submit to job queue')], ['run', 'check', __L('log → 평균 ± SE','log → mean ± SE')]], [['check', 'plan', __L('정지 판정 · 계속 → ①','Stop decision · continue → ①')]]];
+  var CARD = [[__L('① 계획','① Plan'), __L('목표 물성 → 실험 유형 · 서버에 저장 안 함 · plan_hash 반환','Target property → experiment type · not stored on server · returns plan_hash')], [__L('② 사람 승인','② Human approval'), __L('승인 · 수정 · 거부 · 해시 불일치 → 409 거부','Approve · edit · reject · hash mismatch → 409 rejected')], [__L('③ 생성 · 계산','③ Generate · compute'), __L('유사 실험 있으면 재사용 · 없으면 빌드 → GPU 큐','Reuse if a similar experiment exists · otherwise build → GPU queue')], [__L('④ 검증 · 판정','④ Validate · decide'), __L('목표 달성 · 예산 · 무개선 · 계속이면 라벨 반영 후 재제안','Goal reached · budget · no improvement · if continuing, reflect labels and re-propose')]];
+  function node(key, on) { var n = N[key]; return '<circle cx="' + n[0] + '" cy="' + n[1] + '" r="' + (on ? 62 : 54) + '" fill="' + (on ? '#FFF1E0' : '#F6F0E7') + '" stroke="' + (on ? n[4] : '#D3C6B5') + '" stroke-width="' + (on ? 5 : 3) + '"/>' + icoIn(n[3], n[0] - 22, n[1] - 36, 44, n[4]) + T(n[0], n[1] + 34, n[2], 'cfh', 'font-size:19px', 'middle'); }
+  function f(now) {
+    var st = stepOf(root), t = st ? (st - 1) * 3 + 2.95 : ((now - t0) / 1000) % 12, k = Math.min(3, Math.floor(t / 3)), u = (t % 3) / 3, o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    var L = [['plan', 'human'], ['plan', 'build'], ['build', 'run'], ['run', 'check'], ['check', 'plan']];
+    L.forEach(function (l) { var a = N[l[0]], b = N[l[1]]; o += '<line class="tl" x1="' + a[0] + '" y1="' + a[1] + '" x2="' + b[0] + '" y2="' + b[1] + '" stroke-width="3"/>'; });
+    var act = {}; MSG[k].forEach(function (m, i) { act[m[0]] = 1; act[m[1]] = 1; });
+    Object.keys(N).forEach(function (key) { o += node(key, act[key]); });
+    MSG[k].forEach(function (m, i) { var seg = 1 / MSG[k].length, uu = Math.max(0, Math.min(1, (u - i * seg) / seg)); if (uu <= 0) return; var a = N[m[0]], b = N[m[1]], x = a[0] + (b[0] - a[0]) * uu, y = a[1] + (b[1] - a[1]) * uu, mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
+      o += '<line x1="' + a[0] + '" y1="' + a[1] + '" x2="' + x.toFixed(1) + '" y2="' + y.toFixed(1) + '" stroke="' + a[4] + '" stroke-width="5"/><circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="10" fill="' + a[4] + '"/>';
+      var tw = m[2].length * 17 + 30; o += '<rect x="' + (mx - tw / 2) + '" y="' + (my - 22) + '" width="' + tw + '" height="36" rx="18" fill="#231F20"/>' + T(mx, my + 3, m[2], 'cfw', 'font-size:16px', 'middle'); });
+    /* 오른쪽 결과 카드 쌓기 */
+    for (var i = 0; i <= k; i++) { var y = 30 + i * 128, on = i === k; o += '<rect x="1040" y="' + y + '" width="520" height="112" rx="14" fill="' + (on ? '#FFF1E0' : '#F6F0E7') + '" stroke="' + (on ? '#F99D1C' : '#E2D8CA') + '" stroke-width="' + (on ? 3 : 2) + '"/>' + T(1064, y + 38, CARD[i][0], 'cfh', 'font-size:21px', '') + T(1064, y + 76, CARD[i][1], 'cfs', 'font-size:17px', ''); }
+    o += '<rect x="80" y="500" width="900" height="44" rx="12" fill="#F6F0E7"/>' + T(530, 529, __L('핵심 결정 = 정책 + 베이지안 최적화 · LLM 은 핵심 경로 밖 (v1)','Key decision = policy + Bayesian optimization · LLM is outside the critical path (v1)'), 'cfh', 'font-size:18px', 'middle');
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 22장: 밀도 28점 ===== */
+EMB["density"] = function (root, RAF) {
+  var D = W16.dens, P = D.points, t0 = CLK(), W = 1588, H = 560;
+  function f(now) {
+    var st = stepOf(root), t = st ? [3.3, 6.6, 9.9][st - 1] : ((now - t0) / 1000) % 10, k = Math.min(2, Math.floor(t / 3.33)), u = (t % 3.33) / 3.33;
+    var x0 = 140, y0 = 30, w = 760, h = 440, lo = 0.92, hi = 1.10, X = function (v) { return x0 + (v - lo) / (hi - lo) * w; }, Y = function (v) { return y0 + h - (v - lo) / (hi - lo) * h; };
+    var o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig"><line x1="' + x0 + '" y1="' + (y0 + h) + '" x2="' + (x0 + w) + '" y2="' + (y0 + h) + '" stroke="#6E655C" stroke-width="2"/><line x1="' + x0 + '" y1="' + y0 + '" x2="' + x0 + '" y2="' + (y0 + h) + '" stroke="#6E655C" stroke-width="2"/>';
+    for (var v = 0.94; v <= 1.101; v += 0.04) { o += T(X(v), y0 + h + 26, v.toFixed(2), 'cfm', 'fill:#4A4540', 'middle') + T(x0 - 12, Y(v) + 6, v.toFixed(2), 'cfm', 'fill:#4A4540', 'end'); }
+    o += T(x0 + w / 2, y0 + h + 54, __L('실측 밀도 (g/cm³) · 문헌 12편','Measured density (g/cm³) · 12 literature papers'), 'cfs', '', 'middle') + '<text x="60" y="' + (y0 + h / 2) + '" class="cfs" text-anchor="middle" transform="rotate(-90 60 ' + (y0 + h / 2) + __L(')">MD 밀도 (g/cm³)</text>',')">MD density (g/cm³)</text>');
+    if (k >= 1) { var e = k === 1 ? ez(u * 1.5) : 1, a1 = lo + (hi - lo) * e; o += '<defs><clipPath id="w16dc"><rect x="' + x0 + '" y="' + y0 + '" width="' + w + '" height="' + h + '"/></clipPath></defs><polygon clip-path="url(#w16dc)" points="' + X(lo) + ',' + Y(lo * 0.975) + ' ' + X(a1) + ',' + Y(a1 * 0.975) + ' ' + X(a1) + ',' + Y(a1 * 1.025) + ' ' + X(lo) + ',' + Y(lo * 1.025) + '" fill="#2E8B57" opacity=".12"/><line x1="' + X(lo) + '" y1="' + Y(lo) + '" x2="' + X(a1) + '" y2="' + Y(a1) + '" stroke="#2E8B57" stroke-width="3" stroke-dasharray="10 6"/>'; if (e > .9) o += T(X(1.092), Y(1.07), 'y = x', 'cfm', 'fill:#2E8B57', 'end') + T(X(1.03), Y(1.062), '±2.5 %', 'cfmu', '', 'middle'); }
+    var n = k === 0 ? Math.max(1, Math.floor(ez(u * 1.4) * P.length)) : P.length;
+    for (var i = 0; i < n; i++) { var p = P[i], low = p[1] < p[0], col = k === 2 ? (low ? '#4F7FB0' : '#E37F1A') : (p[3] > 300 ? '#C8610C' : '#231F20'); o += '<circle cx="' + X(p[0]).toFixed(1) + '" cy="' + Y(p[1]).toFixed(1) + '" r="8" fill="' + col + '" opacity=".85" stroke="#fff" stroke-width="1.5"/>'; }
+    /* 오른쪽 */
+    o += '<rect x="980" y="30" width="580" height="440" rx="16" fill="#F6F0E7"/>' + T(1010, 70, [__L('① 측정 온도 · 첨가제로 짝짓기','① Pair by measurement temperature · additive'), __L('② 기준선 y = x · ±2.5 % 띠','② Baseline y = x · ±2.5 % band'), __L('③ 크기와 부호 · 계통 오차','③ Size and sign · systematic error')][k], 'cfh', '', '');
+    if (k === 0) o += T(1010, 120, '25 °C ' + D.by_T['293'].n + __L('점 ↔ MD 293 K','Dot ↔ MD 293 K'), 'cfs', '', '') + T(1010, 152, __L('실측 중앙 ','Measured median ') + D.by_T['293'].exp_median + ' · MD ' + D.by_T['293'].md, 'cfm', 'fill:#231F20', '') + T(1010, 200, '60 °C ' + D.by_T['333'].n + __L('점 ↔ MD 333 K','Dot ↔ MD 333 K'), 'cfs', 'fill:#C8610C', '') + T(1010, 232, __L('실측 중앙 ','Measured median ') + D.by_T['333'].exp_median + ' · MD ' + D.by_T['333'].md, 'cfm', 'fill:#C8610C', '') + T(1010, 290, __L('무첨가 27 · SBS 1 · 새 MD 계산 없음','No additive 27 · SBS 1 · no new MD calculation'), 'cfmu', '', '');
+    else if (k === 1) o += T(1010, 120, __L('선 위 = MD 가 실측보다 높음','On line = MD higher than measured'), 'cfs', '', '') + T(1010, 152, __L('선 아래 = MD 가 낮음','Below line = MD lower'), 'cfs', '', '') + T(1010, 200, __L('대부분 띠 안 · 그러나 선 아래에 몰림','Mostly within the band · but clustered below the line'), 'cfm', 'fill:#2E8B57', '');
+    else o += '<text x="1010" y="138" class="cfx" style="fill:#4F7FB0">' + D.n_md_lower + ' / ' + D.n + __L(' 점 MD 낮음</text>',' points MD lower</text>') + T(1010, 190, __L('중앙 |상대오차| ','Median |relative error| ') + D.median_abs_rel_pct + ' % · MAE ' + D.mae_gcc + ' g/cm³', 'cfs', '', '') + T(1010, 224, __L('평균 편차 ','Mean deviation ') + D.mean_dev_gcc + __L(' g/cm³ (약 2.5 % 낮음)',' g/cm³ (about 2.5 % lower)'), 'cfs', '', '') + T(1010, 272, __L('한쪽 부호 = 계통 오차 → 보정 대상','One-sided sign = systematic error → target for correction'), 'cfm', 'fill:#C8610C', '') + T(1010, 306, __L('전원자 비정질 MD 의 공통 저밀도 경향','Common low-density tendency of all-atom amorphous MD'), 'cfmu', '', '');
+    o += '<line x1="1010" y1="346" x2="1530" y2="346" stroke="#E2D8CA" stroke-width="2"/>' + T(1010, 384, __L('힘장 점검 · MD 워크플로우(GAFF2)','Force-field check · MD workflow (GAFF2)'), 'cfh', 'font-size:20px', '') + T(1010, 418, __L('톨루엔 · n-데칸 MD ↔ NIST: 밀도 +1 % 안','Toluene · n-decane MD ↔ NIST: density within +1 %'), 'cfs', '', '') + T(1010, 450, __L('CED 방향족 +6 % · 포화 +21 %','CED aromatic +6 % · saturate +21 %'), 'cfs', '', '');
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 25장: 체크리스트 ===== */
+EMB["checklist"] = function (root, RAF) {
+  var K = W16.check.items, t0 = CLK(), W = 1588, H = 600;
+  var G = [__L('문제 정의','Problem definition'), __L('계산 · 검증 설계','Computation · validation design'), __L('탐색 결과','Exploration results'), __L('재현성','Reproducibility'), __L('한계 논의','Limitations discussion')], PTS = [20, 30, 25, 15, 10];
+  var SL = [['01', __L('문제 정의 · 표적 · 제약 · 성공 기준','Problem definition · targets · constraints · success criteria'), 0], ['02', __L('데이터 · 분자 모델 · 힘장','Data · molecular model · force field'), 1], ['03', __L('프로토콜 · 오차 보고','Protocol · error reporting'), 1], ['04', __L('분할 · 대리모델 검증','Split · surrogate-model validation'), 1], ['05', __L('능동학습 효율 곡선','Active-learning efficiency curve'), 2], ['06', __L('파레토 전선 · 회차별 HV','Pareto front · HV per round'), 2], ['07', __L('추천 조성 · 불확실성','Recommended compositions · uncertainty'), 2], ['08', __L('실측 · 문헌 대조','Comparison with measurements · literature'), 1], ['09', __L('매니페스트 · 실패한 시도','Manifest · failed attempts'), 3], ['10', __L('한계 · 다음 단계','Limitations · next steps'), 4]];
+  function f(now) {
+    var st = stepOf(root), t = st ? (st - 1) * 2.4 + 2.35 : ((now - t0) / 1000) % 12, k = Math.min(4, Math.floor(t / 2.4)), u = (t % 2.4) / 2.4, o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">', score = 0, y = 10;
+    for (var g = 0; g <= 4; g++) {
+      var its = K.filter(function (i) { return i.group === G[g]; }), on = g === k, done = g < k || (on && u > 0.85);
+      o += '<rect x="20" y="' + y + '" width="880" height="' + (32 + its.length * 25) + '" rx="12" fill="' + (on ? '#FFF1E0' : '#F6F0E7') + '" stroke="' + (on ? '#F99D1C' : '#E2D8CA') + '" stroke-width="2"/>' + T(40, y + 24, G[g], 'cfh', 'font-size:19px', '') + T(880, y + 24, PTS[g] + __L('점',' points'), 'cfm', 'fill:#C8610C', 'end');
+      its.forEach(function (it, j) { var yy = y + 50 + j * 25, ok = g < k || (on && u > (j + 1) / (its.length + 1)); if (g > k) ok = false; o += (ok ? '<circle cx="54" cy="' + (yy - 6) + '" r="9" fill="#2E8B57"/><path d="M49 ' + (yy - 6) + ' l3 3 6 -6" fill="none" stroke="#fff" stroke-width="2.2"/>' : '<circle cx="54" cy="' + (yy - 6) + '" r="9" fill="none" stroke="#D3C6B5" stroke-width="2"/>') + T(76, yy, it.item, 'cfs', 'font-size:17px', '') + T(880, yy, it.points + '', 'cfmu', '', 'end'); if (ok) score += it.points; });
+      y += 38 + its.length * 25;
+    }
+    if (k === 4 && u > 0.85) { o += '<rect x="20" y="' + y + '" width="880" height="38" rx="10" fill="#FBE3E1"/>' + T(40, y + 26, __L('✗ 발표 슬라이드 1~10장 · 작성 대기 (형식 요건 · 배점 0)','✗ Presentation slides 1~10 · pending (format requirement · 0 points)'), 'cfh', 'font-size:17px;fill:#A83A32', ''); }
+    /* 오른쪽: 점수 + 발표 10장 */
+    o += '<rect x="940" y="20" width="620" height="90" rx="16" fill="#231F20"/>' + T(970, 76, __L('요건 충족','Requirements met'), 'cfw', 'font-size:22px', '') + '<text x="1530" y="84" text-anchor="end" class="cfx" style="fill:#FBB44E;font-size:44px">' + score + ' / 100</text>';
+    o += T(950, 146, __L('발표 10장 예시 · 장마다 평가 항목 1개','10-slide presentation example · 1 evaluation item per slide'), 'cfh', 'font-size:18px', '');
+    SL.forEach(function (s, i) { var yy = 170 + i * 41, on = s[2] === k; o += '<rect x="940" y="' + yy + '" width="620" height="35" rx="8" fill="' + (on ? '#FFF1E0' : '#fff') + '" stroke="' + (on ? '#F99D1C' : '#E2D8CA') + '"/>' + T(956, yy + 24, s[0], 'cfm', 'fill:#C8610C', '') + T(1000, yy + 24, s[1], 'cfs', 'font-size:16px', '') + T(1548, yy + 24, G[s[2]], 'cfmu', 'font-size:14px', 'end'); });
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 정적 그림 · 표 채우기 ===== */
+(function () {
+  var E = W16.ehvi;
+  var tp = document.getElementById('w16-today-picks'); if (tp) tp.innerHTML = E.picks.map(function (p) { return '<tr><td>' + p.rank + '</td><td>' + p.binder + ' · ' + AB(p.additive) + ' · ' + AB(p.aging) + ' · ' + p.T_K + ' K</td><td class="mono">' + p.mu[0] + ' · ' + p.mu[1] + '</td><td class="mono">' + p.true[0] + ' · ' + p.true[1] + '</td></tr>'; }).join('');
+  var g1 = document.getElementById('w16-g1'); if (g1) g1.textContent = '+' + E.hv_gain_ehvi; var g2 = document.getElementById('w16-g2'); if (g2) g2.textContent = '+' + E.hv_gain_random_mean;
+  var pt = document.getElementById('w16-pick-table'); if (pt) pt.innerHTML = E.picks.map(function (p) { return '<tr><td>' + p.rank + '</td><td style="white-space:nowrap">' + p.binder + ' ' + AB(p.additive) + ' ' + AB(p.aging) + ' ' + p.T_K + ' K</td><td class="mono" style="white-space:nowrap">' + fmt(p.mu[0], 2) + '±' + fmt(p.sd[0], 2) + '</td><td class="mono" style="white-space:nowrap">' + fmt(p.mu[1], 0) + '±' + fmt(p.sd[1], 0) + '</td><td class="mono" style="white-space:nowrap">' + fmt(p.true[0], 2) + ' · ' + fmt(p.true[1], 0) + '</td></tr>'; }).join('');
+  var ct = document.getElementById('w16-cur-table'); if (ct) { var C = W16.cur; ct.innerHTML = [[__L('코어 행','Core rows'), C[0].n, __L('완료 실험','Completed experiments')], [__L('물리 게이트','Physical gate'), C[1].n, __L('플래그 ','Flagged ') + C[1].flagged + ' (K ' + C[1].K_gt_50GPa + ' · CED ' + C[1].CED_negative + ')'], [__L('점도 런 제외','Viscosity runs excluded'), C[2].n, '− ' + C[2].removed + __L(' · 플래그 ',' · flagged ') + C[2].removed_with_flag + __L(' 포함',' included')], [__L('복원 · 재백필','Restore · re-backfill'), C[3].n, __L('노화 ','Aging ') + C[3].aging_relabeled + ' · K ' + C[3].K_backfilled], [__L('중복 · 완비','Duplicates · complete'), C[5].n, __L('중복 ','Duplicates ') + C[4].duplicates + __L(' · 결측 ',' · missing ') + C[5].missing]].map(function (r) { return '<tr><td>' + r[0] + '</td><td class="mono">' + r[1] + '</td><td>' + r[2] + '</td></tr>'; }).join(''); }
+  var kt = document.getElementById('w16-chk-table'); if (kt) { var G = {}; W16.check.items.forEach(function (i) { if (!G[i.group]) G[i.group] = [0, 0, 0]; G[i.group][0] += i.points; G[i.group][1] += i.ok ? 1 : 0; G[i.group][2] += 1; }); kt.innerHTML = Object.keys(G).filter(function (g) { return g !== __L('발표 형식','Presentation format'); }).map(function (g) { return '<tr><td>' + g + '</td><td class="mono">' + G[g][0] + '</td><td>✓ ' + G[g][1] + ' / ' + G[g][2] + '</td></tr>'; }).join(''); }
+  /* 10장 그림: 전선 계단 + 후보 점 하나의 증가 면적 */
+  var eq = document.getElementById('w16-eqsvg'); if (eq) {
+    var F = W16.ehvi.front_obs, ref = W16.ref, P1 = W16.ehvi.picks[0], m = P1.mu, q = [m[0] + P1.sd[0], m[1] + P1.sd[1]], A = axes(150, 12, 560, 220, [3.5, 6.5], [340, 450]), S0 = stairs(F, ref, A), S1 = stairs(frontOf(F.concat([q])), ref, A), o = A.o, h0 = hvOf(F, ref);
+    o += '<defs><clipPath id="w16qc"><rect x="150" y="12" width="560" height="220"/></clipPath></defs><g clip-path="url(#w16qc)"><polygon points="' + S1.poly + '" fill="#2E8B57" opacity=".55"/><polygon points="' + S0.poly + '" fill="#E2D8CA"/></g><path d="' + S0.line + '" fill="none" stroke="#E37F1A" stroke-width="3"/>' + T(A.X(4.0), A.Y(370), __L('현재 초부피','Current hypervolume'), 'cfh', 'fill:#6E655C', 'middle');
+    F.forEach(function (p) { o += '<circle cx="' + A.X(p[0]) + '" cy="' + A.Y(p[1]) + '" r="6" fill="#E37F1A"/>'; });
+    o += '<line x1="' + A.X(m[0]) + '" y1="' + A.Y(m[1]) + '" x2="' + A.X(q[0]) + '" y2="' + A.Y(q[1]) + '" stroke="#4F7FB0" stroke-width="2" stroke-dasharray="5 4"/><circle cx="' + A.X(m[0]) + '" cy="' + A.Y(m[1]) + '" r="8" fill="#fff" stroke="#4F7FB0" stroke-width="3"/>' + T(A.X(m[0]) - 12, A.Y(m[1]) + 22, __L('예측 평균','Predicted mean'), 'cfh', 'fill:#4F7FB0', 'end');
+    o += '<circle class="pulse" cx="' + A.X(q[0]) + '" cy="' + A.Y(q[1]) + '" r="9" fill="#4F7FB0"/>' + T(A.X(q[0]) + 14, A.Y(q[1]) - 10, __L('불확실성 쪽 표본','Sample on the uncertainty side'), 'cfm', 'fill:#4F7FB0;paint-order:stroke;stroke:#F6F0E7;stroke-width:5px', '');
+    o += '<rect x="780" y="16" width="780" height="236" rx="14" fill="#F6F0E7"/>' + T(810, 54, __L('1위 후보 ','Rank-1 candidate ') + P1.binder + __L(' · SiO₂ · 장기 · ',' · SiO₂ · long-term · ') + P1.T_K + ' K', 'cfh', '', '') + T(810, 94, __L('예측 평균 위치의 면적 증가 = ','Area gain at predicted-mean position = ') + fmt(hvOf(frontOf(F.concat([m])), ref) - h0, 2) + __L(' (거의 전선 위)',' (almost on the front)'), 'cfs', '', '') + T(810, 132, __L('불확실성 쪽 표본의 면적 증가 = ','Area gain of the uncertainty-side sample = ') + fmt(hvOf(frontOf(F.concat([q])), ref) - h0, 2) + __L(' (녹색)',' (green)'), 'cfs', 'fill:#2E8B57', '') + T(810, 174, __L('표본 512개의 면적 증가 평균 = EHVI ','Mean area gain of 512 samples = EHVI ') + P1.ehvi, 'cfh', 'fill:#C8610C', '') + T(810, 214, __L('불확실성 클수록 전선 밖 표본 증가 → EHVI 증가','Larger uncertainty → more samples outside the front → higher EHVI'), 'cfmu', '', '');
+    eq.innerHTML = o; }
+  /* 13장 TWEAK */
+  function tw(id, multi) { var s = document.getElementById(id); if (!s) return; var A = axes(90, 20, 560, 230, [0.5, 6.5], [200, 460]), o = A.o, F = W16.front.map(function (f) { return [f.K, f.CED]; }), best = F.slice().sort(function (a, b) { return b[1] - a[1]; })[0];
+    W16.pts.forEach(function (p) { o += '<circle cx="' + A.X(p[0]).toFixed(1) + '" cy="' + A.Y(p[1]).toFixed(1) + '" r="2.5" fill="#D3C6B5"/>'; });
+    if (multi) { var S = stairs(F, W16.ref, A); o += '<path d="' + S.line + '" fill="none" stroke="#E37F1A" stroke-width="3"/>'; F.forEach(function (q) { o += '<circle cx="' + A.X(q[0]) + '" cy="' + A.Y(q[1]) + '" r="7" fill="#E37F1A" stroke="#fff" stroke-width="2"/>'; }); }
+    else { o += '<line x1="90" y1="' + A.Y(best[1]) + '" x2="650" y2="' + A.Y(best[1]) + '" stroke="#C8610C" stroke-dasharray="6 5" stroke-width="2"/><circle class="pulse" cx="' + A.X(best[0]) + '" cy="' + A.Y(best[1]) + '" r="9" fill="#C8610C"/>' + T(A.X(best[0]) - 14, A.Y(best[1]) - 14, __L('CED 최대 1점','Max CED, 1 point'), 'cfm', 'fill:#C8610C', 'end'); }
+    s.innerHTML = o; }
+  tw('w16-tw1', false); tw('w16-tw2', true);
+  /* 23장 Tg 8쌍 */
+  var tg = document.getElementById('w16-tgsvg'); if (tg) { var o = '', P = W16.tg.pairs, x0 = 220, sc = 7; o += T(20, 30, __L('같은 논문의 Tg 실험(DSC) ↔ MD 8쌍 · 막대 = MD − 실험 (K)','Tg experiments (DSC) ↔ MD 8 pairs of the same paper · bar = MD − experiment (K)'), 'cfh', 'font-size:19px', '');
+    P.forEach(function (p, i) { var y = 60 + i * 42, w = p.diff_K * sc, aged = p.group === 'aged-series'; o += T(x0 - 12, y + 24, p.sample, 'cfs', 'font-size:16px', 'end') + '<rect x="' + x0 + '" y="' + (y + 6) + '" width="' + w.toFixed(1) + '" height="26" rx="6" fill="' + (aged ? '#E37F1A' : '#4F7FB0') + '"/>' + T(x0 + w + 10, y + 25, '+' + p.diff_K.toFixed(0) + ' K', 'cfm', 'fill:#231F20', ''); });
+    o += '<rect x="20" y="400" width="14" height="14" fill="#E37F1A"/>' + T(42, 412, __L('노화 계열 4단계','Aging series 4 stages'), 'cfmu', '', '') + '<rect x="200" y="400" width="14" height="14" fill="#4F7FB0"/>' + T(222, 412, __L('재생제 4종','4 rejuvenators'), 'cfmu', '', '');
+    tg.innerHTML = o; }
+  /* 26장 6단계 정지 그림 + 파일 */
+  var rg = document.getElementById('w16-ring'); if (rg) { var cx = 794, cy = 290, rx = 300, ry = 180, o = '<ellipse cx="' + cx + '" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '" fill="none" stroke="#F99D1C" stroke-width="5"/>';
+    var S6 = [[__L('① 문헌 · 후보','① Literature · candidates'), 'book-open', __L('W02 dedup_report.json · W11 개수표','W02 dedup_report.json · W11 count table')], [__L('② 구조 생성','② Structure generation'), 'boxes', 'W06 toluene_box.data · W08 stack.data'], [__L('③ MD 계산','③ MD calculation'), 'cpu', 'W09 results.csv · W10 wsep.json'], [__L('④ 대리모델','④ Surrogate model'), 'brain-circuit', __L('W13 ~ W15 모델 · 예측 ± σ','W13 ~ W15 models · prediction ± σ')], [__L('⑤ 능동학습','⑤ Active learning'), 'crosshair', __L('W15 획득함수 · W16 ehvi.json','W15 acquisition function · W16 ehvi.json')], [__L('⑥ 최적화','⑥ Optimization'), 'trophy', __L('W16 pareto.json · 추천 3건 → ①','W16 pareto.json · 3 recommendations → ①')]];
+    S6.forEach(function (s, i) { var a = -Math.PI / 2 + i * Math.PI / 3, x = cx + rx * Math.cos(a), y = cy + ry * Math.sin(a), right = Math.cos(a) > 0.2, left = Math.cos(a) < -0.2, ax = right ? x + 70 : (left ? x - 70 : x), anc = right ? 'start' : (left ? 'end' : 'middle'), ly = Math.abs(Math.cos(a)) < 0.2 ? (Math.sin(a) < 0 ? y - 84 : y + 76) : y - 6;
+      o += '<circle cx="' + x.toFixed(0) + '" cy="' + y.toFixed(0) + '" r="48" fill="#fff" stroke="#E37F1A" stroke-width="4"/>' + icoIn(s[1], x - 22, y - 22, 44, '#C8610C') + T(ax, ly, s[0], 'cfh', 'font-size:20px', anc) + T(ax, ly + 28, s[2], 'cfm', 'fill:#4A4540;font-size:16px', anc); });
+    o += T(cx, cy - 10, __L('W01 ~ W16 = 순환 한 바퀴','W01 ~ W16 = one turn of the cycle'), 'cfh', 'font-size:24px', 'middle') + T(cx, cy + 24, __L('실측 유입 → 모델 갱신 = 디지털 트윈','Measurement inflow → model update = digital twin'), 'cfs', '', 'middle');
+    rg.innerHTML = o; }
+})();
+
+/* ===== 12장 조작형: 가중치 ===== */
+(function () {
+  var root = document.getElementById('sim-w'); if (!root) return;
+  var svg = root.querySelector('svg'), st = { w: 0.5, n: 3 }, P = W16.pts, F = W16.front.map(function (f) { return [f.K, f.CED]; });
+  var kmin = Math.min.apply(null, P.map(function (p) { return p[0]; })), kmax = Math.max.apply(null, P.map(function (p) { return p[0]; })), cmin = Math.min.apply(null, P.map(function (p) { return p[1]; })), cmax = Math.max.apply(null, P.map(function (p) { return p[1]; }));
+  function sc(p, w) { return w * (p[0] - kmin) / (kmax - kmin) + (1 - w) * (p[1] - cmin) / (cmax - cmin); }
+  var reach = {}; for (var w = 0; w <= 1.0001; w += 0.01) { var b = P.slice().sort(function (a, c) { return sc(c, w) - sc(a, w); })[0]; F.forEach(function (q, i) { if (q[0] === b[0] && q[1] === b[1]) reach[i] = 1; }); }
+  function draw() {
+    var A = axes(100, 20, 1000, 360, [0.5, 6.5], [200, 460]), o = A.o, S = stairs(F, W16.ref, A), sel = P.slice().sort(function (a, c) { return sc(c, st.w) - sc(a, st.w); }).slice(0, st.n);
+    P.forEach(function (p) { o += '<circle cx="' + A.X(p[0]).toFixed(1) + '" cy="' + A.Y(p[1]).toFixed(1) + '" r="3" fill="#D3C6B5"/>'; });
+    o += '<path d="' + S.line + '" fill="none" stroke="#E37F1A" stroke-width="3"/>';
+    F.forEach(function (q, i) { o += '<circle cx="' + A.X(q[0]) + '" cy="' + A.Y(q[1]) + '" r="7" fill="' + (reach[i] ? '#E37F1A' : '#fff') + '" stroke="#E37F1A" stroke-width="3"/>'; });
+    /* 등고선(점수 일정선) 방향 */
+    var dx = st.w / (kmax - kmin), dy = (1 - st.w) / (cmax - cmin), b0 = sel[0];
+    if (dx + dy > 0) { var k1 = 0.5, k2 = 6.5, c1 = b0[1] - (k1 - b0[0]) * dx / (dy || 1e-9), c2 = b0[1] - (k2 - b0[0]) * dx / (dy || 1e-9); o += '<line x1="' + A.X(k1) + '" y1="' + A.Y(Math.max(150, Math.min(520, c1))) + '" x2="' + A.X(k2) + '" y2="' + A.Y(Math.max(150, Math.min(520, c2))) + '" stroke="#2E8B57" stroke-width="2" stroke-dasharray="8 6" opacity=".7"/>'; }
+    sel.forEach(function (p, i) { o += '<circle cx="' + A.X(p[0]).toFixed(1) + '" cy="' + A.Y(p[1]).toFixed(1) + '" r="12" fill="none" stroke="#2E8B57" stroke-width="4"/>' + T(A.X(p[0]) + 16, A.Y(p[1]) + 6, (i + 1) + '', 'cfm', 'fill:#2E8B57', ''); });
+    o += T(1100, 30, __L('녹색 점선 = 같은 점수 선 · 속 찬 주황 = 어떤 w 로든 1위가 되는 전선 점','Green dotted = same-score line · filled orange = front points that rank 1st for some w'), 'cfmu', '', 'end');
+    svg.innerHTML = o;
+    var top = sel[0]; root.querySelector('[data-o=top]').textContent = 'K ' + top[0].toFixed(2) + ' · CED ' + top[1].toFixed(0);
+    root.querySelector('[data-o=reach]').textContent = Object.keys(reach).length + ' / ' + F.length;
+    root.querySelector('[data-o=onf]').textContent = sel.filter(function (p) { return F.some(function (q) { return q[0] === p[0] && q[1] === p[1]; }); }).length + ' / ' + st.n;
+  }
+  root.querySelectorAll('input[type=range]').forEach(function (inp) { inp.addEventListener('input', function () { st[inp.dataset.k] = +inp.value; root.querySelector('[data-o=' + inp.dataset.k + ']').textContent = inp.dataset.k === 'w' ? (+inp.value).toFixed(2) : inp.value; draw(); }); });
+  function set(w) { st.w = w; root.querySelector('input[data-k=w]').value = w; root.querySelector('[data-o=w]').textContent = w.toFixed(2); draw(); }
+  root.querySelector('[data-act=ced]').onclick = function () { set(0); }; root.querySelector('[data-act=k]').onclick = function () { set(1); }; root.querySelector('[data-act=mid]').onclick = function () { set(0.5); };
+  draw();
+})();
+</script>
+</body>
+</html>

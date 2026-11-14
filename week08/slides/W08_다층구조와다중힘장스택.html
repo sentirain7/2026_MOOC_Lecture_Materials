@@ -1,1 +1,729 @@
-../../강의덱/W08_다층구조와다중힘장스택.html
+<!doctype html>
+<html lang="ko" data-v="3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>W08 다층 구조와 다중 힘장 스택 · 계면 셀 3층 · FF-neutral 토폴로지 · 라우팅 · 혼용 규칙</title>
+<link rel="stylesheet" href="../../common/deck.css">
+</head>
+<body>
+
+<!-- 1 표지 -->
+<section class="slide v3 cover">
+<div class="stop">
+<div class="ribbon"></div>
+<div class="cover-txt">
+<p class="eb a" style="--d:0"><span class="ko" data-i>건설소재 역설계 도구 개발을 위한 AI와 분자동역학 활용 · WEEK 08 · 모듈 M2 LAMMPS · 차시 8-1 ~ 8-3 · 50분</span><span class="en" data-i>AI and Molecular Dynamics for Inverse Design of Construction Materials · WEEK 08 · Module M2 LAMMPS · Sessions 8-1 ~ 8-3 · 50 min</span></p>
+<h1 class="cover-h a" style="--d:1"><span class="ko" data-i>다층 구조와 다중 힘장 스택: 계면 셀 3층 · 토폴로지 · 라우팅 · 혼용 규칙</span><span class="en" data-i>Multilayer structures and multi-force-field stacks: 3-layer interface cell · topology · routing · mixing rules</span></h1>
+<p class="cover-sub a" style="--d:2"><span class="ko" data-i>광물 | 물 | 바인더 z 방향 적층 · 한 구조에 힘장 선택 부착 · 한 셀 안 혼용 금지</span><span class="en" data-i>Mineral | water | binder stacked along z · force field attached selectively to one structure · no mixing inside one cell</span></p>
+<p class="who a" style="--d:3"><span class="ko" data-i><b>윤태영</b> 연구위원 · 한국건설기술연구원 도로교통연구본부 · 과학기술연합대학원대학교(UST) 교수</span><span class="en" data-i><b>Taeyoung Yun</b> Senior Research Fellow · Department of Highway & Transportation Research, Korea Institute of Civil Engineering and Building Technology (KICT) · Professor, University of Science and Technology (UST)</span></p>
+<div class="rel a" style="--d:4;justify-content:flex-start"><span><span class="ko" data-i>준비물 · conda mdai</span><span class="en" data-i>Needed · conda mdai</span></span><span>Claude Code</span><span><span class="ko" data-i>W06 톨루엔 아티팩트 (저장소)</span><span class="en" data-i>W06 toluene artifact (repository)</span></span></div>
+</div>
+<div class="cover-fig"><div class="emb" data-emb="stackcover" data-dur="10"></div></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 2 오늘 만들 것 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>오늘 만들 것 · 3차시 · 50분</span><span class="en" data-i>What we build today · 3 sessions · 50 min</span></p>
+<div class="hrow"><span class="hico" data-ico="package-check"></span><h2 class="h"><span class="ko" data-i>오늘의 완성물 2개: 3층 계면 셀(data · in) · 힘장 라우팅 표 + 혼용 점검</span><span class="en" data-i>2 deliverables today: 3-layer interface cell (data · in) · force-field routing table + mixing check</span></h2></div>
+<p class="sub"><span class="ko" data-i>노트북 실행 2번(Claude Code) · 지시 3개 · 슬라이더 1개 · 1,467원자 셀 · LAMMPS 실행 4초</span><span class="en" data-i>2 notebook runs (Claude Code) · 3 prompts · 1 slider · 1,467-atom cell · LAMMPS run 4 s</span></p>
+<div class="bd today">
+<div class="goal">
+<div class="it white a" style="--d:1">
+<div class="ih"><span class="icb" data-ico="layers-3"></span><div><p class="k"><span class="ko" data-i>완성물 ①</span><span class="en" data-i>Deliverable ①</span></p><h4><span class="ko" data-i>3층 계면 셀 stack.data · in.stack</span><span class="en" data-i>3-layer interface cell stack.data · in.stack</span></h4></div></div>
+<div class="cb"><span class="fc"><span class="ko" data-i>석영 <em>540</em></span><span class="en" data-i>Quartz <em>540</em></span></span><span class="x">+</span><span class="fc bl"><span class="ko" data-i>물 <em>627</em></span><span class="en" data-i>Water <em>627</em></span></span><span class="x">+</span><span class="fc or"><span class="ko" data-i>톨루엔 <em>300</em></span><span class="en" data-i>Toluene <em>300</em></span></span><span class="x">=</span><span class="tot"><span class="ko" data-i>1,467<small>원자</small></span><span class="en" data-i>1,467<small>atoms</small></span></span></div>
+<div class="bars">
+<div class="bar"><div class="l"><span class="ko" data-i>석영 슬래브<small>ClayFF · 고정</small></span><span class="en" data-i>Quartz slab<small>ClayFF · fixed</small></span></div><div class="b mt" style="width:108px"></div><div class="v nosum">10.8 Å</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>물 층<small>SPC/E · 209분자</small></span><span class="en" data-i>Water layer<small>SPC/E · 209 molecules</small></span></div><div class="b bl" style="width:100px"></div><div class="v nosum">10 Å</div></div>
+<div class="bar"><div class="l"><span class="ko" data-i>톨루엔 층<small>GAFF2 · 20분자</small></span><span class="en" data-i>Toluene layer<small>GAFF2 · 20 molecules</small></span></div><div class="b" style="width:244px"></div><div class="v nosum">24.4 Å</div></div>
+</div>
+<p><span class="ko" data-i>+ 진공 30 Å (p p f · slab 보정) → Lz 82 Å</span><span class="en" data-i>+ vacuum 30 Å (p p f · slab correction) → Lz 82 Å</span></p>
+</div>
+<div class="it dark a" style="--d:2">
+<div class="ih"><span class="icb" data-ico="git-fork"></span><div><p class="k"><span class="ko" data-i>완성물 ②</span><span class="en" data-i>Deliverable ②</span></p><h4>routed_toluene.json · check_mix_stack.json</h4></div></div>
+<p class="mono-line"><span class="ko" data-i>ca 6 · c3 1 · ha 5 · hc 3 = 아티팩트 일치 · 혼용 규칙 5 <b>✓ ✓ ✓ ✓ ✓</b></span><span class="en" data-i>ca 6 · c3 1 · ha 5 · hc 3 = matches artifact · mixing rules 5 <b>✓ ✓ ✓ ✓ ✓</b></span></p>
+<p><span class="ko" data-i>같은 구조에 세 힘장 이름 붙이기(16장) · in 파일 섞임 점검(24장)</span><span class="en" data-i>Attach three force-field names to the same structure (slide 16) · check the in file for mixing (slide 24)</span></p>
+</div>
+</div>
+<div class="plan">
+<div class="lines">
+<div class="ln a" style="--d:1"><span class="nn">8-1</span><div><h4><span class="ko" data-i>계면 셀 3층</span><span class="en" data-i>3-layer interface cell</span></h4><p><span class="ko" data-i>왜 · 쌓기 · 조립 명령 5 · 측면 뷰 · 두께 슬라이더</span><span class="en" data-i>Why · stacking · 5 assembly commands · side view · thickness slider</span></p></div><span class="min"><span class="ko" data-i>16분</span><span class="en" data-i>16 min</span></span></div>
+<div class="ln a" style="--d:2"><span class="nn">8-2</span><div><h4><span class="ko" data-i>토폴로지와 라우팅</span><span class="en" data-i>Topology and routing</span></h4><p><span class="ko" data-i>FF-neutral · 분기 · 라우팅 표 · hybrid · P8-1 · P8-2</span><span class="en" data-i>FF-neutral · branching · routing table · hybrid · P8-1 · P8-2</span></p></div><span class="min"><span class="ko" data-i>17분</span><span class="en" data-i>17 min</span></span></div>
+<div class="ln a" style="--d:3"><span class="nn">8-3</span><div><h4><span class="ko" data-i>혼용 규칙과 스택</span><span class="en" data-i>Mixing rules and stack</span></h4><p><span class="ko" data-i>조건 4 · 매트릭스 · 수치 예 · slab 바꿔 보기 · P8-3</span><span class="en" data-i>4 conditions · matrix · numeric example · slab variations · P8-3</span></p></div><span class="min"><span class="ko" data-i>18분</span><span class="en" data-i>18 min</span></span></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>운영 예제: <b>석영(ClayFF) | 물(SPC/E) | 톨루엔(GAFF2 · AM1-BCC)</b> = 참고 사례(연구 플랫폼) 스택 <b>clayff_gaff2_v1</b></span><span class="en" data-i>Working example: <b>quartz (ClayFF) | water (SPC/E) | toluene (GAFF2 · AM1-BCC)</b> = reference case (research platform) stack <b>clayff_gaff2_v1</b></span></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>계획서 50분 · 부록 A W08 3차시 · 원본 04주차 4-5 · 05주차 5-3 · 5-4 · 03주차 3-4 혼용 · 계면 셀 = MD 워크플로우 범위 밖</span><span class="en" data-i>Plan 50 min · Appendix A W08 session 3 · original week-04 4-5 · week-05 5-3 · 5-4 · week-03 3-4 mixing · interface cell = outside MD workflow</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 3 차시 8-1 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 8-1 · 16분 · 영상 1편</span><span class="en" data-i>Session 8-1 · 16 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="layers-3"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">1</p><p class="hubt"><span class="ko" data-i>계면 셀 3층</span><span class="en" data-i>3-layer interface cell</span></p><p class="hubs"><span class="ko" data-i>광물 | 물 | 바인더 + 진공 · z 방향 적층</span><span class="en" data-i>Mineral | water | binder + vacuum · stacked along z</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>3층 셀의 구성표 (층 · 두께 · 원자 수 · 경계)</span><span class="en" data-i>Composition table of the 3-layer cell (layer · thickness · atom count · boundary)</span></h4></div></div><p><span class="ko" data-i>슬라이더(8장)로 물 두께 · 분자 수 · 진공 변경 → 조건 3개 확인</span><span class="en" data-i>Change water thickness · molecule count · vacuum with the slider (slide 8) → check 3 conditions</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>최종 프로젝트 확장 예시 셀의 첫 조립</span><span class="en" data-i>First assembly of the final-project extension-example cell</span></h4></div></div><p><span class="ko" data-i>이 셀을 z 로 당겨 분리일 측정(W09 · W10) → 약 100건을 대리모델에 투입(W14 ~ W16)</span><span class="en" data-i>Pull this cell along z to measure work of separation (W09 · W10) → feed about 100 runs to the surrogate model (W14 ~ W16)</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 4 FIG 왜 다층 셀 -->
+<section class="slide v3" data-src="04주차#39,04주차#40">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>8-1 · 왜</span><span class="en" data-i>8-1 · Why</span></p>
+<div class="hrow"><span class="hico" data-ico="unlink"></span><h2 class="h"><span class="ko" data-i>다층 셀의 용도 3: 분리일 · 수분 손상 비교 · 계면 인장</span><span class="en" data-i>3 uses of a multilayer cell: work of separation · moisture-damage comparison · interface tension</span></h2></div>
+<p class="sub"><span class="ko" data-i>계면 = z 대칭 없음 · 경계 p p f · 압력 제어는 x · y 만 · 슬래브 아래 몇 층은 고정 · 진공 ≥ 30 Å</span><span class="en" data-i>Interface = no z symmetry · boundary p p f · pressure control only in x · y · fix a few layers under the slab · vacuum ≥ 30 Å</span></p>
+<div class="bd">
+<div class="grid c3">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="unlink"></span><div><p class="k"><span class="ko" data-i>얻는 물성 ①</span><span class="en" data-i>Property gained ①</span></p><h4><span class="ko" data-i>분리일 W_sep</span><span class="en" data-i>Work of separation W_sep</span></h4></div></div>
+<div class="figw white"><svg viewBox="0 0 420 180"><rect x="40" y="110" width="340" height="40" fill="#6E655C"/><rect x="40" y="40" width="340" height="50" fill="#E37F1A"/><line class="flow" x1="210" y1="90" x2="210" y2="110" stroke="#D9534F" stroke-width="4" stroke-dasharray="6 5"/><text x="210" y="30" text-anchor="middle" class="cfm" font-size="16">W_sep = (E_s + E_b − E_if) / A</text><text x="210" y="170" text-anchor="middle" class="cfmu"><tspan class="ko" data-i>두 층을 떼는 데 드는 일 · W09 · W10</tspan><tspan class="en" data-i>Work to pull two layers apart · W09 · W10</tspan></text></svg></div>
+<p><span class="ko" data-i>계면 인장 → 최대 응력 · 파괴 모드(계면 · 응집)</span><span class="en" data-i>Interface tension → peak stress · failure mode (interface · cohesion)</span></p></div>
+<div class="it hot a" style="--d:2"><div class="ih"><span class="icb" data-ico="droplet"></span><div><p class="k"><span class="ko" data-i>얻는 물성 ②</span><span class="en" data-i>Property gained ②</span></p><h4><span class="ko" data-i>수분 손상 = 물 층 유 · 무 비교</span><span class="en" data-i>Moisture damage = with vs without water layer</span></h4></div></div>
+<div class="figw white"><svg viewBox="0 0 420 180"><g><rect x="30" y="110" width="160" height="40" fill="#6E655C"/><rect x="30" y="50" width="160" height="60" fill="#E37F1A"/><text x="110" y="170" text-anchor="middle" class="cfmu"><tspan class="ko" data-i>건조</tspan><tspan class="en" data-i>Dry</tspan></text></g><g><rect x="230" y="110" width="160" height="40" fill="#6E655C"/><rect x="230" y="86" width="160" height="24" fill="#4F7FB0"/><rect x="230" y="26" width="160" height="60" fill="#E37F1A"/><text x="310" y="170" text-anchor="middle" class="cfmu"><tspan class="ko" data-i>물 층 10 Å</tspan><tspan class="en" data-i>Water layer 10 Å</tspan></text></g></svg></div>
+<p><span class="ko" data-i>같은 슬래브 · 같은 바인더 · 물만 넣고 빼는 비교 · <b>W10 · W16 의 변수</b></span><span class="en" data-i>Same slab · same binder · compare by adding and removing only water · <b>variable in W10 · W16</b></span></p></div>
+<div class="it dark a" style="--d:3"><div class="ih"><span class="icb" data-ico="building-2"></span><div><p class="k"><span class="ko" data-i>플랫폼 셀 (원본 04#40)</span><span class="en" data-i>Platform cell (original 04#40)</span></p><h4><span class="ko" data-i>SiO₂ 건조 표면 · 293 K</span><span class="en" data-i>SiO₂ dry surface · 293 K</span></h4></div></div>
+<div class="cb plain"><span class="fc dk"><span class="ko" data-i><em>23,124</em>원자</span><span class="en" data-i><em>23,124</em> atoms</span></span><span class="fc dk"><span class="ko" data-i>AAA1 <em>216</em>분자</span><span class="en" data-i>AAA1 <em>216</em> molecules</span></span><span class="fc dk"><span class="ko" data-i>석영 ClayFF</span><span class="en" data-i>Quartz ClayFF</span></span></div>
+<p><span class="ko" data-i>바인더 GAFF2 + AM1-BCC · 광물 ClayFF · 이종쌍(unlike pair) Lorentz–Berthelot · PPPM · 오늘은 <b>1,467원자 축소판</b>으로 같은 구성</span><span class="en" data-i>Binder GAFF2 + AM1-BCC · mineral ClayFF · unlike pair (unlike pair) Lorentz–Berthelot · PPPM · today a <b>1,467-atom reduced version</b> with the same composition</span></p></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>규칙 3: 아래 몇 층 <b>고정</b>(fix setforce 0) · 진공 <b>≥ 30 Å</b>(주기 이미지가 닿지 않게) · <b>kspace_modify slab</b>(z 비주기 쿨롱)</span><span class="en" data-i>3 rules: <b>fix</b> the lower layers (fix setforce 0) · vacuum <b>≥ 30 Å</b> (so periodic images do not touch) · <b>kspace_modify slab</b> (z non-periodic Coulomb)</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 04주차 덱 #39 · #40 (paper10 Fig. 2) · 수분 조건 비교 · 분리일 산출은 W10</span><span class="en" data-i>Original week-04 deck #39 · #40 (paper10 Fig. 2) · moisture-condition comparison · work of separation computed in W10</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 5 ANIM z 쌓기 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>8-1 · 어떻게</span><span class="en" data-i>8-1 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="layers-3"></span><h2 class="h"><span class="ko" data-i>z 축 쌓기 4단계: 석영 → 물 → 톨루엔 → 진공</span><span class="en" data-i>4 steps of z stacking: quartz → water → toluene → vacuum</span></h2></div>
+<p class="sub"><span class="ko" data-i>원자 석영 540 · 물 627 · 톨루엔 300 · 진공 30 Å · Lz 82 Å · 층마다 두께 · 원자 수 누적 · 단면 24.6 × 25.5 Å = 2 × 컷오프 12 Å 를 넘는 가장 작은 직교 초격자</span><span class="en" data-i>Atoms quartz 540 · water 627 · toluene 300 · vacuum 30 Å · Lz 82 Å · per-layer thickness · cumulative atom count · cross-section 24.6 × 25.5 Å = smallest orthogonal supercell exceeding 2 × cutoff 12 Å</span></p>
+<div class="bd w08-split">
+<div class="emb" data-emb="zstack" data-dur="12" data-steps="4" data-labels="① 석영 슬래브|② 물 층|③ 톨루엔 층|④ 진공" data-labels-en="① Quartz slab|② Water layer|③ Toluene layer|④ Vacuum"></div>
+<div class="w08-cards" id="zs_cards">
+<div class="it"><div class="ih"><span class="icb" data-ico="brick-wall"></span><div><p class="k"><span class="ko" data-i>① 석영 · ClayFF · 고정</span><span class="en" data-i>① Quartz · ClayFF · fixed</span></p><h4><span class="ko" data-i>540원자 · 10.8 Å</span><span class="en" data-i>540 atoms · 10.8 Å</span></h4></div></div><p><span class="ko" data-i>보정 단위셀 9원자 × 직교 초격자 5 × 3 × 2 · Si +2.1 · O −1.05 · 합 0</span><span class="en" data-i>corrected unit cell 9 atoms × orthogonal supercell 5 × 3 × 2 · Si +2.1 · O −1.05 · sum 0</span></p></div>
+<div class="it"><div class="ih"><span class="icb" data-ico="droplet"></span><div><p class="k"><span class="ko" data-i>② 물 · SPC/E</span><span class="en" data-i>② Water · SPC/E</span></p><h4><span class="ko" data-i>209분자 · 627원자 · 10 Å</span><span class="en" data-i>209 molecules · 627 atoms · 10 Å</span></h4></div></div><p><span class="ko" data-i>N = 두께 × 단면 × 0.0334 분자/Å³ (1 g/cm³) · 간격 2.5 Å</span><span class="en" data-i>N = thickness × cross-section × 0.0334 molecules/Å³ (1 g/cm³) · spacing 2.5 Å</span></p></div>
+<div class="it"><div class="ih"><span class="icb" data-ico="hexagon"></span><div><p class="k"><span class="ko" data-i>③ 톨루엔 · GAFF2 + AM1-BCC</span><span class="en" data-i>③ Toluene · GAFF2 + AM1-BCC</span></p><h4><span class="ko" data-i>20분자 · 300원자 · 24.4 Å</span><span class="en" data-i>20 molecules · 300 atoms · 24.4 Å</span></h4></div></div><p><span class="ko" data-i>초기 밀도 ρ0 0.2 g/cm³ (W06 규칙) → 두께 역산 · Packmol tolerance 2.0</span><span class="en" data-i>Initial density ρ0 0.2 g/cm³ (W06 rule) → back-calculate thickness · Packmol tolerance 2.0</span></p></div>
+<div class="it"><div class="ih"><span class="icb" data-ico="expand"></span><div><p class="k"><span class="ko" data-i>④ 진공 · p p f</span><span class="en" data-i>④ Vacuum · p p f</span></p><h4>30 Å → Lz 82 Å</h4></div></div><p><span class="ko" data-i>주기 이미지가 닿지 않게 · kspace_modify slab 3.0 (빈 공간 3배 가정)</span><span class="en" data-i>So periodic images do not touch · kspace_modify slab 3.0 (assumes 3x empty space)</span></p></div>
+</div>
+</div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>수치 = week08/scripts/stack_cell.py 실행(stack_summary.json) · 단위셀 · 초격자 · 물 밀도 규칙 = 참고 사례(연구 플랫폼) crystal_builder · layer_builder</span><span class="en" data-i>Values = week08/scripts/stack_cell.py run (stack_summary.json) · unit cell · supercell · water density rule = reference case (research platform) crystal_builder · layer_builder</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 6 FIG 조립 명령 5 -->
+<section class="slide v3" data-src="04주차#41">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>8-1 · 어떻게</span><span class="en" data-i>8-1 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="list-ordered"></span><h2 class="h"><span class="ko" data-i>조립 5단계: 경계 · 상자 확장 · 합치기 · 고정 · 압력 제어</span><span class="en" data-i>5 assembly steps: boundary · box extension · merge · fix · pressure control</span></h2></div>
+<p class="sub"><span class="ko" data-i>p p f → change_box → append → setforce → npt x y · 합칠 때 타입 번호 offset · 위치 shift · 두 블록의 조합 규칙(combining rule) · special_bonds 일치 확인</span><span class="en" data-i>p p f → change_box → append → setforce → npt x y · when merging, check type-number offset · position shift · combining rule of both blocks · special_bonds match</span></p>
+<div class="bd">
+<div class="exf a" style="--d:1">
+<div class="exs"><span class="exi" data-ico="move-horizontal"></span><div><h4>① boundary p p f</h4><p><span class="ko" data-i>z 비주기</span><span class="en" data-i>z non-periodic</span></p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="expand"></span><div><h4><span class="ko" data-i>② read_data 슬래브 → change_box z</span><span class="en" data-i>② read_data slab → change_box z</span></h4><p><span class="ko" data-i>바인더 · 진공 공간 확보</span><span class="en" data-i>make room for binder · vacuum</span></p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="combine"></span><div><h4><span class="ko" data-i>③ read_data 바인더 add append</span><span class="en" data-i>③ read_data binder add append</span></h4><p><span class="ko" data-i>offset 타입 · shift 위치</span><span class="en" data-i>offset types · shift positions</span></p></div></div><span class="exa"></span>
+<div class="exs hot"><span class="exi" data-ico="lock"></span><div><h4>④ slab · setforce 0</h4><p><span class="ko" data-i>바닥 고정 · mobile 만 NVT</span><span class="en" data-i>fix bottom · NVT on mobile only</span></p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="move-horizontal"></span><div><h4><span class="ko" data-i>⑤ npt x · y 만</span><span class="en" data-i>⑤ npt x · y only</span></h4><p><span class="ko" data-i>z 는 진공 · 제어 않음</span><span class="en" data-i>z is vacuum · not controlled</span></p></div></div>
+</div>
+<div class="row fill">
+<pre class="code fill" style="flex:1"><span class="c"><span class="ko" data-i># in.interface — 원본 04주차 #41 (두 data 합치기)</span><span class="en" data-i># in.interface — original week-04 #41 (merge two data files)</span></span>
+units real · atom_style full · <span class="k">boundary p p f</span>
+read_data slab.data
+<span class="k">change_box</span> all z final -10 140 units box
+read_data binder.data <span class="k">add append</span> offset 12 18 24 30 0 shift 0 0 42.0
+<span class="k">kspace_modify slab 3.0</span>
+fix frz bottom <span class="k">setforce</span> 0.0 0.0 0.0
+fix nvt mobile nvt temp 298 298 100
+fix p mobile npt temp 298 298 100 <span class="o">x 1.0 1.0 1000 y 1.0 1.0 1000</span></pre>
+<div class="col" style="width:640px;flex:none">
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="file-code"></span><div><h4><span class="ko" data-i>오늘 스크립트 = 한 data 로 직접</span><span class="en" data-i>Today's script = direct from one data file</span></h4></div></div><p><span class="ko" data-i>stack_cell.py 가 세 층의 좌표 · 타입 · 결합을 한 파일에 기록 · offset · shift 는 코드가 처리</span><span class="en" data-i>stack_cell.py writes coordinates · types · bonds of all three layers to one file · code handles offset · shift</span></p></div>
+<div class="it warm a" style="--d:3"><div class="ih"><span class="icb" data-ico="shield-check"></span><div><h4><span class="ko" data-i>합치기 전 점검</span><span class="en" data-i>Check before merging</span></h4></div></div><p><span class="ko" data-i>두 블록의 <b>pair_modify mix · special_bonds</b> 가 같은가 · 다르면 한 셀 배치 불가(8-3)</span><span class="en" data-i>Are <b>pair_modify mix · special_bonds</b> the same in both blocks · if not, they cannot share one cell (8-3)</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 04주차 덱 #41 · 오늘 in 파일: week08/out/in.stack (참고 사례(연구 플랫폼) clayff_gaff2_v1 설정)</span><span class="en" data-i>Original week-04 deck #41 · today's in file: week08/out/in.stack (reference case (research platform) clayff_gaff2_v1 settings)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 7 ANIM 측면 뷰 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>8-1 · 확인</span><span class="en" data-i>8-1 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="scan-line"></span><h2 class="h"><span class="ko" data-i>측면 뷰(500스텝 뒤): x 는 주기 복제 · z 는 진공 · 층 z 범위 분리</span><span class="en" data-i>Side view (after 500 steps): x periodic replicas · z vacuum · layer z ranges separate</span></h2></div>
+<p class="sub"><span class="ko" data-i>점 1,467개 = 실제 실행 결과 · 회색 석영(고정) · 파랑 물 · 주황 톨루엔 · x 방향 = 복제본 연속 · z 위 = 빈 공간</span><span class="en" data-i>1,467 dots = actual run result · gray quartz (fixed) · blue water · orange toluene · x direction = continuous replicas · above z = empty space</span></p>
+<div class="bd w08-split">
+<div class="emb" data-emb="sidescroll" data-dur="12" data-steps="3" data-labels="① 원 셀 단면|② x 주기 복제|③ z 비주기 · 층 범위" data-labels-en="① Original cell cross-section|② x periodic replicas|③ z non-periodic · layer ranges"></div>
+<div class="w08-cards" id="sv_cards">
+<div class="it"><div class="ih"><span class="icb" data-ico="scan-line"></span><div><p class="k"><span class="ko" data-i>① x–z 단면</span><span class="en" data-i>① x–z cross-section</span></p><h4><span class="ko" data-i>24.6 × 82 Å · 1,467점</span><span class="en" data-i>24.6 × 82 Å · 1,467 dots</span></h4></div></div><p><span class="ko" data-i>500스텝 · Δt 1 fs · 온도 298 → 307 K · 벽시계 4초</span><span class="en" data-i>500 steps · Δt 1 fs · temperature 298 → 307 K · wall clock 4 s</span></p></div>
+<div class="it"><div class="ih"><span class="icb" data-ico="move-horizontal"></span><div><p class="k"><span class="ko" data-i>② x 주기 (p)</span><span class="en" data-i>② x periodic (p)</span></p><h4><span class="ko" data-i>복제본 연속</span><span class="en" data-i>continuous replicas</span></h4></div></div><p><span class="ko" data-i>단면 24.6 Å ≥ 2 r_c 24 Å · 자기 복제본과 상호작용하지 않는 최소 크기</span><span class="en" data-i>Cross-section 24.6 Å ≥ 2 r_c 24 Å · minimum size with no interaction with own replica</span></p></div>
+<div class="it"><div class="ih"><span class="icb" data-ico="arrow-up-to-line"></span><div><p class="k"><span class="ko" data-i>③ z 비주기 (f)</span><span class="en" data-i>③ z non-periodic (f)</span></p><h4><span class="ko" data-i>석영 0~10.2 · 물 10.7~25.1 · 톨루엔 25.1~49.7 Å</span><span class="en" data-i>Quartz 0~10.2 · water 10.7~25.1 · toluene 25.1~49.7 Å</span></h4></div></div><p><span class="ko" data-i>z 범위 분리 · 진공 위 이미지 없음 · PE −135,374 → −135,408 kcal/mol (0.025 %)</span><span class="en" data-i>z ranges separate · no image above vacuum · PE −135,374 → −135,408 kcal/mol (0.025 %)</span></p></div>
+</div>
+</div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>데이터 = week08/expected_output/stack_sideview.json · log.stack (mdai lmp · 22 Jul 2025)</span><span class="en" data-i>Data = week08/expected_output/stack_sideview.json · log.stack (mdai lmp · 22 Jul 2025)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 8 SIM 두께 슬라이더 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>8-1 · 확인 · 조작형</span><span class="en" data-i>8-1 · Check · interactive</span></p>
+<div class="hrow"><span class="hico" data-ico="sliders-horizontal"></span><h2 class="h"><span class="ko" data-i>두께 계산기: 물 두께 · 분자 수 · 진공 → 원자 수 · Lz · 조건 3 판정</span><span class="en" data-i>Thickness calculator: water thickness · molecule count · vacuum → atom count · Lz · verdict on 3 conditions</span></h2></div>
+<p class="sub"><span class="ko" data-i>단면 24.6 × 25.5 Å 고정 · 물 = 밀도 → 분자 수 · 톨루엔 = 분자 수 → 두께 역산 · 진공이 30 Å 아래면 ✗</span><span class="en" data-i>Cross-section fixed at 24.6 × 25.5 Å · water = density → molecule count · toluene = molecule count → back-calculate thickness · ✗ if vacuum is below 30 Å</span></p>
+<div class="bd">
+<div class="sim" id="sim-stack">
+<div class="ctl">
+<label><span class="ko" data-i><b>물 층 두께 Å <output data-o="w">10</output></b></span><span class="en" data-i><b>Water layer thickness Å <output data-o="w">10</output></b></span><input type="range" min="0" max="20" value="10" step="1" data-k="w"></label>
+<label><span class="ko" data-i><b>톨루엔 분자 수 <output data-o="n">20</output></b></span><span class="en" data-i><b>Toluene molecule count <output data-o="n">20</output></b></span><input type="range" min="10" max="40" value="20" step="1" data-k="n"></label>
+<label><span class="ko" data-i><b>진공 Å <output data-o="v">30</output></b></span><span class="en" data-i><b>Vacuum Å <output data-o="v">30</output></b></span><input type="range" min="12" max="40" value="30" step="1" data-k="v"></label>
+<button type="button" data-act="fail"><span class="ko" data-i>실패 상태 (진공 12 Å)</span><span class="en" data-i>Failure state (vacuum 12 Å)</span></button>
+<button type="button" class="alt" data-act="reset"><span class="ko" data-i>초기값 (10 · 20 · 30)</span><span class="en" data-i>Initial values (10 · 20 · 30)</span></button>
+</div>
+<div class="view"><svg viewBox="0 0 1160 300" aria-label="층 단면"></svg>
+<div class="kpi"><div><span class="ko" data-i>원자 <b data-o="atoms"> · </b></span><span class="en" data-i>Atoms <b data-o="atoms"> · </b></span></div><div>Lz <b data-o="lz"> · </b></div><div><span class="ko" data-i>변/2rc <b>1.02 ✓</b></span><span class="en" data-i>side/2rc <b>1.02 ✓</b></span></div><div><span class="ko" data-i>진공 ≥ 30 <b data-o="vac"> · </b></span><span class="en" data-i>Vacuum ≥ 30 <b data-o="vac"> · </b></span></div><div><span class="ko" data-i>slab 빈 공간 ≥ 2× <b data-o="slab"> · </b></span><span class="en" data-i>slab empty space ≥ 2× <b data-o="slab"> · </b></span></div></div></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>식 = stack_cell.py 와 같음 · 물 0.0334 분자/Å³(참고 사례(연구 플랫폼) layer_builder) · 톨루엔 두께 = N·M/(ρ0·N_A·A) · 같은 계산: notebooks/01</span><span class="en" data-i>Formula = same as stack_cell.py · water 0.0334 molecules/Å³ (reference case (research platform) layer_builder) · toluene thickness = N·M/(ρ0·N_A·A) · same calculation: notebooks/01</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 9 차시 8-2 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 8-2 · 17분 · 영상 1편</span><span class="en" data-i>Session 8-2 · 17 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="git-fork"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">2</p><p class="hubt"><span class="ko" data-i>토폴로지와 라우팅</span><span class="en" data-i>Topology and routing</span></p><p class="hubs"><span class="ko" data-i>구조는 한 벌 · 힘장은 규칙으로 부착</span><span class="en" data-i>One structure · force field attached by rules</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>3층 셀 설계표(P8-1) · 힘장별 타입 표(P8-2)</span><span class="en" data-i>3-layer cell design table (P8-1) · per-force-field type table (P8-2)</span></h4></div></div><p><span class="ko" data-i>노트북 실행 → 요약 JSON → Claude Code 지시 · 토폴로지 → ca · c3a · C 세 이름</span><span class="en" data-i>Run notebook → summary JSON → Claude Code prompt · topology → three names ca · c3a · C</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>파이프라인 ② 구조 생성의 설계 원리</span><span class="en" data-i>Design principle of pipeline ② structure generation</span></h4></div></div><p><span class="ko" data-i>힘장 교체 시 구조 재생성 없음 · 구조 해시 하나 · 힘장 해시 여럿(W16 기록)</span><span class="en" data-i>Swapping force field needs no structure regeneration · one structure hash · several force-field hashes (recorded in W16)</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 10 FIG FF-neutral -->
+<section class="slide v3" data-src="05주차#22,05주차#23">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>8-2 · 무엇</span><span class="en" data-i>8-2 · What</span></p>
+<div class="hrow"><span class="hico" data-ico="braces"></span><h2 class="h"><span class="ko" data-i>FF-neutral 토폴로지 = 원소 · 좌표 · 결합 · 분자 ID 만</span><span class="en" data-i>FF-neutral topology = element · coordinates · bonds · molecule ID only</span></h2></div>
+<p class="sub"><span class="ko" data-i>data 파일 = 힘장 종속 · 앞단 구조 기록을 힘장과 분리 → 같은 구조에서 힘장별 data 각각 생성</span><span class="en" data-i>data file = force-field dependent · separate the upstream structure record from the force field → generate a data file per force field from the same structure</span></p>
+<div class="bd">
+<div class="row">
+<div class="doc a fill" style="--d:1"><span class="doc-pub"><span class="ko" data-i>data/topology_toluene.json · 발췌 · 구조 해시 55209c995c52</span><span class="en" data-i>data/topology_toluene.json · excerpt · structure hash 55209c995c52</span></span>
+<pre class="code doccode">"role": "organic",  "name": "toluene"
+"atoms": [ {"id": 1, "el": "C", "xyz": [1.396, 0.0, 0.0], "mol": 1},
+           {"id": 7, "el": "C", "xyz": [2.900, 0.0, 0.0], "mol": 1},
+           {"id": 8, "el": "H", "xyz": [1.240, 2.147, 0.0], "mol": 1}, … ]
+"bonds": [ [1, 2, <span class="o">1.5</span>],   <span class="c"><span class="ko" data-i># 방향족 고리</span><span class="en" data-i># aromatic ring</span></span>
+           [1, 7, <span class="o">1.0</span>],   <span class="c"><span class="ko" data-i># 고리–메틸</span><span class="en" data-i># ring–methyl</span></span>
+           [7, 13, <span class="o">1.0</span>], … ]
+<span class="c"><span class="ko" data-i># 없는 것: ff_type · charge · epsilon · sigma · special_bonds</span><span class="en" data-i># absent: ff_type · charge · epsilon · sigma · special_bonds</span></span></pre>
+<span class="doc-m"><span class="ko" data-i>같은 파일에서 GAFF2 · COMPASS · ReaxFF 의 타입 열 각각 채움(11장) · 구조 해시 동일 · 힘장 해시만 상이</span><span class="en" data-i>Same file fills the type columns for GAFF2 · COMPASS · ReaxFF (slide 11) · structure hash identical · only force-field hash differs</span></span></div>
+<div class="col" style="width:620px;flex:none">
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="check"></span><div><h4><span class="ko" data-i>담는 정보 4</span><span class="en" data-i>4 pieces of information</span></h4></div></div><p><span class="ko" data-i>원소 · 좌표 · 결합(차수 1 · 1.5 · 2) · 분자 ID</span><span class="en" data-i>element · coordinates · bonds (order 1 · 1.5 · 2) · molecule ID</span></p></div>
+<div class="it dark a" style="--d:3"><div class="ih"><span class="icb" data-ico="circle-x"></span><div><h4><span class="ko" data-i>담지 않는 것</span><span class="en" data-i>What it omits</span></h4></div></div><p><span class="ko" data-i>힘장 타입 번호 · 전하 q · ε · σ · special_bonds · <b>라우팅이 부착</b></span><span class="en" data-i>force-field type number · charge q · ε · σ · special_bonds · <b>routing attaches them</b></span></p></div>
+<div class="it hot a" style="--d:4"><div class="ih"><span class="icb" data-ico="git-compare"></span><div><h4><span class="ko" data-i>얻는 것</span><span class="en" data-i>What you get</span></h4></div></div><p><span class="ko" data-i>구조 재생성 없이 힘장 비교 실험 · 두 실행을 「같은 구조 해시 + 다른 힘장 해시」로 묶어 기록</span><span class="en" data-i>Force-field comparison without regenerating structure · two runs recorded as "same structure hash + different force-field hash"</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 05주차 덱 #22 · #23 · 파일: week08/scripts/make_topology.py → data/topology_{toluene,quartz,water}.json</span><span class="en" data-i>Original week-05 deck #22 · #23 · file: week08/scripts/make_topology.py → data/topology_{toluene,quartz,water}.json</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 11 ANIM 분기 흐름 -->
+<section class="slide v3" data-src="05주차#24">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>8-2 · 어떻게</span><span class="en" data-i>8-2 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="git-fork"></span><h2 class="h"><span class="ko" data-i>라우팅 분기 3: 같은 원자 → GAFF2 ca / COMPASS c3a / ReaxFF 원소만</span><span class="en" data-i>3 routing branches: same atom → GAFF2 ca / COMPASS c3a / ReaxFF element only</span></h2></div>
+<p class="sub"><span class="ko" data-i>가운데 구조는 한 벌 · 갈래마다 타입 열만 새로 채움 · COMPASS 갈래 = 생성은 가능 · ClayFF 와 한 셀 배치 불가(blocked)</span><span class="en" data-i>One structure in the middle · each branch fills only the type column anew · COMPASS branch = can be generated · cannot share a cell with ClayFF (blocked)</span></p>
+<div class="bd"><div class="emb" data-emb="route3" data-dur="12" data-steps="3" data-labels="① GAFF2 (12-6)|② COMPASS (9-6 · blocked)|③ ReaxFF (원소 · QEq)" data-labels-en="① GAFF2 (12-6)|② COMPASS (9-6 · blocked)|③ ReaxFF (element · QEq)"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 05주차 덱 #24 (메틸페놀 타입 대응) · 오늘 파일: week08/out/routed_toluene.json (ca 6 · c3 1 · ha 5 · hc 3 = 아티팩트 일치)</span><span class="en" data-i>Original week-05 deck #24 (methylphenol type mapping) · today's file: week08/out/routed_toluene.json (ca 6 · c3 1 · ha 5 · hc 3 = matches artifact)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 12 FIG 라우팅 규칙 표 -->
+<section class="slide v3" data-src="05주차#27">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>8-2 · 어떻게</span><span class="en" data-i>8-2 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="route"></span><h2 class="h"><span class="ko" data-i>라우팅 표 5행: 역할 → 힘장 결정 · 경로 없는 unknown = blocked</span><span class="en" data-i>Routing table 5 rows: role → force-field decision · unknown with no route = blocked</span></h2></div>
+<p class="sub"><span class="ko" data-i>경로가 없으면 제출 금지 · 힘장 결정 기준 = 분자 종류 ✗ · <b>역할</b> ○ · 모르는 것은 차단</span><span class="en" data-i>No route means no submission · force field decided by molecule kind ✗ · by <b>role</b> ○ · block what is unknown</span></p>
+<div class="bd">
+<div class="row">
+<table class="t" style="flex:1"><thead><tr><th><span class="ko" data-i>경로(role)</span><span class="en" data-i>Route (role)</span></th><th><span class="ko" data-i>적용 힘장</span><span class="en" data-i>Force field applied</span></th><th><span class="ko" data-i>비고</span><span class="en" data-i>Note</span></th></tr></thead><tbody>
+<tr><td>organic</td><td><span class="ko" data-i>GAFF2 + AM1-BCC 전하</span><span class="en" data-i>GAFF2 + AM1-BCC charges</span></td><td><span class="ko" data-i>SCF 실패 → sqm_robust 1회 더 · 아티팩트 JSON 으로 기록</span><span class="en" data-i>SCF failure → sqm_robust 1 more time · recorded in artifact JSON</span></td></tr>
+<tr><td>inorganic</td><td><span class="ko" data-i>ClayFF 전하 · LJ (12-6)</span><span class="en" data-i>ClayFF charges · LJ (12-6)</span></td><td><span class="ko" data-i>유기 쪽과 Lorentz–Berthelot + PPPM</span><span class="en" data-i>With organic side: Lorentz–Berthelot + PPPM</span></td></tr>
+<tr><td>water</td><td><span class="ko" data-i>SPC/E (ClayFF 스택) · TIP3P (순수 유기)</span><span class="en" data-i>SPC/E (ClayFF stack) · TIP3P (pure organic)</span></td><td><span class="ko" data-i>강체(shake) · 물 모델도 스택이 선언</span><span class="en" data-i>Rigid (shake) · stack also declares the water model</span></td></tr>
+<tr><td>ionic</td><td> · </td><td><span class="ko" data-i>운영자 승인이 있어야 열리는 경로</span><span class="en" data-i>Route that opens only with operator approval</span></td></tr>
+<tr class="hl"><td>unknown</td><td>blocked</td><td><span class="ko" data-i>경로가 없으면 제출 금지</span><span class="en" data-i>No route means no submission</span></td></tr></tbody></table>
+<div class="col" style="width:560px;flex:none">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="circle-x"></span><div><p class="k"><span class="ko" data-i>차단되는 것 4</span><span class="en" data-i>4 things blocked</span></p><h4><span class="ko" data-i>생성 단계에서 거부</span><span class="en" data-i>Rejected at generation stage</span></h4></div></div><p><span class="ko" data-i>유기 분자의 UFF · 원소 LJ 폴백 · 기록 없는 힘장 혼합 · 임의 결합 상수</span><span class="en" data-i>UFF for organic molecules · element-LJ fallback · unrecorded force-field mixing · arbitrary bond constants</span></p></div>
+<div class="it warm a" style="--d:2"><div class="ih"><span class="icb" data-ico="triangle-alert"></span><div><p class="k"><span class="ko" data-i>라벨 오기 사례</span><span class="en" data-i>Mislabel case</span></p><h4><span class="ko" data-i>INTERFACE-FF 라 적힌 LJ = 실제 ClayFF</span><span class="en" data-i>LJ labeled INTERFACE-FF = actually ClayFF</span></h4></div></div><p><span class="ko" data-i>라벨 오류 = 논문 방법 서술 오류 · 결과마다 스택 이름 기록(23장)</span><span class="en" data-i>Label error = error in paper's methods description · record stack name with every result (slide 23)</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 05주차 덱 #27 · 참고 사례(연구 플랫폼) src/forcefield/ff_stack.py · FF_AUDIT_REPORT_20260715 A2</span><span class="en" data-i>Original week-05 deck #27 · reference case (research platform) src/forcefield/ff_stack.py · FF_AUDIT_REPORT_20260715 A2</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 13 FIG hybrid/overlay -->
+<section class="slide v3" data-src="신규(규칙 16 보강) · 원본 05주차#26 · 07주차#17 → 22장 · 저장소 docs">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>8-2 · 비유</span><span class="en" data-i>8-2 · Analogy</span></p>
+<div class="hrow"><span class="hico" data-ico="book-open"></span><h2 class="h"><span class="ko" data-i>설계도 한 벌 · 시방서 3종 = 구조 한 벌 · 힘장별 data</span><span class="en" data-i>One blueprint, 3 specifications = one structure · a data file per force field</span></h2></div>
+<p class="sub"><span class="ko" data-i>설계도(구조)는 그대로 · 시방서(힘장)만 바꿔 시공 · 같은 원자도 시방서마다 이름 · 숫자 상이 · 두 권 혼용 = 8-3 점검 대상</span><span class="en" data-i>Blueprint (structure) stays · only the specification (force field) changes for construction · the same atom gets a different name · number per specification · mixing two volumes = 8-3 check target</span></p>
+<div class="bd"><div class="figw white fill"><svg viewBox="0 0 1700 420" class="cfig">
+<defs><marker id="w08ar" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#907D6A"/></marker></defs>
+<g transform="translate(30,60)"><rect width="360" height="300" rx="14" fill="#156082"/><g stroke="#F2EEE8" stroke-opacity=".35"><path d="M0 60 H360 M0 120 H360 M0 180 H360 M0 240 H360 M72 0 V300 M144 0 V300 M216 0 V300 M288 0 V300"/></g>
+<rect x="60" y="70" width="240" height="160" fill="none" stroke="#F2EEE8" stroke-width="4"/><path d="M60 150 H300 M180 70 V230" stroke="#F2EEE8" stroke-width="3"/>
+<text x="180" y="-18" text-anchor="middle" class="cfh" font-size="24"><tspan class="ko" data-i>설계도 한 벌 = 구조</tspan><tspan class="en" data-i>One blueprint = structure</tspan></text><rect x="0" y="248" width="360" height="44" fill="#0F4A66"/><text x="180" y="278" text-anchor="middle" class="cfs" style="fill:#FFFFFF" font-size="21"><tspan class="ko" data-i>원소 · 좌표 · 결합 · 분자 ID</tspan><tspan class="en" data-i>element · coordinates · bonds · molecule ID</tspan></text></g>
+<path d="M400 210 C 480 210, 480 90, 560 90" stroke="#907D6A" stroke-width="4" fill="none" marker-end="url(#w08ar)"/>
+<path d="M400 210 H560" stroke="#907D6A" stroke-width="4" marker-end="url(#w08ar)"/>
+<path d="M400 210 C 480 210, 480 330, 560 330" stroke="#907D6A" stroke-width="4" fill="none" marker-end="url(#w08ar)"/>
+<g font-size="22">
+<g transform="translate(575,45)"><rect width="430" height="90" rx="10" fill="#FFFDFA" stroke="#E37F1A" stroke-width="3"/><rect width="18" height="90" fill="#E37F1A"/><text x="40" y="38" class="cfh"><tspan class="ko" data-i>시방서 GAFF2</tspan><tspan class="en" data-i>Specification GAFF2</tspan></text><text x="40" y="70" class="cfs"><tspan class="ko" data-i>원자 이름 ca · 전하 AM1-BCC</tspan><tspan class="en" data-i>atom name ca · charges AM1-BCC</tspan></text></g>
+<g transform="translate(575,165)"><rect width="430" height="90" rx="10" fill="#FFFDFA" stroke="#156082" stroke-width="3"/><rect width="18" height="90" fill="#156082"/><text x="40" y="38" class="cfh"><tspan class="ko" data-i>시방서 COMPASS</tspan><tspan class="en" data-i>Specification COMPASS</tspan></text><text x="40" y="70" class="cfs"><tspan class="ko" data-i>원자 이름 c3a · 9-6 함수</tspan><tspan class="en" data-i>atom name c3a · 9-6 function</tspan></text></g>
+<g transform="translate(575,285)"><rect width="430" height="90" rx="10" fill="#FFFDFA" stroke="#2E8B57" stroke-width="3"/><rect width="18" height="90" fill="#2E8B57"/><text x="40" y="38" class="cfh"><tspan class="ko" data-i>시방서 ReaxFF</tspan><tspan class="en" data-i>Specification ReaxFF</tspan></text><text x="40" y="70" class="cfs"><tspan class="ko" data-i>원소 이름만 · 결합은 매 스텝 계산</tspan><tspan class="en" data-i>element names only · bonds computed every step</tspan></text></g>
+</g>
+<path d="M1015 90 H1110" stroke="#907D6A" stroke-width="4" marker-end="url(#w08ar)"/><path d="M1015 210 H1110" stroke="#907D6A" stroke-width="4" marker-end="url(#w08ar)"/><path d="M1015 330 H1110" stroke="#907D6A" stroke-width="4" marker-end="url(#w08ar)"/>
+<g transform="translate(1125,45)"><rect width="250" height="90" rx="10" fill="#F2EEE8"/><text x="125" y="55" text-anchor="middle" class="cfm">data · GAFF2</text></g>
+<g transform="translate(1125,165)"><rect width="250" height="90" rx="10" fill="#F2EEE8"/><text x="125" y="55" text-anchor="middle" class="cfm">data · COMPASS</text></g>
+<g transform="translate(1125,285)"><rect width="250" height="90" rx="10" fill="#F2EEE8"/><text x="125" y="55" text-anchor="middle" class="cfm">data · ReaxFF</text></g>
+<g transform="translate(1410,120)"><rect width="270" height="180" rx="14" fill="#FBE9E4" stroke="#C4472D" stroke-width="3" stroke-dasharray="8 6"/><text x="135" y="62" text-anchor="middle" class="cfh" style="fill:#C4472D"><tspan class="ko" data-i>시방서 두 권을</tspan><tspan class="en" data-i>Two specification volumes</tspan></text><text x="135" y="98" text-anchor="middle" class="cfh" style="fill:#C4472D"><tspan class="ko" data-i>한 건물에 혼용</tspan><tspan class="en" data-i>mixed in one building</tspan></text><text x="135" y="140" text-anchor="middle" class="cfs"><tspan class="ko" data-i>→ 8-3 혼용 점검</tspan><tspan class="en" data-i>→ 8-3 mixing check</tspan></text></g>
+<text x="210" y="405" text-anchor="middle" class="cfs"><tspan class="ko" data-i>한 번 그림</tspan><tspan class="en" data-i>Drawn once</tspan></text><text x="790" y="405" text-anchor="middle" class="cfs"><tspan class="ko" data-i>같은 원자 · 시방서마다 다른 이름과 숫자</tspan><tspan class="en" data-i>Same atom · different name and numbers per specification</tspan></text><text x="1250" y="405" text-anchor="middle" class="cfs"><tspan class="ko" data-i>시공 결과 = 힘장별 data</tspan><tspan class="en" data-i>Construction result = data file per force field</tspan></text>
+</svg></div></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>비유 그림(신규) · 라우팅 실제 = 11 · 12장 · 혼용 판정 = 18 · 19장</span><span class="en" data-i>Analogy figure (new) · actual routing = slides 11 · 12 · mixing verdict = slides 18 · 19</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 14 DEF 5 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>용어 정의</span><span class="en" data-i>Key terms</span></p>
+<div class="hrow"><span class="hico" data-ico="book-marked"></span><h2 class="h"><span class="ko" data-i>새 용어 5: FF-neutral 토폴로지 · 힘장 라우팅 · 힘장 스택 · slab 보정 · 분리일</span><span class="en" data-i>5 new terms: FF-neutral topology · force-field routing · force-field stack · slab correction · work of separation</span></h2></div>
+<p class="sub"><span class="ko" data-i>영어 병기 · 한 줄 정의 · 다시 나오는 곳: W09 · W10 · W16</span><span class="en" data-i>English given · one-line definition · where it returns: W09 · W10 · W16</span></p>
+<div class="bd">
+<div class="defs icon">
+<div class="defcard icon a" style="--d:1"><span class="lic" data-ico="braces"></span><p class="term"><span class="ko" data-i>FF-neutral 토폴로지<em>force-field-neutral topology</em></span><span class="en" data-i>FF-neutral topology<em>force-field-neutral topology</em></span></p><p class="def"><span class="ko" data-i>원소 · 좌표 · 결합 차수 · 분자 ID 만 담은 구조 기록(타입 · 전하 · ε · σ 없음)</span><span class="en" data-i>Structure record holding only element · coordinates · bond order · molecule ID (no type · charge · ε · σ)</span></p><p class="again"><span class="ko" data-i>10 · 11장</span><span class="en" data-i>slides 10 · 11</span></p></div>
+<div class="defcard icon a" style="--d:2"><span class="lic" data-ico="route"></span><p class="term"><span class="ko" data-i>힘장 라우팅<em>force-field routing</em></span><span class="en" data-i>Force-field routing<em>force-field routing</em></span></p><p class="def"><span class="ko" data-i>원자의 역할(organic · inorganic · water)에 따라 규칙으로 힘장을 고르는 일 · 경로 없으면 차단</span><span class="en" data-i>Choosing a force field by rule from an atom's role (organic · inorganic · water) · no route = blocked</span></p><p class="again"><span class="ko" data-i>12장</span><span class="en" data-i>slide 12</span></p></div>
+<div class="defcard icon a" style="--d:3"><span class="lic" data-ico="layers"></span><p class="term"><span class="ko" data-i>힘장 스택<em>force-field stack</em></span><span class="en" data-i>Force-field stack<em>force-field stack</em></span></p><p class="def"><span class="ko" data-i>한 계 전체가 쓰는 힘장 · 조합 규칙 · 전하 방법 · 물 모델 · 1-4 축소의 묶음에 붙인 이름(clayff_gaff2_v1)</span><span class="en" data-i>Name given to the bundle a whole system uses: force field · combining rule · charge method · water model · 1-4 scaling (clayff_gaff2_v1)</span></p><p class="again"><span class="ko" data-i>23장 · W16</span><span class="en" data-i>slide 23 · W16</span></p></div>
+<div class="defcard icon a" style="--d:4"><span class="lic" data-ico="arrow-up-to-line"></span><p class="term"><span class="ko" data-i>slab 보정<em>slab correction</em></span><span class="en" data-i>Slab correction<em>slab correction</em></span></p><p class="def"><span class="ko" data-i>z 비주기 층상 셀에서 PPPM 이 이미지 층 사이 쌍극자 에너지를 빼는 처리 · kspace_modify slab 3.0</span><span class="en" data-i>In z-non-periodic layered cells, PPPM subtracts the dipole energy between image layers · kspace_modify slab 3.0</span></p><p class="again"><span class="ko" data-i>21장</span><span class="en" data-i>slide 21</span></p></div>
+<div class="defcard icon a" style="--d:4"><span class="lic" data-ico="unlink"></span><p class="term"><span class="ko" data-i>분리일<em>work of separation</em></span><span class="en" data-i>Work of separation<em>work of separation</em></span></p><p class="def"><span class="ko" data-i>두 층을 떼는 데 드는 단위 면적당 일 (E_slab + E_binder − E_interface)/A</span><span class="en" data-i>Work per unit area to pull two layers apart (E_slab + E_binder − E_interface)/A</span></p><p class="again">W09 · W10</p></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>정의 문구 = GLOSSARY.md</span><span class="en" data-i>Definitions = GLOSSARY.md</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 15 MAKE P8-1 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>8-2 · 만들어 보기</span><span class="en" data-i>8-2 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="pencil-ruler"></span><h2 class="h"><span class="ko" data-i>만들어 보기 P8-1: 셀 요약 → 내 재료의 층별 설계표 · 조건 판정</span><span class="en" data-i>Try it P8-1: cell summary → per-layer design table for my material · condition verdicts</span></h2></div>
+<div class="bd">
+<div class="make">
+<div class="left a" style="--d:1">
+<pre class="code"><span class="c"><span class="ko" data-i># 환경: week08 폴더 · claude (W01 12장)</span><span class="en" data-i># Environment: week08 folder · claude (W01 slide 12)</span></span>
+python ../run_nb.py notebooks/01_stack_cell.ipynb
+<span class="c"># = stack_cell.py --packmol packmol --lmp lmp</span>
+<span class="c"><span class="ko" data-i># 요약 JSON 직접 읽기 → out/P8-1_result.md</span><span class="en" data-i># Read summary JSON directly → out/P8-1_result.md</span></span></pre>
+<div class="prompt" data-id="P8-1"><span class="ko" data-i>`python ../run_nb.py notebooks/01_stack_cell.ipynb` 로 노트북을 실행하고, 생성된 out/stack_summary.json(3층 계면 셀 요약)을 expected_output 과 비교해라. 이 요약으로 내 재료 [광물: 석영 / 바인더: SBS 개질 아스팔트 / 물 층: 있음] 에 맞춰 ① 층별 설계표(열: 층 · 재료 · 힘장 · 전하 방법 · 두께 Å · 원자 수 · 고정 여부)를 쓰고 ② 셀 한 변이 2 × 컷오프(24 Å) 이상인지, 진공이 30 Å 이상인지, 슬래브 전하 합이 0 인지 판정하고 ③ 바인더를 톨루엔에서 내 재료 분자로 바꿀 때 stack_cell.py 의 어느 인수 · 어느 입력 파일을 바꿔야 하는지 적어 out/P8-1_result.md 에 저장해라. scripts/ 는 고치지 말고, 요약에 없는 값은 「확인 필요」로 표시해라.</span><span class="en" data-i>Run the notebook with `python ../run_nb.py notebooks/01_stack_cell.ipynb` and compare the generated out/stack_summary.json (3-layer interface cell summary) with expected_output. Using this summary, for my material [mineral: quartz / binder: SBS-modified asphalt / water layer: present] ① write a per-layer design table (columns: layer · material · force field · charge method · thickness Å · atom count · fixed or not) ② judge whether the cell side is at least 2 × cutoff (24 Å), vacuum at least 30 Å, and slab charge sum 0 ③ state which argument of stack_cell.py and which input file must change when swapping the binder from toluene to my material, and save to out/P8-1_result.md. Do not edit scripts/; mark values not in the summary as "needs check".</span></div>
+</div>
+<div class="expect a" style="--d:2">
+<h4><span class="tic" data-ico="table"></span><span class="ko" data-i>기대 결과 · 층별 설계표 + 조건 3</span><span class="en" data-i>Expected output · per-layer design table + 3 conditions</span></h4>
+<table class="t"><thead><tr><th><span class="ko" data-i>층</span><span class="en" data-i>Layer</span></th><th><span class="ko" data-i>힘장 · 전하</span><span class="en" data-i>Force field · charge</span></th><th><span class="ko" data-i>두께</span><span class="en" data-i>Thickness</span></th><th><span class="ko" data-i>원자</span><span class="en" data-i>Atoms</span></th><th><span class="ko" data-i>고정</span><span class="en" data-i>Fixed</span></th></tr></thead><tbody>
+<tr><td><span class="ko" data-i>석영 슬래브</span><span class="en" data-i>Quartz slab</span></td><td><span class="ko" data-i>ClayFF · 고정 전하</span><span class="en" data-i>ClayFF · fixed charge</span></td><td>10.8 Å</td><td>540</td><td><span class="ko" data-i>전체 고정</span><span class="en" data-i>all fixed</span></td></tr>
+<tr><td><span class="ko" data-i>물</span><span class="en" data-i>Water</span></td><td><span class="ko" data-i>SPC/E · 고정 전하 · shake</span><span class="en" data-i>SPC/E · fixed charge · shake</span></td><td>10 Å</td><td>627</td><td><span class="ko" data-i>이동</span><span class="en" data-i>mobile</span></td></tr>
+<tr><td><span class="ko" data-i>톨루엔 → [내 재료]</span><span class="en" data-i>Toluene → [my material]</span></td><td>GAFF2 · AM1-BCC</td><td>24.4 Å</td><td>300</td><td><span class="ko" data-i>이동</span><span class="en" data-i>mobile</span></td></tr>
+<tr><td><span class="ko" data-i>진공</span><span class="en" data-i>Vacuum</span></td><td> · </td><td>30 Å</td><td>0</td><td>p p f · slab</td></tr></tbody></table>
+<div class="cb wrap"><span class="fc gr"><span class="ko" data-i>변/2rc <em>1.024</em> ✓</span><span class="en" data-i>side/2rc <em>1.024</em> ✓</span></span><span class="fc gr"><span class="ko" data-i>진공 <em>30</em> ✓</span><span class="en" data-i>Vacuum <em>30</em> ✓</span></span><span class="fc gr"><span class="ko" data-i>슬래브 Σq <em>0</em> ✓</span><span class="en" data-i>Slab Σq <em>0</em> ✓</span></span><span class="fc or"><span class="ko" data-i>바꿀 것: mol · 아티팩트 JSON</span><span class="en" data-i>Change: mol · artifact JSON</span></span></div>
+<p class="cap"><span class="ko" data-i>바인더 교체 = mol + 아티팩트 JSON · 광물 교체 = 단위셀 좌표 + ClayFF 전하</span><span class="en" data-i>Binder swap = mol + artifact JSON · mineral swap = unit-cell coordinates + ClayFF charges</span></p>
+</div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>조건 3(변/2rc · 진공 · 슬래브 전하 합)이 요약의 값으로 판정되었는가</span><span class="en" data-i>Were the 3 conditions (side/2rc · vacuum · slab charge sum) judged from the summary values</span></p><p><span class="ko" data-i>바인더 교체 시 바꿀 파일 2개(mol · 아티팩트 JSON)를 짚었는가 · 코드 수정 ✗ · 입력 교체 ○</span><span class="en" data-i>Did it name the 2 files to change on binder swap (mol · artifact JSON) · no code edits ✗ · swap inputs ○</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>week08/notebooks/01_stack_cell.ipynb · scripts/stack_cell.py · 지시문 원문 week08/prompts.md · P8-1</span><span class="en" data-i>week08/notebooks/01_stack_cell.ipynb · scripts/stack_cell.py · original prompt week08/prompts.md · P8-1</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 16 MAKE P8-2 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>8-2 · 만들어 보기</span><span class="en" data-i>8-2 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="git-fork"></span><h2 class="h"><span class="ko" data-i>만들어 보기 P8-2: 토폴로지 → 힘장 3종 타입 표 → route_ff 결과와 비교</span><span class="en" data-i>Try it P8-2: topology → type tables for 3 force fields → compare with route_ff result</span></h2></div>
+<div class="bd">
+<div class="make">
+<div class="left a" style="--d:1">
+<pre class="code"><span class="c"><span class="ko" data-i># 환경: week08 폴더 · claude · 승인 후 실행</span><span class="en" data-i># Environment: week08 folder · claude · run after approval</span></span>
+python ../run_nb.py notebooks/02_route_and_check.ipynb
+<span class="c"><span class="ko" data-i># 토폴로지 직접 읽기 → 표 ↔ routed → P8-2_result.md</span><span class="en" data-i># Read topology directly → table ↔ routed → P8-2_result.md</span></span></pre>
+<div class="prompt" data-id="P8-2"><span class="ko" data-i>`python ../run_nb.py notebooks/02_route_and_check.ipynb` 로 노트북을 실행해라. 이어서 `@data/topology_toluene.json`(톨루엔 FF-neutral 토폴로지 · 원소 · 좌표 · 결합 차수 · 분자 ID, 타입 · 전하 없음)의 atoms · bonds 만 보고 ① 원자마다 GAFF2 타입(ca · c3 · ha · hc 규칙: 방향족 C = ca · sp³ C = c3 · 방향족 C 의 H = ha · sp³ C 의 H = hc)과 COMPASS 타입(ca→c3a · c3→c4 · ha/hc→h1)을 표로 붙여라(열: id · 원소 · GAFF2 · COMPASS · ReaxFF). ② 타입 수를 세어라. ③ GAFF2 와 COMPASS 를 한 셀에 섞을 수 없는 이유를 함수 형태 · 조합 규칙 · 1-4 축소 세 줄로 써라. 전하 · ε · σ 는 토폴로지에 없으니 쓰지 말고 「라우팅에서 붙임」이라고 적어라. 표를 다 만든 뒤에만 out/routed_toluene.json 과 비교하고 out/P8-2_result.md 에 저장해라.</span><span class="en" data-i>Run the notebook with `python ../run_nb.py notebooks/02_route_and_check.ipynb`. Then, looking only at atoms · bonds in `@data/topology_toluene.json` (toluene FF-neutral topology · element · coordinates · bond order · molecule ID, no types · charges), ① attach to each atom its GAFF2 type (ca · c3 · ha · hc rule: aromatic C = ca · sp³ C = c3 · H on aromatic C = ha · H on sp³ C = hc) and COMPASS type (ca→c3a · c3→c4 · ha/hc→h1) in a table (columns: id · element · GAFF2 · COMPASS · ReaxFF). ② Count the types. ③ Explain in three lines why GAFF2 and COMPASS cannot be mixed in one cell: functional form · combining rule · 1-4 scaling. Charge · ε · σ are not in the topology, so do not write them; write "attached by routing". Only after finishing the table, compare with out/routed_toluene.json and save to out/P8-2_result.md.</span></div>
+</div>
+<div class="expect a" style="--d:2">
+<h4><span class="tic" data-ico="table"></span><span class="ko" data-i>기대 결과 · 타입 표 15행 중 4행 + 집계</span><span class="en" data-i>Expected output · 4 of 15 type-table rows + tally</span></h4>
+<table class="t"><thead><tr><th>id</th><th><span class="ko" data-i>원소 · 환경</span><span class="en" data-i>Element · environment</span></th><th>GAFF2</th><th>COMPASS</th><th>ReaxFF</th></tr></thead><tbody>
+<tr><td>1</td><td><span class="ko" data-i>C · 방향족 고리</span><span class="en" data-i>C · aromatic ring</span></td><td class="mono">ca</td><td class="mono">c3a</td><td class="mono">C</td></tr>
+<tr><td>7</td><td><span class="ko" data-i>C · 메틸 sp³</span><span class="en" data-i>C · methyl sp³</span></td><td class="mono">c3</td><td class="mono">c4</td><td class="mono">C</td></tr>
+<tr><td>8</td><td><span class="ko" data-i>H · 고리 C 에 결합</span><span class="en" data-i>H · bonded to ring C</span></td><td class="mono">ha</td><td class="mono">h1</td><td class="mono">H</td></tr>
+<tr><td>13</td><td><span class="ko" data-i>H · 메틸 C 에 결합</span><span class="en" data-i>H · bonded to methyl C</span></td><td class="mono">hc</td><td class="mono">h1</td><td class="mono">H</td></tr></tbody></table>
+<div class="cb"><span class="fc or">ca <em>6</em></span><span class="fc or">c3 <em>1</em></span><span class="fc bl">ha <em>5</em></span><span class="fc bl">hc <em>3</em></span><span class="x">=</span><span class="tot nosum"><span class="ko" data-i>아티팩트 일치 ✓</span><span class="en" data-i>Matches artifact ✓</span></span></div>
+<p class="cap"><span class="ko" data-i>ReaxFF 열 = 원소만(전하는 QEq 매 스텝) · COMPASS 는 9-6 이라 ClayFF(12-6)와 한 셀 불가 · 전하 · ε · σ 는 「라우팅에서 붙임」</span><span class="en" data-i>ReaxFF column = element only (charges by QEq every step) · COMPASS is 9-6 so it cannot share a cell with ClayFF (12-6) · charge · ε · σ = "attached by routing"</span></p>
+</div>
+</div>
+<div class="check a" style="--d:3"><p>ca 6 · c3 1 · ha 5 · hc 3 = routed_toluene.json · artifact_check.all_match = true</p><p><span class="ko" data-i>ReaxFF 열이 원소만인가 · 전하 · ε · σ 를 지어내지 않았는가</span><span class="en" data-i>Is the ReaxFF column element only · did it avoid inventing charge · ε · σ</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>week08/notebooks/02_route_and_check.ipynb · scripts/route_ff.py · 지시문 원문 week08/prompts.md · P8-2 · 타입 대응 = 원본 05주차 #24</span><span class="en" data-i>week08/notebooks/02_route_and_check.ipynb · scripts/route_ff.py · original prompt week08/prompts.md · P8-2 · type mapping = original week-05 #24</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 17 차시 8-3 -->
+<section class="slide v3 dark">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>차시 8-3 · 18분 · 영상 1편</span><span class="en" data-i>Session 8-3 · 18 min · 1 video</span></p>
+<div class="bd hub">
+<div class="hubc a" style="--d:0"><span class="hubic" data-ico="shield-check"></span><p class="hubk"><span class="ko" data-i>차시</span><span class="en" data-i>Session</span></p><p class="hubn">3</p><p class="hubt"><span class="ko" data-i>혼용 규칙과 스택</span><span class="en" data-i>Mixing rules and stack</span></p><p class="hubs"><span class="ko" data-i>가능 · 조건부 · 불가 · 이름 하나로 기록</span><span class="en" data-i>Allowed · conditional · not allowed · record under one name</span></p></div>
+<div class="hubr">
+<div class="it dark a" style="--d:1"><div class="ih"><span class="icb" data-ico="package-check"></span><div><p class="k"><span class="ko" data-i>이 차시에서 만들 것</span><span class="en" data-i>What we build in this session</span></p><h4><span class="ko" data-i>in 파일 혼용 점검표 (P8-3)</span><span class="en" data-i>in-file mixing checklist (P8-3)</span></h4></div></div><p><span class="ko" data-i>check_mix.py 5규칙 ✓/✗ → 원인 줄 · 물리 이유 · 고치는 줄</span><span class="en" data-i>check_mix.py 5 rules ✓/✗ → offending line · physical reason · fix line</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="map"></span><div><p class="k"><span class="ko" data-i>강좌 안의 위치</span><span class="en" data-i>Where this fits</span></p><h4><span class="ko" data-i>W04 25장의 세 줄을 조건 4 · 매트릭스 · 수치로</span><span class="en" data-i>The three lines of W04 slide 25 as 4 conditions · matrix · numbers</span></h4></div></div><p><span class="ko" data-i>한 셀 안 힘장 하나 · 전하 방법 하나 · special_bonds 하나 → 스택 이름 하나(W16 기록)</span><span class="en" data-i>One force field per cell · one charge method · one special_bonds → one stack name (recorded in W16)</span></p></div>
+</div>
+</div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 18 FIG 혼용 조건 4 -->
+<section class="slide v3" data-src="03주차#31">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>8-3 · 무엇</span><span class="en" data-i>8-3 · What</span></p>
+<div class="hrow"><span class="hico" data-ico="list-checks"></span><h2 class="h"><span class="ko" data-i>혼용 조건 4: 함수 형태 · 조합 규칙 · 전하 척도 · 1-4 축소</span><span class="en" data-i>4 mixing conditions: functional form · combining rule · charge scale · 1-4 scaling</span></h2></div>
+<p class="sub"><span class="ko" data-i>하나라도 다르면 조건부 · 불가 · 조합 규칙은 경험식이라 혼용은 계면 에너지 · 혼합 밀도로 검증 후 사용</span><span class="en" data-i>If even one differs: conditional or not allowed · combining rules are empirical, so verify mixing by interface energy · mixture density before use</span></p>
+<div class="bd">
+<div class="grid c4">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="spline"></span><div><p class="k">01 · functional form</p><h4><span class="ko" data-i>함수 형태</span><span class="en" data-i>Functional form</span></h4></div></div><p><span class="ko" data-i>둘 다 LJ 12-6 → 이종쌍 ε · σ 정의 가능 · 9-6 과는 σ 정의부터 상이</span><span class="en" data-i>Both LJ 12-6 → unlike-pair ε · σ definable · with 9-6 even the σ definition differs</span></p></div>
+<div class="it a" style="--d:2"><div class="ih"><span class="icb" data-ico="combine"></span><div><p class="k">02 · combining rule</p><h4><span class="ko" data-i>조합 규칙</span><span class="en" data-i>Combining rule</span></h4></div></div><p><span class="ko" data-i>같은 규칙(산술 · 기하 · 6제곱) 또는 모든 이종쌍을 pair_coeff 로 직접 지정</span><span class="en" data-i>Same rule (arithmetic · geometric · 6th-power) or specify every unlike pair directly with pair_coeff</span></p></div>
+<div class="it a" style="--d:3"><div class="ih"><span class="icb" data-ico="zap"></span><div><p class="k">03 · charge scale</p><h4><span class="ko" data-i>전하 척도</span><span class="en" data-i>Charge scale</span></h4></div></div><p><span class="ko" data-i>부분전하끼리 · 형식전하끼리 · 척도가 다르면 쿨롱 항 편향</span><span class="en" data-i>Partial with partial · formal with formal · different scales bias the Coulomb term</span></p></div>
+<div class="it hot a" style="--d:4"><div class="ih"><span class="icb" data-ico="scissors"></span><div><p class="k">04 · 1-4 scaling</p><h4><span class="ko" data-i>1-4 축소</span><span class="en" data-i>1-4 scaling</span></h4></div></div><p><span class="ko" data-i>special_bonds 는 계 전체에 하나 · amber 0.5/0.833 과 lj/coul 0.5 가 다른 두 힘장은 <b>한 셀 불가</b></span><span class="en" data-i>special_bonds is one per system · two force fields with different amber 0.5/0.833 and lj/coul 0.5 <b>cannot share a cell</b></span></p></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>W04 25장의 세 줄 = 이 넷의 요약: <b>힘장 하나 · 전하 방법 하나 · special_bonds 하나</b> → 19장 매트릭스로 짝마다 판정</span><span class="en" data-i>The three lines of W04 slide 25 = summary of these four: <b>one force field · one charge method · one special_bonds</b> → judge each pair with the slide 19 matrix</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 03주차 덱 #31</span><span class="en" data-i>Original week-03 deck #31</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 19 ANIM 판정 매트릭스 -->
+<section class="slide v3" data-src="03주차#31,03주차#32">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>8-3 · 확인</span><span class="en" data-i>8-3 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="grid-3x3"></span><h2 class="h"><span class="ko" data-i>판정 매트릭스: 힘장 짝마다 가능 · 조건부 · 불가</span><span class="en" data-i>Verdict matrix: per force-field pair allowed · conditional · not allowed</span></h2></div>
+<p class="sub"><span class="ko" data-i>5 × 4 = 가능 2 · 조건부 1 · 불가 2 · 행 = 힘장 짝 · 열 = 조건 4 · 셀 순차 채움 · ✗ 1개라도 있으면 그 짝은 한 셀 배치 불가</span><span class="en" data-i>5 × 4 = allowed 2 · conditional 1 · not allowed 2 · row = force-field pair · column = 4 conditions · cells fill in order · even 1 ✗ means that pair cannot share a cell</span></p>
+<div class="bd"><div class="emb" data-emb="mixmatrix" data-dur="12" data-steps="5" data-labels="① + ClayFF|② + SPC/E · TIP3P|③ + OPLS-AA|④ + COMPASS|⑤ 고전 + ReaxFF" data-labels-en="① + ClayFF|② + SPC/E · TIP3P|③ + OPLS-AA|④ + COMPASS|⑤ classical + ReaxFF"></div></div>
+<div class="stepslot"></div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 03주차 덱 #31 · #32 (관계도: 선 없는 쌍 = 공동 검증 사례 부족 → 이종쌍 직접 정의 · 검증)</span><span class="en" data-i>Original week-03 deck #31 · #32 (relation map: pair without a line = too few joint validation cases → define unlike pair directly · validate)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 20 FIG 이종쌍 수치 예 -->
+<section class="slide v3" data-src="03주차#33">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>8-3 · 어떻게</span><span class="en" data-i>8-3 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="calculator"></span><h2 class="h"><span class="ko" data-i>이종쌍 수치 예 3: 규칙만 바꿔도 크기 · 반발 · 최소점이 달라짐</span><span class="en" data-i>3 numeric examples of unlike pairs: changing only the rule changes size · repulsion · minimum</span></h2></div>
+<p class="sub"><span class="ko" data-i>한 값 3.283 · 반발 16 % 차 · 최소점 4.35 ↔ 3.88 Å · 값은 문헌 대표값의 반올림 예시 · 실제 계산은 파라미터 파일 값 · 이종쌍은 로그 출력으로 확인</span><span class="en" data-i>One value 3.283 · repulsion differs 16 % · minimum 4.35 ↔ 3.88 Å · values are rounded literature representatives as examples · real calculations use parameter-file values · check unlike pairs in log output</span></p>
+<div class="bd">
+<div class="grid c3">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="check"></span><div><p class="k"><span class="ko" data-i>가능 · GAFF C_ar · ClayFF O</span><span class="en" data-i>Allowed · GAFF C_ar · ClayFF O</span></p><h4><span class="ko" data-i>12-6 + 산술 σ → 한 값</span><span class="en" data-i>12-6 + arithmetic σ → one value</span></h4></div></div>
+<div class="figw white"><svg viewBox="0 0 440 150"><text x="20" y="34" class="cfm" font-size="15">ε_C 0.086 · σ_C 3.400 | ε_O 0.155 · σ_O 3.166</text><text x="20" y="78" class="cfh" font-size="19">σ_CO = (3.400 + 3.166)/2 = <tspan fill="#C8610C">3.283</tspan></text><text x="20" y="118" class="cfh" font-size="19">ε_CO = √(0.086 × 0.155) = <tspan fill="#C8610C">0.116</tspan></text></svg></div>
+<p><span class="ko" data-i>두 힘장 모두 LJ 12-6 + 산술 σ → 이종쌍이 한 값으로 결정</span><span class="en" data-i>Both force fields LJ 12-6 + arithmetic σ → unlike pair fixed to one value</span></p></div>
+<div class="it warm a" style="--d:2"><div class="ih"><span class="icb" data-ico="triangle-alert"></span><div><p class="k"><span class="ko" data-i>조건부 · GAFF2 H · OPLS S</span><span class="en" data-i>Conditional · GAFF2 H · OPLS S</span></p><h4><span class="ko" data-i>규칙만 바꿔도 반발 16 %</span><span class="en" data-i>Changing only the rule shifts repulsion 16 %</span></h4></div></div>
+<div class="figw white"><svg viewBox="0 0 440 150"><text x="20" y="34" class="cfm" font-size="15">σ_H 2.600 · σ_S 3.560</text><text x="20" y="74" class="cfh" font-size="19"><tspan class="ko" data-i>산술 3.080 · 기하 3.042</tspan><tspan class="en" data-i>arithmetic 3.080 · geometric 3.042</tspan></text><text x="20" y="116" class="cfh" font-size="19">(3.080/3.042)¹² ≈ <tspan fill="#C8610C">1.16</tspan> <tspan class="ko" data-i>· 1-4 쿨롱 0.833 vs 0.5</tspan><tspan class="en" data-i>· 1-4 Coulomb 0.833 vs 0.5</tspan></text></svg></div>
+<p><span class="ko" data-i>이종쌍 전부 명시 + 분자별 축소 분리가 있어야 가능</span><span class="en" data-i>Possible only with every unlike pair explicit + per-molecule scaling separation</span></p></div>
+<div class="it dark a" style="--d:3"><div class="ih"><span class="icb" data-ico="circle-x"></span><div><p class="k"><span class="ko" data-i>불가 · 12-6 · 9-6</span><span class="en" data-i>Not allowed · 12-6 · 9-6</span></p><h4><span class="ko" data-i>σ 정의 상이</span><span class="en" data-i>σ definition differs</span></h4></div></div>
+<div class="figw white"><svg viewBox="0 0 440 150"><text x="20" y="34" class="cfm" font-size="15">12-6: r_min = 2^(1/6) σ = 1.122 σ</text><text x="20" y="74" class="cfm" font-size="15">9-6: r_min = σ</text><text x="20" y="116" class="cfh" font-size="19"><tspan class="ko" data-i>같은 σ 3.88 →</tspan><tspan class="en" data-i>Same σ 3.88 →</tspan> <tspan fill="#C8610C">4.35 Å</tspan> <tspan class="ko" data-i>대</tspan><tspan class="en" data-i>vs</tspan> <tspan fill="#C8610C">3.88 Å</tspan></text></svg></div>
+<p><span class="ko" data-i>두 형태 사이 조합 규칙 부재 · ReaxFF = 고정 ε · σ · q 자체 없음</span><span class="en" data-i>No combining rule between two forms · ReaxFF = no fixed ε · σ · q at all</span></p></div>
+</div>
+<div class="foot a" style="--d:4"><span class="ko" data-i>special_bonds amber = 0 0 0.8333 · lj/coul = 0 0 0.5 · <b>계 전체에 하나만</b> · 축소 계수가 다른 두 힘장의 분자를 한 셀에 섞으면 한쪽 분자의 내부 에너지가 왜곡</span><span class="en" data-i>special_bonds amber = 0 0 0.8333 · lj/coul = 0 0 0.5 · <b>only one per system</b> · mixing molecules of two force fields with different scaling factors in one cell distorts one side's internal energy</span></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 03주차 덱 #33 (값 = 문헌 대표값 반올림 · C_ar ε 0.086 σ 3.400 은 GAFF 1세대 노트 값 · GAFF2 ca 는 0.0988 · 3.3152)</span><span class="en" data-i>Original week-03 deck #33 (values = rounded literature representatives · C_ar ε 0.086 σ 3.400 is a GAFF 1st-generation note value · GAFF2 ca is 0.0988 · 3.3152)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 21 TWEAK slab 보정 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>8-3 · 바꿔 보기</span><span class="en" data-i>8-3 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="git-compare"></span><h2 class="h"><span class="ko" data-i>slab 보정 무 ↔ 유: 같은 좌표 · 퍼텐셜 에너지 3.5 % 차</span><span class="en" data-i>Without ↔ with slab correction: same coordinates · potential energy differs 3.5 %</span></h2></div>
+<p class="sub"><span class="ko" data-i>진공 30 Å 만으로 차단 불가 · z 주기 → PPPM 이 이미지 층 사이 쌍극자 에너지 합산 · 층상 셀은 p p f + slab 이 기본</span><span class="en" data-i>Vacuum 30 Å alone cannot block it · periodic z → PPPM sums dipole energy between image layers · for layered cells p p f + slab is the default</span></p>
+<div class="bd">
+<div class="tweak">
+<div class="pane before a" style="--d:1"><h3><span class="tic" data-ico="minus"></span><span class="ko" data-i>전 · boundary p p p · slab 없음</span><span class="en" data-i>Before · boundary p p p · no slab</span></h3>
+<pre class="code">boundary       p p p
+kspace_style   pppm 1.0e-4   <span class="c"><span class="ko" data-i># z 도 주기 → 이미지 층</span><span class="en" data-i># z also periodic → image layers</span></span></pre>
+<div class="figw white"><svg viewBox="0 0 700 220"><g opacity=".35"><rect x="60" y="10" width="200" height="24" fill="#6E655C"/><rect x="60" y="-20" width="200" height="30" fill="#E37F1A"/></g><rect x="60" y="150" width="200" height="30" fill="#6E655C"/><rect x="60" y="120" width="200" height="30" fill="#4F7FB0"/><rect x="60" y="60" width="200" height="60" fill="#E37F1A"/><g opacity=".35"><rect x="60" y="200" width="200" height="20" fill="#E37F1A"/></g><line class="flow" x1="160" y1="60" x2="160" y2="34" stroke="#D9534F" stroke-width="4" stroke-dasharray="6 5"/><text x="300" y="60" class="cfs"><tspan class="ko" data-i>위 이미지의 슬래브 아랫면이</tspan><tspan class="en" data-i>slab bottom of the image above</tspan></text><text x="300" y="90" class="cfs"><tspan class="ko" data-i>바인더 윗면과 상호작용</tspan><tspan class="en" data-i>interacts with binder top</tspan></text><text x="300" y="140" class="cfh" fill="#D9534F" font-size="22">PE −135,251 · E_long −37,685</text><text x="300" y="180" class="cfmu"><tspan class="ko" data-i>kcal/mol · 최소화 전 · 같은 좌표</tspan><tspan class="en" data-i>kcal/mol · before minimization · same coordinates</tspan></text></svg></div>
+<p class="cap"><span class="ko" data-i>진공만으로는 장거리 쿨롱의 z 이미지 잔존</span><span class="en" data-i>With vacuum alone, z images of long-range Coulomb remain</span></p></div>
+<div class="pane after a" style="--d:2"><h3><span class="tic" data-ico="plus"></span><span class="ko" data-i>후 · boundary p p f · kspace_modify slab 3.0</span><span class="en" data-i>After · boundary p p f · kspace_modify slab 3.0</span></h3>
+<pre class="code">boundary       p p f
+kspace_style   pppm 1.0e-4
+<span class="k">kspace_modify  slab 3.0</span>   <span class="c"><span class="ko" data-i># z 빈 공간 3배 가정 · 쌍극자 보정</span><span class="en" data-i># assume 3x empty space in z · dipole correction</span></span></pre>
+<div class="figw white"><svg viewBox="0 0 700 220"><rect x="60" y="150" width="200" height="30" fill="#6E655C"/><rect x="60" y="120" width="200" height="30" fill="#4F7FB0"/><rect x="60" y="60" width="200" height="60" fill="#E37F1A"/><line x1="40" y1="20" x2="280" y2="20" stroke="#2E8B57" stroke-width="3" stroke-dasharray="10 8"/><text x="160" y="12" text-anchor="middle" class="cfmu" fill="#2E8B57"><tspan class="ko" data-i>z 이미지 없음 (f)</tspan><tspan class="en" data-i>no z images (f)</tspan></text><text x="300" y="60" class="cfs"><tspan class="ko" data-i>쌍극자 보정 → 층 하나만 셈</tspan><tspan class="en" data-i>dipole correction → counts only one layer</tspan></text><text x="300" y="90" class="cfs"><tspan class="ko" data-i>진공 30 Å + slab 3.0</tspan><tspan class="en" data-i>Vacuum 30 Å + slab 3.0</tspan></text><text x="300" y="140" class="cfh" fill="#2E8B57" font-size="22">PE −130,670 · E_long −32,049</text><text x="300" y="180" class="cfmu">Δ PE 4,582 (3.5 %) · Δ E_long 5,636</text></svg></div>
+<p class="cap"><span class="ko" data-i>층상 셀의 기본 · 원본 04#41 · 참고 사례(연구 플랫폼) 설정 · check_mix R5</span><span class="en" data-i>Default for layered cells · original 04#41 · reference case (research platform) settings · check_mix R5</span></p></div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>저장소: python3 scripts/stack_cell.py --slab off --tag stack_noslab → log.stack_noslab 의 E_long · PotEng 비교</span><span class="en" data-i>Repository: python3 scripts/stack_cell.py --slab off --tag stack_noslab → compare E_long · PotEng in log.stack_noslab</span></p><p><span class="ko" data-i>500스텝 뒤 두 경우 모두 층 유지 · 차이 = 에너지 기준(분리일 계산)에서 확인</span><span class="en" data-i>After 500 steps layers hold in both cases · difference shows in energy baseline (work-of-separation calculation)</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>수치 = week08/expected_output/log.stack · log.stack_noslab (최소화 전 step 0 · 같은 stack.data 좌표)</span><span class="en" data-i>Values = week08/expected_output/log.stack · log.stack_noslab (step 0 before minimization · same stack.data coordinates)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 22 FIG 재정의 4 · 검증 5 -->
+<section class="slide v3" data-src="03주차#34,05주차#26,07주차#17">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>8-3 · 어떻게</span><span class="en" data-i>8-3 · How</span></p>
+<div class="hrow"><span class="hico" data-ico="badge-check"></span><h2 class="h"><span class="ko" data-i>조건부 짝 = 이종쌍 다시 정하기 · 검증 통과 후 사용</span><span class="en" data-i>Conditional pair = redefine unlike pairs · use after validation passes</span></h2></div>
+<p class="sub"><span class="ko" data-i>미검증 이종쌍의 물성 = 학습 데이터 제외 · 오늘 셀 = 전부 12-6 → 자동 혼합 28쌍으로 충분</span><span class="en" data-i>Property of an unvalidated unlike pair = excluded from training data · today's cell = all 12-6 → automatic mixing of 28 pairs is enough</span></p>
+<div class="bd">
+<div class="exf a" style="--d:1">
+<div class="exs"><span class="exi" data-ico="merge"></span><div><h4><span class="ko" data-i>① 통일</span><span class="en" data-i>① Unify</span></h4><p><span class="ko" data-i>한쪽 재파라미터화 · 가장 안전</span><span class="en" data-i>reparameterize one side · safest</span></p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="git-compare"></span><div><h4><span class="ko" data-i>② 형식 변환</span><span class="en" data-i>② Convert form</span></h4><p><span class="ko" data-i>최소점 위치만 일치</span><span class="en" data-i>matches minimum position only</span></p></div></div><span class="exa"></span>
+<div class="exs hot"><span class="exi" data-ico="file-code"></span><div><h4><span class="ko" data-i>③ 명시 지정</span><span class="en" data-i>③ Explicit specification</span></h4><p><span class="ko" data-i>교차쌍 직접 기재 · 쿨롱 1회</span><span class="en" data-i>write cross pairs directly · Coulomb 1 time</span></p></div></div><span class="exa"></span>
+<div class="exs"><span class="exi" data-ico="atom"></span><div><h4><span class="ko" data-i>④ QM 적합</span><span class="en" data-i>④ QM fit</span></h4><p><span class="ko" data-i>이량체 곡선에 맞춤</span><span class="en" data-i>fit to dimer curve</span></p></div></div>
+</div>
+<table class="t"><thead><tr><th><span class="ko" data-i>검증 단계</span><span class="en" data-i>Validation stage</span></th><th><span class="ko" data-i>계산 대상</span><span class="en" data-i>Calculated</span></th><th><span class="ko" data-i>합격 기준 · 비교 대상</span><span class="en" data-i>Pass criterion · comparison</span></th></tr></thead><tbody>
+<tr><td><span class="ko" data-i>01 단성분</span><span class="en" data-i>01 Single component</span></td><td><span class="ko" data-i>밀도 · 증발열</span><span class="en" data-i>density · heat of vaporization</span></td><td><span class="ko" data-i>원 힘장 보고값 재현</span><span class="en" data-i>reproduce original force field's reported values</span></td></tr>
+<tr><td><span class="ko" data-i>02 혼합</span><span class="en" data-i>02 Mixture</span></td><td><span class="ko" data-i>밀도 · 엔탈피</span><span class="en" data-i>density · enthalpy</span></td><td><span class="ko" data-i>실험과 수 % 이내</span><span class="en" data-i>within a few % of experiment</span></td></tr>
+<tr><td><span class="ko" data-i>03 구조</span><span class="en" data-i>03 Structure</span></td><td><span class="ko" data-i>이종쌍 RDF 첫 피크</span><span class="en" data-i>unlike-pair RDF first peak</span></td><td><span class="ko" data-i>QM 이량체 거리 · 회절</span><span class="en" data-i>QM dimer distance · diffraction</span></td></tr>
+<tr><td><span class="ko" data-i>04 계면</span><span class="en" data-i>04 Interface</span></td><td><span class="ko" data-i>분리일 · 접촉각</span><span class="en" data-i>work of separation · contact angle</span></td><td><span class="ko" data-i>부착 시험 경향 (W10)</span><span class="en" data-i>adhesion test trend (W10)</span></td></tr>
+<tr class="hl"><td><span class="ko" data-i>05 전이성</span><span class="en" data-i>05 Transferability</span></td><td><span class="ko" data-i>온도 · 함량 바꿔 재계산</span><span class="en" data-i>recompute at other temperature · content</span></td><td><span class="ko" data-i>경향 일치 시 사용</span><span class="en" data-i>use if trends agree</span></td></tr></tbody></table>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 03주차 덱 #34 · 05주차 #26 · 07주차 #17 · 입력 예시 전문 = 저장소 docs/forcefield_stack_notes.md · 검증 조건 · 기준값 = 실험 ID 와 함께 기록</span><span class="en" data-i>Original week-03 deck #34 · week-05 #26 · week-07 #17 · full input examples = repository docs/forcefield_stack_notes.md · validation conditions · reference values recorded with experiment ID</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 23 FIG 스택 레지스트리 -->
+<section class="slide v3" data-src="05주차#28">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>8-3 · 확인</span><span class="en" data-i>8-3 · Check</span></p>
+<div class="hrow"><span class="hico" data-ico="library"></span><h2 class="h"><span class="ko" data-i>스택 레지스트리: 이름 하나 = 힘장 · 규칙 · 전하 · 물 모델 · 1-4 축소</span><span class="en" data-i>Stack registry: one name = force field · rules · charges · water model · 1-4 scaling</span></h2></div>
+<p class="sub"><span class="ko" data-i>제출 시점에 코드가 강제: validated · research_only · blocked 중 하나 · 모르는 스택은 미리보기만</span><span class="en" data-i>Enforced by code at submission: one of validated · research_only · blocked · unknown stacks preview only</span></p>
+<div class="bd">
+<div class="row">
+<table class="t" style="flex:1"><thead><tr><th>stack_id</th><th><span class="ko" data-i>구성</span><span class="en" data-i>Composition</span></th><th><span class="ko" data-i>검증 수준</span><span class="en" data-i>Validation level</span></th></tr></thead><tbody>
+<tr class="hl"><td>clayff_gaff2_v1</td><td><span class="ko" data-i>GAFF2 유기 + ClayFF 무기 · 12-6 · Lorentz–Berthelot · AM1-BCC · 물 SPC/E · PPPM 1e-4</span><span class="en" data-i>GAFF2 organic + ClayFF inorganic · 12-6 · Lorentz–Berthelot · AM1-BCC · water SPC/E · PPPM 1e-4</span></td><td><span class="ko" data-i>생산 (오늘 셀)</span><span class="en" data-i>Production (today's cell)</span></td></tr>
+<tr><td>gaff2_am1bcc_v1</td><td><span class="ko" data-i>벌크 · 단분자</span><span class="en" data-i>Bulk · single molecule</span></td><td>validated</td></tr>
+<tr><td>gaff2_org__inorganic_profile__arith_v1</td><td><span class="ko" data-i>층상 (유기 + 무기 프로파일)</span><span class="en" data-i>Layered (organic + inorganic profile)</span></td><td>research_only</td></tr>
+<tr><td>reaxff_v1</td><td><span class="ko" data-i>반응성 검증 레인</span><span class="en" data-i>Reactive validation lane</span></td><td>research_only</td></tr>
+<tr><td>pcff_iff_v1</td><td><span class="ko" data-i>9-6 · 6제곱 계열</span><span class="en" data-i>9-6 · 6th-power family</span></td><td><span class="ko" data-i>미구현 · blocked</span><span class="en" data-i>Not implemented · blocked</span></td></tr></tbody></table>
+<div class="col" style="width:560px;flex:none">
+<div class="it a" style="--d:1"><div class="ih"><span class="icb" data-ico="hash"></span><div><h4><span class="ko" data-i>이름 하나가 묶는 것</span><span class="en" data-i>What one name bundles</span></h4></div></div><p><span class="ko" data-i>pair_style · mix · kspace · special_bonds · 전하 방법 · 물 모델 · 파라미터 파일 · 세트 교체 = 전부 동시 교체</span><span class="en" data-i>pair_style · mix · kspace · special_bonds · charge method · water model · parameter file · swapping the set = swap all at once</span></p></div>
+<div class="it dark a" style="--d:2"><div class="ih"><span class="icb" data-ico="triangle-alert"></span><div><p class="k"><span class="ko" data-i>사고</span><span class="en" data-i>Incident</span></p><h4><span class="ko" data-i>무기 LJ 가 interface_ff 로 기록 → clayff 로 정정</span><span class="en" data-i>Inorganic LJ recorded as interface_ff → corrected to clayff</span></h4></div></div><p><span class="ko" data-i>라벨 오류 = 논문의 방법 서술 오류 · 결과 행마다 stack_id 를 남기는 이유</span><span class="en" data-i>Label error = error in the paper's methods description · why every result row keeps a stack_id</span></p></div>
+</div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>원본 05주차 덱 #28 · 참고 사례(연구 플랫폼) runtime/active_ff_stack.json = clayff_gaff2_v1 · src/forcefield/ff_stack.py</span><span class="en" data-i>Original week-05 deck #28 · reference case (research platform) runtime/active_ff_stack.json = clayff_gaff2_v1 · src/forcefield/ff_stack.py</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 24 MAKE P8-3 -->
+<section class="slide v3">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>8-3 · 만들어 보기</span><span class="en" data-i>8-3 · Try it</span></p>
+<div class="hrow"><span class="hico" data-ico="shield-check"></span><h2 class="h"><span class="ko" data-i>만들어 보기 P8-3: check_mix ▶ → 5규칙 ✓/✗ → 원인 · 이유 · 고치는 줄</span><span class="en" data-i>Try it P8-3: check_mix ▶ → 5 rules ✓/✗ → cause · reason · fix line</span></h2></div>
+<div class="bd">
+<div class="make">
+<div class="left a" style="--d:1">
+<pre class="code"><span class="c"><span class="ko" data-i># 환경: week08 폴더 · claude · 두 줄 승인 후 실행</span><span class="en" data-i># Environment: week08 folder · claude · run after approving two lines</span></span>
+python3 scripts/check_mix.py out/in.stack \
+        out/stack_summary.json
+python3 scripts/check_mix.py data/in_bad_mix.example \
+        out/bad_summary.json
+<span class="c"><span class="ko" data-i># in + 판정 JSON 직접 읽기 → out/P8-3_result.md</span><span class="en" data-i># Read in + verdict JSON directly → out/P8-3_result.md</span></span></pre>
+<div class="prompt" data-id="P8-3"><span class="ko" data-i>`scripts/check_mix.py` 를 [out/in.stack + out/stack_summary.json] 과 [data/in_bad_mix.example + out/bad_summary.json] 으로 한 번씩 실행해라. 각 in 파일과 판정 out/check_mix_*.json(5규칙 ✓/✗)을 읽고 ✗ 인 규칙마다 ① 어느 줄이 원인인지 ② 왜 물리적으로 문제인지(함수 형태 · 조합 규칙 · 전하 척도 · 1-4 축소 · 층상 셀 중 하나로) ③ 고치는 한 줄(또는 「한 셀에 둘 수 없음 · 영역 분할」)을 표로 써라. 모든 규칙이 ✓ 이면 「혼용 없음」 한 줄과 남은 검증 항목(단성분 밀도 · 혼합 밀도 · 계면 RDF · 분리일 · 전이성)을 써라. 결과는 out/P8-3_result.md 에 저장하고 판정을 expected_output 과 비교해라.</span><span class="en" data-i>Run `scripts/check_mix.py` once each on [out/in.stack + out/stack_summary.json] and [data/in_bad_mix.example + out/bad_summary.json]. Read each in file and the verdict out/check_mix_*.json (5 rules ✓/✗) and, for every rule marked ✗, tabulate ① which line is the cause ② why it is physically a problem (one of functional form · combining rule · charge scale · 1-4 scaling · layered cell) ③ the one-line fix (or "cannot share one cell · domain decomposition"). If every rule is ✓, write one line "no mixing" and the remaining validation items (single-component density · mixture density · interface RDF · work of separation · transferability). Save the result to out/P8-3_result.md and compare the verdict with expected_output.</span></div>
+</div>
+<div class="expect a" style="--d:2">
+<h4><span class="tic" data-ico="table"></span><span class="ko" data-i>기대 결과 · in.stack 5 ✓ · in_bad_mix 5 ✗</span><span class="en" data-i>Expected output · in.stack 5 ✓ · in_bad_mix 5 ✗</span></h4>
+<table class="t"><thead><tr><th><span class="ko" data-i>규칙</span><span class="en" data-i>Rule</span></th><th>in.stack</th><th><span class="ko" data-i>in_bad_mix.example · 원인 줄</span><span class="en" data-i>in_bad_mix.example · offending line</span></th></tr></thead><tbody>
+<tr><td><span class="ko" data-i>R1 함수 형태</span><span class="en" data-i>R1 Functional form</span></td><td>✓ 12-6</td><td>✗ hybrid lj/cut + lj/class2 + buck</td></tr>
+<tr><td><span class="ko" data-i>R2 조합 규칙</span><span class="en" data-i>R2 Combining rule</span></td><td>✓ mix arithmetic</td><td><span class="ko" data-i>✗ pair_modify mix 2줄</span><span class="en" data-i>✗ pair_modify mix 2 lines</span></td></tr>
+<tr><td><span class="ko" data-i>R3 전하 척도</span><span class="en" data-i>R3 Charge scale</span></td><td><span class="ko" data-i>✓ 고정 점전하 3층</span><span class="en" data-i>✓ fixed point charges in 3 layers</span></td><td><span class="ko" data-i>✗ QEq 층 + 고정 전하 층</span><span class="en" data-i>✗ QEq layer + fixed-charge layer</span></td></tr>
+<tr><td>R4 special_bonds</td><td><span class="ko" data-i>✓ 1줄</span><span class="en" data-i>✓ 1 line</span></td><td><span class="ko" data-i>✗ 2줄 (amber · lj/coul)</span><span class="en" data-i>✗ 2 lines (amber · lj/coul)</span></td></tr>
+<tr><td><span class="ko" data-i>R5 층상 셀</span><span class="en" data-i>R5 Layered cell</span></td><td><span class="ko" data-i>✓ p p f · slab · 변/2rc 1.02 · 진공 30</span><span class="en" data-i>✓ p p f · slab · side/2rc 1.02 · vacuum 30</span></td><td><span class="ko" data-i>✗ slab 없음 · 진공 12 Å</span><span class="en" data-i>✗ no slab · vacuum 12 Å</span></td></tr></tbody></table>
+<p class="cap"><span class="ko" data-i>고치는 줄은 「한 셀 안 힘장 하나 · 전하 방법 하나 · special_bonds 하나」 · 함수 형태가 다르면 고치는 줄이 없다: 영역 분할</span><span class="en" data-i>Fix line = "one force field · one charge method · one special_bonds per cell" · if functional form differs there is no fix line: domain decomposition</span></p>
+</div>
+</div>
+<div class="check a" style="--d:3"><p><span class="ko" data-i>✗ 마다 원인 줄 번호 · 조건(5 중 1) · 고치는 줄이 표에 있는가</span><span class="en" data-i>For each ✗: offending line number · condition (1 of 5) · fix line in the table</span></p><p><span class="ko" data-i>✓ 뿐이면 검증 5단계(22장)가 「남은 일」로 적혔는가 · 혼용 없음 ≠ 검증 끝</span><span class="en" data-i>If only ✓, are the 5 validation stages (slide 22) listed as "remaining work" · no mixing ≠ validation done</span></p></div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>week08/scripts/check_mix.py · data/in_bad_mix.example · 지시문 원문 week08/prompts.md · P8-3</span><span class="en" data-i>week08/scripts/check_mix.py · data/in_bad_mix.example · original prompt week08/prompts.md · P8-3</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<!-- 25 다음 주차로 -->
+<section class="slide v3 accent">
+<div class="stop">
+<p class="eb"><span class="ko" data-i>다음 주차로 · W09 물성 산출</span><span class="en" data-i>Next week · W09 property calculation</span></p>
+<div class="hrow"><span class="hico" data-ico="arrow-right"></span><h2 class="h"><span class="ko" data-i>오늘의 산출물 3: 3층 셀 · 라우팅 표 · 혼용 점검표 → W09 물성 계산의 입력</span><span class="en" data-i>3 outputs today: 3-layer cell · routing table · mixing checklist → inputs for W09 property calculation</span></h2></div>
+<p class="sub"><span class="ko" data-i>3층 = 고정 슬래브 + 물 + 바인더 + 진공(p p f · slab) · 구조는 한 벌 · 힘장은 라우팅 · 한 셀 안 스택 하나 · 이름으로 기록</span><span class="en" data-i>3 layers = fixed slab + water + binder + vacuum (p p f · slab) · one structure · force field by routing · one stack per cell · recorded by name</span></p>
+<div class="bd">
+<div class="lines">
+<div class="ln a" style="--d:1"><span class="nn">01</span><div><h4><span class="ko" data-i>산출물</span><span class="en" data-i>Outputs</span></h4><p><span class="file">out/stack.data</span> · <span class="file">in.stack</span> · <span class="file">routed_toluene.json</span> · <span class="file">check_mix_stack.json</span> <span class="ko" data-i>· P8-1 ~ P8-3 결과</span><span class="en" data-i> · P8-1 ~ P8-3 results</span></p></div></div>
+<div class="ln a" style="--d:2"><span class="nn">02</span><div><h4><span class="ko" data-i>다음 주 W09</span><span class="en" data-i>Next week W09</span></h4><p><span class="ko" data-i>이 셀과 W06 벌크 셀에서 밀도 · CED · 점도 · 분리일 측정 · 준비물 없음</span><span class="en" data-i>Measure density · CED · viscosity · work of separation on this cell and the W06 bulk cell · nothing to prepare</span></p></div></div>
+<div class="ln a" style="--d:3"><span class="nn">03</span><div><h4><span class="ko" data-i>못 끝냈다면</span><span class="en" data-i>If unfinished</span></h4><p><span class="file">week08/expected_output/</span> <span class="ko" data-i>의 결과 파일로 W09 진행 가능</span><span class="en" data-i> result files can carry you through W09</span></p></div></div>
+<div class="ln a" style="--d:4"><span class="nn">04</span><div><h4><span class="ko" data-i>퀴즈 · 용어</span><span class="en" data-i>Quiz · key terms</span></h4><p><span class="file">week08/quiz.md</span> <span class="ko" data-i>5문항 ·</span><span class="en" data-i>5 questions ·</span> <span class="file">GLOSSARY.md</span> <span class="ko" data-i>· 바꿔 보기</span><span class="en" data-i> · Try it</span> <span class="file">--slab off</span> · <span class="file">--water 0</span></p></div></div>
+</div>
+</div>
+<div class="meta"><p class="ft src"><span class="ko" data-i>M2 끝 · 다음 주부터 M3 물성 · 소재 (W09 ~ W12)</span><span class="en" data-i>M2 ends · M3 properties · materials from next week (W09 ~ W12)</span></p></div>
+<p class="pn"></p>
+</div>
+</section>
+
+<script src="../../common/icons.js"></script>
+<script src="../../common/deck.js"></script>
+<script>
+function stepOf(root) { var s = parseInt(root.dataset.step || '0', 10); return isNaN(s) ? 0 : s; }
+function icoIn(n, x, y, s, col) { return '<svg x="' + x + '" y="' + y + '" width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" stroke="' + col + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + (IC[n] || '') + '</svg>'; }
+function ez(u) { u = Math.max(0, Math.min(1, u)); return 1 - Math.pow(1 - u, 3); }
+function syncCards(id, k) { var c = document.getElementById(id); if (!c) return; var its = c.querySelectorAll('.it'); for (var i = 0; i < its.length; i++) its[i].classList.toggle('on', i === k); c.classList.add('sync'); }
+var SIDE=[[0,1,2.3,0.0],[0,1,2.3,5.4],[0,1,7.2,0.0],[0,1,7.2,5.4],[0,1,4.8,0.0],[0,1,4.8,5.4],[0,1,6.2,3.6],[0,1,3.8,3.6],[0,1,1.3,3.6],[0,1,1.3,1.8],[0,1,6.2,1.8],[0,1,3.8,1.8],[0,1,1.4,0.6],[0,1,6.3,0.6],[0,1,3.8,0.6],[0,1,7.7,3.0],[0,1,0.3,3.0],[0,1,5.2,3.0],[0,1,2.8,3.0],[0,1,3.2,4.2],[0,1,0.8,4.2],[0,1,8.2,4.2],[0,1,5.7,4.2],[0,1,8.2,1.2],[0,1,0.8,1.2],[0,1,5.7,1.2],[0,1,3.2,1.2],[0,1,2.8,2.5],[0,1,0.3,2.5],[0,1,7.7,2.5],[0,1,5.2,2.5],[0,1,6.3,4.8],[0,1,3.8,4.8],[0,1,1.4,4.8],[0,1,12.1,0.0],[0,1,12.1,5.4],[0,1,9.7,0.0],[0,1,9.7,5.4],[0,1,14.6,0.0],[0,1,14.6,5.4],[0,1,8.7,3.6],[0,1,16.0,3.6],[0,1,13.6,3.6],[0,1,11.1,3.6],[0,1,11.1,1.8],[0,1,8.7,1.8],[0,1,16.0,1.8],[0,1,13.6,1.8],[0,1,11.2,0.6],[0,1,8.8,0.6],[0,1,16.1,0.6],[0,1,13.7,0.6],[0,1,10.1,3.0],[0,1,15.0,3.0],[0,1,12.6,3.0],[0,1,13.1,4.2],[0,1,10.6,4.2],[0,1,15.5,4.2],[0,1,10.6,1.2],[0,1,15.5,1.2],[0,1,13.1,1.2],[0,1,12.6,2.5],[0,1,10.1,2.5],[0,1,15.0,2.5],[0,1,8.8,4.8],[0,1,16.1,4.8],[0,1,13.7,4.8],[0,1,11.2,4.8],[0,1,22.0,0.0],[0,1,22.0,5.4],[0,1,19.5,0.0],[0,1,19.5,5.4],[0,1,17.1,0.0],[0,1,17.1,5.4],[0,1,24.4,0.0],[0,1,24.4,5.4],[0,1,18.5,3.6],[0,1,23.4,3.6],[0,1,20.9,3.6],[0,1,20.9,1.8],[0,1,18.5,1.8],[0,1,23.4,1.8],[0,1,21.0,0.6],[0,1,18.6,0.6],[0,1,23.5,0.6],[0,1,19.9,3.0],[0,1,17.5,3.0],[0,1,22.4,3.0],[0,1,22.9,4.2],[0,1,20.4,4.2],[0,1,18.0,4.2],[0,1,20.4,1.2],[0,1,18.0,1.2],[0,1,22.9,1.2],[0,1,22.4,2.5],[0,1,19.9,2.5],[0,1,17.5,2.5],[0,1,18.6,4.8],[0,1,23.5,4.8],[0,1,21.0,4.8],[0,1,7.2,0.0],[0,1,7.2,5.4],[0,1,4.8,0.0],[0,1,4.8,5.4],[0,1,2.3,0.0],[0,1,2.3,5.4],[0,1,7.2,0.0],[0,1,7.2,5.4],[0,1,2.3,0.0],[0,1,2.3,5.4],[0,1,3.8,3.6],[0,1,1.3,3.6],[0,1,6.2,3.6],[0,1,6.2,1.8],[0,1,3.8,1.8],[0,1,1.3,1.8],[0,1,6.3,0.6],[0,1,3.8,0.6],[0,1,1.4,0.6],[0,1,5.2,3.0],[0,1,2.8,3.0],[0,1,7.7,3.0],[0,1,0.3,3.0],[0,1,8.2,4.2],[0,1,5.7,4.2],[0,1,3.2,4.2],[0,1,0.8,4.2],[0,1,5.7,1.2],[0,1,3.2,1.2],[0,1,8.2,1.2],[0,1,0.8,1.2],[0,1,7.7,2.5],[0,1,5.2,2.5],[0,1,2.8,2.5],[0,1,0.3,2.5],[0,1,3.8,4.8],[0,1,1.4,4.8],[0,1,6.3,4.8],[0,1,12.1,0.0],[0,1,12.1,5.4],[0,1,9.7,0.0],[0,1,9.7,5.4],[0,1,14.6,0.0],[0,1,14.6,5.4],[0,1,12.1,0.0],[0,1,12.1,5.4],[0,1,13.6,3.6],[0,1,8.7,3.6],[0,1,11.1,3.6],[0,1,16.0,3.6],[0,1,16.0,1.8],[0,1,11.1,1.8],[0,1,8.7,1.8],[0,1,13.6,1.8],[0,1,16.1,0.6],[0,1,11.2,0.6],[0,1,8.8,0.6],[0,1,13.7,0.6],[0,1,15.0,3.0],[0,1,10.1,3.0],[0,1,12.6,3.0],[0,1,13.1,4.2],[0,1,10.6,4.2],[0,1,15.5,4.2],[0,1,15.5,1.2],[0,1,10.6,1.2],[0,1,13.1,1.2],[0,1,12.6,2.5],[0,1,10.1,2.5],[0,1,15.0,2.5],[0,1,13.7,4.8],[0,1,8.8,4.8],[0,1,11.2,4.8],[0,1,16.1,4.8],[0,1,17.1,0.0],[0,1,17.1,5.4],[0,1,22.0,0.0],[0,1,22.0,5.4],[0,1,19.5,0.0],[0,1,19.5,5.4],[0,1,17.1,0.0],[0,1,17.1,5.4],[0,1,24.4,0.0],[0,1,24.4,5.4],[0,1,22.0,0.0],[0,1,22.0,5.4],[0,1,18.5,3.6],[0,1,23.4,3.6],[0,1,20.9,3.6],[0,1,20.9,1.8],[0,1,18.5,1.8],[0,1,23.4,1.8],[0,1,21.0,0.6],[0,1,18.6,0.6],[0,1,23.5,0.6],[0,1,19.9,3.0],[0,1,17.5,3.0],[0,1,22.4,3.0],[0,1,18.0,4.2],[0,1,22.9,4.2],[0,1,20.4,4.2],[0,1,20.4,1.2],[0,1,18.0,1.2],[0,1,22.9,1.2],[0,1,17.5,2.5],[0,1,22.4,2.5],[0,1,19.9,2.5],[0,1,18.6,4.8],[0,1,23.5,4.8],[0,1,21.0,4.8],[0,1,4.8,0.0],[0,1,4.8,5.4],[0,1,3.8,3.6],[0,1,1.3,3.6],[0,1,6.2,3.6],[0,1,1.3,1.8],[0,1,6.2,1.8],[0,1,3.8,1.8],[0,1,1.4,0.6],[0,1,6.3,0.6],[0,1,3.8,0.6],[0,1,0.3,3.0],[0,1,5.2,3.0],[0,1,2.8,3.0],[0,1,7.7,3.0],[0,1,3.2,4.2],[0,1,0.8,4.2],[0,1,8.2,4.2],[0,1,5.7,4.2],[0,1,0.8,1.2],[0,1,5.7,1.2],[0,1,3.2,1.2],[0,1,8.2,1.2],[0,1,2.8,2.5],[0,1,0.3,2.5],[0,1,7.7,2.5],[0,1,5.2,2.5],[0,1,3.8,4.8],[0,1,1.4,4.8],[0,1,6.3,4.8],[0,1,14.6,0.0],[0,1,14.6,5.4],[0,1,9.7,0.0],[0,1,9.7,5.4],[0,1,11.1,3.6],[0,1,16.0,3.6],[0,1,8.7,3.6],[0,1,13.6,3.6],[0,1,13.6,1.8],[0,1,11.1,1.8],[0,1,8.7,1.8],[0,1,16.0,1.8],[0,1,13.7,0.6],[0,1,11.2,0.6],[0,1,8.8,0.6],[0,1,16.1,0.6],[0,1,12.6,3.0],[0,1,10.1,3.0],[0,1,15.0,3.0],[0,1,15.5,4.2],[0,1,13.1,4.2],[0,1,10.6,4.2],[0,1,13.1,1.2],[0,1,10.6,1.2],[0,1,15.5,1.2],[0,1,15.0,2.5],[0,1,12.6,2.5],[0,1,10.1,2.5],[0,1,11.2,4.8],[0,1,16.1,4.8],[0,1,8.8,4.8],[0,1,13.7,4.8],[0,1,24.4,0.0],[0,1,24.4,5.4],[0,1,19.5,0.0],[0,1,19.5,5.4],[0,1,23.4,3.6],[0,1,20.9,3.6],[0,1,18.5,3.6],[0,1,23.4,1.8],[0,1,18.5,1.8],[0,1,20.9,1.8],[0,1,23.5,0.6],[0,1,18.6,0.6],[0,1,21.0,0.6],[0,1,22.4,3.0],[0,1,17.5,3.0],[0,1,19.9,3.0],[0,1,20.4,4.2],[0,1,18.0,4.2],[0,1,22.9,4.2],[0,1,22.9,1.2],[0,1,18.0,1.2],[0,1,20.4,1.2],[0,1,19.9,2.5],[0,1,17.5,2.5],[0,1,22.4,2.5],[0,1,23.5,4.8],[0,1,21.0,4.8],[0,1,18.6,4.8],[0,1,6.2,9.0],[0,1,3.8,9.0],[0,1,1.3,9.0],[0,1,1.3,7.2],[0,1,6.2,7.2],[0,1,3.8,7.2],[0,1,1.4,6.0],[0,1,6.3,6.0],[0,1,3.8,6.0],[0,1,7.7,8.4],[0,1,0.3,8.4],[0,1,5.2,8.4],[0,1,2.8,8.4],[0,1,3.2,9.7],[0,1,0.8,9.7],[0,1,8.2,9.7],[0,1,5.7,9.7],[0,1,8.2,6.6],[0,1,0.8,6.6],[0,1,5.7,6.6],[0,1,3.2,6.6],[0,1,2.8,7.8],[0,1,0.3,7.8],[0,1,7.7,7.8],[0,1,5.2,7.8],[0,1,6.3,10.2],[0,1,3.8,10.2],[0,1,1.4,10.2],[0,1,8.7,9.0],[0,1,16.0,9.0],[0,1,13.6,9.0],[0,1,11.1,9.0],[0,1,11.1,7.2],[0,1,8.7,7.2],[0,1,16.0,7.2],[0,1,13.6,7.2],[0,1,11.2,6.0],[0,1,8.8,6.0],[0,1,16.1,6.0],[0,1,13.7,6.0],[0,1,10.1,8.4],[0,1,15.0,8.4],[0,1,12.6,8.4],[0,1,13.1,9.7],[0,1,10.6,9.7],[0,1,15.5,9.7],[0,1,10.6,6.6],[0,1,15.5,6.6],[0,1,13.1,6.6],[0,1,12.6,7.8],[0,1,10.1,7.8],[0,1,15.0,7.8],[0,1,8.8,10.2],[0,1,16.1,10.2],[0,1,13.7,10.2],[0,1,11.2,10.2],[1,0,13.8,14.9],[0,1,18.5,9.0],[0,1,23.4,9.0],[0,1,20.9,9.0],[0,1,20.9,7.2],[0,1,18.5,7.2],[0,1,23.4,7.2],[0,1,21.0,6.0],[0,1,18.6,6.0],[0,1,23.5,6.0],[0,1,19.9,8.4],[0,1,17.5,8.4],[0,1,22.4,8.4],[0,1,22.9,9.7],[0,1,20.4,9.7],[0,1,18.0,9.7],[0,1,20.4,6.6],[0,1,18.0,6.6],[0,1,22.9,6.6],[0,1,22.4,7.8],[0,1,19.9,7.8],[0,1,17.5,7.8],[0,1,18.6,10.2],[0,1,23.5,10.2],[0,1,21.0,10.2],[0,1,3.8,9.0],[0,1,1.3,9.0],[0,1,6.2,9.0],[0,1,6.2,7.2],[0,1,3.8,7.2],[0,1,1.3,7.2],[0,1,6.3,6.0],[0,1,3.8,6.0],[0,1,1.4,6.0],[0,1,5.2,8.4],[0,1,2.8,8.4],[0,1,7.7,8.4],[0,1,0.3,8.4],[0,1,8.2,9.7],[0,1,5.7,9.7],[0,1,3.2,9.7],[0,1,0.8,9.7],[0,1,5.7,6.6],[0,1,3.2,6.6],[0,1,8.2,6.6],[0,1,0.8,6.6],[0,1,7.7,7.8],[0,1,5.2,7.8],[0,1,2.8,7.8],[0,1,0.3,7.8],[0,1,3.8,10.2],[0,1,1.4,10.2],[0,1,6.3,10.2],[0,1,13.6,9.0],[0,1,8.7,9.0],[0,1,11.1,9.0],[0,1,16.0,9.0],[0,1,16.0,7.2],[0,1,11.1,7.2],[0,1,8.7,7.2],[0,1,13.6,7.2],[0,1,16.1,6.0],[0,1,11.2,6.0],[0,1,8.8,6.0],[0,1,13.7,6.0],[0,1,15.0,8.4],[0,1,10.1,8.4],[0,1,12.6,8.4],[0,1,13.1,9.7],[0,1,10.6,9.7],[0,1,15.5,9.7],[0,1,15.5,6.6],[0,1,10.6,6.6],[0,1,13.1,6.6],[0,1,12.6,7.8],[0,1,10.1,7.8],[0,1,15.0,7.8],[0,1,13.7,10.2],[0,1,8.8,10.2],[0,1,11.2,10.2],[0,1,16.1,10.2],[1,0,12.5,13.9],[1,0,16.6,13.3],[1,0,9.2,12.3],[1,1,13.6,10.7],[1,0,14.1,11.2],[0,1,18.5,9.0],[0,1,23.4,9.0],[0,1,20.9,9.0],[0,1,20.9,7.2],[0,1,18.5,7.2],[0,1,23.4,7.2],[0,1,21.0,6.0],[0,1,18.6,6.0],[0,1,23.5,6.0],[0,1,19.9,8.4],[0,1,17.5,8.4],[0,1,22.4,8.4],[0,1,18.0,9.7],[0,1,22.9,9.7],[0,1,20.4,9.7],[0,1,20.4,6.6],[0,1,18.0,6.6],[0,1,22.9,6.6],[0,1,17.5,7.8],[0,1,22.4,7.8],[0,1,19.9,7.8],[0,1,18.6,10.2],[0,1,23.5,10.2],[0,1,21.0,10.2],[0,1,3.8,9.0],[0,1,1.3,9.0],[0,1,6.2,9.0],[0,1,1.3,7.2],[0,1,6.2,7.2],[0,1,3.8,7.2],[0,1,1.4,6.0],[0,1,6.3,6.0],[0,1,3.8,6.0],[0,1,0.3,8.4],[0,1,5.2,8.4],[0,1,2.8,8.4],[0,1,7.7,8.4],[0,1,3.2,9.7],[0,1,0.8,9.7],[0,1,8.2,9.7],[0,1,5.7,9.7],[0,1,0.8,6.6],[0,1,5.7,6.6],[0,1,3.2,6.6],[0,1,8.2,6.6],[0,1,2.8,7.8],[0,1,0.3,7.8],[0,1,7.7,7.8],[0,1,5.2,7.8],[0,1,3.8,10.2],[0,1,1.4,10.2],[0,1,6.3,10.2],[1,0,4.3,12.1],[1,1,7.1,12.5],[1,0,7.9,11.8],[0,1,11.1,9.0],[0,1,16.0,9.0],[0,1,8.7,9.0],[0,1,13.6,9.0],[0,1,13.6,7.2],[0,1,11.1,7.2],[0,1,8.7,7.2],[0,1,16.0,7.2],[0,1,13.7,6.0],[0,1,11.2,6.0],[0,1,8.8,6.0],[0,1,16.1,6.0],[0,1,12.6,8.4],[0,1,10.1,8.4],[0,1,15.0,8.4],[0,1,15.5,9.7],[0,1,13.1,9.7],[0,1,10.6,9.7],[0,1,13.1,6.6],[0,1,10.6,6.6],[0,1,15.5,6.6],[0,1,15.0,7.8],[0,1,12.6,7.8],[0,1,10.1,7.8],[0,1,11.2,10.2],[0,1,16.1,10.2],[0,1,8.8,10.2],[0,1,13.7,10.2],[1,0,7.5,13.4],[1,0,12.4,13.8],[1,1,16.7,11.9],[1,0,15.0,13.7],[1,0,14.1,12.3],[0,1,23.4,9.0],[0,1,20.9,9.0],[0,1,18.5,9.0],[0,1,23.4,7.2],[0,1,18.5,7.2],[0,1,20.9,7.2],[0,1,23.5,6.0],[0,1,18.6,6.0],[0,1,21.0,6.0],[0,1,22.4,8.4],[0,1,17.5,8.4],[0,1,19.9,8.4],[0,1,20.4,9.7],[0,1,18.0,9.7],[0,1,22.9,9.7],[0,1,22.9,6.6],[0,1,18.0,6.6],[0,1,20.4,6.6],[0,1,19.9,7.8],[0,1,17.5,7.8],[0,1,22.4,7.8],[0,1,23.5,10.2],[0,1,21.0,10.2],[0,1,18.6,10.2],[1,1,24.0,12.5],[1,0,23.7,13.3],[1,1,4.8,18.0],[1,0,3.9,18.3],[1,0,4.7,17.0],[1,0,5.2,19.7],[1,0,5.9,16.1],[1,0,8.6,17.9],[1,1,7.8,14.6],[1,0,7.9,14.8],[1,0,6.8,14.6],[1,1,10.1,15.3],[1,0,10.4,16.2],[1,1,4.6,15.2],[1,0,4.2,14.9],[1,0,4.1,14.9],[1,1,1.0,17.4],[1,0,0.3,17.0],[1,0,0.8,18.2],[1,1,2.3,14.3],[1,0,2.3,14.7],[1,0,1.3,14.2],[1,0,1.4,19.2],[1,1,7.6,16.5],[1,0,7.6,17.2],[1,0,6.8,16.0],[1,1,2.6,21.8],[1,0,2.5,20.9],[1,0,3.4,22.3],[1,1,3.2,15.4],[1,0,3.1,15.5],[1,0,2.5,16.0],[1,1,6.6,19.1],[1,0,6.0,18.7],[1,0,6.7,20.1],[1,1,0.2,19.7],[1,0,-0.0,20.5],[1,0,24.2,19.7],[1,1,0.7,17.9],[1,0,1.6,18.2],[1,0,0.6,17.8],[1,0,0.8,16.1],[1,1,5.5,14.9],[1,0,5.2,14.6],[1,0,5.6,14.2],[1,0,7.1,21.6],[1,1,1.0,15.2],[1,1,9.1,18.5],[1,0,8.8,18.5],[1,0,9.3,15.2],[1,0,8.1,18.4],[1,1,10.5,19.7],[1,0,10.9,20.4],[1,0,8.4,20.5],[1,1,14.5,15.7],[1,0,14.3,16.7],[1,0,14.8,15.5],[1,1,12.7,15.6],[1,0,12.2,15.0],[1,0,12.6,16.6],[1,1,8.9,17.4],[1,0,9.0,17.8],[1,0,8.5,16.5],[1,1,13.5,20.4],[1,0,14.0,20.9],[1,0,13.6,19.4],[1,1,14.9,20.2],[1,0,14.7,19.3],[1,0,12.3,16.6],[1,0,16.0,17.6],[1,0,15.2,16.3],[1,1,14.1,14.4],[1,0,13.6,13.5],[1,1,10.2,13.4],[1,0,9.2,13.8],[1,0,10.7,13.9],[1,1,9.0,18.1],[1,0,11.8,21.8],[1,1,9.2,15.3],[1,0,9.1,16.3],[1,0,9.7,15.1],[1,1,12.6,16.4],[1,0,12.9,15.5],[1,0,11.8,16.6],[1,1,14.9,17.6],[1,0,15.4,17.0],[1,0,14.2,17.1],[1,1,12.3,12.3],[1,0,11.4,12.6],[1,0,12.2,11.8],[1,0,16.2,17.7],[1,1,12.0,18.3],[1,0,12.5,19.1],[1,0,11.0,18.5],[1,1,15.3,14.5],[1,0,15.1,14.4],[1,1,16.2,16.4],[1,0,14.9,21.6],[1,0,15.1,13.7],[1,0,17.0,15.8],[1,0,16.5,17.4],[1,1,15.3,21.4],[1,0,14.6,20.9],[1,0,17.8,18.2],[1,1,23.2,16.6],[1,0,22.3,16.3],[1,0,23.5,16.9],[1,1,21.0,16.6],[1,1,20.6,14.7],[1,0,21.3,14.1],[1,0,19.8,14.2],[1,1,23.3,13.7],[1,0,24.2,14.1],[1,0,22.8,14.0],[1,0,20.2,19.0],[1,1,20.4,15.9],[1,0,20.7,16.1],[1,0,19.8,15.1],[1,1,18.1,14.5],[1,0,17.5,13.7],[1,0,18.2,14.4],[1,0,19.4,16.3],[1,1,19.2,17.0],[1,0,19.5,16.6],[1,0,19.6,16.6],[1,1,17.1,17.6],[1,1,18.5,13.9],[1,0,18.0,14.2],[1,0,19.4,13.6],[1,1,19.8,18.9],[1,0,18.9,19.5],[1,0,17.3,20.1],[1,0,9.4,19.5],[1,1,4.3,19.5],[1,0,3.6,19.0],[1,0,4.8,20.1],[1,0,2.4,16.9],[1,1,4.0,13.8],[1,0,4.6,14.6],[1,0,4.6,13.0],[1,1,2.9,15.5],[1,0,3.1,14.8],[1,0,3.2,16.4],[1,1,6.4,15.8],[1,0,6.2,16.3],[1,1,6.5,14.9],[1,0,6.8,15.4],[1,0,7.2,14.7],[1,1,4.4,17.4],[1,0,5.3,17.5],[1,0,4.1,18.4],[1,1,0.9,15.4],[1,0,0.4,14.5],[1,0,0.9,15.8],[1,0,7.2,14.6],[1,1,6.7,17.3],[1,0,7.3,18.1],[1,0,7.2,16.4],[1,0,3.2,21.0],[1,1,7.4,16.8],[1,0,6.9,16.6],[1,0,8.0,16.0],[1,1,0.5,12.7],[1,0,1.2,12.2],[1,1,7.1,21.4],[1,0,7.5,20.5],[1,0,0.8,20.4],[1,1,4.1,15.9],[1,0,4.6,16.4],[1,0,3.6,15.1],[1,0,8.7,19.6],[1,0,1.8,15.3],[1,1,2.6,19.9],[1,0,3.0,19.9],[1,0,0.9,20.1],[1,1,4.0,10.7],[1,0,3.1,11.2],[1,0,4.8,11.3],[1,0,0.6,12.8],[1,1,3.1,20.0],[1,0,2.8,20.8],[1,1,15.1,17.1],[1,0,9.5,18.5],[1,0,8.3,19.2],[1,0,8.6,14.8],[1,1,14.5,18.3],[1,0,15.4,17.9],[1,1,12.7,12.9],[1,0,13.5,12.6],[1,1,8.3,19.2],[1,0,9.3,19.1],[1,1,10.3,15.2],[1,0,9.4,15.1],[1,0,11.0,15.6],[1,1,12.2,16.4],[1,0,13.1,16.6],[1,1,10.6,18.7],[1,0,11.1,17.9],[1,0,11.3,19.4],[1,0,15.4,15.0],[1,1,16.6,12.7],[1,0,16.3,11.8],[1,1,15.0,15.4],[1,0,14.6,16.3],[1,0,15.9,15.7],[1,1,10.7,17.1],[1,0,10.7,16.4],[1,0,10.0,17.8],[1,1,10.2,18.0],[1,0,10.4,17.5],[1,1,8.2,14.8],[1,1,8.4,18.9],[1,0,8.1,18.1],[1,1,9.5,14.7],[1,0,10.3,15.3],[1,0,9.6,14.0],[1,1,9.5,13.0],[1,0,9.9,13.7],[1,1,13.6,17.4],[1,0,14.0,17.7],[1,0,12.8,17.9],[1,0,12.8,11.2],[1,1,15.1,13.2],[1,0,14.9,14.0],[1,0,15.0,12.4],[1,1,14.2,19.3],[1,0,14.3,18.5],[1,0,14.7,19.0],[1,1,15.9,21.4],[1,0,16.1,20.1],[1,0,18.4,12.9],[1,0,13.6,20.9],[1,0,20.7,17.4],[1,1,18.5,16.2],[1,0,16.3,20.7],[1,1,16.1,19.1],[1,0,16.8,19.0],[1,1,18.1,18.4],[1,0,19.0,18.7],[1,0,18.1,17.5],[1,1,20.8,12.7],[1,0,21.7,13.2],[1,0,20.9,11.8],[1,1,22.1,17.7],[1,0,21.9,17.0],[1,0,21.8,18.6],[1,0,21.6,16.9],[1,1,19.3,14.2],[1,0,18.7,14.6],[1,0,18.8,13.9],[1,0,16.6,20.8],[1,1,17.1,17.5],[1,0,16.8,18.0],[1,0,18.1,17.7],[1,1,0.4,18.3],[1,0,-0.0,17.8],[1,0,0.8,17.6],[1,0,17.8,16.7],[1,1,21.6,14.5],[1,0,21.3,15.1],[1,0,20.9,13.7],[1,1,19.3,19.1],[1,0,18.4,19.2],[1,0,19.8,19.3],[1,1,20.6,20.2],[1,1,19.9,19.8],[1,0,19.2,20.4],[1,1,0.1,16.9],[1,0,0.4,15.9],[1,0,23.7,16.9],[1,1,21.8,16.0],[1,0,21.6,16.3],[1,0,21.5,15.1],[1,1,17.8,13.7],[1,0,17.9,14.6],[1,0,16.9,13.4],[1,0,21.6,11.7],[1,0,20.2,20.3],[1,0,18.9,21.0],[1,0,3.9,15.3],[1,1,2.4,17.4],[1,0,3.3,17.2],[1,0,2.7,17.6],[1,1,6.0,20.3],[1,0,5.5,20.8],[1,0,5.4,20.2],[1,1,2.2,17.4],[1,0,2.0,16.7],[1,0,2.6,20.5],[1,1,6.5,16.2],[1,0,6.3,17.0],[1,0,6.0,15.4],[1,1,24.5,16.5],[1,0,24.6,17.4],[1,0,0.7,16.4],[1,1,4.4,16.1],[1,0,5.2,16.5],[1,0,4.2,15.2],[1,1,9.6,17.0],[1,0,10.4,16.9],[1,1,4.8,12.9],[1,0,5.5,13.2],[1,1,6.1,13.4],[1,0,7.0,13.6],[1,0,6.0,12.7],[1,0,8.9,20.7],[1,0,7.8,14.8],[1,1,2.7,16.6],[1,0,3.1,16.0],[1,0,3.1,16.6],[1,1,7.1,17.1],[1,0,8.0,17.0],[1,0,6.6,17.9],[1,1,3.1,18.9],[1,0,3.1,18.0],[1,0,3.0,18.6],[1,1,3.4,15.0],[1,0,3.5,14.0],[1,0,5.9,19.0],[1,0,5.9,18.8],[1,0,8.4,15.7],[1,0,3.4,20.6],[1,0,13.9,18.2],[1,0,11.1,13.7],[1,0,7.2,15.2],[1,1,8.7,14.4],[1,1,13.0,18.4],[1,0,13.2,18.8],[1,0,13.7,18.5],[1,1,10.7,21.0],[1,0,10.8,21.7],[1,0,11.4,20.3],[1,1,11.4,14.0],[1,1,6.2,18.1],[1,0,7.2,18.2],[1,1,12.8,15.1],[1,0,12.6,14.2],[1,0,13.3,15.1],[1,1,16.8,14.6],[1,0,16.4,14.8],[1,0,16.6,15.3],[1,1,9.9,12.6],[1,0,9.4,13.3],[1,0,9.7,12.8],[1,1,13.2,15.1],[1,0,13.4,15.6],[1,0,13.6,15.6],[1,1,16.0,15.4],[1,0,16.4,16.2],[1,0,16.7,12.9],[1,0,17.7,11.6],[1,1,16.1,20.8],[1,0,16.7,20.9],[1,0,10.3,17.3],[1,1,12.6,18.4],[1,0,12.0,17.6],[1,0,12.1,19.2],[1,0,9.6,18.0],[1,1,14.8,19.0],[1,0,15.0,20.0],[1,1,14.1,13.2],[1,1,7.7,15.0],[1,1,11.4,17.5],[1,0,12.0,16.8],[1,0,11.9,17.9],[1,0,8.8,14.3],[1,1,12.0,12.8],[1,0,11.2,12.7],[1,0,12.0,11.9],[1,1,14.8,21.7],[1,0,15.7,22.2],[1,1,10.0,16.5],[1,0,9.6,15.7],[1,0,10.3,16.2],[1,1,8.7,14.3],[1,0,8.2,15.1],[1,0,9.6,14.2],[1,1,14.8,14.2],[1,0,14.5,13.6],[1,0,14.0,14.4],[1,0,14.9,21.9],[1,0,16.7,20.2],[1,1,9.2,20.0],[1,0,22.6,18.0],[1,1,23.2,20.1],[1,0,23.4,19.7],[1,1,17.3,17.4],[1,0,17.0,16.5],[1,0,17.4,17.6],[1,1,23.3,18.7],[1,0,23.7,18.7],[1,1,17.8,18.4],[1,0,17.6,18.3],[1,0,18.5,17.7],[1,1,17.8,19.2],[1,0,18.8,19.4],[1,0,17.7,18.2],[1,1,18.2,16.5],[1,0,17.6,15.9],[1,0,19.1,16.1],[1,1,19.4,12.8],[1,0,19.4,12.7],[1,0,23.6,11.7],[1,1,22.7,19.0],[1,0,21.8,18.7],[1,0,23.3,18.2],[1,1,20.5,15.6],[1,0,21.4,15.8],[1,0,20.2,15.1],[1,1,20.1,12.7],[1,0,20.6,11.9],[1,0,20.1,12.7],[1,1,21.1,16.9],[1,0,20.8,16.1],[1,0,20.5,17.7],[1,1,23.6,11.4],[1,0,23.4,12.1],[1,0,24.6,11.4],[1,0,15.7,18.5],[1,1,22.8,13.9],[1,0,23.6,14.6],[1,0,22.7,13.7],[1,1,16.1,14.8],[1,0,15.7,14.4],[1,0,15.4,15.0],[1,1,23.4,17.7],[1,0,23.5,17.4],[1,0,23.9,18.6],[1,1,20.4,14.9],[1,0,20.0,14.5],[1,0,21.3,14.6],[1,1,23.2,16.4],[1,0,24.1,16.0],[1,0,23.4,16.9],[1,1,19.7,13.5],[1,0,20.1,14.2],[1,0,18.8,13.8],[1,1,21.0,11.0],[1,0,20.3,11.3],[1,1,4.8,19.3],[1,0,4.4,20.0],[1,1,2.1,19.0],[1,1,3.4,21.0],[1,0,2.7,20.6],[1,0,4.2,21.3],[1,1,24.1,21.8],[1,0,24.2,21.4],[1,0,23.9,22.8],[1,1,8.8,24.0],[1,0,8.3,23.3],[1,1,5.2,22.7],[1,0,6.0,22.1],[1,0,4.7,22.9],[1,0,6.3,21.3],[1,0,5.5,20.0],[1,0,1.9,18.9],[1,1,-0.1,21.5],[1,0,23.7,21.8],[1,0,0.7,22.0],[2,1,6.1,27.1],[2,1,6.1,27.8],[2,1,7.1,27.6],[2,1,5.0,27.4],[2,0,5.4,28.7],[2,0,7.2,28.1],[2,0,5.2,26.9],[2,0,5.1,28.4],[1,0,9.8,23.8],[1,1,5.4,20.9],[1,0,11.0,20.7],[1,1,7.3,21.3],[1,0,7.6,20.4],[1,1,14.0,21.8],[1,0,8.5,23.1],[1,0,9.7,19.4],[1,1,8.3,21.5],[1,0,8.9,21.9],[1,1,11.5,21.2],[1,0,10.9,21.8],[1,0,8.0,21.6],[1,1,9.3,23.2],[1,0,8.9,22.5],[1,0,8.9,23.2],[1,1,8.8,22.3],[1,0,9.7,22.4],[1,0,14.2,21.1],[1,0,13.0,21.6],[1,0,14.2,20.3],[1,1,11.7,22.0],[1,0,12.3,22.3],[1,1,11.0,22.3],[1,0,10.9,23.1],[1,1,17.5,20.6],[1,1,16.7,22.9],[1,0,17.4,23.4],[1,0,16.1,22.4],[1,0,18.0,24.6],[1,1,17.2,18.9],[1,0,16.7,19.4],[1,0,17.9,18.3],[1,0,16.7,20.6],[1,1,19.8,22.3],[1,0,20.0,21.8],[1,0,19.0,22.9],[1,1,8.7,20.3],[1,0,7.8,19.9],[1,1,7.6,22.9],[1,0,7.4,23.9],[1,0,7.0,22.6],[1,0,8.7,21.2],[1,0,2.2,19.8],[1,1,23.8,24.3],[1,0,23.7,25.1],[1,0,-0.0,24.4],[1,1,3.0,22.4],[1,0,4.0,22.3],[1,0,2.5,21.7],[1,1,0.0,20.3],[1,0,24.2,19.3],[1,1,1.7,24.6],[1,0,0.8,24.3],[1,1,5.9,21.6],[1,0,6.8,21.6],[1,0,5.9,22.2],[1,1,1.3,20.6],[1,0,0.7,20.6],[1,1,8.7,21.2],[1,0,9.6,21.7],[1,1,12.8,20.1],[1,0,13.5,19.6],[1,0,12.1,20.4],[1,0,11.9,22.6],[1,1,12.9,20.2],[1,0,13.4,19.9],[1,0,12.3,20.9],[1,1,11.8,22.9],[1,0,11.3,22.7],[1,0,12.8,22.9],[1,1,13.5,21.9],[1,0,14.4,22.4],[1,1,14.8,22.2],[1,0,13.9,21.8],[1,0,15.4,22.0],[1,0,15.6,22.9],[1,1,11.5,21.5],[1,0,12.2,21.7],[1,0,11.9,20.8],[1,1,10.3,22.2],[1,0,10.9,22.2],[1,0,9.3,22.3],[2,1,11.4,26.9],[2,1,9.8,26.8],[2,0,11.8,26.0],[2,0,10.4,25.8],[2,0,8.8,26.5],[2,0,9.9,27.5],[1,1,17.0,20.7],[1,0,21.4,20.8],[1,0,16.7,21.5],[1,1,18.4,23.9],[1,0,19.2,23.6],[1,1,15.8,23.0],[1,0,16.7,22.7],[1,0,20.1,19.5],[1,1,22.4,22.2],[1,0,22.7,23.0],[1,0,23.2,21.9],[1,1,18.0,21.4],[1,0,17.8,21.1],[1,1,20.5,20.3],[1,0,21.5,20.3],[2,1,19.5,26.4],[2,1,19.2,26.4],[2,1,19.0,27.6],[2,0,19.6,25.5],[2,0,19.2,25.5],[2,0,18.8,27.6],[1,1,0.7,19.6],[1,0,1.4,19.4],[1,0,1.2,19.5],[1,1,8.9,22.8],[1,0,8.0,23.2],[1,1,2.5,19.9],[1,0,2.5,18.9],[1,1,5.4,23.7],[1,0,4.7,24.4],[1,0,5.4,23.5],[1,1,6.4,23.9],[1,0,7.0,24.2],[1,0,5.5,24.4],[1,1,5.3,23.2],[1,0,5.6,23.6],[1,0,4.6,22.5],[1,1,3.8,21.0],[1,0,3.4,20.6],[1,0,2.0,23.8],[1,1,6.1,19.6],[1,0,6.8,20.2],[2,0,2.0,28.3],[1,0,14.6,22.1],[1,0,13.5,22.6],[1,0,8.9,22.9],[1,0,15.3,22.0],[1,1,8.4,23.1],[1,0,8.3,22.1],[1,0,7.7,23.6],[1,1,11.9,21.8],[1,0,11.8,21.5],[1,0,11.1,22.2],[1,0,16.6,23.1],[1,1,14.7,23.1],[1,0,14.7,23.0],[1,0,14.7,24.1],[1,0,9.8,20.3],[1,1,12.1,21.5],[1,0,11.2,21.7],[1,0,12.8,21.9],[1,1,14.5,22.7],[1,0,24.1,19.9],[1,1,19.5,23.4],[1,0,19.8,24.4],[1,0,20.2,22.8],[1,1,19.7,22.8],[1,0,18.9,22.8],[1,0,19.3,22.5],[1,1,21.7,21.9],[1,0,22.3,22.0],[1,0,22.3,21.9],[1,1,17.3,22.9],[1,0,18.2,23.1],[1,1,23.2,21.9],[1,0,22.7,22.1],[1,0,22.9,21.0],[1,0,20.3,21.2],[2,1,8.1,26.6],[2,1,8.1,25.9],[2,1,7.1,26.2],[2,0,8.9,26.4],[2,0,7.1,25.6],[2,0,4.0,27.2],[2,0,8.8,25.1],[2,0,11.2,38.0],[2,1,1.7,35.3],[2,0,1.6,34.9],[2,0,1.9,34.5],[2,0,0.7,35.8],[2,0,4.3,28.4],[2,0,5.5,28.5],[2,0,5.2,29.9],[2,1,8.2,36.2],[2,0,7.2,36.6],[2,1,10.4,27.6],[2,1,10.0,28.9],[2,1,10.4,29.5],[2,1,11.3,28.9],[2,1,11.8,27.6],[2,0,9.2,29.3],[2,0,10.1,30.5],[2,0,12.6,27.2],[2,0,16.8,30.1],[2,0,12.5,34.5],[2,1,19.4,28.9],[2,1,19.6,27.6],[2,1,19.1,28.8],[2,1,19.5,30.1],[2,0,19.8,27.6],[2,0,18.9,29.8],[2,0,20.1,30.1],[2,0,18.5,30.5],[2,0,20.0,30.9],[2,1,16.8,33.5],[2,1,16.2,33.6],[2,1,15.8,32.5],[2,1,16.0,31.2],[2,1,16.6,31.1],[2,1,17.0,32.3],[2,0,15.9,34.5],[2,0,15.3,32.5],[2,0,15.7,30.3],[2,0,22.3,36.6],[2,1,3.9,29.7],[2,1,3.6,28.9],[2,1,2.3,29.0],[2,1,1.2,29.7],[2,1,1.6,30.6],[2,1,2.9,30.6],[2,1,5.2,29.6],[2,0,0.2,29.7],[2,0,0.8,31.1],[2,0,3.1,31.2],[2,0,6.0,30.2],[2,0,11.8,29.5],[2,1,16.5,34.1],[2,1,15.6,33.6],[2,1,15.1,32.3],[2,1,15.7,31.6],[2,0,16.9,35.1],[2,0,15.1,34.3],[2,0,14.4,31.8],[2,0,15.4,30.5],[2,0,12.9,35.2],[2,1,17.1,33.4],[2,1,17.4,34.8],[2,0,17.4,32.3],[2,0,16.7,35.3],[2,0,18.3,34.6],[2,0,17.6,35.6],[2,1,16.6,32.1],[2,1,18.1,34.1],[2,0,17.1,31.5],[2,0,19.1,33.7],[2,0,18.1,35.2],[2,0,18.0,33.8],[2,1,5.1,42.6],[2,1,3.8,43.1],[2,1,3.0,42.2],[2,1,3.5,41.0],[2,1,4.7,40.4],[2,1,5.5,41.3],[2,1,6.0,43.4],[2,0,2.2,42.7],[2,0,2.9,40.4],[2,0,5.1,39.5],[2,0,6.4,41.0],[2,0,6.1,43.0],[2,0,7.6,42.1],[2,1,7.2,37.3],[2,1,6.8,36.4],[2,1,7.7,35.9],[2,0,6.4,37.7],[2,0,5.7,36.0],[2,0,7.3,35.2],[2,1,13.7,43.8],[2,1,15.1,43.4],[2,1,16.0,44.3],[2,0,13.0,43.0],[2,0,15.4,42.4],[2,0,17.1,44.0],[2,1,9.5,37.1],[2,1,8.5,37.7],[2,1,9.0,36.2],[2,1,11.0,37.5],[2,0,8.8,38.3],[2,0,9.8,35.7],[2,0,11.3,38.0],[2,0,11.6,36.5],[2,1,9.0,35.9],[2,0,8.5,36.0],[2,0,7.6,41.9],[2,1,2.8,36.3],[2,1,3.9,36.2],[2,1,5.0,37.1],[2,1,5.0,37.9],[2,1,4.0,37.9],[2,1,2.8,37.1],[2,0,3.9,35.5],[2,0,5.8,37.0],[2,0,5.9,38.6],[2,0,3.9,38.6],[2,0,2.0,37.1],[2,0,2.6,42.3],[2,0,4.4,42.2],[2,1,18.7,40.9],[2,1,17.5,41.0],[2,1,16.4,41.0],[2,1,16.4,40.8],[2,0,19.6,40.9],[2,0,17.4,41.1],[2,0,15.4,41.1],[2,0,15.5,40.9],[2,1,10.9,35.7],[2,1,10.3,35.6],[2,1,8.8,36.3],[2,1,10.2,36.0],[2,1,12.4,35.4],[2,0,10.9,35.4],[2,0,8.2,36.6],[2,0,10.6,35.9],[2,0,13.0,36.2],[2,1,9.8,42.4],[2,1,9.9,42.1],[2,0,9.8,41.6],[2,0,10.1,41.1],[2,1,17.7,40.7],[2,1,18.8,40.7],[2,1,17.7,40.3],[2,0,19.8,40.7],[2,0,17.1,39.4],[2,0,18.7,40.2],[2,0,17.3,41.2],[2,1,21.0,39.7],[2,1,21.9,40.5],[2,1,23.0,39.9],[2,1,23.1,38.5],[2,1,22.3,37.7],[2,1,21.2,38.4],[2,0,21.8,41.6],[2,0,23.7,40.5],[2,0,24.0,38.0],[2,0,8.3,44.2],[2,1,9.4,44.1],[2,0,9.8,43.3],[2,1,12.1,41.4],[2,1,12.4,41.7],[2,1,11.6,41.1],[2,1,10.6,40.3],[2,1,10.3,39.9],[2,1,11.1,40.5],[2,1,12.8,42.2],[2,0,10.0,39.8],[2,0,9.6,39.1],[2,0,11.0,40.2],[2,0,12.8,43.2],[2,0,13.9,41.8],[2,0,12.3,42.1],[2,1,18.4,42.6],[2,1,19.7,42.8],[2,1,20.6,41.7],[2,1,20.2,40.5],[2,1,18.8,40.3],[2,1,17.9,41.3],[2,1,17.3,43.7],[2,0,20.1,43.8],[2,0,21.7,42.0],[2,0,20.8,39.6],[2,0,18.5,39.3],[2,0,16.8,41.1],[2,0,17.7,44.6],[2,0,16.4,43.4],[2,1,19.8,40.3],[2,0,20.5,37.7],[2,0,20.0,41.4],[2,0,18.9,40.3],[2,0,19.6,39.9],[2,0,5.6,44.5],[2,0,3.5,44.0],[2,0,7.0,43.4],[2,1,8.8,46.2],[2,1,7.9,45.1],[2,0,8.5,47.1],[2,0,6.9,45.2],[2,1,10.0,46.1],[2,0,10.7,47.0],[2,1,14.3,46.0],[2,1,13.3,45.1],[2,1,15.6,45.6],[2,1,13.9,47.4],[2,0,12.3,45.3],[2,0,16.3,46.2],[2,0,13.8,48.0],[2,0,13.0,47.5],[2,0,14.7,47.8],[2,0,6.3,42.9],[2,1,8.2,43.9],[2,1,7.4,42.6],[2,1,4.6,44.3],[2,1,4.1,45.6],[2,1,3.0,45.6],[2,1,2.4,44.5],[2,1,2.9,43.2],[2,1,4.0,43.2],[2,1,5.7,44.3],[2,0,4.5,46.5],[2,0,2.7,46.6],[2,0,1.6,44.5],[2,0,6.6,44.9],[2,0,5.9,43.3],[2,0,5.6,44.9],[2,1,16.1,47.0],[2,1,15.2,46.0],[2,1,15.6,48.2],[2,0,14.1,46.0],[2,0,15.1,49.0],[2,0,14.8,47.9],[2,0,16.4,48.7],[2,1,9.4,43.8],[2,1,10.3,44.9],[2,0,9.7,42.9],[2,0,11.2,44.9],[2,1,9.4,43.7],[2,1,9.8,43.1],[2,1,9.6,44.5],[2,1,9.4,44.8],[2,0,9.8,42.9],[2,0,9.4,45.3],[2,0,9.1,45.8],[2,1,17.5,46.9],[2,0,18.2,47.7],[2,1,15.7,44.8],[2,1,17.0,44.7],[2,1,17.9,45.8],[2,0,15.0,44.1],[2,0,17.3,43.9],[2,0,18.9,45.7],[2,1,7.2,48.4],[2,1,6.3,47.7],[2,1,6.7,49.0],[2,0,5.3,47.4],[2,0,5.7,49.4],[2,0,6.5,48.1],[2,0,9.9,45.0],[2,0,13.2,42.4],[2,0,11.9,41.3],[2,1,6.8,47.3],[2,1,8.1,47.5],[2,1,8.9,48.2],[2,1,8.5,48.6],[2,0,6.1,46.6],[2,0,8.4,47.1],[2,0,9.9,48.4],[2,0,9.2,49.2],[2,0,17.1,43.9],[2,0,7.4,49.7]];var SIDEBOX=[24.565, 80.21];var SIDELAY={"slab":{"n":540,"zmin":0.0,"zmax":10.17,"zmean":5.11},"water":{"n":627,"zmin":10.67,"zmax":25.1,"zmean":17.95},"binder":{"n":300,"zmin":25.12,"zmax":49.69,"zmean":38.31}};
+var LAYERS = [{ n: __L('석영 슬래브 · ClayFF','Quartz slab · ClayFF'), col: '#6E655C', z0: 0, z1: 10.8, atoms: 540, sub: __L('540원자 · 고정','540 atoms · fixed') }, { n: __L('물 · SPC/E','Water · SPC/E'), col: '#4F7FB0', z0: 13.3, z1: 23.3, atoms: 627, sub: __L('209분자 · 627원자','209 molecules · 627 atoms') }, { n: __L('톨루엔 · GAFF2','Toluene · GAFF2'), col: '#E37F1A', z0: 25.8, z1: 50.2, atoms: 300, sub: __L('20분자 · 300원자','20 molecules · 300 atoms') }, { n: __L('진공 · p p f','Vacuum · p p f'), col: '#F6F0E7', z0: 50.2, z1: 80.2, atoms: 0, sub: '30 Å · slab 3.0' }];
+
+/* ===== z 쌓기 그림 (표지 compact · 5장 큰 그림) ===== */
+function drawStack(W, H, k, u, compact) {
+  var x0 = compact ? 60 : 120, zx = compact ? 300 : 620, top = compact ? 40 : 50, bot = H - (compact ? 60 : 60), sc = (bot - top) / 82;
+  function Y(z) { return bot - (z + 2) * sc; }
+  var o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+  o += '<line x1="' + (x0 - 24) + '" y1="' + Y(-2) + '" x2="' + (x0 - 24) + '" y2="' + Y(80.2) + '" stroke="#6E655C" stroke-width="3"/>';
+  [0, 20, 40, 60, 80].forEach(function (z) { o += '<line x1="' + (x0 - 32) + '" y1="' + Y(z) + '" x2="' + (x0 - 16) + '" y2="' + Y(z) + '" stroke="#6E655C" stroke-width="2"/><text x="' + (x0 - 40) + '" y="' + (Y(z) + 6) + '" text-anchor="end" class="cfm" font-size="' + (compact ? 15 : 18) + '">' + z + '</text>'; });
+  o += '<text x="' + (x0 - 24) + '" y="' + (Y(80.2) - 14) + '" text-anchor="middle" class="cfs" font-size="' + (compact ? 15 : 18) + '">z (Å)</text>';
+  var total = 0;
+  LAYERS.forEach(function (L, i) {
+    if (i > k) return; var f = i < k ? 1 : ez(u * 1.4), z1 = L.z0 + (L.z1 - L.z0) * f, isvac = i === 3;
+    o += '<rect x="' + x0 + '" y="' + Y(z1) + '" width="' + (zx - x0) + '" height="' + Math.max(0, Y(L.z0) - Y(z1)) + '" fill="' + L.col + '"' + (isvac ? ' stroke="#D3C6B5" stroke-width="2" stroke-dasharray="8 6"' : '') + ' rx="3"/>';
+    if (!isvac && f > 0.3) { var seed = i * 97; for (var p = 0; p < (compact ? 40 : 90); p++) { seed = (seed * 9301 + 49297) % 233280; var px = x0 + 10 + (seed / 233280) * (zx - x0 - 20); seed = (seed * 9301 + 49297) % 233280; var pz = L.z0 + 0.5 + (seed / 233280) * (z1 - L.z0 - 1); o += '<circle cx="' + px.toFixed(1) + '" cy="' + Y(pz).toFixed(1) + '" r="' + (compact ? 2.2 : 3.2) + '" fill="#FFFDF9" opacity=".75"/>'; } }
+    o += '<text x="' + (zx + 18) + '" y="' + (Y((L.z0 + z1) / 2) + 7) + '" class="cfh" font-size="' + (compact ? 16 : 22) + '">' + L.n + '</text>';
+    if (!compact) o += '<text x="' + (zx + 18) + '" y="' + (Y((L.z0 + z1) / 2) + 32) + '" class="cfs" font-size="19">' + L.sub + ' · ' + (L.z1 - L.z0).toFixed(1) + ' Å</text>';
+    total += Math.round(L.atoms * f);
+  });
+  o += '<rect x="' + x0 + '" y="' + (bot + 10) + '" width="' + (zx - x0) + '" height="' + (compact ? 30 : 36) + '" rx="8" fill="#231F20"/><text x="' + ((x0 + zx) / 2) + '" y="' + (bot + (compact ? 31 : 35)) + '" text-anchor="middle" class="cfw" font-family="JetBrains Mono" font-size="' + (compact ? 15 : 19) + __L('">원자 ','">atoms ') + total.toLocaleString() + (k >= 3 ? ' · Lz 82 Å' : '') + '</text>';
+  return o + '</svg>';
+}
+EMB["stackcover"] = function (root, RAF) { var t0 = CLK(); function f(now) { var t = ((now - t0) / 1000) % 10, k = Math.min(3, Math.floor(t / 2.5)), u = (t % 2.5) / 2.5; root.innerHTML = drawStack(560, 560, k, u, true); RAF(f); } RAF(f); };
+EMB["zstack"] = function (root, RAF) { var t0 = CLK(); function f(now) { var st = stepOf(root), t = st ? (st - 1) * 3 + 2.9 : ((now - t0) / 1000) % 12, k = Math.min(3, Math.floor(t / 3)), u = (t % 3) / 3; root.innerHTML = drawStack(1120, 560, k, u, false); syncCards('zs_cards', k); RAF(f); } RAF(f); };
+
+/* ===== 7장: 측면 뷰 스크롤 (실제 좌표 1,467점) ===== */
+EMB["sidescroll"] = function (root, RAF) {
+  var W = 1120, H = 560, Lx = SIDEBOX[0], Lz = SIDEBOX[1], t0 = CLK();
+  var cols = ['#6E655C', '#4F7FB0', '#E37F1A'], ZT = 56, sc = (H - 70) / (ZT + 2), ox = 70, bw = Lx * sc, Y = function (z) { return H - 40 - (z + 2) * sc; };
+  function f(now) {
+    var st = stepOf(root), t = st ? (st - 1) * 4 + 3.9 : ((now - t0) / 1000) % 12, k = Math.min(2, Math.floor(t / 4)), u = (t % 4) / 4;
+    var shift = k === 1 ? ((now - t0) / 1000 * 6) % Lx : 0, copies = k === 1 ? 3 : 1, o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    for (var c = 0; c < copies; c++) { var cx = ox + c * bw; o += '<rect x="' + cx + '" y="' + Y(ZT) + '" width="' + bw + '" height="' + (Y(-2) - Y(ZT)) + '" fill="' + (c === 0 ? '#FFFFFF' : '#FBF7F1') + '" stroke="#E2D8CA" stroke-dasharray="' + (c ? '6 5' : 'none') + '"/>'; }
+    for (var i = 0; i < SIDE.length; i++) { var p = SIDE[i]; for (c = 0; c < copies; c++) { var x = ((p[2] - shift) % Lx + Lx) % Lx; o += '<circle cx="' + (ox + c * bw + x * sc).toFixed(1) + '" cy="' + Y(p[3]).toFixed(1) + '" r="' + (p[1] ? 2.6 : 1.6) + '" fill="' + cols[p[0]] + '" opacity="' + (c ? 0.45 : 0.9) + '"/>'; } }
+    if (k >= 2) { ['slab', 'water', 'binder'].forEach(function (nm, i) { var L = SIDELAY[nm]; o += '<line x1="' + (ox + bw + 10) + '" y1="' + Y(L.zmin) + '" x2="' + (ox + bw + 10) + '" y2="' + Y(L.zmax) + '" stroke="' + cols[i] + '" stroke-width="6"/><text x="' + (ox + bw + 22) + '" y="' + (Y((L.zmin + L.zmax) / 2) + 6) + '" class="cfm" fill="' + cols[i] + '">' + L.zmin + ' ~ ' + L.zmax + ' Å</text>'; }); o += '<rect x="' + ox + '" y="' + Y(ZT) + '" width="' + bw + '" height="' + (Y(50) - Y(ZT)) + '" fill="#2E8B57" opacity=".08"/><text x="' + (ox + bw + 22) + '" y="' + (Y(53)) + __L('" class="cfh" fill="#2E8B57" font-size="20">↑ 진공 30 Å · z 이미지 없음 (f) · Lz 82</text>','" class="cfh" fill="#2E8B57" font-size="20">↑ vacuum 30 Å · no z images (f) · Lz 82</text>'); }
+    o += '<text x="' + (ox + bw / 2) + '" y="' + (H - 12) + '" text-anchor="middle" class="cfs">x · ' + Lx.toFixed(1) + ' Å' + (k >= 1 ? __L(' → 주기 복제 (p)',' → periodic replica (p)') : '') + '</text><text x="' + (ox - 36) + '" y="' + Y(40) + '" text-anchor="middle" class="cfs" transform="rotate(-90 ' + (ox - 36) + ' ' + Y(40) + ')">z (Å)</text>';
+    o += '<rect x="' + (W - 420) + '" y="16" width="400" height="44" rx="10" fill="#FFF1E0"/><text x="' + (W - 220) + '" y="45" text-anchor="middle" class="cfh" font-size="19">' + [__L('① 원 셀 단면 · 500스텝 뒤','① Original cell cross-section · after 500 steps'), __L('② x 방향 이동 → 복제본 연속','② shift in x → replicas continuous'), __L('③ 층 z 범위 분리 · 진공 위 이미지 없음','③ layer z ranges separate · no image above vacuum')][k] + '</text></svg>';
+    root.innerHTML = o; syncCards('sv_cards', k); RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 11장: 라우팅 분기 3 ===== */
+EMB["route3"] = function (root, RAF) {
+  var W = 1588, H = 560, t0 = CLK();
+  var atoms = [['C', __L('방향족 C','aromatic C'), 'ca', 'c3a', 'C'], ['O', __L('히드록시 O','hydroxyl O'), 'oh', 'o2h', 'O'], ['H', __L('O 의 H','H of O'), 'ho', 'h1o', 'H'], ['C', __L('메틸 C','methyl C'), 'c3', 'c4', 'C']];
+  var br = [[__L('GAFF2 (12-6 · 산술 · AM1-BCC)','GAFF2 (12-6 · arithmetic · AM1-BCC)'), '#C8610C', __L('validated · 오늘 셀','validated · today\'s cell')], [__L('COMPASS (9-6 · 6제곱 · 결합 증분)','COMPASS (9-6 · 6th-power · bond increments)'), '#4F7FB0', __L('blocked · ClayFF 와 한 셀 불가','blocked · cannot share a cell with ClayFF')], [__L('ReaxFF (결합 차수 · QEq)','ReaxFF (bond order · QEq)'), '#2E8B57', __L('research_only · 영역 분할만','research_only · domain decomposition only')]];
+  function f(now) {
+    var st = stepOf(root), t = st ? (st - 1) * 4 + 3.9 : ((now - t0) / 1000) % 12, k = Math.min(2, Math.floor(t / 4)), u = (t % 4) / 4, o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    o += __L('<rect x="30" y="40" width="420" height="480" rx="18" fill="#F6F0E7"/><text x="240" y="80" text-anchor="middle" class="cfh">FF-neutral 토폴로지 (구조 한 벌)</text><text x="240" y="108" text-anchor="middle" class="cfmu">원소 · 좌표 · 결합 차수 · 분자 ID</text>','<rect x="30" y="40" width="420" height="480" rx="18" fill="#F6F0E7"/><text x="240" y="80" text-anchor="middle" class="cfh">FF-neutral topology (one structure)</text><text x="240" y="108" text-anchor="middle" class="cfmu">element · coordinates · bond order · molecule ID</text>');
+    atoms.forEach(function (a, i) { var y = 170 + i * 90; o += '<circle cx="110" cy="' + y + '" r="26" fill="#FFFFFF" stroke="#6E655C" stroke-width="3"/><text x="110" y="' + (y + 8) + '" text-anchor="middle" class="cfh" font-size="22">' + a[0] + '</text><text x="150" y="' + (y + 7) + '" class="cfs">' + a[1] + '</text>'; });
+    br.forEach(function (b, j) { var on = j === k, past = j < k, bx = 560, by = 40 + j * 165, col = on || past ? b[1] : '#D3C6B5';
+      o += '<line x1="450" y1="280" x2="' + bx + '" y2="' + (by + 70) + '" stroke="' + col + '" stroke-width="' + (on ? 5 : 3) + '"' + (on ? ' stroke-dasharray="14 10" class="flow"' : '') + '/>';
+      o += '<rect x="' + bx + '" y="' + by + '" width="990" height="140" rx="16" fill="' + (on ? '#FFF1E0' : '#FFFFFF') + '" stroke="' + col + '" stroke-width="' + (on ? 4 : 2) + '"/><text x="' + (bx + 24) + '" y="' + (by + 38) + '" class="cfh" fill="' + col + '">' + b[0] + '</text><text x="' + (bx + 24) + '" y="' + (by + 122) + '" class="cfmu">' + b[2] + '</text>';
+      atoms.forEach(function (a, i) { var show = past || (on && u > (i + 1) / 5), tx = bx + 440 + i * 130; if (!show) return; o += '<rect x="' + (tx - 52) + '" y="' + (by + 52) + '" width="104" height="44" rx="10" fill="' + col + '"/><text x="' + tx + '" y="' + (by + 81) + '" text-anchor="middle" class="cfw" font-family="JetBrains Mono" font-size="20">' + a[2 + j] + '</text>'; });
+    });
+    o += '</svg>'; root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 19장: 혼용 판정 매트릭스 ===== */
+EMB["mixmatrix"] = function (root, RAF) {
+  var W = 1588, H = 560, t0 = CLK();
+  var cols = [__L('함수 형태','Functional form'), __L('조합 규칙','Combining rule'), __L('전하 척도','Charge scale'), __L('1-4 축소','1-4 scaling')];
+  var rows = [['GAFF2 + ClayFF', ['✓ 12-6 · 12-6', __L('✓ 산술 σ','✓ arithmetic σ'), __L('✓ 점전하','✓ point charges'), __L('✓ 비결합 광물','✓ non-bonded mineral')], __L('가능','Allowed'), '#2E8B57', __L('ClayFF = 유기 힘장과의 계면 전제로 개발','ClayFF = developed assuming an interface with organic force fields')],
+              ['GAFF2 + SPC/E · TIP3P', ['✓ 12-6', __L('✓ 산술','✓ arithmetic'), __L('✓ 점전하','✓ point charges'), __L('✓ 강체 물','✓ rigid water')], __L('가능','Allowed'), '#2E8B57', __L('같은 계열에서 함께 검증된 물 모델','water model validated together within the same family')],
+              ['GAFF2 + OPLS-AA', ['✓ 12-6', __L('△ σ 규칙 상이','△ σ rules differ'), __L('✓ 점전하','✓ point charges'), '✗ 0.833 vs 0.5'], __L('조건부','Conditional'), '#E37F1A', __L('이종쌍 전부 명시 + 분자별 축소 분리 필수','Every unlike pair explicit + per-molecule scaling separation required')],
+              ['GAFF2 + COMPASS', ['✗ 12-6 · 9-6', __L('✗ 6제곱','✗ 6th-power'), __L('△ 결합 증분','△ bond increments'), '✗'], __L('불가','Not allowed'), '#D9534F', __L('함수 형태 상이 → 이종쌍 정의 불가','Functional forms differ → unlike pair undefined')],
+              [__L('고전 + ReaxFF','Classical + ReaxFF'), [__L('✗ 결합 차수 에너지','✗ bond-order energy'), __L('· 없음','· none'), __L('✗ QEq 매 스텝','✗ QEq every step'), __L('· 없음','· none')], __L('불가','Not allowed'), '#D9534F', __L('에너지 표현 자체가 상이 · 영역 분할만','Energy representation itself differs · domain decomposition only')]];
+  function f(now) {
+    var st = stepOf(root), t = st ? (st - 1) * 2.4 + 2.3 : ((now - t0) / 1000) % 12, k = Math.min(4, Math.floor(t / 2.4)), u = (t % 2.4) / 2.4, o = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="cfig">';
+    var x0 = 330, cw = 230, rh = 78, y0 = 70;
+    o += '<rect x="20" y="' + (y0 - 50) + '" width="' + (W - 40) + '" height="44" rx="10" fill="#231F20"/><text x="40" y="' + (y0 - 20) + __L('" class="cfw">힘장 짝</text>','" class="cfw">force-field pair</text>');
+    cols.forEach(function (c, j) { o += '<text x="' + (x0 + j * cw + cw / 2) + '" y="' + (y0 - 20) + '" text-anchor="middle" class="cfw">' + c + '</text>'; });
+    o += '<text x="' + (x0 + 4 * cw + 110) + '" y="' + (y0 - 20) + __L('" text-anchor="middle" class="cfw">판정</text>','" text-anchor="middle" class="cfw">verdict</text>');
+    rows.forEach(function (r, i) {
+      var y = y0 + i * rh, done = i < k, cur = i === k, vis = done || cur;
+      o += '<rect x="20" y="' + y + '" width="' + (W - 40) + '" height="' + (rh - 8) + '" rx="12" fill="' + (cur ? '#FFF1E0' : (i % 2 ? '#FBF7F1' : '#FFFFFF')) + '" stroke="' + (cur ? '#F99D1C' : '#E2D8CA') + '" stroke-width="2"/>';
+      o += '<text x="40" y="' + (y + 30) + '" class="cfh" font-size="21" fill="' + (vis ? '#231F20' : '#B9AE9E') + '">' + r[0] + '</text>';
+      if (vis) o += '<text x="40" y="' + (y + 56) + '" class="cfmu" font-size="15">' + r[4] + '</text>';
+      r[1].forEach(function (c, j) { var show = done || (cur && u > (j + 1) / 5.5); if (!show) return; var mark = c[0], col = mark === '✓' ? '#2E8B57' : (mark === '✗' ? '#D9534F' : (mark === '△' ? '#E37F1A' : '#6E655C')); o += '<rect x="' + (x0 + j * cw + 8) + '" y="' + (y + 10) + '" width="' + (cw - 16) + '" height="' + (rh - 28) + '" rx="8" fill="' + col + '" opacity=".12"/><text x="' + (x0 + j * cw + cw / 2) + '" y="' + (y + 42) + '" text-anchor="middle" class="cfh" font-size="19" fill="' + col + '">' + c + '</text>'; });
+      if (done || (cur && u > 0.92)) o += '<rect x="' + (x0 + 4 * cw + 40) + '" y="' + (y + 14) + '" width="140" height="42" rx="21" fill="' + r[3] + '"/><text x="' + (x0 + 4 * cw + 110) + '" y="' + (y + 42) + '" text-anchor="middle" class="cfw" font-size="20">' + r[2] + '</text>';
+    });
+    o += '<text x="' + (W / 2) + '" y="' + (H - 16) + __L('" text-anchor="middle" class="cfmu">✓ 조건 충족 · △ 명시 지정으로 해결 가능 · ✗ 해결 불가 · 조합 규칙은 경험식 · 가능 짝도 혼합 밀도 · 계면 에너지로 검증</text></svg>','" text-anchor="middle" class="cfmu">✓ condition met · △ solvable by explicit specification · ✗ unsolvable · combining rules are empirical · validate allowed pairs too by mixture density · interface energy</text></svg>');
+    root.innerHTML = o; RAF(f);
+  }
+  RAF(f);
+};
+
+/* ===== 8장 조작형: 두께 계산기 ===== */
+(function () {
+  var root = document.getElementById('sim-stack'); if (!root) return;
+  var svg = root.querySelector('svg'), st = { w: 10, n: 20, v: 30 }, A = 24.565 * 25.529, NA = 6.02214076e23, M = 92.141, RHO = 0.2, GAP = 2.5, TS = 10.81, NS = 540;
+  function draw() {
+    var nw = Math.round(st.w * A * 0.0334), tt = st.n * M / (RHO * NA) * 1e24 / A, zw1 = TS + GAP + st.w, zb0 = (st.w ? zw1 : TS) + GAP, zb1 = zb0 + tt, Lz = zb1 + st.v, atoms = NS + 3 * nw + 15 * st.n;
+    var vac_ok = st.v >= 30, slab_ok = st.v >= 2 * (zb1 + 2) / 3 * 0; slab_ok = st.v / (zb1 + 2) >= 0.5;
+    var sc = 1080 / 100, Y = 120, h = 110, o = '', x = 40;
+    [[TS + 2, '#6E655C', __L('석영 ','Quartz ') + NS], [st.w ? st.w + GAP : 0, '#4F7FB0', nw ? __L('물 ','Water ') + nw + __L('분자',' molecules') : ''], [tt + GAP, '#E37F1A', __L('톨루엔 ','Toluene ') + st.n + ' · ' + tt.toFixed(1) + ' Å'], [st.v, vac_ok ? '#E8F3EC' : '#FBE3E1', __L('진공 ','Vacuum ') + st.v + ' Å']].forEach(function (L) {
+      var w = L[0] * sc; if (w <= 0) return; o += '<rect x="' + x + '" y="' + Y + '" width="' + w + '" height="' + h + '" fill="' + L[1] + '" stroke="#E2D8CA"/>'; if (L[2]) o += '<text x="' + (x + w / 2) + '" y="' + (Y + h + 30) + '" text-anchor="middle" class="cfs" font-size="18">' + L[2] + '</text>'; x += w; });
+    o += __L('<text x="40" y="60" class="cfh">z 단면 (가로 = z · 1 Å = ','<text x="40" y="60" class="cfh">z section (horizontal = z · 1 Å = ') + sc.toFixed(1) + ' px) · Lz ' + Lz.toFixed(1) + ' Å</text>';
+    o += __L('<text x="40" y="100" class="cfm">N_물 = ','<text x="40" y="100" class="cfm">N_water = ') + st.w + ' × ' + A.toFixed(0) + ' × 0.0334 = ' + nw + __L(' · t_톨루엔 = ',' · t_toluene = ') + st.n + ' × 92.14 / (0.2 × N_A × ' + A.toFixed(0) + ' Å²) = ' + tt.toFixed(1) + ' Å</text>';
+    o += '<text x="40" y="290" class="cfs" fill="' + (vac_ok ? '#2E8B57' : '#D9534F') + '">' + (vac_ok ? __L('✓ 진공 ≥ 30 Å · 주기 이미지 분리','✓ vacuum ≥ 30 Å · periodic images separated') : __L('✗ 진공 ','✗ vacuum ') + st.v + __L(' Å · 30 Å 미만 · 바인더 윗면 ↔ 이미지 슬래브 근접',' Å · under 30 Å · binder top ↔ image slab close')) + '</text>';
+    svg.innerHTML = o;
+    root.querySelector('[data-o=atoms]').textContent = atoms.toLocaleString(); root.querySelector('[data-o=lz]').textContent = Lz.toFixed(1) + ' Å';
+    root.querySelector('[data-o=vac]').textContent = vac_ok ? '✓' : '✗'; root.querySelector('[data-o=slab]').textContent = slab_ok ? '✓ ' + (st.v / (zb1 + 2)).toFixed(2) : '✗ ' + (st.v / (zb1 + 2)).toFixed(2);
+    ['w', 'n', 'v'].forEach(function (k) { root.querySelector('[data-o=' + k + ']').textContent = st[k]; });
+  }
+  root.querySelectorAll('input[type=range]').forEach(function (inp) { inp.addEventListener('input', function () { st[inp.dataset.k] = +inp.value; draw(); }); });
+  function set(o) { for (var k in o) { st[k] = o[k]; root.querySelector('input[data-k=' + k + ']').value = o[k]; } draw(); }
+  root.querySelector('[data-act=fail]').onclick = function () { set({ w: 10, n: 20, v: 12 }); };
+  root.querySelector('[data-act=reset]').onclick = function () { set({ w: 10, n: 20, v: 30 }); };
+  draw();
+})();
+</script>
+</body>
+</html>
