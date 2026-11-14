@@ -27,8 +27,7 @@ cd 2026_MOOC_Lecture_Materials
 ## 폴더
 | 폴더 | 내용 |
 |---|---|
-| `week01/` ~ `week18/` | 주차별 한 묶음: 강의 덱 `slides/WNN_….html`(Chrome 으로 연다 · 「한국어 \| EN」 L 키) · README · 지시문 `prompts.md` · notebooks · scripts · data · 기준 결과 `expected_output/` · 평가문항 문제지 |
-| `common/` | 덱이 함께 쓰는 글꼴 · 스타일 · 스크립트(덱을 다른 곳으로 옮길 때 같은 상대 위치에 둔다) |
+| `week01/` ~ `week18/` | 주차별 한 묶음: 강의 덱 `slides/WNN_….html`(파일 하나 · 내려받아 Chrome 으로 연다 · 「한국어 \| EN」 L 키) · README · 지시문 `prompts.md` · notebooks · scripts · data · 기준 결과 `expected_output/` · 평가문항 문제지 |
 | `mdworkflow/` | MD 워크플로우(W17): 분자 → 힘장(GAFF2 · AM1-BCC) → 상자(Packmol) → LAMMPS → 밀도 · CED → 결과 표 |
 | `loop/` | 폐루프(W18): Obsidian 볼트 문헌 노트 → 표적 → 평균 분자 후보 168 → 대리모델 → 체비셰프 EI → 볼트 환류 · 기준 사례 |
 | `docs/` | 설치 지시문 · Claude Code 시작 · 지시문 사용법 · Git |
@@ -81,8 +80,7 @@ cd 2026_MOOC_Lecture_Materials
 ## Folders
 | Folder | Contents |
 |---|---|
-| `week01/` ~ `week18/` | One bundle per week: lecture deck `slides/WNN_….html` (open in Chrome · 「한국어 \| EN」 button or L key) · README · prompts `prompts.md` · notebooks · scripts · data · reference results `expected_output/` · assessment question sheet |
-| `common/` | Fonts, styles and scripts shared by the decks (keep the same relative location if you move a deck) |
+| `week01/` ~ `week18/` | One bundle per week: lecture deck `slides/WNN_….html` (a single file · download and open in Chrome · 「한국어 \| EN」 button or L key) · README · prompts `prompts.md` · notebooks · scripts · data · reference results `expected_output/` · assessment question sheet |
 | `mdworkflow/` | MD workflow (W17): molecule → force field (GAFF2 · AM1-BCC) → box (Packmol) → LAMMPS → density · CED → results table |
 | `loop/` | Closed loop (W18): Obsidian vault literature notes → targets → 168 average-molecule candidates → surrogate model → Chebyshev EI → write-back to the vault · reference case |
 | `docs/` | Install prompts · getting started with Claude Code · how to use prompts · Git |

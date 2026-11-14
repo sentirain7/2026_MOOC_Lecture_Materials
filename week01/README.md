@@ -45,7 +45,7 @@ Claude Code 없이 확인할 때: mdai 환경의 week01 폴더에서 `python3 sc
 week01/
   README.md                     이 문서
   prompts.md                    Claude Code 지시 원문 (P1-1 · P1-2)
-  slides/W01_과정개요.html       덱 (공용 ../common/ 필요)
+  slides/W01_과정개요.html       덱 (파일 하나 · 글꼴 · 스타일 내장)
   notebooks/00_setup_check.ipynb  환경 점검 (10분)
   live/combination_space.ipynb    덱 6장과 같은 계산
   scripts/setup_check.py          노트북과 같은 일을 하는 스크립트
