@@ -21,6 +21,7 @@ cd 2026_MOOC_Lecture_Materials
 2. **나머지 설치**는 Claude Code 에 지시문을 붙여 넣는다 → `docs/install_prompts.md` (I-1 conda · I-2 강좌 환경 `mdai` · I-3 Zotero · I-4 Obsidian · I-5 전체 점검)
 3. **매주**: `conda activate mdai` → `cd 2026_MOOC_Lecture_Materials/weekNN` → `claude` → 덱의 지시문 붙여 넣기 → 결과 `out/` ↔ 기준 `expected_output/`
 - **수강생 사용자 가이드**: [`사용자_가이드.md`](사용자_가이드.md) — 준비물 · 덱 보는 법 · 설치 · 매주 실습 · 주차별 할 일 · 평가 · 막힐 때
+- **온라인 슬라이드(설치 없이 · 주차별 링크)**: https://sentirain7.github.io/Self_Driving_Lab_Instruction/lectures/mooc/
 - `강의자/` 폴더 = 강의자 전용(비공개 저장소 연결 · 작성자만 열 수 있다 · 수강생은 필요 없다)
 
 ## 폴더
@@ -74,6 +75,7 @@ cd 2026_MOOC_Lecture_Materials
 2. **Install everything else** by pasting prompts into Claude Code → `docs/install_prompts.md` (I-1 conda · I-2 course environment `mdai` · I-3 Zotero · I-4 Obsidian · I-5 full check)
 3. **Every week**: `conda activate mdai` → `cd 2026_MOOC_Lecture_Materials/weekNN` → `claude` → paste the deck prompt → compare your results in `out/` with the reference in `expected_output/`
 - **Student user guide**: [`사용자_가이드.md`](사용자_가이드.md) — what you need · how to view the decks · installation · weekly exercises · weekly tasks · assessment · troubleshooting
+- **Online slides (no install · one link per week)**: https://sentirain7.github.io/Self_Driving_Lab_Instruction/lectures/mooc/
 - `강의자/` folder = instructor only (linked private repository · only the author can open it · students do not need it)
 
 ## Folders
